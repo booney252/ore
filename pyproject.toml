@@ -1,0 +1,23 @@
+[project]
+name = "cse"
+version = "0.1.0"
+description = "Creative strategy engine: research layer (Phase 1)"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.34",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "moto[s3]>=5"]
+
+[project.scripts]
+cse = "cse.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cse"]
