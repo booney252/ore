@@ -8,6 +8,20 @@ A full-stack creative strategy tool for brands running UGC and paid social ads. 
 
 First user: me. **Current brand: PeptidePal (peptide tracking app) only.** Solis (morning alarm + phone lock app for 18 to 25 year old guys) is on hold. Keep the code brand-agnostic so it can be added later, but don't build, test, or research for it now.
 
+## North star: a product other people can use
+
+The end goal is to release this to other people. They type in what their product or service is (a sentence or a URL) and the tool does the rest: researches the market, finds competitors, builds the research brief, pulls and breaks down ads, and writes weekly briefs. No research PDF, no hand-filled `brand.md`.
+
+For now I'm the only user and PeptidePal is the only brand (dogfooding). Build for PeptidePal first, but don't paint us into a corner:
+
+- **Nothing app- or health-specific in the core.** Apps, ecommerce, services, local businesses all have to work. Source choices (App Store reviews vs Amazon vs Trustpilot vs Google reviews) and compliance rules (health, finance, etc.) are picked per brand, not hardcoded.
+- **The foundation must run from a one-line description.** PeptidePal skips it because I already have a brief, but for everyone else `init` takes a description or URL, drafts `brand.md` by research, and the foundation (competitors, VOC, the 4 prompts → research brief) runs automatically. Keep that pipeline on the roadmap; it's the product.
+- **Two kinds of knowledge.** General copywriting craft (hooks, structure, short-form, direct response) ships with the product for everyone. Brand-specific knowledge (rules, compliance, voice) lives with each brand. My notes from paid courses (e.g. RMBC) stay in my private brand/workspace knowledge and are **not** shipped to other users unless rewritten as original material; course terms usually forbid redistribution.
+- **Keep data separated per brand** (and later per account), so adding users later is a prefix change, not a rewrite.
+- **Providers stay swappable** (storage, ad data, transcription, LLM). Before release, re-check terms for commercial use at scale: ScrapeCreators' terms for reselling data, Meta's scraping stance, and API costs per customer.
+- **Handoff mode is a dev convenience.** The released product runs on the API.
+- Release-only work (web UI, accounts, billing, per-customer costs) comes after the weekly engine works for PeptidePal.
+
 ## The workflow (updated 2026-10-15)
 
 Two loops:
@@ -222,4 +236,6 @@ The PeptidePal foundation already exists: my Unified Research Brief (Oct 6, 2026
 5. Ads (competitors + own) and creative breakdown
 6. `knowledge/` loading + `briefs` (6 per week)
 7. `weekly` (new ads only → briefs)
-8. Later: VOC module and the 4 research prompts, for refreshing the brief
+8. Auto-foundation from a one-line description: `init` drafts `brand.md` by research, then competitors → VOC → the 4 prompts → research brief. Needed for every user who isn't me; also refreshes PeptidePal's brief.
+9. Split `knowledge/` into general (ships) and brand-specific (private).
+10. Release work: web UI, accounts, billing, terms review.
