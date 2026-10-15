@@ -18,7 +18,7 @@ machines see the same files. Research prompts live in `prompts/` (in git).
 
 ```
 cse init <brand>          create brands/<brand>/brand.md for you to fill in
-cse competitors <brand>   (not built yet)
+cse competitors <brand>   find competitors in 3 rings -> competitors.json (review + approve)
 cse ads <brand>           (not built yet)
 cse voc <brand>           (not built yet)
 cse report <brand>        (not built yet)

@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Creative strategy engine: research layer (Phase 1)"
 requires-python = ">=3.11"
 dependencies = [
+    "anthropic>=1.14",
     "boto3>=1.34",
     "pyyaml>=6.0",
     "python-dotenv>=1.0",

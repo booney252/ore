@@ -9,12 +9,12 @@ import sys
 from dotenv import load_dotenv
 
 from . import brand as brandlib
+from . import competitors, llm
 from .storage import Storage, StorageError, from_env
 
 log = logging.getLogger("cse")
 
 NOT_BUILT = {
-    "competitors": "build the 3-ring competitor map",
     "ads": "pull competitor Meta ads + score them",
     "voc": "mine voice of customer",
     "report": "write report.md and research-brief.md",
@@ -42,6 +42,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--force", action="store_true", help="overwrite an existing brand.md")
 
+    sub.add_parser("competitors", help="build the 3-ring competitor map").add_argument("brand")
+
     for name, help_text in NOT_BUILT.items():
         sub.add_parser(name, help=f"{help_text} (not built yet)").add_argument("brand")
     return parser
@@ -55,9 +57,12 @@ def main(argv: list[str] | None = None) -> int:
         storage = from_env()
         if args.command == "init":
             return cmd_init(storage, args.brand, args.force)
+        if args.command == "competitors":
+            competitors.run(storage, args.brand)
+            return 0
         log.error("`%s` is not built yet.", args.command)
         return 2
-    except (StorageError, brandlib.BrandError) as e:
+    except (StorageError, brandlib.BrandError, llm.LLMError) as e:
         log.error("error: %s", e)
         return 1
 
