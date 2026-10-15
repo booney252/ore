@@ -213,12 +213,13 @@ See `docs/decisions.md`. Storage: Cloudflare R2. Ad data: ScrapeCreators (free c
 
 ## Build order
 
+The PeptidePal foundation already exists: my Unified Research Brief (Oct 6, 2026) is imported as `research-brief.md` (in `seed/peptidepal/` until R2 is set up), and its 19 competitors seed `competitors.json`. Its quotes come without per-quote links; that's accepted for this imported brief only. Its hard rules are in `knowledge/rules.md`.
+
 1. ~~Repo, storage, `init`~~ (done)
 2. ~~Ad data research~~ (done, see `docs/ad-data-options.md`)
-3. ~~`competitors`~~ (built; first real run pending)
-4. Handoff mode, then run the PeptidePal competitor audit
-5. VOC
-6. Ads (competitors + own) and creative breakdown
-7. Research prompts → report + research brief
-8. `knowledge/` loading + `briefs` (6 per week)
-9. `weekly` (new ads only → briefs)
+3. ~~`competitors`~~ (built) and ~~foundation~~ (imported from my brief)
+4. Handoff mode; find websites + Facebook pages for the seeded competitors and PeptidePal itself
+5. Ads (competitors + own) and creative breakdown
+6. `knowledge/` loading + `briefs` (6 per week)
+7. `weekly` (new ads only → briefs)
+8. Later: VOC module and the 4 research prompts, for refreshing the brief
