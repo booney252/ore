@@ -1,4 +1,4 @@
-# Creative Strategy Engine: Phase 1 Brief
+# Creative Strategy Engine: Build Brief
 
 Working name. Rename later.
 
@@ -6,11 +6,33 @@ Working name. Rename later.
 
 A full-stack creative strategy tool for brands running UGC and paid social ads. It researches the market, studies competitors' ads, mines how real customers talk, and later turns all of that into briefs and scripts for creators. It runs the same research process every time and remembers each brand, so it gets smarter over time.
 
-First user: me. First brands: PeptidePal (peptide tracking app) and Solis (morning alarm + phone lock app for 18 to 25 year old guys).
+First user: me. **Current brand: PeptidePal (peptide tracking app) only.** Solis (morning alarm + phone lock app for 18 to 25 year old guys) is on hold. Keep the code brand-agnostic so it can be added later, but don't build, test, or research for it now.
 
-## Phase 1 goal
+## The workflow (updated 2026-10-15)
 
-Build the **research layer only**. For any brand, one command should produce a research report with:
+Two loops:
+
+**Foundation (once, refreshed every month or two)**
+1. Competitor audit: direct, adjacent, and relative rings.
+2. Voice of customer: real quotes with sources.
+3. My 4 research prompts → `research-brief.md`, the brand brain.
+
+**Weekly engine (the main goal)**
+1. Pull new Meta ads from competitors **and from PeptidePal itself**.
+2. Score which are winning (winner score below).
+3. Break down the new ads: hook (first line + first frame), visuals, pacing/cuts, format, angle, structure, offer, CTA.
+4. Explain *why* each winner is likely working, tied to what's actually in the video.
+5. Write **6 new idea briefs per week** for PeptidePal: iterations on winners (same angle, new hook; same hook, new format) or new ideas built on why the winners work. Every brief cites the ad(s) and VOC quotes it came from.
+
+The weekly run only processes ads it hasn't seen before, so it stays cheap. It's the part that will later run in the cloud on a schedule.
+
+**Copywriting skill.** Research tells the tool *what* to say; it also needs to know *how* to write: hooks, angles, structure, short-form video, direct response, and the RMBC method (I'm taking the RMBC course). This lives in a `knowledge/` folder in the repo, editable like `prompts/`, and is loaded every time briefs are written. I add my own notes and summaries there over time (not verbatim course material).
+
+**Own ads.** Start by pulling PeptidePal's ads from the public Ad Library like any competitor (no performance data). Later, connect my Meta ad account (official Marketing API) so own-ad winners are judged on real results (spend, CPA, ROAS).
+
+## Foundation detail
+
+The foundation produces:
 
 1. **Competitor map** in three rings:
    - Direct: same product, same buyer
@@ -19,7 +41,7 @@ Build the **research layer only**. For any brand, one command should produce a r
 2. **Competitor ad intel**: their current and recent Meta ads, ranked by how likely each one is a winner
 3. **Voice of customer (VOC)**: the exact words buyers use for their pains, desires, and objections, with sources
 
-No briefs, hooks, or scripts yet. That's Phase 2. Phase 1 has to produce research good enough that writing a brief from it is easy.
+Build order: foundation first (briefs are only as good as the research under them), then the weekly engine and briefs.
 
 ## Tech setup
 
@@ -31,7 +53,7 @@ No briefs, hooks, or scripts yet. That's Phase 2. Phase 1 has to produce researc
 - **Data and media**: in cloud storage, not local folders. Recommend a simple option (for example Supabase for data plus file storage, or an S3-style bucket) and check storage limits and cost first, since videos add up fast. Ask me before picking anything paid.
 - **Secrets**: `.env` on each machine, with a `.env.example` in the repo listing what's needed. Never commit real keys.
 - The tool must work the same from either machine: same command, same data, same results.
-- Running from the cloud on a schedule comes later (Phase 2), so don't build anything that only works on a local machine.
+- Running the weekly engine from the cloud on a schedule comes later, so don't build anything that only works on a local machine.
 
 Organize the cloud data one brand at a time, like this:
 
@@ -43,8 +65,10 @@ brands/
     ads.json
     voc.json
     report.md         # the human-readable output
-  solis/
-    ...
+    research-brief.md # brand brain the weekly briefs read
+    media/            # downloaded ad videos/images + key frames
+    briefs/           # one file of 6 briefs per week
+
 ```
 
 ## Commands
@@ -52,11 +76,15 @@ brands/
 ```
 init <brand>              create the brand folder + a brand.md template for me to fill in
 competitors <brand>       build the 3-ring competitor map
-ads <brand>               pull competitor Meta ads + score them
+ads <brand>               pull competitor + own Meta ads, score them, break down new ones
 voc <brand>               mine voice of customer
-report <brand>            write report.md from everything above
-run <brand>               all of the above in order
+report <brand>            write report.md + research-brief.md from everything above
+run <brand>               foundation: all of the above in order
+briefs <brand>            write 6 new idea briefs from this week's winners + research brief
+weekly <brand>            weekly engine: ads, then briefs
 ```
+
+**Handoff mode.** Until an Anthropic API key is added, every Claude step can run in "handoff" mode: the tool saves the fully filled-in prompt with our real data, Claude Code does the step in a session, and saves the answer back for the tool to continue. Same code path; switching to the API is a `.env` change.
 
 ## Module details
 
@@ -106,11 +134,11 @@ hook line, first frame, time to product, length, cuts per second, on-screen text
 These breakdowns feed the "patterns across winning ads" section of the report, so patterns come from what's actually in the videos, not just the captions.
 
 ### 3. Voice of customer
-Phase 1 sources, easiest first:
-- Reddit (official API): relevant subreddits and threads
-- App Store and Google Play reviews for competitor apps (both of my brands are apps, so this matters most)
+Sources, easiest first:
+- App Store reviews for competitor apps (PeptidePal is an app, so this matters most). Apple's public review feed.
 - YouTube comments (official API) on relevant videos
-- Manual paste: a file where I dump TikTok comments, Amazon reviews, DMs, anything
+- Manual paste: a file where I dump Reddit threads, TikTok comments, Amazon reviews, DMs, anything
+- Left out: Google Play (no official API; scraping breaks its terms) and the Reddit API (free tier is non-commercial only; business use needs Reddit's approval). Reddit content comes in via manual paste.
 
 Use Claude to cluster quotes into:
 - Pains
@@ -138,7 +166,7 @@ They cover four steps:
 
 ### 4. Report
 Two outputs:
-- `research-brief.md`: the unified research brief from prompt 4. This becomes the brand brain that Phase 2 (briefs and scripts) reads every time.
+- `research-brief.md`: the unified research brief from prompt 4. This becomes the brand brain the weekly briefs read every time.
 - `report.md`: the quick read, about 10 minutes:
 - Competitor map (3 rings)
 - Top 10 competitor ads by winner score, with the reason for each score, a link, the hook line, the first frame image, and the breakdown
@@ -150,31 +178,47 @@ Two outputs:
 
 - Respect rate limits and each platform's terms. If something would require breaking terms, stop and tell me instead of working around it.
 - Health products (peptides) have strict ad rules. Flag any competitor claims that look risky, but don't treat them as safe to copy.
-- Keep it simple. Only the cloud storage we need, no UI, auth, or multiple users in Phase 1.
+- Keep it simple. Only the cloud storage we need, no UI, auth, or multiple users for now.
 - Write short tests for the winner score and the data parsing.
 - Log what each run pulled (counts per source) so I can tell when something breaks.
 
-## Out of scope for Phase 1
+### 5. Weekly briefs
+- Input: this week's scored + broken-down ads (competitors and own), `research-brief.md`, `voc.json`, and everything in `knowledge/`.
+- Output: `brands/<brand>/briefs/<YYYY-MM-DD>.md` with 6 briefs. Each brief: idea name, type (iteration or new), source ads and why they win, angle, hook options (spoken line + first frame), format, structure/beats, on-screen text, CTA, VOC quotes to use (exact, with links), and creator notes.
+- PeptidePal is a health-adjacent product: every brief flags claims needing compliance review. No results, cures, or numbers without proof. Competitor claims are never treated as safe to copy.
 
-Briefs, hooks, scripts, scheduled weekly runs, connecting my ad accounts, the learn loop, the compliance checker, a UI. All of that comes later.
+## Later (not now)
+
+Scheduled cloud runs of the weekly engine, connecting my Meta ad account, full scripts, the learn loop (which briefs became winners), the compliance checker, a UI, Solis.
 
 ## Done when
 
-- `run peptidepal` works start to finish in one command.
+- `run peptidepal` works start to finish.
 - The report has at least 15 competitors across all 3 rings, at least 10 scored competitor ads (each with downloaded media, a transcript, and a visual breakdown), and at least 50 VOC quotes with sources.
 - I read the report and learn at least one thing about the PeptidePal market I didn't know.
-- Same for `run solis`.
+- `weekly peptidepal` pulls only new ads and produces 6 briefs I'd actually hand to a creator.
 - I can run it on my Mac, switch to my desktop, and see the same data and reports.
 
 ## What I'll provide
 
-- `brand.md` filled in for PeptidePal and Solis
+- `brand.md` filled in for PeptidePal
+- My copywriting notes (RMBC and others) in `knowledge/`
 - My research prompts in `prompts/`
 - Known competitor names I already know
 - API keys once we pick the services
 
-## Start here
+## Decisions so far
 
-1. Set up the GitHub repo, recommend the cloud storage option, and build the `init` command against it.
-2. Do the ad data research step and report back before building ad intel.
-3. Build competitors, then VOC, then ads, then creative breakdown, then the research prompts, then the report and research brief.
+See `docs/decisions.md`. Storage: Cloudflare R2. Ad data: ScrapeCreators (free credits first). Transcription: Whisper inside the tool.
+
+## Build order
+
+1. ~~Repo, storage, `init`~~ (done)
+2. ~~Ad data research~~ (done, see `docs/ad-data-options.md`)
+3. ~~`competitors`~~ (built; first real run pending)
+4. Handoff mode, then run the PeptidePal competitor audit
+5. VOC
+6. Ads (competitors + own) and creative breakdown
+7. Research prompts → report + research brief
+8. `knowledge/` loading + `briefs` (6 per week)
+9. `weekly` (new ads only → briefs)
