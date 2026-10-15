@@ -1,0 +1,178 @@
+{
+  "brand": "peptidepal",
+  "updated_at": "2026-10-15T00:00:00+00:00",
+  "note": "Seeded from the Unified Research Brief (Oct 6, 2026). Websites and Facebook pages still to find.",
+  "competitors": [
+    {
+      "name": "Pep AI",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "Peptide tracker; closest product (launched Feb 2026). Complaints: unit selection, 'randomly deletes everything'.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Peptide Tracker",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "Peptide tracker built for 30-45 biohackers; reminders, reconstitution calculator.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "PeptIQ",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "Peptide tracker for the Product Aware stack crowd.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Regimen",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "Peptide/protocol tracker.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "PepTracker",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "Peptide tracker.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "LynkDose",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "Peptide tracker (publishes tracker roundups).",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Shotsy",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "GLP-1 tracker; premium missing promised calorie/protein charts, data-loss complaints.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "MeAgain",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "GLP-1 tracker; broad but shallow, subscription-only, ~30K iOS ratings.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Glapp",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "GLP-1 tracker built for one or two meds.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "GlucoPal",
+      "ring": "direct",
+      "website": "",
+      "facebook_page": "",
+      "why": "GLP-1 tracker built for one or two meds.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "MyFitnessPal",
+      "ring": "adjacent",
+      "website": "",
+      "facebook_page": "",
+      "why": "Food logging; added free GLP-1 dose logging April 2026. Typical Solution Aware setup.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Lose It!",
+      "ring": "adjacent",
+      "website": "",
+      "facebook_page": "",
+      "why": "Calorie/food logging used alongside a shot reminder.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Cal AI",
+      "ring": "adjacent",
+      "website": "",
+      "facebook_page": "",
+      "why": "AI calorie logging; surprise-renewal complaints.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Noom",
+      "ring": "adjacent",
+      "website": "",
+      "facebook_page": "",
+      "why": "Weight program with GLP-1 tie-ins; surprise-renewal complaints.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Hims & Hers",
+      "ring": "relative",
+      "website": "",
+      "facebook_page": "",
+      "why": "Telehealth; plans to sell peptides by end of 2026 with a free tracker bundled.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Eden",
+      "ring": "relative",
+      "website": "",
+      "facebook_page": "",
+      "why": "Telehealth/longevity clinic; app tracks only what they sell.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Hone Health",
+      "ring": "relative",
+      "website": "",
+      "facebook_page": "",
+      "why": "Longevity/TRT clinic; app tracks only what they sell.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Maximus",
+      "ring": "relative",
+      "website": "",
+      "facebook_page": "",
+      "why": "Men's TRT/longevity clinic.",
+      "source": "you",
+      "status": "approved"
+    },
+    {
+      "name": "Ro",
+      "ring": "relative",
+      "website": "",
+      "facebook_page": "",
+      "why": "Telehealth GLP-1 provider.",
+      "source": "you",
+      "status": "approved"
+    }
+  ]
+}
