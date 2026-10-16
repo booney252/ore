@@ -1,178 +1,222 @@
 {
   "brand": "peptidepal",
   "updated_at": "2026-10-15T00:00:00+00:00",
-  "note": "Seeded from the Unified Research Brief (Oct 6, 2026). Websites and Facebook pages still to find.",
+  "note": "Seeded from the Unified Research Brief (Oct 6, 2026); websites and Facebook pages researched 2026-10-16.",
   "competitors": [
     {
       "name": "Pep AI",
       "ring": "direct",
-      "website": "",
+      "website": "https://pepaiapp.com/",
       "facebook_page": "",
       "why": "Peptide tracker; closest product (launched Feb 2026). Complaints: unit selection, 'randomly deletes everything'.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/pep-ai-glp-1-peptide-tracker/id6758682710",
+      "notes": "No Facebook page found (Instagram @pepaiapp)."
     },
     {
       "name": "Peptide Tracker",
       "ring": "direct",
-      "website": "",
+      "website": "https://peptidetracker.ai/",
       "facebook_page": "",
       "why": "Peptide tracker built for 30-45 biohackers; reminders, reconstitution calculator.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/peptide-tracker-log-reminder/id6763939355",
+      "notes": "Generic name; this is Flat Six Labs' app. No Facebook page found."
     },
     {
       "name": "PeptIQ",
       "ring": "direct",
-      "website": "",
+      "website": "https://peptiq.io/",
       "facebook_page": "",
       "why": "Peptide tracker for the Product Aware stack crowd.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/peptiq-peptide-tracker/id6757513095",
+      "notes": "Site runs a Meta pixel, so likely advertises; no Facebook page link found."
     },
     {
       "name": "Regimen",
       "ring": "direct",
-      "website": "",
+      "website": "https://helloregimen.com/",
       "facebook_page": "",
       "why": "Peptide/protocol tracker.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/regimen-peptide-tracker/id6753905449",
+      "notes": "No Facebook page found."
     },
     {
       "name": "PepTracker",
       "ring": "direct",
-      "website": "",
+      "website": "https://peptracker.app/",
       "facebook_page": "",
       "why": "Peptide tracker.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/peptracker-dose-log/id6747189889",
+      "notes": "No Facebook page found."
     },
     {
       "name": "LynkDose",
       "ring": "direct",
-      "website": "",
+      "website": "https://lynkdose.com",
       "facebook_page": "",
       "why": "Peptide tracker (publishes tracker roundups).",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/peptide-tracker-lynkdose/id6747953794",
+      "notes": "Very small (17 ratings)."
     },
     {
       "name": "Shotsy",
       "ring": "direct",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://shotsyapp.com/",
+      "facebook_page": "https://www.facebook.com/61561810976630",
       "why": "GLP-1 tracker; premium missing promised calorie/protein charts, data-loss complaints.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/shotsy-glp-1-tracker/id6499510249",
+      "fb_search_name": "Shotsy App"
     },
     {
       "name": "MeAgain",
       "ring": "direct",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://meagain.com/",
+      "facebook_page": "https://www.facebook.com/profile.php?id=61574528357744",
       "why": "GLP-1 tracker; broad but shallow, subscription-only, ~30K iOS ratings.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/meagain-glp-1-tracker-app/id6744178534",
+      "fb_search_name": "MeAgain App"
     },
     {
       "name": "Glapp",
       "ring": "direct",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://glapp.io/",
+      "facebook_page": "https://www.facebook.com/glapphealth",
       "why": "GLP-1 tracker built for one or two meds.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/glapp-smart-glp-1-tracker/id6756984097",
+      "fb_search_name": "Glapp",
+      "notes": "Not Glippy."
     },
     {
       "name": "GlucoPal",
       "ring": "direct",
-      "website": "",
+      "website": "https://glucopal.com/",
       "facebook_page": "",
       "why": "GLP-1 tracker built for one or two meds.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/zepbound-mounjaro-tracker/id6670317407",
+      "notes": "Listing name rotates (now 'Zepbound & Mounjaro Tracker'). No Facebook page found."
     },
     {
       "name": "MyFitnessPal",
       "ring": "adjacent",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.myfitnesspal.com/",
+      "facebook_page": "https://www.facebook.com/myfitnesspal/",
       "why": "Food logging; added free GLP-1 dose logging April 2026. Typical Solution Aware setup.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/myfitnesspal-calorie-counter/id341232718",
+      "fb_search_name": "MyFitnessPal"
     },
     {
       "name": "Lose It!",
       "ring": "adjacent",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.loseit.com/",
+      "facebook_page": "https://www.facebook.com/loseit/",
       "why": "Calorie/food logging used alongside a shot reminder.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/lose-it-calorie-counter/id297368629",
+      "fb_search_name": "Lose It!"
     },
     {
       "name": "Cal AI",
       "ring": "adjacent",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.calai.app/",
+      "facebook_page": "https://www.facebook.com/getcalai/",
       "why": "AI calorie logging; surprise-renewal complaints.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/cal-ai-calorie-tracker/id6480417616",
+      "fb_search_name": "Cal AI"
     },
     {
       "name": "Noom",
       "ring": "adjacent",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.noom.com/",
+      "facebook_page": "https://www.facebook.com/noom",
       "why": "Weight program with GLP-1 tie-ins; surprise-renewal complaints.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/noom-weight-loss-food-tracker/id634598719",
+      "fb_search_name": "Noom",
+      "notes": "Two pages titled Noom (noom, NoomHQ); check the matched page."
     },
     {
       "name": "Hims & Hers",
       "ring": "relative",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.hims.com/",
+      "facebook_page": "https://www.facebook.com/wearehims",
       "why": "Telehealth; plans to sell peptides by end of 2026 with a free tracker bundled.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/hims-telehealth-for-men/id1455690574",
+      "fb_search_name": "hims",
+      "notes": "Hers is a separate brand with no Facebook page found."
     },
     {
       "name": "Eden",
       "ring": "relative",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.tryeden.com/",
+      "facebook_page": "https://www.facebook.com/TryEdenHealth",
       "why": "Telehealth/longevity clinic; app tracks only what they sell.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "",
+      "fb_search_name": "TryEden",
+      "notes": "Not Eden Health Inc. (employer care)."
     },
     {
       "name": "Hone Health",
       "ring": "relative",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.honehealth.com/",
+      "facebook_page": "https://www.facebook.com/hone.your.health/",
       "why": "Longevity/TRT clinic; app tracks only what they sell.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "",
+      "fb_search_name": "Hone Health"
     },
     {
       "name": "Maximus",
       "ring": "relative",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://www.maximustribe.com/",
+      "facebook_page": "https://www.facebook.com/maximustribehealth",
       "why": "Men's TRT/longevity clinic.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "",
+      "fb_search_name": "Maximus Tribe",
+      "notes": "Page display name unconfirmed (Maximus or Maximus Tribe)."
     },
     {
       "name": "Ro",
       "ring": "relative",
-      "website": "",
-      "facebook_page": "",
+      "website": "https://ro.co/",
+      "facebook_page": "https://www.facebook.com/getroman/",
       "why": "Telehealth GLP-1 provider.",
       "source": "you",
-      "status": "approved"
+      "status": "approved",
+      "app_store_url": "https://apps.apple.com/us/app/ro-online-healthcare/id1585858911",
+      "fb_search_name": "Ro",
+      "notes": "Low confidence: only the legacy 'Roman' page found. Verify the matched page links to ro.co."
     }
   ]
 }

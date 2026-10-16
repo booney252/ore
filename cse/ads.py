@@ -128,7 +128,8 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
     for comp in targets:
         name = comp["name"]
         if not comp.get("fb_page_id"):
-            page = pick_page(name, source.find_pages(name))
+            search = comp.get("fb_search_name") or name
+            page = pick_page(search, source.find_pages(search))
             if not page:
                 log.info("  %-22s no Ad Library page found", name)
                 counts[name] = 0
