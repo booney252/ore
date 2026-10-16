@@ -34,9 +34,9 @@ Two loops:
 **Weekly engine (the main goal)**
 1. Pull new Meta ads from competitors **and from PeptidePal itself**.
 2. Score which are winning (winner score below).
-3. Break down the new ads: hook (first line + first frame), visuals, pacing/cuts, format, angle, structure, offer, CTA.
-4. Explain *why* each winner is likely working, tied to what's actually in the video.
-5. Write **6 new idea briefs per week** for PeptidePal: iterations on winners (same angle, new hook; same hook, new format) or new ideas built on why the winners work. Every brief cites the ad(s) and VOC quotes it came from.
+3. **Diagnose the winners.** Take each strong ad apart element by element: spoken hook, on-screen text hook, frame 0, first 3 seconds, caption style, creator, setting, camera, edit and pacing, time to product, structure, emotion, persuasion devices, proof, offer, CTA. Mark which elements are load-bearing and why (evidence: days running, versions, reused across the advertiser's other ads).
+4. **Put the winning elements into PeptidePal ads.** That's the whole point: find why winners win, then build our ads out of those elements.
+5. Write **6 briefs per week** for PeptidePal as full 20-60s UGC scripts (creator to camera). Each brief has a "Winning elements we're using" table citing the ads each element came from. Mix: some stay close to one winner, some are new concepts aimed at gaps, still built from proven elements.
 
 The weekly run only processes ads it hasn't seen before, so it stays cheap. It's the part that will later run in the cloud on a schedule.
 

@@ -32,9 +32,11 @@ Winning ads in other formats (silent demos, b-roll with text, statics, animation
 
 ## Your job
 
-First, in a short section called **What's winning this week**, name the 3-5 patterns across the top-scoring ads (hooks, first frames, formats, angles, pacing, offers), each with the ad IDs that show it. Note what {{brand_name}}'s own ads are doing vs competitors, and gaps: pains or objections from the research brief that no winning ad is addressing.
+The whole point: find out exactly why the winners are winning, then put those winning elements into {{brand_name}} ads.
 
-Then write **{{brief_count}} briefs**. Mix: at least 2 **iterations** (take a winner's proven element: same angle with a new hook, same hook in a new format, same structure for a different segment) and at least 2 **new ideas** (built on why the winners work, aimed at a gap). Each one has to be something a creator could shoot this week.
+1. **Winners, diagnosed.** Take the 5-7 strongest ads (highest score, plus any that the advertiser keeps reshooting) and diagnose each one, element by element, as a table `| Element | What they do | Why it works |`. Cover everything you can see and hear: the spoken hook, the on-screen text hook, frame 0, the first 3 seconds, the on-screen text style, the creator, the setting, the camera, the edit and pacing, time to product, structure, the emotional trigger, the persuasion devices, the proof, the offer and CTA. End each table with a "Why it's a winner" row with the evidence (days running, active, versions, the same element reused across the advertiser's other ads). Use the breakdowns' `load_bearing` lists. Include {{brand_name}}'s own best ad.
+2. **What's winning this week.** The 3-5 patterns that repeat across winners, each with the ad IDs that show it; what {{brand_name}}'s own ads do vs competitors; and gaps: pains or objections from the research brief that no winning ad addresses.
+3. **{{brief_count}} briefs.** Every brief is built from diagnosed winning elements. Mix: at least 2 that stay close to one winner (keep its load-bearing elements, adapt the rest to {{brand_name}}) and at least 2 new concepts aimed at a gap, still executed with proven winning elements. Each one has to be something a creator could shoot this week.
 
 For each brief:
 
@@ -43,6 +45,7 @@ For each brief:
 - **Built from:** which ads (IDs + advertiser) and what about them is winning, with their score reason
 - **Segment + awareness stage:** one segment from the research brief, and the stage you're opening for
 - **Angle:** one line
+- **Winning elements we're using:** a table `| Element | From | How it shows up here |`, at least 3 rows, each citing the ad ID or advertiser it comes from. A gap idea gets a row for the gap and rows for the execution elements it borrows.
 - **Setup:** who's on camera (age, look, role), where, how it's shot, target length (20-60s)
 - **Alternate hooks (2):** each a different first line the creator says AND its first frame
 - **Script:** a table, `| Time | They say | On screen |`, covering 0s to the end. "They say" is the full spoken script, word for word, in natural spoken language (contractions, short sentences, the way a real person talks to their phone). "On screen" is the shot, any cut, and any text overlay word for word. The first row is the main hook.
