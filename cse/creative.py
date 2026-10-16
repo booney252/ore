@@ -106,13 +106,26 @@ def analyze_video(path: Path, workdir: Path) -> tuple[dict, list[tuple[float, Pa
     return analysis, frames
 
 
-def run(storage, slug: str, limit: int | None = None) -> dict:
+def pick(ads: list[dict], limit: int | None = None, per_brand: int | None = None) -> list[dict]:
+    """Highest scores first; with per_brand, only each advertiser's top N (analyzed or not)."""
+    ranked = sorted((a for a in ads if a.get("media_key")),
+                    key=lambda a: a.get("score", 0), reverse=True)
+    if per_brand:
+        counts: dict[str, int] = {}
+        kept = []
+        for a in ranked:
+            counts[a.get("brand", "")] = counts.get(a.get("brand", ""), 0) + 1
+            if counts[a.get("brand", "")] <= per_brand:
+                kept.append(a)
+        ranked = kept
+    todo = [a for a in ranked if not a.get("analysis")]
+    return todo[:limit] if limit else todo
+
+
+def run(storage, slug: str, limit: int | None = None, per_brand: int | None = None) -> dict:
     ads_key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(ads_key))
-    todo = [a for a in doc["ads"].values() if a.get("media_key") and not a.get("analysis")]
-    todo.sort(key=lambda a: a.get("score", 0), reverse=True)
-    if limit:
-        todo = todo[:limit]
+    todo = pick(list(doc["ads"].values()), limit, per_brand)
 
     done = failed = 0
     for ad in todo:
