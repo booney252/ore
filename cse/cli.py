@@ -77,6 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("breakdown", help="Claude breaks down each analyzed ad (hook, format, angle...)")
     p.add_argument("brand")
     p.add_argument("--limit", type=int, help="only the top N by score")
+    p.add_argument("--per-brand", type=int, help="at most N per advertiser")
 
     p = sub.add_parser("briefs", help="write this week's idea briefs")
     p.add_argument("brand")
@@ -113,7 +114,8 @@ def main(argv: list[str] | None = None) -> int:
             creative.run(storage, args.brand, limit=args.limit)
             return 0
         if args.command == "breakdown":
-            breakdown.run(storage, args.brand, brand_name(storage, args.brand), limit=args.limit)
+            breakdown.run(storage, args.brand, brand_name(storage, args.brand), limit=args.limit,
+                          per_brand=args.per_brand)
             return 0
         if args.command == "briefs":
             briefs.run(storage, args.brand, brand_name(storage, args.brand), count=args.count)

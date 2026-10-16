@@ -67,3 +67,10 @@ def test_handoff_round_trip(tmp_path, monkeypatch):
     key = briefs.run(storage, "pp", "PeptidePal", today=TODAY)
     assert key == "brands/pp/briefs/2026-10-16.md"
     assert "### Brief 1: Test" in storage.read_text(key)
+
+
+def test_breakdown_pick_caps_per_brand():
+    ads = [{"ad_id": str(i), "brand": "A" if i < 5 else "B", "score": 100 - i, "analysis": {"frames": []}}
+           for i in range(8)]
+    ids = [a["ad_id"] for a in breakdown.pick(ads, limit=4, per_brand=2)]
+    assert ids == ["0", "1", "5", "6"]

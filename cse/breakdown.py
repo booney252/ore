@@ -43,16 +43,29 @@ def build_prompt(template: str, ad: dict, brand_name: str) -> str:
     })
 
 
+def pick(ads: list[dict], limit: int | None, per_brand: int | None) -> list[dict]:
+    """Highest scores first, at most `per_brand` per advertiser, at most `limit` total."""
+    todo = sorted((a for a in ads if a.get("analysis") and not a.get("breakdown")),
+                  key=lambda a: a.get("score", 0), reverse=True)
+    if per_brand:
+        seen: dict[str, int] = {}
+        kept = []
+        for a in todo:
+            n = seen.get(a.get("brand", ""), 0)
+            if n < per_brand:
+                kept.append(a)
+                seen[a.get("brand", "")] = n + 1
+        todo = kept
+    return todo[:limit] if limit else todo
+
+
 def run(storage, slug: str, brand_name: str | None = None, limit: int | None = None,
-        client=None) -> dict:
+        per_brand: int | None = None, client=None) -> dict:
     ads_key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(ads_key))
     template = PROMPT_FILE.read_text()
     brand_name = brand_name or slug
-    todo = sorted((a for a in doc["ads"].values() if a.get("analysis") and not a.get("breakdown")),
-                  key=lambda a: a.get("score", 0), reverse=True)
-    if limit:
-        todo = todo[:limit]
+    todo = pick(list(doc["ads"].values()), limit, per_brand)
 
     done, waiting, failed = 0, [], 0
     for ad in todo:
