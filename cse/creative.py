@@ -43,8 +43,20 @@ def video_length(path: Path) -> float:
     return round(float(out.stdout.strip() or 0), 2)
 
 
+def load_audio(path: Path):
+    """16 kHz mono float32 samples via ffmpeg (empty array if the video has no audio)."""
+    import numpy as np
+
+    out = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-vn", "-ac", "1",
+                          "-ar", "16000", "-f", "f32le", "-"], capture_output=True)
+    return np.frombuffer(out.stdout, dtype=np.float32)
+
+
 def transcribe(path: Path) -> list[dict]:
-    segments, _ = _model().transcribe(str(path), vad_filter=True)
+    audio = load_audio(path)
+    if audio.size < 16000 // 2:  # under half a second of audio
+        return []
+    segments, _ = _model().transcribe(audio, vad_filter=True)
     return [{"start": round(s.start, 2), "end": round(s.end, 2), "text": s.text.strip()}
             for s in segments if s.text.strip()]
 
