@@ -21,6 +21,7 @@ KNOWLEDGE_DIR = Path("knowledge")
 TOP_ADS = 30
 MAX_NEW_ADS = 30
 RECENT_WEEKS = 3
+DEFAULT_AD_FORMAT = "UGC: a real creator talking to camera, shot on a phone, 15-45s"
 
 
 def load_knowledge(folder: Path = KNOWLEDGE_DIR) -> str:
@@ -71,6 +72,10 @@ def run(storage, slug: str, brand_name: str | None = None, count: int = 6,
     today = today or datetime.now(timezone.utc).date()
     brand_name = brand_name or slug
     research = storage.read_text(brandlib.brand_key(slug, "research-brief.md"))
+    fields = {}
+    if storage.exists(brandlib.brand_key(slug)):
+        fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    ad_format = fields.get("ad_format") or DEFAULT_AD_FORMAT
     ads = list(json.loads(storage.read_text(brandlib.brand_key(slug, "ads.json")))["ads"].values())
     chosen = pick_ads(ads, today)
     if not chosen:
@@ -82,6 +87,7 @@ def run(storage, slug: str, brand_name: str | None = None, count: int = 6,
     prompt = llm.render(PROMPT_FILE.read_text(), {
         "brand_name": brand_name,
         "brief_count": count,
+        "ad_format": ad_format,
         "research_brief": research,
         "knowledge": load_knowledge(),
         "ads": "\n\n".join(format_ad(a, today) for a in chosen),

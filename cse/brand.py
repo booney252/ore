@@ -42,6 +42,7 @@ app_store_url: ""
 play_store_url: ""
 known_competitors: []  # names you already know; the tool marks these as "listed by you"
 health_product: false  # true = flag every promise for compliance review
+ad_format: "UGC: a real creator talking to camera, shot on a phone, 15-45s"  # what every brief must be
 ---
 
 # {name}

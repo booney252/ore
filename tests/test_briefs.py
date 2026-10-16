@@ -63,6 +63,7 @@ def test_handoff_round_trip(tmp_path, monkeypatch):
     assert briefs.run(storage, "pp", "PeptidePal", today=TODAY) is None
     prompt = storage.read_text("brands/pp/handoff/briefs-2026-10-16.prompt.md")
     assert "No needles." in prompt and "Wait, Sunday?" in prompt and "{{" not in prompt
+    assert "UGC: a real creator" in prompt
     storage.write_text("brands/pp/handoff/briefs-2026-10-16.answer.md", "### Brief 1: Test")
     key = briefs.run(storage, "pp", "PeptidePal", today=TODAY)
     assert key == "brands/pp/briefs/2026-10-16.md"
