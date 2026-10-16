@@ -43,10 +43,9 @@ For each brief:
 - **Built from:** which ads (IDs + advertiser) and what about them is winning, with their score reason
 - **Segment + awareness stage:** one segment from the research brief, and the stage you're opening for
 - **Angle:** one line
-- **Hooks (3 options):** each with the line the creator says AND the first frame (what's on screen in second 0, any text overlay word for word)
-- **Format:** how this brief fits the required format (who's on camera, where, how it's shot), length target, pacing (cuts per second target)
-- **Beats:** timestamped, 0s to end
-- **On-screen text:** word for word
+- **Setup:** who's on camera (age, look, role), where, how it's shot, target length (20-60s)
+- **Alternate hooks (2):** each a different first line the creator says AND its first frame
+- **Script:** a table, `| Time | They say | On screen |`, covering 0s to the end. "They say" is the full spoken script, word for word, in natural spoken language (contractions, short sentences, the way a real person talks to their phone). "On screen" is the shot, any cut, and any text overlay word for word. The first row is the main hook.
 - **CTA:** what they say and what the button is
 - **Customer language to use:** phrases from the research brief, exact
 - **Creator notes:** casting, setting, props, delivery, what to avoid

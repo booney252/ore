@@ -16,7 +16,7 @@ app_store_url: ""     # confirm which listing is ours
 play_store_url: ""
 known_competitors: []  # see competitors.json (seeded from the research brief)
 health_product: true
-ad_format: "UGC: a real creator (ideally 45-60) talking to camera, shot on a phone in a real home, 15-45s. No b-roll-with-text, statics or animation."
+ad_format: "UGC: a real creator (ideally 45-60) talking to camera, shot on a phone in a real home, 20-60s full video with a word-for-word script. No b-roll-with-text, statics or animation."
 ---
 
 # PeptidePal

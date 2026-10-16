@@ -21,7 +21,7 @@ KNOWLEDGE_DIR = Path("knowledge")
 TOP_ADS = 30
 MAX_NEW_ADS = 30
 RECENT_WEEKS = 3
-DEFAULT_AD_FORMAT = "UGC: a real creator talking to camera, shot on a phone, 15-45s"
+DEFAULT_AD_FORMAT = "UGC: a real creator talking to camera, shot on a phone, 20-60s full video with a word-for-word script"
 
 
 def load_knowledge(folder: Path = KNOWLEDGE_DIR) -> str:
