@@ -18,8 +18,8 @@ log = logging.getLogger("cse")
 
 PROMPT_FILE = Path("prompts/05-weekly-briefs.md")
 KNOWLEDGE_DIR = Path("knowledge")
-TOP_ADS = 20
-MAX_NEW_ADS = 15
+TOP_ADS = 30
+MAX_NEW_ADS = 30
 RECENT_WEEKS = 3
 
 

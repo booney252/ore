@@ -33,7 +33,7 @@ def test_pick_ads_top_plus_new_plus_own():
     ads += [_ad("new", 1, "2026-10-14"), _ad("own", 0, "2026-01-01", own=True),
             _ad("raw", 99, "2026-10-14", broken=False)]
     ids = [a["ad_id"] for a in briefs.pick_ads(ads, TODAY)]
-    assert ids[:2] == ["0", "1"] and len(ids) == briefs.TOP_ADS + 2
+    assert ids[:2] == ["0", "1"] and len(ids) == 30 + 2
     assert "new" in ids and "own" in ids and "raw" not in ids
 
 

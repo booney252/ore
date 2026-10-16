@@ -232,10 +232,10 @@ The PeptidePal foundation already exists: my Unified Research Brief (Oct 6, 2026
 1. ~~Repo, storage, `init`~~ (done)
 2. ~~Ad data research~~ (done, see `docs/ad-data-options.md`)
 3. ~~`competitors`~~ (built) and ~~foundation~~ (imported from my brief)
-4. Handoff mode; find websites + Facebook pages for the seeded competitors and PeptidePal itself
-5. Ads (competitors + own) and creative breakdown
-6. `knowledge/` loading + `briefs` (6 per week)
-7. `weekly` (new ads only → briefs)
+4. ~~Handoff mode; websites + Facebook pages for competitors and PeptidePal~~ (done; R2 live)
+5. ~~Ads (competitors + own) and creative breakdown~~ (done: `ads`, `creative`, `breakdown`)
+6. ~~`knowledge/` loading + `briefs`~~ (done; first briefs 2026-10-16 in `exports/peptidepal/briefs/`)
+7. ~~`weekly`~~ (built). Next: Anthropic API key so it runs without a handoff session; scheduled cloud run.
 8. Auto-foundation from a one-line description: `init` drafts `brand.md` by research, then competitors → VOC → the 4 prompts → research brief. Needed for every user who isn't me; also refreshes PeptidePal's brief.
 9. Split `knowledge/` into general (ships) and brand-specific (private).
 10. Release work: web UI, accounts, billing, terms review.
