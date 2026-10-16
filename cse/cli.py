@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, competitors, creative, llm
+from . import ads, breakdown, briefs, competitors, creative, llm
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -33,6 +33,13 @@ def cmd_init(storage: Storage, slug: str, force: bool = False) -> int:
     log.info("created %s in %s", key, storage.describe())
     log.info("next: fill in brand.md, then run `cse competitors %s`", slug)
     return 0
+
+
+def brand_name(storage: Storage, slug: str) -> str:
+    key = brandlib.brand_key(slug)
+    if storage.exists(key):
+        return brandlib.parse(storage.read_text(key))[0].get("name") or slug
+    return slug
 
 
 def cmd_seed(storage: Storage, slug: str) -> int:
@@ -67,6 +74,19 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--limit", type=int, help="only the top N new ads by score")
 
+    p = sub.add_parser("breakdown", help="Claude breaks down each analyzed ad (hook, format, angle...)")
+    p.add_argument("brand")
+    p.add_argument("--limit", type=int, help="only the top N by score")
+
+    p = sub.add_parser("briefs", help="write this week's idea briefs")
+    p.add_argument("brand")
+    p.add_argument("--count", type=int, default=6)
+
+    p = sub.add_parser("weekly", help="weekly engine: ads -> creative -> breakdown -> briefs")
+    p.add_argument("brand")
+    p.add_argument("--pages", type=int, default=1)
+    p.add_argument("--count", type=int, default=6)
+
     p = sub.add_parser("seed", help="upload seed/<brand>/ files into storage")
     p.add_argument("brand")
 
@@ -91,6 +111,21 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "creative":
             creative.run(storage, args.brand, limit=args.limit)
+            return 0
+        if args.command == "breakdown":
+            breakdown.run(storage, args.brand, brand_name(storage, args.brand), limit=args.limit)
+            return 0
+        if args.command == "briefs":
+            briefs.run(storage, args.brand, brand_name(storage, args.brand), count=args.count)
+            return 0
+        if args.command == "weekly":
+            name = brand_name(storage, args.brand)
+            ads.run(storage, args.brand, max_pages=args.pages)
+            creative.run(storage, args.brand)
+            if breakdown.run(storage, args.brand, name)["waiting"]:
+                log.info("weekly: paused for handoff breakdowns; re-run `weekly` when answered.")
+                return 0
+            briefs.run(storage, args.brand, name, count=args.count)
             return 0
         if args.command == "seed":
             return cmd_seed(storage, args.brand)

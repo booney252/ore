@@ -70,3 +70,81 @@ def extract_json(client, instructions: str, source: str, schema: dict) -> dict:
         return json.loads(_text(response))
     except json.JSONDecodeError as e:
         raise LLMError(f"model returned invalid JSON: {e}") from None
+
+
+# --- Prompt steps that can run through the API or as a handoff --------------------------
+
+class HandoffPending(Exception):
+    """Raised in handoff mode when a prompt is waiting for an answer."""
+
+    def __init__(self, prompt_key: str, answer_key: str):
+        super().__init__(f"waiting for {answer_key}")
+        self.prompt_key, self.answer_key = prompt_key, answer_key
+
+
+def mode() -> str:
+    """'api' or 'handoff'. Default: api when ANTHROPIC_API_KEY is set, else handoff."""
+    explicit = (os.environ.get("CSE_LLM") or "").strip().lower()
+    if explicit in ("api", "handoff"):
+        return explicit
+    return "api" if os.environ.get("ANTHROPIC_API_KEY") else "handoff"
+
+
+def render(template: str, values: dict) -> str:
+    """Fill {{placeholders}}. Every placeholder must have a value."""
+    import re
+
+    missing = sorted(set(re.findall(r"\{\{(\w+)\}\}", template)) - set(values))
+    if missing:
+        raise LLMError(f"prompt is missing values for: {', '.join(missing)}")
+    return re.sub(r"\{\{(\w+)\}\}", lambda m: str(values[m.group(1)]), template)
+
+
+def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None = None,
+        client=None, max_tokens: int = 32000, effort: str = "high") -> str:
+    """Run one prompt step and return the model's text answer.
+
+    Handoff mode writes brands/<slug>/handoff/<step>.prompt.md and returns the answer
+    once brands/<slug>/handoff/<step>.answer.md exists (written by Claude Code).
+    """
+    base = f"brands/{slug}/handoff/{step}"
+    prompt_key, answer_key = f"{base}.prompt.md", f"{base}.answer.md"
+    if mode() == "handoff":
+        if storage.exists(answer_key):
+            return storage.read_text(answer_key)
+        images = "".join(f"\n- {k}" for k in image_keys or [])
+        storage.write_text(prompt_key, prompt + (f"\n\n## Images (storage keys)\n{images}\n"
+                                                 if images else ""))
+        raise HandoffPending(prompt_key, answer_key)
+
+    import base64
+
+    content = []
+    for key in image_keys or []:
+        content.append({"type": "image", "source": {
+            "type": "base64", "media_type": "image/jpeg",
+            "data": base64.standard_b64encode(storage.read_bytes(key)).decode()}})
+    content.append({"type": "text", "text": prompt})
+    client = client or make_client()
+    with client.beta.messages.stream(
+        model=model(), betas=BETAS, fallbacks="default", max_tokens=max_tokens,
+        output_config={"effort": effort}, messages=[{"role": "user", "content": content}],
+    ) as stream:
+        response = stream.get_final_message()
+    if response.stop_reason == "refusal":
+        raise LLMError(f"Claude declined the request: {response.stop_details}")
+    answer = _text(response)
+    storage.write_text(answer_key, answer)  # keep a copy of every answer for review
+    return answer
+
+
+def parse_json(text: str) -> dict | list:
+    """Pull a JSON object/array out of a model answer (tolerates ```json fences)."""
+    start = min((i for i in (text.find("{"), text.find("[")) if i >= 0), default=-1)
+    end = max(text.rfind("}"), text.rfind("]"))
+    if start < 0 or end < start:
+        raise LLMError("answer has no JSON")
+    try:
+        return json.loads(text[start:end + 1])
+    except json.JSONDecodeError as e:
+        raise LLMError(f"answer has invalid JSON: {e}") from None
