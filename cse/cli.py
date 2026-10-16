@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, competitors, llm
+from . import ads, competitors, creative, llm
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -63,6 +63,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1, help="result pages per brand (1 credit each)")
 
+    p = sub.add_parser("creative", help="transcripts, cuts and key frames for new ads")
+    p.add_argument("brand")
+    p.add_argument("--limit", type=int, help="only the top N new ads by score")
+
     p = sub.add_parser("seed", help="upload seed/<brand>/ files into storage")
     p.add_argument("brand")
 
@@ -84,6 +88,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "ads":
             ads.run(storage, args.brand, max_pages=args.pages)
+            return 0
+        if args.command == "creative":
+            creative.run(storage, args.brand, limit=args.limit)
             return 0
         if args.command == "seed":
             return cmd_seed(storage, args.brand)
