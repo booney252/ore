@@ -59,6 +59,7 @@ def test_pick_page_prefers_exact_name():
              {"page_id": "2", "name": "Shotsy", "likes": 50}]
     assert ads.pick_page("Shotsy", cands)["page_id"] == "2"
     assert ads.pick_page("Nope", []) is None
+    assert ads.pick_page("Ro", [{"page_id": "3", "name": "Cristiano Ronaldo", "likes": 10**8}]) is None
 
 
 def test_dedupe_keeps_best_version():

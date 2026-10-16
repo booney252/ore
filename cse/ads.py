@@ -27,13 +27,23 @@ def _norm(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
 
+def _words(s: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+", (s or "").lower())
+
+
 def pick_page(name: str, candidates: list[dict]) -> dict | None:
     """Best Ad Library page for a brand name: exact name match first, then most likes."""
     if not candidates:
         return None
-    exact = [c for c in candidates if _norm(c["name"]) == _norm(name)]
-    pool = exact or [c for c in candidates if _norm(name) in _norm(c["name"])] or candidates
-    return max(pool, key=lambda c: c.get("likes") or 0)
+    target = _norm(name)
+    words = _words(name)
+    exact = [c for c in candidates if _norm(c["name"]) == target]
+    # Close match = every word of the search name appears as a whole word in the page name
+    # ("Shotsy" -> "Shotsy App"), so "Ro" never matches "Cristiano Ronaldo".
+    close = [c for c in candidates if words and set(words) <= set(_words(c["name"]))]
+    pool = exact or close
+    # No name match: better to skip than to pull a stranger's ads.
+    return max(pool, key=lambda c: c.get("likes") or 0) if pool else None
 
 
 def dedupe_creatives(ads: list[dict], today: date) -> list[dict]:
