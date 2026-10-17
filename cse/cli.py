@@ -115,6 +115,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("verify", help="re-check top ads are still in the Ad Library (1 credit each)")
     p.add_argument("brand")
 
+    p = sub.add_parser("worker", help="run requests from the website (jobs/pending in storage)")
+    p.add_argument("--once", action="store_true", help="process what's pending, then exit")
+
     p = sub.add_parser("seed", help="upload seed/<brand>/ files into storage")
     p.add_argument("brand")
 
@@ -155,17 +158,20 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "weekly":
             idea_count = ask_idea_count(args.ideas)
-            name = brand_name(storage, args.brand)
-            ads.run(storage, args.brand, max_pages=args.pages)
-            creative.run(storage, args.brand, per_brand=5)
-            if breakdown.run(storage, args.brand, name, per_brand=5)["waiting"]:
-                log.info("weekly: paused for handoff breakdowns; re-run `weekly` when answered.")
-                return 0
-            cmd_verify(storage, args.brand)
-            stages.run_report(storage, args.brand, idea_count)
+            from . import worker
+
+            try:
+                worker.run_weekly(storage, args.brand, idea_count, pages=args.pages)
+            except llm.HandoffPending:
+                log.info("weekly: paused for handoff answers; re-run `weekly` when answered.")
             return 0
         if args.command == "verify":
             cmd_verify(storage, args.brand)
+            return 0
+        if args.command == "worker":
+            from . import worker
+
+            worker.loop(storage, once=args.once)
             return 0
         if args.command == "seed":
             return cmd_seed(storage, args.brand)

@@ -37,6 +37,9 @@ class Storage(ABC):
         """All keys under `prefix`, sorted."""
 
     @abstractmethod
+    def delete(self, key: str) -> None: ...
+
+    @abstractmethod
     def describe(self) -> str:
         """Human-readable location, for log lines."""
 
@@ -85,6 +88,9 @@ class LocalStorage(Storage):
             return []
         keys = (p.relative_to(base).as_posix() for p in base.rglob("*") if p.is_file())
         return sorted(k for k in keys if k.startswith(prefix))
+
+    def delete(self, key: str) -> None:
+        self._path(key).unlink(missing_ok=True)
 
     def describe(self) -> str:
         return f"local folder {self.root}"
@@ -135,6 +141,9 @@ class S3Storage(Storage):
         for page in paginator.paginate(Bucket=self.bucket, Prefix=prefix):
             keys.extend(obj["Key"] for obj in page.get("Contents", []))
         return sorted(keys)
+
+    def delete(self, key: str) -> None:
+        self.client.delete_object(Bucket=self.bucket, Key=key)
 
     def describe(self) -> str:
         where = self.endpoint_url or "AWS"

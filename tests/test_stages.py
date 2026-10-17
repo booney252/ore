@@ -103,3 +103,24 @@ def test_breakdown_pick_caps_per_brand():
             "analysis": {"frames": []}} for i in range(8)]
     ids = [a["ad_id"] for a in breakdown.pick(ads, limit=4, per_brand=2)]
     assert ids == ["0", "1", "5", "6"]
+
+
+def test_worker_runs_followup_jobs_and_records_status(brand, monkeypatch):
+    from cse import worker
+
+    storage = brand
+    storage.write_text("brands/pp/reports/2026-10-17.md", "#### Idea 1: Fridge\n- x\n")
+    storage.write_text("brands/pp/handoff/scripts-2026-10-17-ideas-1.answer.md", "### Script 1")
+    job = {"id": "j1", "type": "scripts", "brand": "pp", "ideas": [1], "report": "2026-10-17",
+           "created_at": "2026-10-17T00:00:00Z"}
+    storage.write_text("jobs/pending/j1.json", json.dumps(job))
+    storage.write_text("jobs/pending/j2.json", json.dumps({**job, "id": "j2", "ideas": [2]}))
+    storage.write_text("jobs/pending/j3.json", json.dumps({**job, "id": "j3", "type": "briefs"}))
+
+    while worker.process_one(storage):
+        pass
+    done = json.loads(storage.read_text("jobs/done/j1.json"))
+    assert done["result"].endswith("scripts/2026-10-17-ideas-1.md")
+    assert "no idea number" in json.loads(storage.read_text("jobs/failed/j2.json"))["error"]
+    assert json.loads(storage.read_text("jobs/waiting/j3.json"))["type"] == "briefs"
+    assert storage.list("jobs/pending/") == [] and storage.list("jobs/running/") == []
