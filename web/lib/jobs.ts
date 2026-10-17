@@ -1,4 +1,4 @@
-import { listKeys, readText, writeText } from "./storage";
+import { deleteKey, listKeys, readText, writeText } from "./storage";
 
 export type JobType = "report" | "scripts" | "briefs" | "setup" | "research";
 export type Job = {
@@ -14,7 +14,8 @@ export type Job = {
   error?: string;
 };
 
-const STATES = ["pending", "running", "done", "failed", "waiting"] as const;
+const STATES = ["pending", "running", "done", "failed", "waiting", "cancelled"] as const;
+const JOB_ID = /^[0-9]{14}-[a-z0-9]{1,12}$/;
 
 /** Drop a request into R2. The Python worker (`cse worker`) picks it up. */
 export async function createJob(job: Omit<Job, "id" | "created_at">): Promise<string> {
@@ -30,14 +31,56 @@ export async function createJob(job: Omit<Job, "id" | "created_at">): Promise<st
 }
 
 export async function listJobs(brand: string, limit = 10): Promise<Job[]> {
-  const jobs: Job[] = [];
-  for (const state of STATES) {
-    for (const key of await listKeys(`jobs/${state}/`)) {
-      const raw = await readText(key);
-      if (!raw) continue;
-      const job = JSON.parse(raw) as Job;
-      if (job.brand === brand) jobs.push({ ...job, status: state });
+  const [jobs, cancelling] = await Promise.all([
+    Promise.all(
+      STATES.map(async (state) => {
+        const out: Job[] = [];
+        for (const key of await listKeys(`jobs/${state}/`)) {
+          const raw = await readText(key);
+          if (!raw) continue;
+          const job = JSON.parse(raw) as Job;
+          if (job.brand === brand) out.push({ ...job, status: state });
+        }
+        return out;
+      }),
+    ).then((lists) => lists.flat()),
+    listKeys("jobs/cancel/"),
+  ]);
+  for (const job of jobs) {
+    if (job.status === "running" && cancelling.includes(`jobs/cancel/${job.id}.json`)) {
+      job.status = "cancelling";
     }
   }
   return jobs.sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, limit);
+}
+
+/**
+ * Cancel a request. Pending or waiting: removed now. Running: the worker stops at its next
+ * step (it watches jobs/cancel/). Cancelling a brand's setup removes the brand too.
+ * Returns whether the brand was removed right away.
+ */
+export async function cancelJob(brand: string, id: string): Promise<{ brandRemoved: boolean }> {
+  if (!JOB_ID.test(id)) throw new Error("bad job id");
+  for (const state of ["pending", "waiting", "running"] as const) {
+    const key = `jobs/${state}/${id}.json`;
+    const raw = await readText(key);
+    if (!raw) continue;
+    const job = JSON.parse(raw) as Job;
+    if (job.brand !== brand) throw new Error("job belongs to another brand");
+    const removeBrand = job.type === "setup";
+    if (state === "running") {
+      await writeText(`jobs/cancel/${id}.json`, JSON.stringify({ remove_brand: removeBrand }));
+      return { brandRemoved: false };
+    }
+    await writeText(
+      `jobs/cancelled/${id}.json`,
+      JSON.stringify({ ...job, updated_at: new Date().toISOString() }, null, 2),
+    );
+    await deleteKey(key);
+    if (removeBrand) {
+      for (const k of await listKeys(`brands/${brand}/`)) await deleteKey(k);
+    }
+    return { brandRemoved: removeBrand };
+  }
+  return { brandRemoved: false };
 }

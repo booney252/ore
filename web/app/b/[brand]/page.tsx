@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { newReport } from "@/app/actions";
 import AdCard from "@/app/AdCard";
+import CancelButton from "@/app/CancelButton";
 import { docLabel } from "@/app/dates";
 import { loadAds, stats, winners } from "@/lib/ads";
 import { brandName, listDocs, setupState, type Kind } from "@/lib/brands";
-import { listJobs } from "@/lib/jobs";
+import { listJobs, type Job } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
 
@@ -26,10 +27,10 @@ export default async function Overview({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ queued?: string }>;
+  searchParams: Promise<{ queued?: string; cancelled?: string }>;
 }) {
   const { brand } = await params;
-  const { queued } = await searchParams;
+  const { queued, cancelled } = await searchParams;
   const kinds = Object.keys(KIND) as Kind[];
   const [setup, name, ads, jobs, ...docs] = await Promise.all([
     setupState(brand),
@@ -59,7 +60,20 @@ export default async function Overview({
         </p>
       )}
 
-      {!setup.ready && <SetupSteps state={setup} />}
+      {cancelled && (
+        <p className="notice quiet">
+          <span className="dot" aria-hidden="true" />
+          Cancelled. If it was already running, it stops at its next step.
+        </p>
+      )}
+
+      {!setup.ready && (
+        <SetupSteps
+          state={setup}
+          brand={brand}
+          job={jobs.find((j) => j.type === "setup" && ACTIVE.includes(j.status ?? ""))}
+        />
+      )}
 
       {s.total > 0 && (
         <>
@@ -147,6 +161,9 @@ export default async function Overview({
                   {j.idea_count ? `, ${j.idea_count} ideas` : ""}
                 </span>
                 <span className="mono muted">{new Date(j.created_at).toLocaleString()}</span>
+                {ACTIVE.includes(j.status ?? "") && j.status !== "cancelling" ? (
+                  <CancelButton brand={brand} id={j.id} setup={j.type === "setup"} />
+                ) : null}
                 {j.error ? <span className="error">{j.error}</span> : null}
               </li>
             ))}
@@ -165,10 +182,25 @@ const STEPS: { key: "profile" | "competitors" | "voc" | "ads" | "brief"; label: 
   { key: "brief", label: "Research brief", how: "Your 4 research prompts, run on all of it." },
 ];
 
-function SetupSteps({ state }: { state: Record<string, boolean> }) {
+const ACTIVE = ["pending", "running", "waiting", "cancelling"];
+
+function SetupSteps({
+  state,
+  brand,
+  job,
+}: {
+  state: Record<string, boolean>;
+  brand: string;
+  job?: Job;
+}) {
   return (
     <section className="panel setup">
-      <p className="mono muted">Getting set up</p>
+      <div className="setup-head">
+        <p className="mono muted">
+          Getting set up{job ? ` · ${job.status === "pending" ? "in the queue" : job.status}` : ""}
+        </p>
+        {job && job.status !== "cancelling" && <CancelButton brand={brand} id={job.id} setup />}
+      </div>
       <ol className="steps">
         {STEPS.map((step) => (
           <li key={step.key} className={state[step.key] ? "done" : ""}>

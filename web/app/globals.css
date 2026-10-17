@@ -775,3 +775,28 @@ table.data td { vertical-align: middle; }
 .side-note { font-size: 0.87rem; margin-bottom: 8px; }
 .paste { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
 .ok { color: var(--emerald); font-size: 0.88rem; }
+
+/* ---------- Cancel ---------- */
+
+.cancel-button {
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-2);
+  font-size: 0.8rem;
+  padding: 5px 11px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: color 160ms var(--ease), border-color 160ms var(--ease), background 160ms var(--ease);
+}
+.cancel-button:hover { color: #ff8eaa; border-color: rgba(255, 46, 99, 0.45); background: rgba(255, 46, 99, 0.08); }
+.cancel-button:active { transform: scale(0.97); }
+.jobs li { grid-template-columns: 92px 1fr auto auto; }
+.jobs li > form { justify-self: end; }
+.status.cancelled { color: var(--muted); }
+.status.cancelling { color: #ffc56b; }
+.notice.quiet { border-color: var(--line-2); background: rgba(255, 255, 255, 0.03); }
+.setup-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+@media (max-width: 860px) {
+  .jobs li { grid-template-columns: 80px 1fr; }
+  .jobs li > form { grid-column: 2; justify-self: start; }
+}

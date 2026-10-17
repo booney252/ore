@@ -4,6 +4,10 @@ The site writes jobs/pending/<id>.json; the worker moves each job to jobs/runnin
 then to jobs/done/ (with the result key), jobs/failed/ (with the error) or jobs/waiting/
 (a Claude step is waiting on a handoff answer; needs an API key to run unattended).
 
+Cancelling: the site deletes a pending or waiting job itself. For a running job it writes
+jobs/cancel/<id>.json; the worker checks for it between steps and moves the job to
+jobs/cancelled/. If the marker says remove_brand (a new brand's setup), the brand's files go too.
+
 Job types:
   report  {brand, idea_count}         full weekly run: ads -> creative -> breakdown -> verify -> report
   scripts {brand, ideas, report}      scripts for chosen ideas
@@ -26,12 +30,20 @@ from . import brand as brandlib
 log = logging.getLogger("cse")
 
 
-def run_weekly(storage, slug: str, idea_count: int, pages: int = 1) -> str | None:
+class Cancelled(Exception):
+    pass
+
+
+def run_weekly(storage, slug: str, idea_count: int, pages: int = 1,
+               check=lambda: None) -> str | None:
     name = stages.brand_context(storage, slug)["brand_name"]
     ads.run(storage, slug, max_pages=pages)
+    check()
     creative.run(storage, slug, per_brand=5)
+    check()
     if breakdown.run(storage, slug, name, per_brand=5)["waiting"]:
         raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
+    check()
     ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
     return stages.run_report(storage, slug, idea_count)
 
@@ -43,10 +55,20 @@ def _move(storage, job: dict, src: str, dst: str, **extra) -> dict:
     return job
 
 
+def cancel_marker(job: dict) -> str:
+    return f"jobs/cancel/{job['id']}.json"
+
+
 def run_job(storage, job: dict) -> str | None:
     slug = brandlib.validate_slug(job["brand"])
+
+    def check():
+        if storage.exists(cancel_marker(job)):
+            raise Cancelled()
+
+    check()
     if job["type"] == "report":
-        return run_weekly(storage, slug, int(job.get("idea_count") or 10))
+        return run_weekly(storage, slug, int(job.get("idea_count") or 10), check=check)
     if job["type"] in ("scripts", "briefs"):
         report_key = (brandlib.brand_key(slug, f"reports/{job['report']}.md")
                       if job.get("report") else None)
@@ -55,9 +77,10 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "setup":
         if not os.environ.get("ANTHROPIC_API_KEY"):  # web research has no handoff mode
             raise llm.HandoffPending("", "")
-        return setup.run(storage, slug)
+        return setup.run(storage, slug, check=check)
     if job["type"] == "research":
         voc.run(storage, slug)
+        check()
         return research.run(storage, slug)
     raise ValueError(f"unknown job type {job['type']!r}")
 
@@ -72,9 +95,19 @@ def process_one(storage) -> bool:
     log.info("worker: %s %s for %s", job["id"], job["type"], job["brand"])
     try:
         result = run_job(storage, job)
+        if storage.exists(cancel_marker(job)):  # cancelled during the last step
+            raise Cancelled()
         if result is None:  # a Claude step wrote a handoff prompt instead of an answer
             raise llm.HandoffPending("", "")
         _move(storage, job, "running", "done", result=result)
+    except Cancelled:
+        marker = json.loads(storage.read_text(cancel_marker(job)))
+        if marker.get("remove_brand"):
+            for key in storage.list(f"brands/{brandlib.validate_slug(job['brand'])}/"):
+                storage.delete(key)
+        storage.delete(cancel_marker(job))
+        _move(storage, job, "running", "cancelled")
+        log.info("worker: %s cancelled", job["id"])
     except llm.HandoffPending:
         _move(storage, job, "running", "waiting",
               error="waiting on a Claude step: add ANTHROPIC_API_KEY to run unattended")

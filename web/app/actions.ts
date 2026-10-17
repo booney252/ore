@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { brandExists, checkFile, checkSlug, createBrand, savePaste, slugify } from "@/lib/brands";
-import { createJob } from "@/lib/jobs";
+import { cancelJob, createJob } from "@/lib/jobs";
 
 export async function newReport(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
@@ -55,4 +55,10 @@ export async function pasteQuotes(form: FormData) {
   if (!text.trim()) redirect(`/b/${brand}/research`);
   await savePaste(brand, /^https?:\/\//i.test(source) ? source : "", text);
   redirect(`/b/${brand}/research?pasted=1`);
+}
+
+export async function cancelRequest(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  const { brandRemoved } = await cancelJob(brand, String(form.get("id")));
+  redirect(brandRemoved ? "/?cancelled=1" : `/b/${brand}?cancelled=1`);
 }

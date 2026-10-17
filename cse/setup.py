@@ -91,7 +91,8 @@ def fill(brand_md: str, values: dict) -> str:
     return head + sep + rest
 
 
-def run(storage, slug: str, client=None) -> str | None:
+def run(storage, slug: str, client=None, check=lambda: None) -> str | None:
+    """`check` is called between steps; the worker uses it to stop a cancelled job."""
     key = brandlib.brand_key(slug)
     text = storage.read_text(key)
     fields = brandlib.parse(text)[0]
@@ -106,10 +107,14 @@ def run(storage, slug: str, client=None) -> str | None:
         storage.write_text(key, fill(text, values))
         log.info("setup: drafted brand.md from %d web searches", searches)
 
+    check()
     competitors.run(storage, slug, client=client)
+    check()
     voc.run(storage, slug)
+    check()
     if os.environ.get("SCRAPECREATORS_API_KEY"):
         ads.run(storage, slug)
     else:
         log.warning("setup: SCRAPECREATORS_API_KEY not set, so the research runs without ads")
+    check()
     return research.run(storage, slug, client=client)

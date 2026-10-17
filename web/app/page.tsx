@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ taken?: string; missing?: string }>;
+  searchParams: Promise<{ taken?: string; missing?: string; cancelled?: string }>;
 }) {
-  const { taken, missing } = await searchParams;
+  const { taken, missing, cancelled } = await searchParams;
   const brands = await listBrands();
   const rows = await Promise.all(brands.map(async (b) => ({ ...b, s: stats(await loadAds(b.slug)) })));
 
@@ -24,6 +24,13 @@ export default async function Home({
       </header>
 
       <main className="home">
+        {cancelled && (
+          <p className="notice quiet">
+            <span className="dot" aria-hidden="true" />
+            Setup cancelled and the brand was removed.
+          </p>
+        )}
+
         <section className="home-hero">
           <p className="mono muted">New brand</p>
           <h1 className="display">What are we mining?</h1>

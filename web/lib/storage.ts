@@ -1,5 +1,6 @@
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
@@ -73,4 +74,8 @@ export async function exists(key: string): Promise<boolean> {
     if (e.name === "NotFound" || e.$metadata?.httpStatusCode === 404) return false;
     throw err;
   }
+}
+
+export async function deleteKey(key: string): Promise<void> {
+  await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
 }
