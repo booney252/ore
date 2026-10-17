@@ -1,3 +1,4 @@
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
   GetObjectCommand,
   ListObjectsV2Command,
@@ -53,4 +54,11 @@ export async function writeText(key: string, text: string, contentType = "applic
   await client.send(
     new PutObjectCommand({ Bucket: bucket, Key: key, Body: text, ContentType: contentType }),
   );
+}
+
+/** A short-lived link to a private file (frames, videos), so the browser loads it straight from R2. */
+export async function signedUrl(key: string, seconds = 3600): Promise<string> {
+  return getSignedUrl(client, new GetObjectCommand({ Bucket: bucket, Key: key }), {
+    expiresIn: seconds,
+  });
 }

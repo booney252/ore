@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Markdown from "@/app/Markdown";
-import { brandName, readDoc } from "@/lib/brands";
+import { KIND_LABEL, readDoc } from "@/lib/brands";
 
 export const dynamic = "force-dynamic";
 
@@ -20,9 +20,9 @@ export default async function Doc({
   }
   if (!md) notFound();
   return (
-    <main>
-      <p className="crumbs">
-        <Link href="/">Brands</Link> / <Link href={`/b/${brand}`}>{await brandName(brand)}</Link>
+    <main className="page read">
+      <p className="crumbs mono">
+        <Link href={`/b/${brand}/${kind}`}>{KIND_LABEL[kind]}</Link> / {file}
       </p>
       <Markdown text={md} />
     </main>

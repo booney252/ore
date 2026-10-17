@@ -1,30 +1,32 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { listBrands } from "@/lib/brands";
-import Gem, { gemFor } from "./Gem";
+import { loadAds, stats } from "@/lib/ads";
+import Wordmark from "./Wordmark";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const brands = await listBrands();
+  if (brands.length === 1) redirect(`/b/${brands[0].slug}`);
+  const rows = await Promise.all(brands.map(async (b) => ({ ...b, s: stats(await loadAds(b.slug)) })));
+
   return (
-    <main>
-      <p className="eyebrow">Your vault</p>
-      <h1>Brands</h1>
-      <p className="lede" style={{ marginBottom: 32 }}>
-        Each brand gets its own weekly dig: the ads that are winning, why, and what to make next.
-      </p>
-      {brands.length === 0 ? (
+    <main className="home">
+      <Wordmark />
+      <h1 className="display">Brands</h1>
+      {rows.length === 0 ? (
         <p className="muted">No brands yet. Create one with `cse init` for now.</p>
       ) : (
-        <ul className="cards">
-          {brands.map((b) => (
+        <ul className="brand-rows">
+          {rows.map((b) => (
             <li key={b.slug}>
-              <Link href={`/b/${b.slug}`} className="card brand-card" data-gem={gemFor(b.slug)}>
-                <Gem kind={gemFor(b.slug)} size={46} />
-                <span>
-                  <strong>{b.name}</strong>
-                  <span className="muted">Open reports, scripts and briefs</span>
+              <Link href={`/b/${b.slug}`}>
+                <span className="brand-row-name">{b.name}</span>
+                <span className="mono muted">
+                  {b.s.total} ads · {b.s.advertisers} advertisers
                 </span>
+                <span aria-hidden="true" className="arrow">→</span>
               </Link>
             </li>
           ))}
