@@ -156,3 +156,12 @@ def test_worker_runs_iteration_and_brief_jobs(brand, monkeypatch):
     assert "no ad(s) ranked [5]" in json.loads(storage.read_text("jobs/failed/j2.json"))["error"]
     assert json.loads(storage.read_text("jobs/waiting/j3.json"))["type"] == "briefs"
     assert storage.list("jobs/pending/") == [] and storage.list("jobs/running/") == []
+
+
+def test_report_cap_grows_with_few_advertisers(brand):
+    storage = brand
+    ads = {str(i): _ad(str(i), 90 - i, brand="A" if i % 2 else "B") for i in range(12)}
+    storage.write_text("brands/pp/ads.json", json.dumps({"ads": ads}))
+    stages.run_report(storage, "pp", today=TODAY)
+    prompt = storage.read_text("brands/pp/handoff/report-2026-10-17.prompt.md")
+    assert prompt.count("\n### #") == 10  # 2 advertisers fill all 10 slots

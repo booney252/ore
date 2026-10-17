@@ -141,7 +141,11 @@ def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None
     today = today or datetime.now(timezone.utc).date()
     ctx = brand_context(storage, slug)
     ads = load_ads(storage, slug)
-    top = ranked(ads)[:top_n]
+    # Few advertisers (a new category, or a brand with few competitors running ads): let each
+    # one fill more of the top list, so the report still has top_n winners to learn from.
+    advertisers = len({a.get("brand") for a in ranked(ads, per_brand=None)})
+    cap = max(PER_BRAND, -(-top_n // max(1, advertisers)))
+    top = ranked(ads, per_brand=cap)[:top_n]
     if not top:
         raise llm.LLMError("no broken-down ads yet: run `ads`, `creative` and `breakdown` first")
     top_ids = {a["ad_id"] for a in top}
