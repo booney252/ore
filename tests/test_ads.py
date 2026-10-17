@@ -154,3 +154,15 @@ def test_save_fields_keeps_ads_added_by_another_run(tmp_path):
     save_fields(s, "acme", "1", {"analysis": {"length_s": 9}})
     ads = json.loads(s.read_text(key))["ads"]
     assert ads["1"]["analysis"] == {"length_s": 9} and "2" in ads
+
+
+def test_page_save_keeps_competitors_added_meanwhile(tmp_path):
+    import json
+    from cse.ads import _save_pages
+    from cse.storage import LocalStorage
+    s = LocalStorage(tmp_path)
+    key = "brands/acme/competitors.json"
+    s.write_text(key, json.dumps({"competitors": [{"name": "Brick"}, {"name": "Opal"}]}))
+    _save_pages(s, key, [{"name": "Brick", "fb_page_id": "110679378676446", "fb_page_name": "Brick"}])
+    comps = {c["name"]: c for c in json.loads(s.read_text(key))["competitors"]}
+    assert comps["Brick"]["fb_page_id"] == "110679378676446" and "Opal" in comps

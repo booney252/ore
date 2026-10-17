@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { brandExists, checkFile, checkSlug, createBrand, savePaste, slugify } from "@/lib/brands";
+import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { cancelJob, createJob } from "@/lib/jobs";
 
 function formatOf(form: FormData): string {
@@ -80,4 +81,30 @@ export async function cancelRequest(form: FormData) {
   const back = String(form.get("back") ?? "");
   if (brandRemoved) redirect("/?cancelled=1");
   redirect(`${back.startsWith(`/b/${brand}`) ? back.split("?")[0] : `/b/${brand}`}?cancelled=1`);
+}
+
+export async function addCompetitorAction(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  const name = String(form.get("name") ?? "").trim().slice(0, 80);
+  const ring = String(form.get("ring")) as Ring;
+  if (!name || !RINGS.includes(ring)) redirect(`/b/${brand}?competitor=missing#competitors`);
+  let website = String(form.get("website") ?? "").trim().slice(0, 300);
+  if (website && !/^https?:\/\//i.test(website)) website = `https://${website}`;
+  const adLibrary = String(form.get("ad_library") ?? "").trim().slice(0, 500);
+  const result = await addCompetitor(brand, {
+    name,
+    ring,
+    website,
+    adLibrary: /^https?:\/\//i.test(adLibrary) ? adLibrary : "",
+    instagram: String(form.get("instagram") ?? "").trim().slice(0, 60),
+    why: String(form.get("why") ?? "").trim().slice(0, 300),
+  });
+  redirect(`/b/${brand}?competitor=${result}&name=${encodeURIComponent(name)}#competitors`);
+}
+
+export async function removeCompetitorAction(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  const name = String(form.get("name") ?? "");
+  await removeCompetitor(brand, name);
+  redirect(`/b/${brand}?competitor=removed&name=${encodeURIComponent(name)}#competitors`);
 }

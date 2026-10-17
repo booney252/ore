@@ -164,7 +164,7 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
     for ad_id in all_new:
         download_media(storage, slug, existing[ad_id], session)
 
-    storage.write_text(comp_key, json.dumps(comp_doc, indent=2) + "\n")
+    _save_pages(storage, comp_key, targets)
     storage.write_text(ads_key, json.dumps({
         "brand": slug,
         "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -180,6 +180,20 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
              "%(media_downloaded)d media downloaded, %(media_failed)d failed, "
              "%(credits_used)s credits used", summary)
     return summary
+
+
+PAGE_FIELDS = ("fb_page_id", "fb_page_name", "fb_page_match")
+
+
+def _save_pages(storage, comp_key: str, pulled: list[dict]) -> None:
+    """Write back only the Ad Library page fields this run found, onto a fresh copy of
+    competitors.json, so a competitor added on the site during the pull isn't lost."""
+    doc = json.loads(storage.read_text(comp_key))
+    found = {c["name"]: c for c in pulled}
+    for c in doc["competitors"]:
+        if c["name"] in found:
+            c.update({f: found[c["name"]][f] for f in PAGE_FIELDS if f in found[c["name"]]})
+    storage.write_text(comp_key, json.dumps(doc, indent=2) + "\n")
 
 
 def save_fields(storage, slug: str, ad_id: str, fields: dict, drop: tuple = ()) -> None:

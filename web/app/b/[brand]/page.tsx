@@ -1,6 +1,8 @@
 import Link from "next/link";
 import AdCard from "@/app/AdCard";
 import CancelButton from "@/app/CancelButton";
+import Competitors from "@/app/Competitors";
+import { listCompetitors } from "@/lib/competitors";
 import { loadAds, stats, winners } from "@/lib/ads";
 import { brandName, setupState } from "@/lib/brands";
 import { listJobs, type Job } from "@/lib/jobs";
@@ -12,15 +14,16 @@ export default async function Overview({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ queued?: string; cancelled?: string }>;
+  searchParams: Promise<{ queued?: string; cancelled?: string; competitor?: string; name?: string }>;
 }) {
   const { brand } = await params;
-  const { queued, cancelled } = await searchParams;
-  const [setup, name, ads, setupJobs] = await Promise.all([
+  const { queued, cancelled, competitor, name: compName } = await searchParams;
+  const [setup, name, ads, setupJobs, competitors] = await Promise.all([
     setupState(brand),
     brandName(brand),
     loadAds(brand),
     listJobs(brand, 3, ["setup"]),
+    listCompetitors(brand),
   ]);
   const s = stats(ads);
   const top = winners(ads, 2).slice(0, 5);
@@ -81,6 +84,12 @@ export default async function Overview({
           </section>
         </>
       )}
+
+      <Competitors
+        brand={brand}
+        competitors={competitors}
+        notice={competitor ? { kind: competitor, name: compName } : undefined}
+      />
     </main>
   );
 }
