@@ -111,7 +111,9 @@ def _own_entry(fields: dict) -> dict | None:
 
 
 def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
-        today: date | None = None) -> dict:
+        today: date | None = None, only: list[str] | None = None) -> dict:
+    """Pull ads for every competitor (or just the names in `only`) plus the brand's own page.
+    A competitor whose fb_page_id is "none" was checked and has no Ad Library page: skipped."""
     today = today or datetime.now(timezone.utc).date()
     if source is None:
         from .adsource import ScrapeCreatorsSource
@@ -124,7 +126,8 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
 
     comp_key = brandlib.brand_key(slug, "competitors.json")
     comp_doc = json.loads(storage.read_text(comp_key))
-    targets = [c for c in comp_doc["competitors"] if c.get("status") != "removed"]
+    targets = [c for c in comp_doc["competitors"] if c.get("status") != "removed"
+               and (only is None or c["name"].lower() in {n.lower() for n in only})]
 
     brand_key = brandlib.brand_key(slug)
     if storage.exists(brand_key):
@@ -139,6 +142,9 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
     all_new = []
     for comp in targets:
         name = comp["name"]
+        if comp.get("fb_page_id") == "none":
+            counts[name] = 0
+            continue
         if not comp.get("fb_page_id"):
             search = comp.get("fb_search_name") or name
             page = pick_page(search, source.find_pages(search))

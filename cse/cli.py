@@ -86,6 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1, help="result pages per brand (1 credit each)")
+    p.add_argument("--only", help="comma-separated competitor names to pull (default: all)")
 
     p = sub.add_parser("creative", help="transcripts, cuts and key frames for new ads")
     p.add_argument("brand")
@@ -145,7 +146,8 @@ def main(argv: list[str] | None = None) -> int:
             competitors.run(storage, args.brand)
             return 0
         if args.command == "ads":
-            ads.run(storage, args.brand, max_pages=args.pages)
+            ads.run(storage, args.brand, max_pages=args.pages,
+                    only=[n.strip() for n in args.only.split(",")] if args.only else None)
             return 0
         if args.command == "creative":
             creative.run(storage, args.brand, limit=args.limit, per_brand=args.per_brand)
