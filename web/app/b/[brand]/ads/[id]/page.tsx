@@ -13,10 +13,28 @@ const LABELS: Record<string, string> = {
   speaker: "Who's talking",
   setting: "Setting",
   first_frame: "First frame",
+  graphic_style: "Graphic style",
+  focal_point: "Focal point",
+  copy_hook: "Copy's first line",
+  copy_length_tone: "Copy length and voice",
+  headline_role: "Headline",
   offer: "Offer",
   cta: "CTA",
 };
-const LONG = ["why_it_works", "beats", "on_screen_text", "risky_claims", "hook_line", "time_to_product_s"];
+const LONG = [
+  "why_it_works",
+  "why_the_graphic_works",
+  "why_the_copy_works",
+  "copy_structure",
+  "beats",
+  "on_screen_text",
+  "risky_claims",
+  "hook_line",
+  "time_to_product_s",
+  "load_bearing",
+  "transferable",
+  "not_transferable",
+];
 
 export default async function AdPage({ params }: { params: Promise<{ brand: string; id: string }> }) {
   const { brand, id } = await params;
@@ -101,6 +119,30 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
             </section>
           ) : null}
 
+          {b.why_the_graphic_works ? (
+            <section className="ad-section">
+              <h2>Why the graphic works</h2>
+              <p className="big-read">{text(b.why_the_graphic_works)}</p>
+            </section>
+          ) : null}
+
+          {b.why_the_copy_works ? (
+            <section className="ad-section">
+              <h2>Why the copy works</h2>
+              <p className="big-read">{text(b.why_the_copy_works)}</p>
+              {asList(b.copy_structure).length > 0 && (
+                <ol className="beats">{asList(b.copy_structure).map((x, i) => <li key={i}>{x}</li>)}</ol>
+              )}
+            </section>
+          ) : null}
+
+          {asList(b.transferable).length > 0 && (
+            <section className="ad-section">
+              <h2>What we can use</h2>
+              <ul className="beats">{asList(b.transferable).map((x, i) => <li key={i}>{x}</li>)}</ul>
+            </section>
+          )}
+
           {risky.length > 0 && (
             <section className="ad-section risk">
               <h2>Risky claims, don't copy</h2>
@@ -115,25 +157,28 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
             </section>
           )}
 
-          <section className="ad-section">
-            <h2>Transcript</h2>
-            {a.transcript?.length ? (
-              <ol className="transcript">
-                {a.transcript.map((l) => (
-                  <li key={l.start}>
-                    <span className="mono">{l.start.toFixed(1)}s</span>
-                    <span>{l.text}</span>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="empty">No speech.</p>
-            )}
+          {ad.media_type !== "image" && (
+            <section className="ad-section">
+              <h2>Transcript</h2>
+              {a.transcript?.length ? (
+                <ol className="transcript">
+                  {a.transcript.map((l) => (
+                    <li key={l.start}>
+                      <span className="mono">{l.start.toFixed(1)}s</span>
+                      <span>{l.text}</span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="empty">No speech.</p>
+  
+          )}
           </section>
+          )}
 
           {asList(b.on_screen_text).length > 0 && (
             <section className="ad-section">
-              <h2>On-screen text</h2>
+              <h2>{ad.media_type === "image" ? "Text on the image" : "On-screen text"}</h2>
               <ul className="beats">{asList(b.on_screen_text).map((x, i) => <li key={i}>{x}</li>)}</ul>
             </section>
           )}

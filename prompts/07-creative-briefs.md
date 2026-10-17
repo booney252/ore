@@ -44,6 +44,9 @@ Every brief must be this format: **{{ad_format}}**
 - **Creator notes:** casting, setting, props, delivery, what to avoid
 - **Compliance check:** list every line that makes or implies a claim, and say if it needs review. Confirm it follows every hard rule in the research brief and knowledge.
 
+## Static ideas
+If an idea is a static image ad (only when the format allows statics), the brief is a static spec instead of a video: image direction (what's in it, the focal point, style, layout), every word on the image, the primary text word for word, the headline, the CTA button, and 2 alternate first lines for the primary text.
+
 ## Rules
 
 - Ground every idea in the ads and the research brief. Don't invent stats, testimonials or customer quotes. Quotes come only from the research brief, word for word.

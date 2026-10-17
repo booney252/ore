@@ -16,6 +16,7 @@ from .ads import save_fields
 log = logging.getLogger("cse")
 
 PROMPT_FILE = Path("prompts/ad-breakdown.md")
+STATIC_PROMPT_FILE = Path("prompts/ad-breakdown-static.md")  # images: graphic + copy, no transcript
 
 
 def _transcript(analysis: dict) -> str:
@@ -64,7 +65,7 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
         per_brand: int | None = None, client=None) -> dict:
     ads_key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(ads_key))
-    template = PROMPT_FILE.read_text()
+    templates = {"video": PROMPT_FILE.read_text(), "image": STATIC_PROMPT_FILE.read_text()}
     brand_name = brand_name or slug
     todo = pick(list(doc["ads"].values()), limit, per_brand)
 
@@ -73,7 +74,9 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
         frames = [f["key"] for f in ad["analysis"].get("frames", [])]
         try:
             answer = llm.ask(storage, slug, f"breakdown-{ad['ad_id']}",
-                             build_prompt(template, ad, brand_name), image_keys=frames,
+                             build_prompt(templates["image" if ad.get("media_type") == "image"
+                                                    else "video"], ad, brand_name),
+                             image_keys=frames,
                              client=client, max_tokens=8000, effort="medium")
             ad["breakdown"] = llm.parse_json(answer)
             save_fields(storage, slug, ad["ad_id"], {"breakdown": ad["breakdown"]},

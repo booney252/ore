@@ -152,6 +152,8 @@ hook line, first frame, time to product, length, cuts per second, on-screen text
 
 These breakdowns feed the "patterns across winning ads" section of the report, so patterns come from what's actually in the videos, not just the captions.
 
+**Statics count too** (added 2026-10-17). A static image that's crushing competes on the same winner score and gets the same depth: `prompts/ad-breakdown-static.md` breaks down the graphic (focal point, layout, style, typography, color, product) and the copy (first line, structure, voice, headline), and the report gives it a piece-by-piece table plus "why the graphic works" and "why the copy works". Ideas from a static stay in the brand's `ad_format` (a static idea only when the format allows statics).
+
 ### 3. Voice of customer
 Sources, easiest first:
 - App Store reviews for competitor apps (PeptidePal is an app, so this matters most). Apple's public review feed.
