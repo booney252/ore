@@ -6,7 +6,7 @@ Working name. Rename later.
 
 A full-stack creative strategy tool for brands running UGC and paid social ads. It researches the market, studies competitors' ads, mines how real customers talk, and later turns all of that into briefs and scripts for creators. It runs the same research process every time and remembers each brand, so it gets smarter over time.
 
-First user: me. **Current brand: PeptidePal (peptide tracking app) only.** Solis (morning alarm + phone lock app for 18 to 25 year old guys) is on hold. Keep the code brand-agnostic so it can be added later, but don't build, test, or research for it now.
+First user: me. **Current brands: PeptidePal (peptide tracking app) and Solis (morning alarm + phone lock app for 18 to 25 year old guys).** Solis was added 2026-10-17: its Oct 4, 2026 research (competitors, customer research, awareness, campaign brief) is imported into `brands/solis/` as research steps 1-3 and `research-brief.md`, with 59 competitors in `competitors.json`. Keep the code brand-agnostic.
 
 ## North star: a product other people can use
 
@@ -232,7 +232,7 @@ See `docs/decisions.md`. Storage: Cloudflare R2. Ad data: ScrapeCreators (free c
 
 ## Build order
 
-The PeptidePal foundation already exists: my Unified Research Brief (Oct 6, 2026) is imported as `research-brief.md` (in `seed/peptidepal/` until R2 is set up), and its 19 competitors seed `competitors.json`. Its quotes come without per-quote links; that's accepted for this imported brief only. Its hard rules are in `knowledge/rules.md`.
+The PeptidePal foundation already exists: my Unified Research Brief (Oct 6, 2026) is imported as `research-brief.md` (in `seed/peptidepal/` until R2 is set up), and its 19 competitors seed `competitors.json`. Its quotes come without per-quote links; that's accepted for this imported brief only. Its hard rules are in `knowledge/rules.md`. Solis's foundation was imported the same way on 2026-10-17 (its rules are in its brand.md and section 5 of its brief).
 
 1. ~~Repo, storage, `init`~~ (done)
 2. ~~Ad data research~~ (done, see `docs/ad-data-options.md`)
