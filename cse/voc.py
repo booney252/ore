@@ -118,8 +118,19 @@ def run(storage, slug: str, session=None) -> dict:
         targets.append({"name": fields.get("name") or slug, "app_store_url": fields["app_store_url"],
                         "website": fields.get("website", "")})
 
+    voc_key = brandlib.brand_key(slug, "voc.json")
+    previous = json.loads(storage.read_text(voc_key))["quotes"] if storage.exists(voc_key) else []
     quotes: dict[str, dict] = {}
     counts: dict[str, int] = {}
+
+    def keep_previous(name: str) -> None:
+        """Apple timed out or rate-limited this app: keep what we pulled last time."""
+        kept = [q for q in previous if q.get("source") == "app_store" and q.get("about") == name]
+        for q in kept:
+            quotes[_id(q)] = q
+        counts[name] = len(kept)
+        if kept:
+            log.info("  %-22s kept %d reviews from the last run", name, len(kept))
     for t in targets:
         aid, url = app_id(t["app_store_url"]), t["app_store_url"]
         try:
@@ -136,6 +147,8 @@ def run(storage, slug: str, session=None) -> dict:
                 r = session.get(FEED.format(country=country, page=page, app_id=aid), timeout=20)
                 if r.status_code != 200:
                     log.warning("  %-22s App Store page %d: HTTP %s", t["name"], page, r.status_code)
+                    if page == 1:
+                        raise RuntimeError(f"HTTP {r.status_code}")
                     break
                 batch = parse_feed(r.json(), t["name"], url)
                 got.extend(batch)
@@ -143,7 +156,7 @@ def run(storage, slug: str, session=None) -> dict:
                     break
         except Exception as e:  # noqa: BLE001 - one app failing shouldn't stop the run
             log.warning("  %-22s App Store failed: %s", t["name"], e)
-            counts[t["name"]] = 0
+            keep_previous(t["name"])
             continue
         got = [q for q in got if len(q["text"].split()) >= MIN_WORDS]
         for q in got:
@@ -161,7 +174,7 @@ def run(storage, slug: str, session=None) -> dict:
 
     doc = {"brand": slug, "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "counts": counts, "quotes": list(quotes.values())}
-    storage.write_text(brandlib.brand_key(slug, "voc.json"), json.dumps(doc, indent=1) + "\n")
+    storage.write_text(voc_key, json.dumps(doc, indent=1) + "\n")
     log.info("voc: %d quotes (%d App Store, %d pasted)", len(quotes),
              sum(v for k, v in counts.items() if k != "pasted"), pasted)
     return counts

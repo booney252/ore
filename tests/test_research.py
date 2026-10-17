@@ -81,3 +81,20 @@ def test_find_app_needs_the_competitors_own_website(monkeypatch):
     monkeypatch.setattr(voc, "PAUSE", 0)
     assert voc.find_app(Session(), "Eden", "https://www.tryeden.com")["id"] == "2"
     assert voc.find_app(Session(), "Eden", "") is None
+
+
+def test_voc_keeps_last_runs_reviews_when_apple_fails(tmp_path, monkeypatch):
+    monkeypatch.setattr(voc, "PAUSE", 0)
+    s = LocalStorage(tmp_path)
+    s.write_text(brandlib.brand_key("acme"), brandlib.render_template("acme"))
+    s.write_text(brandlib.brand_key("acme", "competitors.json"), json.dumps({"competitors": [
+        {"name": "Alarmy", "app_store_url": "https://apps.apple.com/us/app/alarmy/id1163786766"}]}))
+    old = {"text": "The squat mission finally gets me out of bed", "source": "app_store", "about": "Alarmy"}
+    s.write_text(brandlib.brand_key("acme", "voc.json"), json.dumps({"quotes": [old]}))
+
+    class Session:
+        def get(self, *a, **k):
+            raise TimeoutError("read timed out")
+
+    assert voc.run(s, "acme", session=Session())["Alarmy"] == 1
+    assert json.loads(s.read_text(brandlib.brand_key("acme", "voc.json")))["quotes"] == [old]
