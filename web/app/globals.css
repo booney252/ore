@@ -732,7 +732,7 @@ table.data td { vertical-align: middle; }
 .rail-foot a:hover { color: var(--text); }
 
 .panel.setup { margin-bottom: 40px; display: grid; gap: 16px; }
-.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .steps li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
 .steps li > span:last-child { display: grid; gap: 4px; font-size: 0.86rem; }
 .steps strong { font-weight: 600; color: var(--text); font-size: 0.95rem; }
@@ -755,3 +755,23 @@ table.data td { vertical-align: middle; }
   .home-top { padding: 20px 16px 0; }
   .steps { grid-template-columns: 1fr 1fr; }
 }
+
+/* ---------- Research ---------- */
+
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 36px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.tabs a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--text-2);
+  font-size: 0.88rem;
+  transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease);
+}
+.tabs a .mono { margin-right: 4px; color: var(--muted); }
+.tabs a:hover { color: var(--text); border-color: var(--line-2); }
+.tabs a.on { color: #07080b; background: var(--g-diamond); border-color: transparent; }
+.tabs a.on .mono { color: #07080b; }
+.tabs a:active { transform: scale(0.97); }
+.side-note { font-size: 0.87rem; margin-bottom: 8px; }
+.paste { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
+.ok { color: var(--emerald); font-size: 0.88rem; }

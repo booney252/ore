@@ -10,17 +10,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, competitors, creative, llm, setup, stages
+from . import ads, breakdown, competitors, creative, llm, research, setup, stages, voc
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
 log = logging.getLogger("cse")
-
-NOT_BUILT = {
-    "voc": "mine voice of customer",
-    "run": "all of the above in order",
-}
-
 
 def cmd_init(storage: Storage, slug: str, force: bool = False) -> int:
     key = brandlib.brand_key(slug)
@@ -83,8 +77,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("competitors", help="build the 3-ring competitor map").add_argument("brand")
 
-    sub.add_parser("setup", help="new brand: draft brand.md by research, then map competitors"
+    sub.add_parser("setup", help="new brand: profile, competitors, VOC, ads, research brief"
                    ).add_argument("brand")
+    sub.add_parser("run", help="same as setup: the whole foundation in order").add_argument("brand")
+    sub.add_parser("voc", help="customer quotes: App Store reviews + pasted text").add_argument("brand")
+    sub.add_parser("research", help="the 4 research prompts -> research-brief.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
     p.add_argument("brand")
@@ -124,8 +121,6 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("seed", help="upload seed/<brand>/ files into storage")
     p.add_argument("brand")
 
-    for name, help_text in NOT_BUILT.items():
-        sub.add_parser(name, help=f"{help_text} (not built yet)").add_argument("brand")
     return parser
 
 
@@ -137,8 +132,14 @@ def main(argv: list[str] | None = None) -> int:
         storage = from_env()
         if args.command == "init":
             return cmd_init(storage, args.brand, args.force)
-        if args.command == "setup":
+        if args.command in ("setup", "run"):
             setup.run(storage, args.brand)
+            return 0
+        if args.command == "voc":
+            voc.run(storage, args.brand)
+            return 0
+        if args.command == "research":
+            research.run(storage, args.brand)
             return 0
         if args.command == "competitors":
             competitors.run(storage, args.brand)

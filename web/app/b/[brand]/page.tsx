@@ -18,6 +18,7 @@ const JOB_LABEL = {
   scripts: "Scripts",
   briefs: "Creative briefs",
   setup: "Brand setup",
+  research: "Research refresh",
 };
 
 export default async function Overview({
@@ -156,11 +157,12 @@ export default async function Overview({
   );
 }
 
-const STEPS: { key: "profile" | "competitors" | "ads" | "brief"; label: string; how: string }[] = [
-  { key: "profile", label: "Brand profile", how: "Researched from what you typed. Runs automatically." },
-  { key: "competitors", label: "Competitor map", how: "Direct, adjacent and relative rings. Runs automatically." },
-  { key: "ads", label: "Competitor ads", how: "Pulled, scored and taken apart by the first report." },
-  { key: "brief", label: "Research brief", how: "Buyer, pains, language, objections. Coming next to Ore." },
+const STEPS: { key: "profile" | "competitors" | "voc" | "ads" | "brief"; label: string; how: string }[] = [
+  { key: "profile", label: "Brand profile", how: "Researched from what you typed." },
+  { key: "competitors", label: "Competitor map", how: "Direct, adjacent and relative rings." },
+  { key: "voc", label: "Customer quotes", how: "Real reviews of every competitor app." },
+  { key: "ads", label: "Competitor ads", how: "Pulled from the Ad Library and scored." },
+  { key: "brief", label: "Research brief", how: "Your 4 research prompts, run on all of it." },
 ];
 
 function SetupSteps({ state }: { state: Record<string, boolean> }) {

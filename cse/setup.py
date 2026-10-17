@@ -1,18 +1,22 @@
-"""New brand from a one-line description: draft brand.md by research, then map competitors.
+"""New brand from a one-line description: the whole foundation, in order.
 
 The website (or `cse setup`) writes a brand.md with just the name, website and what it sells.
-This fills every empty field from web research (never overwriting what the user wrote),
-then runs the 3-ring competitor map. VOC and the research brief come next on the roadmap.
+1. brand profile: fill every empty brand.md field from web research (never overwriting the user)
+2. competitors: the 3-ring map
+3. voc: customer quotes (App Store reviews + anything pasted)
+4. ads: pull competitor + own ads from the Ad Library and score them
+5. research: the 4 research prompts -> research-brief.md
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 
 from . import brand as brandlib
-from . import competitors, llm
+from . import ads, competitors, llm, research, voc
 
 log = logging.getLogger("cse")
 
@@ -87,7 +91,7 @@ def fill(brand_md: str, values: dict) -> str:
     return head + sep + rest
 
 
-def run(storage, slug: str, client=None) -> str:
+def run(storage, slug: str, client=None) -> str | None:
     key = brandlib.brand_key(slug)
     text = storage.read_text(key)
     fields = brandlib.parse(text)[0]
@@ -103,4 +107,9 @@ def run(storage, slug: str, client=None) -> str:
         log.info("setup: drafted brand.md from %d web searches", searches)
 
     competitors.run(storage, slug, client=client)
-    return brandlib.brand_key(slug, "competitors.json")
+    voc.run(storage, slug)
+    if os.environ.get("SCRAPECREATORS_API_KEY"):
+        ads.run(storage, slug)
+    else:
+        log.warning("setup: SCRAPECREATORS_API_KEY not set, so the research runs without ads")
+    return research.run(storage, slug, client=client)

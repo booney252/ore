@@ -112,12 +112,50 @@ export async function brandExists(slug: string): Promise<boolean> {
 /** What a brand still needs before the weekly report can run. */
 export async function setupState(slug: string) {
   const base = `brands/${checkSlug(slug)}/`;
-  const [md, competitors, ads, brief] = await Promise.all([
+  const [md, competitors, voc, ads, brief] = await Promise.all([
     readText(`${base}brand.md`),
     exists(`${base}competitors.json`),
+    exists(`${base}voc.json`),
     exists(`${base}ads.json`),
     exists(`${base}research-brief.md`),
   ]);
   const profile = /^audience:\s*"?[^"\s#]/m.test(md ?? "");
-  return { profile, competitors, ads, brief, ready: profile && competitors && ads && brief };
+  return { profile, competitors, voc, ads, brief, ready: profile && competitors && ads && brief };
+}
+
+export const RESEARCH_STEPS = [
+  { file: "01-competitors", label: "Competitors" },
+  { file: "02-psychographics", label: "Psychographics" },
+  { file: "03-awareness", label: "Awareness" },
+] as const;
+
+/** The research brief plus the latest run's step outputs (research/<date>/0N-*.md). */
+export async function readResearch(slug: string) {
+  const base = `brands/${checkSlug(slug)}/`;
+  const keys = await listKeys(`${base}research/`);
+  const dates = [...new Set(keys.map((k) => k.slice(base.length + 9).split("/")[0]))]
+    .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
+    .sort();
+  const date = dates.at(-1) ?? null;
+  const [brief, ...steps] = await Promise.all([
+    readText(`${base}research-brief.md`),
+    ...RESEARCH_STEPS.map((s) => (date ? readText(`${base}research/${date}/${s.file}.md`) : null)),
+  ]);
+  return { brief, date, steps: RESEARCH_STEPS.map((s, i) => ({ ...s, text: steps[i] })) };
+}
+
+export async function vocCounts(slug: string): Promise<{ total: number; pasted: number } | null> {
+  const raw = await readText(`brands/${checkSlug(slug)}/voc.json`);
+  if (!raw) return null;
+  const doc = JSON.parse(raw) as { quotes: { source: string }[] };
+  return {
+    total: doc.quotes.length,
+    pasted: doc.quotes.filter((q) => q.source === "pasted").length,
+  };
+}
+
+export async function savePaste(slug: string, source: string, text: string): Promise<void> {
+  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  const body = (source ? `source: ${source}\n\n` : "") + text.trim() + "\n";
+  await writeText(`brands/${checkSlug(slug)}/voc-paste/${stamp}.md`, body, "text/markdown; charset=utf-8");
 }

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const ITEMS: { href: string; label: string; tone?: string }[] = [
   { href: "", label: "Overview" },
   { href: "/ads", label: "Winning ads" },
+  { href: "/research", label: "Research" },
   { href: "/reports", label: "Reports", tone: "diamond" },
   { href: "/scripts", label: "Scripts", tone: "emerald" },
   { href: "/briefs", label: "Creative briefs", tone: "ruby" },

@@ -101,8 +101,9 @@ def render(template: str, values: dict) -> str:
 
 
 def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None = None,
-        client=None, max_tokens: int = 32000, effort: str = "high") -> str:
-    """Run one prompt step and return the model's text answer.
+        client=None, max_tokens: int = 32000, effort: str = "high", web: bool = False) -> str:
+    """Run one prompt step and return the model's text answer. `web` lets the API model
+    search the web (for facts like pricing); in handoff mode the session can search itself.
 
     Handoff mode writes brands/<slug>/handoff/<step>.prompt.md and returns the answer
     once brands/<slug>/handoff/<step>.answer.md exists (written by Claude Code).
@@ -116,6 +117,11 @@ def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None
         storage.write_text(prompt_key, prompt + (f"\n\n## Images (storage keys)\n{images}\n"
                                                  if images else ""))
         raise HandoffPending(prompt_key, answer_key)
+
+    if web:
+        answer, _ = web_research(client or make_client(), prompt)
+        storage.write_text(answer_key, answer)
+        return answer
 
     import base64
 

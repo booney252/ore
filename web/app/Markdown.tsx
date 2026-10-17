@@ -15,7 +15,7 @@ export default function Markdown({ text }: { text: string }) {
           ),
         }}
       >
-        {text}
+        {text.replace(/<!--[\s\S]*?-->/g, "")}
       </ReactMarkdown>
     </article>
   );
