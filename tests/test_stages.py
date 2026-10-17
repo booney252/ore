@@ -38,13 +38,14 @@ def test_ranked_caps_per_brand_and_skips_removed_and_raw():
     assert ids == ["0", "1", "2", "b1"]
 
 
-def test_extract_ideas_and_parse_numbers():
-    md = ("## 4. Iteration ideas\n\n#### Idea 1: Fridge\n- From: ad #1 (Cal AI, 2922821464729858)\n\n"
-          "#### Idea 2: Notes\n- From: ad #2\n\n#### Idea 3: Doctor\n- x\n\n## Sources\nlinks")
-    got = stages.extract_ideas(md, [1, 3])
-    assert set(got) == {1, 3}
-    assert got[1].startswith("#### Idea 1: Fridge") and "2922821464729858" in got[1]
-    assert "Sources" not in got[3]
+def test_sections_and_parse_numbers():
+    report = ("### 2. Each ad\n\n#### 1. Cal AI: \"best way\" (static)\n- why 2922821464729858\n\n"
+              "#### 2. Shotsy: \"Is anyone else\" (video)\n- x\n\n### 3. Patterns\n- p\n")
+    got = stages.sections(report, r"(\d+)\.", [1, 2], hashes="{4}")
+    assert got[1].startswith("#### 1. Cal AI") and "2922821464729858" in got[1]
+    assert "Patterns" not in got[2]
+    its = "### Iteration 1: Fridge\n- a\n### Iteration 2: Notes\n- b\n## Sources\nlinks"
+    assert stages.sections(its, r"Iteration\s+(\d+)\b", [2]) == {2: "### Iteration 2: Notes\n- b"}
     assert stages.parse_numbers("1, 3,5-7") == [1, 3, 5, 6, 7]
 
 
@@ -74,37 +75,44 @@ def test_full_pipeline_in_handoff(brand):
                        '{"hook_line": "Is anyone else", "format": "talking head"}')
     assert breakdown.run(storage, "pp", "PeptidePal")["done"] == 1
 
-    # Report: prompt has the transcript line by line, the idea count and the format
-    assert stages.run_report(storage, "pp", idea_count=7, today=TODAY) is None
-    prompt = storage.read_text("brands/pp/handoff/report-2026-10-17-7ideas.prompt.md")
-    assert "[0.0-2.0s] Is anyone else" in prompt and "exactly 7 ideas" in prompt
-    assert "No needles." in prompt and "UGC video: a real creator" in prompt and "{{" not in prompt
-    storage.write_text("brands/pp/handoff/report-2026-10-17-7ideas.answer.md",
-                       "## 4. Ideas\n\n#### Idea 1: Fridge\n- From: ad #1 (2922821464729858)\n\n"
-                       "#### Idea 2: Notes\n- x\n")
-    key = stages.run_report(storage, "pp", idea_count=7, today=TODAY)
+    # Report: the transcript line by line, no ideas section, plus the ranked ad list
+    assert stages.run_report(storage, "pp", today=TODAY) is None
+    prompt = storage.read_text("brands/pp/handoff/report-2026-10-17.prompt.md")
+    assert "[0.0-2.0s] Is anyone else" in prompt and "No needles." in prompt
+    assert "Iteration ideas" not in prompt and "{{" not in prompt
+    storage.write_text("brands/pp/handoff/report-2026-10-17.answer.md",
+                       "### 2. Each ad\n\n#### 1. Cal AI: \"best way\" (static)\n- why it works\n\n"
+                       "### 3. Patterns\n- p\n")
+    key = stages.run_report(storage, "pp", today=TODAY)
     assert key == "brands/pp/reports/2026-10-17.md"
+    assert json.loads(storage.read_text("brands/pp/reports/2026-10-17.json"))["top"][0] == \
+        {"rank": 1, "ad_id": "2922821464729858", "brand": "X"}
 
-    # Scripts for idea 1: pulls the idea text and its source ad
-    assert stages.run_followup(storage, "pp", "scripts", [1], today=TODAY) is None
-    prompt = storage.read_text("brands/pp/handoff/scripts-2026-10-17-ideas-1.prompt.md")
-    assert "#### Idea 1: Fridge" in prompt and "Idea 2" not in prompt
-    assert "Ad 2922821464729858" in prompt
-    storage.write_text("brands/pp/handoff/scripts-2026-10-17-ideas-1.answer.md", "### Script 1")
-    assert stages.run_followup(storage, "pp", "scripts", [1], today=TODAY) == \
-        "brands/pp/scripts/2026-10-17-ideas-1.md"
-
-    with pytest.raises(llm.LLMError):
-        stages.run_followup(storage, "pp", "briefs", [9], today=TODAY)
-
-    # Same idea as a static brief: static fields, its own file name, no video script table
-    assert stages.run_followup(storage, "pp", "briefs", [1], today=TODAY, fmt="static") is None
-    prompt = storage.read_text("brands/pp/handoff/briefs-2026-10-17-ideas-1-static.prompt.md")
-    assert "Static image ad" in prompt and "**Text on the image:**" in prompt
+    # Iterations from winner #1 as a static: the report's diagnosis, the ad, static fields
+    assert stages.run_iterations(storage, "pp", None, [1], fmt="static", today=TODAY) is None
+    step = "brands/pp/handoff/iterations-2026-10-17-ads-1-static"
+    prompt = storage.read_text(step + ".prompt.md")
+    assert "#### 1. Cal AI" in prompt and "Patterns" not in prompt.split("<report>")[1].split("</report>")[0]
+    assert "Ad 2922821464729858" in prompt and "**Text on the image:**" in prompt
     assert "They say" not in prompt and "{{" not in prompt
-    storage.write_text("brands/pp/handoff/briefs-2026-10-17-ideas-1-static.answer.md", "### Brief 1")
-    assert stages.run_followup(storage, "pp", "briefs", [1], today=TODAY, fmt="static") == \
-        "brands/pp/briefs/2026-10-17-ideas-1-static.md"
+    storage.write_text(step + ".answer.md",
+                       "### Iteration 1: Truck\n- **From:** ad #1 (Cal AI, 2922821464729858)\n")
+    its_key = stages.run_iterations(storage, "pp", None, [1], fmt="static", today=TODAY)
+    assert its_key == "brands/pp/iterations/2026-10-17-ads-1-static.md"
+    with pytest.raises(llm.LLMError):
+        stages.run_iterations(storage, "pp", None, [4], today=TODAY)
+
+    # Brief for iteration 1: stays static, pulls its source ad
+    assert stages.run_briefs(storage, "pp", its_key, [1], today=TODAY) is None
+    step = "brands/pp/handoff/briefs-2026-10-17-ads-1-static-its-1"
+    prompt = storage.read_text(step + ".prompt.md")
+    assert "### Iteration 1: Truck" in prompt and "Static image ad" in prompt
+    assert "Ad 2922821464729858" in prompt and "{{" not in prompt
+    storage.write_text(step + ".answer.md", "### Brief 1: Truck")
+    assert stages.run_briefs(storage, "pp", its_key, [1], today=TODAY) == \
+        "brands/pp/briefs/2026-10-17-ads-1-static-its-1.md"
+    with pytest.raises(llm.LLMError):
+        stages.run_briefs(storage, "pp", its_key, [9], today=TODAY)
 
 
 def test_formats():
@@ -123,22 +131,28 @@ def test_breakdown_pick_caps_per_brand():
     assert ids == ["0", "1", "5", "6"]
 
 
-def test_worker_runs_followup_jobs_and_records_status(brand, monkeypatch):
+def test_worker_runs_iteration_and_brief_jobs(brand, monkeypatch):
     from cse import worker
 
     storage = brand
-    storage.write_text("brands/pp/reports/2026-10-17.md", "#### Idea 1: Fridge\n- x\n")
-    storage.write_text("brands/pp/handoff/scripts-2026-10-17-ideas-1.answer.md", "### Script 1")
-    job = {"id": "j1", "type": "scripts", "brand": "pp", "ideas": [1], "report": "2026-10-17",
-           "created_at": "2026-10-17T00:00:00Z"}
-    storage.write_text("jobs/pending/j1.json", json.dumps(job))
-    storage.write_text("jobs/pending/j2.json", json.dumps({**job, "id": "j2", "ideas": [2]}))
-    storage.write_text("jobs/pending/j3.json", json.dumps({**job, "id": "j3", "type": "briefs"}))
+    storage.write_text("brands/pp/reports/2026-10-17.md", "#### 1. X: \"hook\"\n- why\n")
+    storage.write_text("brands/pp/reports/2026-10-17.json",
+                       json.dumps({"top": [{"rank": 1, "ad_id": "2922821464729858"}]}))
+    storage.write_text("brands/pp/handoff/iterations-2026-10-17-ads-1.answer.md",
+                       "### Iteration 1: Fridge")
+    base = {"brand": "pp", "created_at": "2026-10-17T00:00:00Z"}
+    jobs = {
+        "j1": {"type": "iterations", "report": "2026-10-17", "ads": [1], "format": "ugc"},
+        "j2": {"type": "iterations", "report": "2026-10-17", "ads": [5], "format": "ugc"},
+        "j3": {"type": "briefs", "iterations": "2026-10-17-ads-1", "numbers": [1]},
+    }
+    for jid, job in jobs.items():
+        storage.write_text(f"jobs/pending/{jid}.json", json.dumps({**base, **job, "id": jid}))
 
     while worker.process_one(storage):
         pass
     done = json.loads(storage.read_text("jobs/done/j1.json"))
-    assert done["result"].endswith("scripts/2026-10-17-ideas-1.md")
-    assert "no idea number" in json.loads(storage.read_text("jobs/failed/j2.json"))["error"]
+    assert done["result"].endswith("iterations/2026-10-17-ads-1.md")
+    assert "no ad(s) ranked [5]" in json.loads(storage.read_text("jobs/failed/j2.json"))["error"]
     assert json.loads(storage.read_text("jobs/waiting/j3.json"))["type"] == "briefs"
     assert storage.list("jobs/pending/") == [] and storage.list("jobs/running/") == []

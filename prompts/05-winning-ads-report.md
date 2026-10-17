@@ -1,6 +1,6 @@
 # Winning Ads Report
 
-You are the creative strategist for {{brand_name}}. This report is market research: find what's winning in paid social right now, take it apart, explain why it works, and turn it into iteration ideas for {{brand_name}}. Scripts and full briefs come later, from the ideas the reader picks, so keep ideas tight and concrete.
+You are the creative strategist for {{brand_name}}. This report is market research: find what's winning in paid social right now, take it apart, and explain why it works. Don't write ideas or iterations for {{brand_name}} here: the reader picks winners from this report and makes iterations in the next step, so put your effort into the diagnosis.
 
 ## What you're working with
 
@@ -46,21 +46,8 @@ For a **static**, the same depth, applied to the image and the copy:
 ### 3. Patterns
 Group the ads that share something: hook type, format, structure, creator type, caption style, angle, offer, pacing. For each pattern, name it, list the ad numbers that show it, and say why it works for this kind of buyer. Note what {{brand_name}}'s own ads do vs competitors, and gaps: pains or objections from the research brief that no winning ad touches.
 
-### 4. Iteration ideas ({{idea_count}} ideas)
-Write exactly {{idea_count}} ideas, numbered 1 to {{idea_count}}. Spread them across the top ads: if there are at least as many ideas as top ads, every top ad gets at least one; if fewer, give them to the strongest ads first. Each idea:
-
-#### Idea <N>: <short name>
-- **From:** ad #<rank> (<advertiser>, ID)
-- **Type:** 90/10 hook (keep their hook almost word for word, change only what makes it {{brand_name}}) or pattern transfer (reuse their structure, format or mechanism with our message)
-- **What we're borrowing:** the exact element, quoted where it's words
-- **{{brand_name}} version:** the hook (the spoken first line for UGC, the first on-screen line for B-roll, the main line on the image for a static), the first frame or the image, and 2-3 sentences on how the ad plays out
-- **Why it should work for us:** one or two sentences tied to the research brief
-- **Compliance:** any line that needs review, or "clear"
-
-Every idea must be this format (chosen by the reader): **{{ad_format}}**. A winner in another format still lends its hook, structure, mechanism or graphic idea; translate it. A video's hook can become a static's main line; a static's headline or graphic can become a video's hook, first frame or on-screen text.
-
 ## Rules
 - Only use what's in the data. Don't invent stats, testimonials, customer quotes or ad details. Quotes come only from the research brief, word for word.
-- Competitor claims are never safe to copy just because they're running. When a winner's strength is a claim we can't make, borrow the structure and swap in a promise from the research brief.
+- Competitor claims are never safe to copy just because they're running. Flag any claim a winner leans on that would be risky for {{brand_name}} to make.
 - Follow every hard rule in the research brief and knowledge (for health products: no results promises, no dosing advice, no banned visuals in paid ads).
 - Plain words, short sentences. Today's date: {{date}}.

@@ -40,19 +40,6 @@ def cmd_verify(storage: Storage, slug: str) -> None:
     ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
 
 
-def ask_idea_count(given: int | None) -> int:
-    """How many iteration ideas: the flag, else ask (interactive), else 10."""
-    if given:
-        return given
-    if not sys.stdin.isatty():
-        return 10
-    while True:
-        answer = input("How many ideas do you want? [10] ").strip() or "10"
-        if answer.isdigit() and 1 <= int(answer) <= 50:
-            return int(answer)
-        print("Enter a number from 1 to 50.")
-
-
 def ask_format(given: str | None) -> str:
     """Which format to write in: the flag, else ask (interactive), else UGC."""
     if given:
@@ -112,26 +99,25 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--limit", type=int, help="only the top N by score")
     p.add_argument("--per-brand", type=int, help="at most N per advertiser")
 
-    p = sub.add_parser("report", help="Winning Ads Report: top 10 broken down, patterns, N ideas")
+    sub.add_parser("report", help="Winning Ads Report: top winners broken down, patterns, gaps"
+                   ).add_argument("brand")
+
+    p = sub.add_parser("iterations", help="turn winners from a report into iterations for the brand")
     p.add_argument("brand")
-    p.add_argument("--ideas", type=int, help="how many iteration ideas (asks if not given)")
+    p.add_argument("--ads", required=True, help="winner ranks from the report, e.g. 1,3,5-7")
+    p.add_argument("--report", help="report date YYYY-MM-DD (default: latest)")
     p.add_argument("--format", choices=list(formats.FORMATS),
                    help="ugc, broll or static (asks if not given)")
+    p.add_argument("--per-ad", type=int, default=1, help="iterations per winner (default 1)")
 
-    for name, what in (("scripts", "full scripts"), ("briefs", "full creative strategy briefs")):
-        p = sub.add_parser(name, help=f"{what} for ideas picked from a report")
-        p.add_argument("brand")
-        p.add_argument("--ideas", required=True, help="idea numbers from the report, e.g. 1,3,5-7")
-        p.add_argument("--report", help="report date YYYY-MM-DD (default: latest)")
-        p.add_argument("--format", choices=list(formats.FORMATS),
-                       help="ugc, broll or static (asks if not given)")
+    p = sub.add_parser("briefs", help="turn chosen iterations into full creative briefs")
+    p.add_argument("brand")
+    p.add_argument("--iterations", help="iterations file name (default: latest)")
+    p.add_argument("--numbers", required=True, help="iteration numbers, e.g. 1,2")
 
     p = sub.add_parser("weekly", help="ads -> creative -> breakdown -> verify -> report")
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1)
-    p.add_argument("--ideas", type=int, help="how many iteration ideas (asks if not given)")
-    p.add_argument("--format", choices=list(formats.FORMATS),
-                   help="ugc, broll or static (asks if not given)")
 
     p = sub.add_parser("verify", help="re-check top ads are still in the Ad Library (1 credit each)")
     p.add_argument("brand")
@@ -177,23 +163,24 @@ def main(argv: list[str] | None = None) -> int:
                           per_brand=args.per_brand)
             return 0
         if args.command == "report":
-            stages.run_report(storage, args.brand, ask_idea_count(args.ideas),
-                              fmt=ask_format(args.format))
+            stages.run_report(storage, args.brand)
             return 0
-        if args.command in ("scripts", "briefs"):
+        if args.command == "iterations":
             report_key = (brandlib.brand_key(args.brand, f"reports/{args.report}.md")
                           if args.report else None)
-            stages.run_followup(storage, args.brand, args.command,
-                                stages.parse_numbers(args.ideas), report_key,
-                                fmt=ask_format(args.format))
+            stages.run_iterations(storage, args.brand, report_key, stages.parse_numbers(args.ads),
+                                  fmt=ask_format(args.format), per_ad=args.per_ad)
+            return 0
+        if args.command == "briefs":
+            its_key = (brandlib.brand_key(args.brand, f"iterations/{args.iterations}.md")
+                       if args.iterations else stages.latest_key(storage, args.brand, "iterations"))
+            stages.run_briefs(storage, args.brand, its_key, stages.parse_numbers(args.numbers))
             return 0
         if args.command == "weekly":
-            idea_count = ask_idea_count(args.ideas)
-            fmt = ask_format(args.format)
             from . import worker
 
             try:
-                worker.run_weekly(storage, args.brand, idea_count, pages=args.pages, fmt=fmt)
+                worker.run_weekly(storage, args.brand, pages=args.pages)
             except llm.HandoffPending:
                 log.info("weekly: paused for handoff answers; re-run `weekly` when answered.")
             return 0

@@ -1,12 +1,13 @@
 """The three outputs, in order:
 
-1. report   -> brands/<brand>/reports/<date>.md   Winning Ads Report: top 10 winners broken
-                                                  down line by line, patterns, why they work,
-                                                  and N iteration ideas (N asked at run time)
-2. scripts  -> brands/<brand>/scripts/<date>-ideas-<n>.md   full scripts for chosen ideas
-3. briefs   -> brands/<brand>/briefs/<date>-ideas-<n>.md    full creative strategy briefs
-
-Scripts and briefs read the ideas straight out of a report, by number.
+1. report      -> reports/<date>.md (+ .json with the top ads in rank order)
+                  Winning Ads Report: the top winners (videos and statics) broken down line by
+                  line or piece by piece, why they work, patterns and gaps. No ideas.
+2. iterations  -> iterations/<report>-ads-<ranks>[-format].md
+                  The reader picks winning ads from a report and a format (UGC, B-roll, static);
+                  each pick becomes an iteration: a UGC script, a B-roll shot list, or a static spec.
+3. briefs      -> briefs/<iterations file>-its-<numbers>.md
+                  The reader picks iterations; each becomes a full creative brief.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ log = logging.getLogger("cse")
 
 PROMPTS = {
     "report": Path("prompts/05-winning-ads-report.md"),
-    "scripts": Path("prompts/06-scripts.md"),
+    "iterations": Path("prompts/06-iterations.md"),
     "briefs": Path("prompts/07-creative-briefs.md"),
 }
 KNOWLEDGE_DIR = Path("knowledge")
@@ -135,11 +136,10 @@ def report_candidates(ads: list[dict]) -> list[str]:
     return [a["ad_id"] for a in ranked(ads)[:CANDIDATES]]
 
 
-def run_report(storage, slug: str, idea_count: int, top_n: int = TOP_N,
-               today: date | None = None, client=None, fmt: str = formats.DEFAULT) -> str | None:
+def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None,
+               client=None) -> str | None:
     today = today or datetime.now(timezone.utc).date()
-    ctx = with_format(brand_context(storage, slug), fmt)
-    tag = formats.suffix(fmt)
+    ctx = brand_context(storage, slug)
     ads = load_ads(storage, slug)
     top = ranked(ads)[:top_n]
     if not top:
@@ -151,99 +151,152 @@ def run_report(storage, slug: str, idea_count: int, top_n: int = TOP_N,
     prompt = llm.render(PROMPTS["report"].read_text(), {
         **ctx,
         "top_count": len(top),
-        "idea_count": idea_count,
         "top_ads": "\n\n".join(format_full(a, i + 1) for i, a in enumerate(top)),
         "other_ads": "\n".join(format_line(a) for a in others) or "(none)",
         "date": today.isoformat(),
     })
-    step = f"report-{today.isoformat()}-{idea_count}ideas{tag}"
     try:
-        answer = llm.ask(storage, slug, step, prompt, client=client, max_tokens=64000,
-                         effort="high")
+        answer = llm.ask(storage, slug, f"report-{today.isoformat()}", prompt, client=client,
+                         max_tokens=64000, effort="high")
     except llm.HandoffPending as p:
         log.info("report: prompt ready at %s; answer it in %s, then re-run.",
                  p.prompt_key, p.answer_key)
         return None
 
-    out_key = brandlib.brand_key(slug, f"reports/{today.isoformat()}{tag}.md")
+    out_key = brandlib.brand_key(slug, f"reports/{today.isoformat()}.md")
     header = (f"# {ctx['brand_name']} Winning Ads Report, {today.isoformat()}\n\n"
-              f"_Top {len(top)} of {len(ads)} ads pulled. {idea_count} iteration ideas, "
-              f"{formats.FORMATS[formats.check(fmt)]['label']}._\n\n")
+              f"_Top {len(top)} of {len(ads)} ads pulled._\n\n")
     storage.write_text(out_key, header + answer.strip() + "\n")
+    # The ranks the report uses, so iterations can map "#3" back to an ad.
+    storage.write_text(out_key[:-3] + ".json", json.dumps({
+        "top": [{"rank": i + 1, "ad_id": a["ad_id"], "brand": a.get("brand")}
+                for i, a in enumerate(top)]}, indent=2) + "\n")
     log.info("report: saved %s", out_key)
     return out_key
 
 
-# --- stages 2 and 3: scripts and briefs from chosen ideas ------------------------------
-
-_IDEA_RE = re.compile(r"^#{2,4}\s*Idea\s+(\d+)\b.*$", re.M)
-
-
-def extract_ideas(report_md: str, numbers: list[int]) -> dict[int, str]:
-    """Pull the 'Idea N' sections out of a report. Missing numbers are left out."""
-    heads = list(_IDEA_RE.finditer(report_md))
-    found = {}
-    for i, m in enumerate(heads):
-        n = int(m.group(1))
-        if n not in numbers:
-            continue
-        end = heads[i + 1].start() if i + 1 < len(heads) else len(report_md)
-        nxt = re.search(r"^#{1,3}\s", report_md[m.end():end], re.M)  # a later section heading
-        if nxt:
-            end = m.end() + nxt.start()
-        found[n] = report_md[m.start():end].strip()
-    return found
-
-
-def latest_report_key(storage, slug: str) -> str:
-    keys = sorted(k for k in storage.list(brandlib.brand_key(slug, "reports/")) if k.endswith(".md"))
+def latest_key(storage, slug: str, folder: str) -> str:
+    keys = sorted(k for k in storage.list(brandlib.brand_key(slug, f"{folder}/"))
+                  if k.endswith(".md"))
     if not keys:
-        raise llm.LLMError("no Winning Ads Report yet: run `report` first")
+        raise llm.LLMError(f"nothing in {folder}/ yet")
     return keys[-1]
 
 
-def run_followup(storage, slug: str, kind: str, numbers: list[int], report_key: str | None = None,
-                 today: date | None = None, client=None, fmt: str = formats.DEFAULT) -> str | None:
-    """kind = 'scripts' or 'briefs', written in the chosen format (UGC, B-roll or static)."""
+def sections(md: str, heading: str, numbers: list[int], hashes: str = "{2,4}") -> dict[int, str]:
+    r"""Pull numbered sections out of a document, e.g. heading=r"Iteration\s+(\d+)\b" for
+    "### Iteration 3: ..." or r"(\d+)\." for a report's "#### 3. Advertiser: ...".
+    A section runs to the next heading of the same or a higher level. `hashes` limits which
+    heading levels count (a report's ads are always "####", its own sections "###")."""
+    found = {}
+    pattern = re.compile(rf"^(#{hashes})\s*{heading}.*$", re.M)
+    for m in pattern.finditer(md):
+        n = int(m.group(2))
+        if n not in numbers or n in found:
+            continue
+        level = len(m.group(1))
+        nxt = re.search(rf"^#{{1,{level}}}\s", md[m.end():], re.M)
+        end = m.end() + nxt.start() if nxt else len(md)
+        found[n] = md[m.start():end].strip()
+    return found
+
+
+# --- stage 2: iterations from chosen winners -------------------------------------------
+
+def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
+                   fmt: str = formats.DEFAULT, per_ad: int = 1, today: date | None = None,
+                   client=None) -> str | None:
+    """Turn the report's winners #<ranks> into iterations for the brand, in the chosen format."""
     today = today or datetime.now(timezone.utc).date()
-    report_key = report_key or latest_report_key(storage, slug)
+    fmt = formats.check(fmt)
+    report_key = report_key or latest_key(storage, slug, "reports")
     report_md = storage.read_text(report_key)
-    ideas = extract_ideas(report_md, numbers)
-    missing = [n for n in numbers if n not in ideas]
+    index_key = report_key[:-3] + ".json"
+    if not storage.exists(index_key):
+        raise llm.LLMError(f"{report_key} has no ranked ad list (re-run the report)")
+    by_rank = {t["rank"]: t["ad_id"] for t in json.loads(storage.read_text(index_key))["top"]}
+    missing = [r for r in ranks if r not in by_rank]
     if missing:
-        raise llm.LLMError(f"{report_key} has no idea number(s) {missing}")
+        raise llm.LLMError(f"{report_key} has no ad(s) ranked {missing}")
+
+    ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
+    diagnosis = sections(report_md, r"(\d+)\.", ranks, hashes="{4}")
+    ctx = with_format(brand_context(storage, slug), fmt)
+    prompt = llm.render(PROMPTS["iterations"].read_text(), {
+        **ctx,
+        "per_ad": per_ad,
+        "total": per_ad * len(ranks),
+        "report_sections": "\n\n".join(diagnosis.get(r, f"(ad #{r}: no section found)")
+                                        for r in ranks),
+        "source_ads": "\n\n".join(format_full(ads[by_rank[r]], r) for r in ranks
+                                   if by_rank[r] in ads),
+        "date": today.isoformat(),
+    })
+    stem = (f"{Path(report_key).stem}-ads-{'-'.join(map(str, ranks))}"
+            f"{f'-x{per_ad}' if per_ad > 1 else ''}{formats.suffix(fmt)}")
+    try:
+        answer = llm.ask(storage, slug, f"iterations-{stem}", prompt, client=client,
+                         max_tokens=64000, effort="high")
+    except llm.HandoffPending as p:
+        log.info("iterations: prompt ready at %s; answer it in %s, then re-run.",
+                 p.prompt_key, p.answer_key)
+        return None
+
+    out_key = brandlib.brand_key(slug, f"iterations/{stem}.md")
+    header = (f"# {ctx['brand_name']} iterations: {formats.FORMATS[fmt]['label']}\n\n"
+              f"_From winners #{', #'.join(map(str, ranks))} of the Winning Ads Report of "
+              f"{Path(report_key).stem}._\n\n")
+    storage.write_text(out_key, header + answer.strip() + "\n")
+    log.info("iterations: saved %s", out_key)
+    return out_key
+
+
+# --- stage 3: creative briefs from chosen iterations -----------------------------------
+
+def format_of(file_stem: str) -> str:
+    """The format an iterations file was written in, from its name (no suffix = UGC)."""
+    m = re.search(r"-(broll|static)$", file_stem)
+    return m.group(1) if m else formats.DEFAULT
+
+
+def run_briefs(storage, slug: str, iterations_key: str, numbers: list[int],
+               today: date | None = None, client=None) -> str | None:
+    today = today or datetime.now(timezone.utc).date()
+    its_md = storage.read_text(iterations_key)
+    chosen = sections(its_md, r"Iteration\s+(\d+)\b", numbers)
+    missing = [n for n in numbers if n not in chosen]
+    if missing:
+        raise llm.LLMError(f"{iterations_key} has no iteration number(s) {missing}")
 
     ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
     cited = []
-    for text in ideas.values():
+    for text in chosen.values():
         for ad_id in re.findall(r"\b\d{12,20}\b", text):
             if ad_id in ads and ad_id not in cited:
                 cited.append(ad_id)
 
-    ctx = with_format(brand_context(storage, slug), fmt)
-    prompt = llm.render(PROMPTS[kind].read_text(), {
+    stem = Path(iterations_key).stem
+    ctx = with_format(brand_context(storage, slug), format_of(stem))
+    prompt = llm.render(PROMPTS["briefs"].read_text(), {
         **ctx,
-        "ideas": "\n\n".join(ideas[n] for n in numbers),
+        "iterations": "\n\n".join(chosen[n] for n in numbers),
         "source_ads": "\n\n".join(format_full(ads[i]) for i in cited) or "(none found)",
         "date": today.isoformat(),
     })
-    tag = "-".join(str(n) for n in numbers) + formats.suffix(fmt)
-    report_date = Path(report_key).stem
+    out_stem = f"{stem}-its-{'-'.join(map(str, numbers))}"
     try:
-        answer = llm.ask(storage, slug, f"{kind}-{report_date}-ideas-{tag}", prompt,
-                         client=client, max_tokens=64000, effort="high")
+        answer = llm.ask(storage, slug, f"briefs-{out_stem}", prompt, client=client,
+                         max_tokens=64000, effort="high")
     except llm.HandoffPending as p:
-        log.info("%s: prompt ready at %s; answer it in %s, then re-run.", kind,
+        log.info("briefs: prompt ready at %s; answer it in %s, then re-run.",
                  p.prompt_key, p.answer_key)
         return None
 
-    out_key = brandlib.brand_key(slug, f"{kind}/{report_date}-ideas-{tag}.md")
-    title = "Scripts" if kind == "scripts" else "Creative briefs"
-    header = (f"# {ctx['brand_name']} {title}: ideas {', '.join(map(str, numbers))}\n\n"
-              f"_{formats.FORMATS[formats.check(fmt)]['label']}. From the Winning Ads Report of "
-              f"{report_date}._\n\n")
+    out_key = brandlib.brand_key(slug, f"briefs/{out_stem}.md")
+    header = (f"# {ctx['brand_name']} creative briefs: iterations {', '.join(map(str, numbers))}"
+              f"\n\n_{formats.FORMATS[format_of(stem)]['label']}. From {stem}._\n\n")
     storage.write_text(out_key, header + answer.strip() + "\n")
-    log.info("%s: saved %s", kind, out_key)
+    log.info("briefs: saved %s", out_key)
     return out_key
 
 
