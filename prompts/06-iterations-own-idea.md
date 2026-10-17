@@ -10,6 +10,13 @@ Their idea is the starting point and it stays theirs: keep what they asked for. 
 {{idea}}
 </idea>
 
+## The product (from brand.md, in the founder's words)
+
+This is the truth about what {{brand_name}} is and how it works. Where the research brief or anything else describes the product differently, this wins. Never describe a feature the product doesn't have.
+<product>
+{{product_facts}}
+</product>
+
 ## What you're working with
 
 1. **The research brief** (buyer, pains, desires, language, objections, promises, hard rules). Its rules are hard constraints.

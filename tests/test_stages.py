@@ -186,3 +186,16 @@ def test_iterations_from_your_own_idea(brand):
     assert "**Your idea:** A guy films" in storage.read_text(out)
     with pytest.raises(llm.LLMError):
         stages.run_iterations(storage, "pp", None, [], today=TODAY)
+
+
+def test_product_facts_from_brand_md_reach_the_prompts(brand):
+    storage = brand
+    storage.write_text("brands/pp/brand.md", "---\nname: PeptidePal\nproduct: a tracker\n---\n\n"
+                       "## How it works\nNo snooze. Start mission.\n")
+    storage.write_text("brands/pp/reports/2026-10-17.md", "#### 1. X: \"hook\"\n- why\n")
+    storage.write_text("brands/pp/reports/2026-10-17.json",
+                       json.dumps({"top": [{"rank": 1, "ad_id": "2922821464729858"}]}))
+    stages.run_iterations(storage, "pp", None, [1], today=TODAY)
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "- product: a tracker" in prompt and "No snooze. Start mission." in prompt

@@ -59,11 +59,21 @@ def with_format(ctx: dict, fmt: str) -> dict:
             "format_fields": formats.FORMATS[fmt]["fields"]}
 
 
+def product_facts(fields: dict, notes: str) -> str:
+    """What the product is and how it works, from brand.md (the founder's own words). Prompts
+    treat this as the truth about the product, over the research brief where they differ."""
+    lines = [f"- {k}: {fields[k]}" for k in ("name", "website", "product", "offer", "app_store_url")
+             if fields.get(k)]
+    body = notes.strip()
+    return "\n".join(lines) + (f"\n\n{body}" if body else "") or "(not filled in yet)"
+
+
 def brand_context(storage, slug: str) -> dict:
-    fields = {}
+    fields, notes = {}, ""
     if storage.exists(brandlib.brand_key(slug)):
-        fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+        fields, notes = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))
     return {
+        "product_facts": product_facts(fields, notes),
         "brand_name": fields.get("name") or slug,
         "ad_format": fields.get("ad_format") or DEFAULT_AD_FORMAT,
         "format_notes": fields.get("ad_format") or "",
