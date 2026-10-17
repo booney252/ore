@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, briefs, competitors, creative, llm
+from . import ads, breakdown, competitors, creative, llm, stages
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -18,7 +18,6 @@ log = logging.getLogger("cse")
 
 NOT_BUILT = {
     "voc": "mine voice of customer",
-    "report": "write report.md and research-brief.md",
     "run": "all of the above in order",
 }
 
@@ -42,14 +41,22 @@ def brand_name(storage: Storage, slug: str) -> str:
     return slug
 
 
-def cmd_verify(storage: Storage, slug: str, top: int) -> None:
-    """Check the ads the briefs will cite (top by score + own) before citing them."""
-    import json
-    from datetime import datetime, timezone
+def cmd_verify(storage: Storage, slug: str) -> None:
+    """Re-check the ads the report may cite, so it never cites a removed ad as live."""
+    ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
 
-    all_ads = json.loads(storage.read_text(brandlib.brand_key(slug, "ads.json")))["ads"].values()
-    picked = briefs.pick_ads(list(all_ads), datetime.now(timezone.utc).date())[:top]
-    ads.verify(storage, slug, [a["ad_id"] for a in picked])
+
+def ask_idea_count(given: int | None) -> int:
+    """How many iteration ideas: the flag, else ask (interactive), else 10."""
+    if given:
+        return given
+    if not sys.stdin.isatty():
+        return 10
+    while True:
+        answer = input("How many ideas do you want? [10] ").strip() or "10"
+        if answer.isdigit() and 1 <= int(answer) <= 50:
+            return int(answer)
+        print("Enter a number from 1 to 50.")
 
 
 def cmd_seed(storage: Storage, slug: str) -> int:
@@ -90,18 +97,23 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--limit", type=int, help="only the top N by score")
     p.add_argument("--per-brand", type=int, help="at most N per advertiser")
 
-    p = sub.add_parser("briefs", help="write this week's idea briefs")
+    p = sub.add_parser("report", help="Winning Ads Report: top 10 broken down, patterns, N ideas")
     p.add_argument("brand")
-    p.add_argument("--count", type=int, default=6)
+    p.add_argument("--ideas", type=int, help="how many iteration ideas (asks if not given)")
 
-    p = sub.add_parser("weekly", help="weekly engine: ads -> creative -> breakdown -> briefs")
+    for name, what in (("scripts", "full scripts"), ("briefs", "full creative strategy briefs")):
+        p = sub.add_parser(name, help=f"{what} for ideas picked from a report")
+        p.add_argument("brand")
+        p.add_argument("--ideas", required=True, help="idea numbers from the report, e.g. 1,3,5-7")
+        p.add_argument("--report", help="report date YYYY-MM-DD (default: latest)")
+
+    p = sub.add_parser("weekly", help="ads -> creative -> breakdown -> verify -> report")
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1)
-    p.add_argument("--count", type=int, default=6)
+    p.add_argument("--ideas", type=int, help="how many iteration ideas (asks if not given)")
 
     p = sub.add_parser("verify", help="re-check top ads are still in the Ad Library (1 credit each)")
     p.add_argument("brand")
-    p.add_argument("--top", type=int, default=30)
 
     p = sub.add_parser("seed", help="upload seed/<brand>/ files into storage")
     p.add_argument("brand")
@@ -132,21 +144,28 @@ def main(argv: list[str] | None = None) -> int:
             breakdown.run(storage, args.brand, brand_name(storage, args.brand), limit=args.limit,
                           per_brand=args.per_brand)
             return 0
-        if args.command == "briefs":
-            briefs.run(storage, args.brand, brand_name(storage, args.brand), count=args.count)
+        if args.command == "report":
+            stages.run_report(storage, args.brand, ask_idea_count(args.ideas))
+            return 0
+        if args.command in ("scripts", "briefs"):
+            report_key = (brandlib.brand_key(args.brand, f"reports/{args.report}.md")
+                          if args.report else None)
+            stages.run_followup(storage, args.brand, args.command,
+                                stages.parse_numbers(args.ideas), report_key)
             return 0
         if args.command == "weekly":
+            idea_count = ask_idea_count(args.ideas)
             name = brand_name(storage, args.brand)
             ads.run(storage, args.brand, max_pages=args.pages)
-            creative.run(storage, args.brand)
-            if breakdown.run(storage, args.brand, name)["waiting"]:
+            creative.run(storage, args.brand, per_brand=5)
+            if breakdown.run(storage, args.brand, name, per_brand=5)["waiting"]:
                 log.info("weekly: paused for handoff breakdowns; re-run `weekly` when answered.")
                 return 0
-            cmd_verify(storage, args.brand, 30)
-            briefs.run(storage, args.brand, name, count=args.count)
+            cmd_verify(storage, args.brand)
+            stages.run_report(storage, args.brand, idea_count)
             return 0
         if args.command == "verify":
-            cmd_verify(storage, args.brand, args.top)
+            cmd_verify(storage, args.brand)
             return 0
         if args.command == "seed":
             return cmd_seed(storage, args.brand)

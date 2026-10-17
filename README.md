@@ -18,16 +18,17 @@ machines see the same files. Research prompts live in `prompts/` (in git).
 
 ```
 cse init <brand>          create brands/<brand>/brand.md for you to fill in
+cse seed <brand>          upload seed/<brand>/ (e.g. an existing research brief) into storage
 cse competitors <brand>   find competitors in 3 rings -> competitors.json (review + approve)
 cse ads <brand>           pull competitor + own ads, score, download media -> ads.json
 cse creative <brand>      transcripts (Whisper), cuts, key frames for new ads
-cse breakdown <brand>     Claude breaks down each analyzed ad (hook, first frame, format, angle...)
-cse briefs <brand>        write this week's 6 idea briefs -> briefs/<date>.md
-cse weekly <brand>        ads -> creative -> breakdown -> briefs
-cse seed <brand>          upload seed/<brand>/ (e.g. an existing research brief) into storage
-cse voc <brand>           (not built yet)
-cse report <brand>        (not built yet)
-cse run <brand>           (not built yet)
+cse breakdown <brand>     Claude diagnoses each analyzed ad, element by element
+cse verify <brand>        re-check top ads are still in the Ad Library
+cse report <brand>        1. Winning Ads Report: top 10 broken down line by line, patterns,
+                             why they work, N iteration ideas (asks how many)
+cse scripts <brand> --ideas 1,3   2. full scripts for ideas picked from the latest report
+cse briefs <brand> --ideas 1,3    3. full creative strategy briefs for picked ideas
+cse weekly <brand>        ads -> creative -> breakdown -> verify -> report
 ```
 
 ## Tests

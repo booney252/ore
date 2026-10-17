@@ -36,7 +36,10 @@ Two loops:
 2. Score which are winning (winner score below).
 3. **Diagnose the winners.** Take each strong ad apart element by element: spoken hook, on-screen text hook, frame 0, first 3 seconds, caption style, creator, setting, camera, edit and pacing, time to product, structure, emotion, persuasion devices, proof, offer, CTA. Mark which elements are load-bearing and why (evidence: days running, versions, reused across the advertiser's other ads).
 4. **Put the winning elements into PeptidePal ads.** That's the whole point: find why winners win, then build our ads out of those elements.
-5. Write **6 briefs per week** for PeptidePal as full 20-60s UGC scripts (creator to camera). Each brief has a "Winning elements we're using" table citing the ads each element came from. Mix: some stay close to one winner, some are new concepts aimed at gaps, still built from proven elements.
+5. **Three outputs, in order** (updated 2026-10-17):
+   1. **Winning Ads Report** (market research + ideas): the top 10 winning ads, each broken down line by line with visuals; patterns across them; why each works now and, for long-runners, why it still works; then N iteration ideas (the user is asked how many), each tied to a winner as a 90/10 hook or a pattern transfer.
+   2. **Scripts**: the user picks ideas from the report and gets full 20-60s UGC scripts.
+   3. **Creative briefs**: the user picks ideas and gets full creative strategy briefs for themselves or creators.
 
 The weekly run only processes ads it hasn't seen before, so it stays cheap. It's the part that will later run in the cloud on a schedule.
 
@@ -59,7 +62,7 @@ Build order: foundation first (briefs are only as good as the research under the
 
 ## Tech setup
 
-- Python, run from the command line. No web app or UI yet.
+- Python pipeline, run from the command line or by the website's worker. Website: Next.js on Vercel in `web/` (started 2026-10-17).
 - Claude API for analysis and summarizing. Keys go in `.env`, never in code.
 
 **Everything lives in the cloud, nothing only on one computer.** I switch between a Mac and a desktop, so:
