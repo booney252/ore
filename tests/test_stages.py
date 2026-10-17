@@ -78,7 +78,7 @@ def test_full_pipeline_in_handoff(brand):
     assert stages.run_report(storage, "pp", idea_count=7, today=TODAY) is None
     prompt = storage.read_text("brands/pp/handoff/report-2026-10-17-7ideas.prompt.md")
     assert "[0.0-2.0s] Is anyone else" in prompt and "exactly 7 ideas" in prompt
-    assert "No needles." in prompt and "UGC: a real creator" in prompt and "{{" not in prompt
+    assert "No needles." in prompt and "UGC video: a real creator" in prompt and "{{" not in prompt
     storage.write_text("brands/pp/handoff/report-2026-10-17-7ideas.answer.md",
                        "## 4. Ideas\n\n#### Idea 1: Fridge\n- From: ad #1 (2922821464729858)\n\n"
                        "#### Idea 2: Notes\n- x\n")
@@ -96,6 +96,24 @@ def test_full_pipeline_in_handoff(brand):
 
     with pytest.raises(llm.LLMError):
         stages.run_followup(storage, "pp", "briefs", [9], today=TODAY)
+
+    # Same idea as a static brief: static fields, its own file name, no video script table
+    assert stages.run_followup(storage, "pp", "briefs", [1], today=TODAY, fmt="static") is None
+    prompt = storage.read_text("brands/pp/handoff/briefs-2026-10-17-ideas-1-static.prompt.md")
+    assert "Static image ad" in prompt and "**Text on the image:**" in prompt
+    assert "They say" not in prompt and "{{" not in prompt
+    storage.write_text("brands/pp/handoff/briefs-2026-10-17-ideas-1-static.answer.md", "### Brief 1")
+    assert stages.run_followup(storage, "pp", "briefs", [1], today=TODAY, fmt="static") == \
+        "brands/pp/briefs/2026-10-17-ideas-1-static.md"
+
+
+def test_formats():
+    from cse import formats
+    assert formats.check("B-roll") == "broll" and formats.check(None) == "ugc"
+    assert formats.suffix("ugc") == "" and formats.suffix("static") == "-static"
+    with pytest.raises(ValueError):
+        formats.check("carousel")
+    assert "chosen format wins" in formats.describe("broll", "creator 45-60")
 
 
 def test_breakdown_pick_caps_per_brand():

@@ -1,0 +1,65 @@
+"""Ad formats the user picks when asking for ideas, scripts or briefs.
+
+The chosen format decides how ideas are written and what a script or brief contains.
+The brand's own `ad_format` in brand.md (creator age, setting, style rules) is kept as notes;
+where it conflicts with the chosen format, the chosen format wins.
+"""
+
+from __future__ import annotations
+
+DEFAULT = "ugc"
+
+FORMATS = {
+    "ugc": {
+        "label": "UGC video",
+        "spec": "UGC video: a real creator talking to camera, shot on a phone, 20-60s, "
+                "with a full word-for-word script",
+        "fields": """\
+- **Setup:** who's on camera (age, look, role), where, how it's shot, target length (20-60s)
+- **Alternate hooks (2):** each a different first line the creator says AND its first frame
+- **Script:** a table `| Time | They say | On screen |`, 0s to the end. "They say" is every spoken word, written the way a real person talks to their phone (contractions, short sentences). "On screen" is the shot, any cut, and any text overlay word for word. The first row is the main hook.""",
+    },
+    "broll": {
+        "label": "B-roll video",
+        "spec": "B-roll video: no one talking to camera; real-looking footage of the moment, the "
+                "problem and the product (hands, phone screen, room, setting) carried by on-screen "
+                "text and/or a voiceover, 15-45s",
+        "fields": """\
+- **Setup:** the footage to shoot or source (hands, phone screen, room, product, setting), how it should look (native phone footage, not polished), whether it's text-only or has a voiceover, target length (15-45s)
+- **Alternate hooks (2):** each a different first on-screen line (and first voiceover line, if any) AND its first shot
+- **Script:** a table `| Time | Shot | On-screen text | Voiceover |`, 0s to the end. Describe every shot; write every word of on-screen text and voiceover word for word ("none" where there's no voiceover). The first row is the main hook.""",
+    },
+    "static": {
+        "label": "Static image",
+        "spec": "Static image ad: one image plus its primary text, headline and button",
+        "fields": """\
+- **Image:** what's in it, the focal point, the style (native photo, screenshot, notes app, review card, designed graphic) and the layout, so a designer can make it without asking
+- **Text on the image:** every word, biggest first
+- **Alternate hooks (2):** each a different main line on the image AND how the image changes with it
+- **Primary text:** word for word, first line first (the line that earns the "see more" tap), plus 2 alternate first lines
+- **Headline and button:** the headline under the image and the CTA button""",
+    },
+}
+
+
+def check(fmt: str | None) -> str:
+    fmt = (fmt or DEFAULT).strip().lower().replace("-", "").replace(" ", "")
+    fmt = {"video": "ugc", "b-roll": "broll", "image": "static"}.get(fmt, fmt)
+    if fmt not in FORMATS:
+        raise ValueError(f"format must be one of {', '.join(FORMATS)}")
+    return fmt
+
+
+def describe(fmt: str, brand_notes: str = "") -> str:
+    """The {{ad_format}} line for a prompt: the chosen format plus the brand's own notes."""
+    spec = FORMATS[check(fmt)]["spec"]
+    if not brand_notes:
+        return spec
+    return (f"{spec}. Brand notes on ads (follow them where they fit this format; where they "
+            f"conflict with it, the chosen format wins): {brand_notes}")
+
+
+def suffix(fmt: str) -> str:
+    """File-name suffix: UGC (the default) has none, so older files keep their names."""
+    fmt = check(fmt)
+    return "" if fmt == DEFAULT else f"-{fmt}"

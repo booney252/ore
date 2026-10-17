@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, competitors, creative, llm, research, setup, stages, voc
+from . import ads, breakdown, competitors, creative, formats, llm, research, setup, stages, voc
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -51,6 +51,20 @@ def ask_idea_count(given: int | None) -> int:
         if answer.isdigit() and 1 <= int(answer) <= 50:
             return int(answer)
         print("Enter a number from 1 to 50.")
+
+
+def ask_format(given: str | None) -> str:
+    """Which format to write in: the flag, else ask (interactive), else UGC."""
+    if given:
+        return formats.check(given)
+    if not sys.stdin.isatty():
+        return formats.DEFAULT
+    while True:
+        answer = input("Format? ugc / broll / static [ugc] ").strip() or formats.DEFAULT
+        try:
+            return formats.check(answer)
+        except ValueError:
+            print("Type ugc, broll or static.")
 
 
 def cmd_seed(storage: Storage, slug: str) -> int:
@@ -101,17 +115,23 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("report", help="Winning Ads Report: top 10 broken down, patterns, N ideas")
     p.add_argument("brand")
     p.add_argument("--ideas", type=int, help="how many iteration ideas (asks if not given)")
+    p.add_argument("--format", choices=list(formats.FORMATS),
+                   help="ugc, broll or static (asks if not given)")
 
     for name, what in (("scripts", "full scripts"), ("briefs", "full creative strategy briefs")):
         p = sub.add_parser(name, help=f"{what} for ideas picked from a report")
         p.add_argument("brand")
         p.add_argument("--ideas", required=True, help="idea numbers from the report, e.g. 1,3,5-7")
         p.add_argument("--report", help="report date YYYY-MM-DD (default: latest)")
+        p.add_argument("--format", choices=list(formats.FORMATS),
+                       help="ugc, broll or static (asks if not given)")
 
     p = sub.add_parser("weekly", help="ads -> creative -> breakdown -> verify -> report")
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1)
     p.add_argument("--ideas", type=int, help="how many iteration ideas (asks if not given)")
+    p.add_argument("--format", choices=list(formats.FORMATS),
+                   help="ugc, broll or static (asks if not given)")
 
     p = sub.add_parser("verify", help="re-check top ads are still in the Ad Library (1 credit each)")
     p.add_argument("brand")
@@ -157,20 +177,23 @@ def main(argv: list[str] | None = None) -> int:
                           per_brand=args.per_brand)
             return 0
         if args.command == "report":
-            stages.run_report(storage, args.brand, ask_idea_count(args.ideas))
+            stages.run_report(storage, args.brand, ask_idea_count(args.ideas),
+                              fmt=ask_format(args.format))
             return 0
         if args.command in ("scripts", "briefs"):
             report_key = (brandlib.brand_key(args.brand, f"reports/{args.report}.md")
                           if args.report else None)
             stages.run_followup(storage, args.brand, args.command,
-                                stages.parse_numbers(args.ideas), report_key)
+                                stages.parse_numbers(args.ideas), report_key,
+                                fmt=ask_format(args.format))
             return 0
         if args.command == "weekly":
             idea_count = ask_idea_count(args.ideas)
+            fmt = ask_format(args.format)
             from . import worker
 
             try:
-                worker.run_weekly(storage, args.brand, idea_count, pages=args.pages)
+                worker.run_weekly(storage, args.brand, idea_count, pages=args.pages, fmt=fmt)
             except llm.HandoffPending:
                 log.info("weekly: paused for handoff answers; re-run `weekly` when answered.")
             return 0

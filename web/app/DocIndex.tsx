@@ -35,13 +35,15 @@ export default async function DocIndex({ brand, kind }: { brand: string; kind: K
       ) : (
         <ul className="doc-rows">
           {files.map((f) => {
-            const { date, ideas } = docLabel(f);
+            const { date, ideas, format } = docLabel(f);
             return (
               <li key={f}>
                 <Link href={`/b/${brand}/${kind}/${f}`}>
                   <span className={`dot ${c.tone}`} aria-hidden="true" />
                   <span className="doc-date">{date}</span>
-                  <span className="muted">{ideas ? `Ideas ${ideas}` : ""}</span>
+                  <span className="muted">
+                    {[ideas ? `Ideas ${ideas}` : "", format].filter(Boolean).join(" · ")}
+                  </span>
                   <span className="arrow" aria-hidden="true">→</span>
                 </Link>
               </li>

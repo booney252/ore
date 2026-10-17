@@ -26,16 +26,11 @@ The winning ads they came from (transcripts and breakdowns):
 
 ### Script <idea number>: <idea name>
 - **From:** the idea's source ad and what we're borrowing from it
-- **Setup:** who's on camera (age, look), where, how it's shot, length
-- **Alternate hooks (2):** a different first line + its first frame for each
-- **Script:** a table `| Time | They say | On screen |`, 0s to the end. "They say" is every spoken word, written the way a real person talks to their phone. "On screen" is the shot, cuts and any text overlay word for word. The first row is the main hook from the idea.
+{{format_fields}}
 - **CTA:** spoken line + button
 - **Compliance:** any line that needs review, or "clear"
 
-Format for every script: **{{ad_format}}**. Keep what made the source ad win (hook, structure, pacing) and make everything else {{brand_name}}.
-
-## Static ideas
-If an idea is a static image ad (only when the format allows statics), the script is a static spec instead of a video: image direction (what's in it, the focal point, style, layout), every word on the image, the primary text word for word, the headline, the CTA button, and 2 alternate first lines for the primary text.
+Format for every script (chosen by the reader, a hard constraint): **{{ad_format}}**. If an idea was written for another format, translate it: keep what made the source ad win (hook, structure, pacing, the graphic idea) and make everything else {{brand_name}}.
 
 ## Rules
 - Quotes only from the research brief, word for word. No invented stats or testimonials.

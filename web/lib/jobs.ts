@@ -6,6 +6,7 @@ export type Job = {
   type: JobType;
   brand: string;
   idea_count?: number;
+  format?: string;
   ideas?: number[];
   report?: string;
   created_at: string;

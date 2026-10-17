@@ -4,10 +4,15 @@ import { redirect } from "next/navigation";
 import { brandExists, checkFile, checkSlug, createBrand, savePaste, slugify } from "@/lib/brands";
 import { cancelJob, createJob } from "@/lib/jobs";
 
+function formatOf(form: FormData): string {
+  const f = String(form.get("format") ?? "ugc");
+  return ["ugc", "broll", "static"].includes(f) ? f : "ugc";
+}
+
 export async function newReport(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
   const ideaCount = Math.min(50, Math.max(1, Number(form.get("idea_count")) || 10));
-  await createJob({ type: "report", brand, idea_count: ideaCount });
+  await createJob({ type: "report", brand, idea_count: ideaCount, format: formatOf(form) });
   redirect(`/b/${brand}?queued=report`);
 }
 
@@ -20,7 +25,7 @@ export async function fromIdeas(form: FormData) {
     .map(Number)
     .filter((n) => Number.isInteger(n) && n > 0);
   if (ideas.length === 0) redirect(`/b/${brand}/reports/${report}?pick=1`);
-  await createJob({ type, brand, ideas, report });
+  await createJob({ type, brand, ideas, report, format: formatOf(form) });
   redirect(`/b/${brand}?queued=${type}`);
 }
 

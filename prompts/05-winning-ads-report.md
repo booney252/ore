@@ -53,11 +53,11 @@ Write exactly {{idea_count}} ideas, numbered 1 to {{idea_count}}. Spread them ac
 - **From:** ad #<rank> (<advertiser>, ID)
 - **Type:** 90/10 hook (keep their hook almost word for word, change only what makes it {{brand_name}}) or pattern transfer (reuse their structure, format or mechanism with our message)
 - **What we're borrowing:** the exact element, quoted where it's words
-- **{{brand_name}} version:** the hook line, the first frame, and 2-3 sentences on how the video plays out
+- **{{brand_name}} version:** the hook (the spoken first line for UGC, the first on-screen line for B-roll, the main line on the image for a static), the first frame or the image, and 2-3 sentences on how the ad plays out
 - **Why it should work for us:** one or two sentences tied to the research brief
 - **Compliance:** any line that needs review, or "clear"
 
-Every idea must fit this format: **{{ad_format}}**. A winner in another format still lends its hook, structure or mechanism; translate it. A static winner's headline, graphic idea or copy can become a video's hook, first frame, on-screen text or caption. If the format above allows static ads, an idea from a static winner can be a static too: give the image direction, every word on the image, the primary text and the headline.
+Every idea must be this format (chosen by the reader): **{{ad_format}}**. A winner in another format still lends its hook, structure, mechanism or graphic idea; translate it. A video's hook can become a static's main line; a static's headline or graphic can become a video's hook, first frame or on-screen text.
 
 ## Rules
 - Only use what's in the data. Don't invent stats, testimonials, customer quotes or ad details. Quotes come only from the research brief, word for word.

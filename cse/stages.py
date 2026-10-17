@@ -18,7 +18,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from . import brand as brandlib
-from . import llm
+from . import formats, llm
 
 log = logging.getLogger("cse")
 
@@ -49,6 +49,13 @@ def load_knowledge(folder: Path = KNOWLEDGE_DIR) -> str:
     return "\n\n".join(parts) or "(none yet)"
 
 
+def with_format(ctx: dict, fmt: str) -> dict:
+    """Swap in the format the reader chose for this run (UGC, B-roll or static)."""
+    fmt = formats.check(fmt)
+    return {**ctx, "ad_format": formats.describe(fmt, ctx.get("format_notes", "")),
+            "format_fields": formats.FORMATS[fmt]["fields"]}
+
+
 def brand_context(storage, slug: str) -> dict:
     fields = {}
     if storage.exists(brandlib.brand_key(slug)):
@@ -56,6 +63,7 @@ def brand_context(storage, slug: str) -> dict:
     return {
         "brand_name": fields.get("name") or slug,
         "ad_format": fields.get("ad_format") or DEFAULT_AD_FORMAT,
+        "format_notes": fields.get("ad_format") or "",
         "research_brief": storage.read_text(brandlib.brand_key(slug, "research-brief.md")),
         "knowledge": load_knowledge(),
     }
@@ -128,9 +136,10 @@ def report_candidates(ads: list[dict]) -> list[str]:
 
 
 def run_report(storage, slug: str, idea_count: int, top_n: int = TOP_N,
-               today: date | None = None, client=None) -> str | None:
+               today: date | None = None, client=None, fmt: str = formats.DEFAULT) -> str | None:
     today = today or datetime.now(timezone.utc).date()
-    ctx = brand_context(storage, slug)
+    ctx = with_format(brand_context(storage, slug), fmt)
+    tag = formats.suffix(fmt)
     ads = load_ads(storage, slug)
     top = ranked(ads)[:top_n]
     if not top:
@@ -147,7 +156,7 @@ def run_report(storage, slug: str, idea_count: int, top_n: int = TOP_N,
         "other_ads": "\n".join(format_line(a) for a in others) or "(none)",
         "date": today.isoformat(),
     })
-    step = f"report-{today.isoformat()}-{idea_count}ideas"
+    step = f"report-{today.isoformat()}-{idea_count}ideas{tag}"
     try:
         answer = llm.ask(storage, slug, step, prompt, client=client, max_tokens=64000,
                          effort="high")
@@ -156,9 +165,10 @@ def run_report(storage, slug: str, idea_count: int, top_n: int = TOP_N,
                  p.prompt_key, p.answer_key)
         return None
 
-    out_key = brandlib.brand_key(slug, f"reports/{today.isoformat()}.md")
+    out_key = brandlib.brand_key(slug, f"reports/{today.isoformat()}{tag}.md")
     header = (f"# {ctx['brand_name']} Winning Ads Report, {today.isoformat()}\n\n"
-              f"_Top {len(top)} of {len(ads)} ads pulled. {idea_count} iteration ideas._\n\n")
+              f"_Top {len(top)} of {len(ads)} ads pulled. {idea_count} iteration ideas, "
+              f"{formats.FORMATS[formats.check(fmt)]['label']}._\n\n")
     storage.write_text(out_key, header + answer.strip() + "\n")
     log.info("report: saved %s", out_key)
     return out_key
@@ -193,8 +203,8 @@ def latest_report_key(storage, slug: str) -> str:
 
 
 def run_followup(storage, slug: str, kind: str, numbers: list[int], report_key: str | None = None,
-                 today: date | None = None, client=None) -> str | None:
-    """kind = 'scripts' or 'briefs'."""
+                 today: date | None = None, client=None, fmt: str = formats.DEFAULT) -> str | None:
+    """kind = 'scripts' or 'briefs', written in the chosen format (UGC, B-roll or static)."""
     today = today or datetime.now(timezone.utc).date()
     report_key = report_key or latest_report_key(storage, slug)
     report_md = storage.read_text(report_key)
@@ -210,14 +220,14 @@ def run_followup(storage, slug: str, kind: str, numbers: list[int], report_key: 
             if ad_id in ads and ad_id not in cited:
                 cited.append(ad_id)
 
-    ctx = brand_context(storage, slug)
+    ctx = with_format(brand_context(storage, slug), fmt)
     prompt = llm.render(PROMPTS[kind].read_text(), {
         **ctx,
         "ideas": "\n\n".join(ideas[n] for n in numbers),
         "source_ads": "\n\n".join(format_full(ads[i]) for i in cited) or "(none found)",
         "date": today.isoformat(),
     })
-    tag = "-".join(str(n) for n in numbers)
+    tag = "-".join(str(n) for n in numbers) + formats.suffix(fmt)
     report_date = Path(report_key).stem
     try:
         answer = llm.ask(storage, slug, f"{kind}-{report_date}-ideas-{tag}", prompt,
@@ -230,7 +240,8 @@ def run_followup(storage, slug: str, kind: str, numbers: list[int], report_key: 
     out_key = brandlib.brand_key(slug, f"{kind}/{report_date}-ideas-{tag}.md")
     title = "Scripts" if kind == "scripts" else "Creative briefs"
     header = (f"# {ctx['brand_name']} {title}: ideas {', '.join(map(str, numbers))}\n\n"
-              f"_From the Winning Ads Report of {report_date}._\n\n")
+              f"_{formats.FORMATS[formats.check(fmt)]['label']}. From the Winning Ads Report of "
+              f"{report_date}._\n\n")
     storage.write_text(out_key, header + answer.strip() + "\n")
     log.info("%s: saved %s", kind, out_key)
     return out_key

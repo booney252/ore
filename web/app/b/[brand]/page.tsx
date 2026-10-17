@@ -2,6 +2,7 @@ import Link from "next/link";
 import { newReport } from "@/app/actions";
 import AdCard from "@/app/AdCard";
 import CancelButton from "@/app/CancelButton";
+import FormatPicker, { FORMAT_LABEL } from "@/app/FormatPicker";
 import { docLabel } from "@/app/dates";
 import { loadAds, stats, winners } from "@/lib/ads";
 import { brandName, listDocs, setupState, type Kind } from "@/lib/brands";
@@ -109,11 +110,12 @@ export default async function Overview({
           <p className="mono muted">This week</p>
           <h2>Run the Winning Ads Report</h2>
           <p className="muted">
-            Pulls new ads, takes the top 10 apart line by line, finds the patterns, and writes
-            iteration ideas you can turn into scripts or briefs.
+            Pulls new ads, takes the top 10 apart (videos and statics), finds the patterns, and
+            writes iteration ideas in the format you pick.
           </p>
           <form action={newReport} className="run-form">
             <input type="hidden" name="brand" value={brand} />
+            <FormatPicker />
             <label>
               <span className="mono muted">Ideas</span>
               <input type="number" name="idea_count" min={1} max={50} defaultValue={10} />
@@ -132,13 +134,15 @@ export default async function Overview({
           ) : (
             <ul className="doc-list">
               {latest.map(({ kind, file }) => {
-                const { date, ideas } = docLabel(file);
+                const { date, ideas, format } = docLabel(file);
                 return (
                   <li key={kind + file}>
                     <Link href={`/b/${brand}/${kind}/${file}`}>
                       <span className={`tag ${KIND[kind].tone}`}>{KIND[kind].label}</span>
                       <span>{date}</span>
-                      <span className="muted">{ideas ? `ideas ${ideas}` : ""}</span>
+                      <span className="muted">
+                        {[ideas ? `ideas ${ideas}` : "", format].filter(Boolean).join(" · ")}
+                      </span>
                     </Link>
                   </li>
                 );
@@ -159,6 +163,7 @@ export default async function Overview({
                   {JOB_LABEL[j.type]}
                   {j.ideas ? `, ideas ${j.ideas.join(", ")}` : ""}
                   {j.idea_count ? `, ${j.idea_count} ideas` : ""}
+                  {j.format ? `, ${FORMAT_LABEL[j.format] ?? j.format}` : ""}
                 </span>
                 <span className="mono muted">{new Date(j.created_at).toLocaleString()}</span>
                 {ACTIVE.includes(j.status ?? "") && j.status !== "cancelling" ? (

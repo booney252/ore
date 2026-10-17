@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fromIdeas } from "@/app/actions";
+import FormatPicker from "@/app/FormatPicker";
 import Markdown from "@/app/Markdown";
 import { parseIdeas, readDoc } from "@/lib/brands";
 
@@ -51,6 +52,7 @@ export default async function Report({
                 </label>
               ))}
             </div>
+            <FormatPicker />
             <button type="submit" name="type" value="scripts" className="btn-primary emerald">
               Get scripts
             </button>

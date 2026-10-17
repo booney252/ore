@@ -26,7 +26,9 @@ You are the creative strategist and direct-response copywriter for {{brand_name}
 
 ## Format (hard constraint)
 
-Every brief must be this format: **{{ad_format}}**
+Every brief must be this format (chosen by the reader): **{{ad_format}}**
+
+If an idea was written for another format, translate it: keep what made the source ad win (hook, structure, pacing, the graphic idea) in this format.
 
 ## Write one brief per idea, in the order given
 
@@ -36,16 +38,11 @@ Every brief must be this format: **{{ad_format}}**
 - **Segment + awareness stage:** one segment from the research brief, and the stage you're opening for
 - **Angle:** one line
 - **Winning elements we're using:** a table `| Element | From | How it shows up here |`, at least 3 rows, each citing the ad ID or advertiser it comes from. A gap idea gets a row for the gap and rows for the execution elements it borrows.
-- **Setup:** who's on camera (age, look, role), where, how it's shot, target length (20-60s)
-- **Alternate hooks (2):** each a different first line the creator says AND its first frame
-- **Script:** a table, `| Time | They say | On screen |`, covering 0s to the end. "They say" is the full spoken script, word for word, in natural spoken language (contractions, short sentences, the way a real person talks to their phone). "On screen" is the shot, any cut, and any text overlay word for word. The first row is the main hook.
+{{format_fields}}
 - **CTA:** what they say and what the button is
 - **Customer language to use:** phrases from the research brief, exact
-- **Creator notes:** casting, setting, props, delivery, what to avoid
+- **Creator or design notes:** for video, casting, setting, props, delivery, what to avoid; for a static, design notes: style, fonts, colors, what to avoid
 - **Compliance check:** list every line that makes or implies a claim, and say if it needs review. Confirm it follows every hard rule in the research brief and knowledge.
-
-## Static ideas
-If an idea is a static image ad (only when the format allows statics), the brief is a static spec instead of a video: image direction (what's in it, the focal point, style, layout), every word on the image, the primary text word for word, the headline, the CTA button, and 2 alternate first lines for the primary text.
 
 ## Rules
 

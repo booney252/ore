@@ -40,6 +40,7 @@ Two loops:
    1. **Winning Ads Report** (market research + ideas): the top 10 winning ads, each broken down line by line with visuals; patterns across them; why each works now and, for long-runners, why it still works; then N iteration ideas (the user is asked how many), each tied to a winner as a 90/10 hook or a pattern transfer.
    2. **Scripts**: the user picks ideas from the report and gets full 20-60s UGC scripts.
    3. **Creative briefs**: the user picks ideas and gets full creative strategy briefs for themselves or creators.
+   Each of the three is written in a format the user picks at run time (added 2026-10-17): **UGC video** (creator to camera, 20-60s, word-for-word script), **B-roll** (footage + on-screen text/voiceover, 15-45s, shot list) or **static** (image direction, every word on the image, primary text, headline). Formats live in `cse/formats.py`; the brand's `ad_format` in brand.md stays as notes (creator age, style rules), and the chosen format wins where they conflict. The winning-ads breakdown always covers videos and statics.
 
 The weekly run only processes ads it hasn't seen before, so it stays cheap. It's the part that will later run in the cloud on a schedule.
 

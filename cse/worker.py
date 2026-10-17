@@ -9,9 +9,9 @@ jobs/cancel/<id>.json; the worker checks for it between steps and moves the job 
 jobs/cancelled/. If the marker says remove_brand (a new brand's setup), the brand's files go too.
 
 Job types:
-  report  {brand, idea_count}         full weekly run: ads -> creative -> breakdown -> verify -> report
-  scripts {brand, ideas, report}      scripts for chosen ideas
-  briefs  {brand, ideas, report}      creative briefs for chosen ideas
+  report  {brand, idea_count, format} full weekly run: ads -> creative -> breakdown -> verify -> report
+  scripts {brand, ideas, report, format}  scripts for chosen ideas (format: ugc, broll, static)
+  briefs  {brand, ideas, report, format}  creative briefs for chosen ideas
   setup   {brand}                     new brand: profile, competitors, VOC, ads, research brief
   research {brand}                    refresh: re-pull customer quotes, re-run the 4 research prompts
 """
@@ -35,7 +35,7 @@ class Cancelled(Exception):
 
 
 def run_weekly(storage, slug: str, idea_count: int, pages: int = 1,
-               check=lambda: None) -> str | None:
+               check=lambda: None, fmt: str = "ugc") -> str | None:
     name = stages.brand_context(storage, slug)["brand_name"]
     ads.run(storage, slug, max_pages=pages)
     check()
@@ -45,7 +45,7 @@ def run_weekly(storage, slug: str, idea_count: int, pages: int = 1,
         raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
     check()
     ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
-    return stages.run_report(storage, slug, idea_count)
+    return stages.run_report(storage, slug, idea_count, fmt=fmt)
 
 
 def _move(storage, job: dict, src: str, dst: str, **extra) -> dict:
@@ -68,12 +68,14 @@ def run_job(storage, job: dict) -> str | None:
 
     check()
     if job["type"] == "report":
-        return run_weekly(storage, slug, int(job.get("idea_count") or 10), check=check)
+        return run_weekly(storage, slug, int(job.get("idea_count") or 10), check=check,
+                          fmt=job.get("format") or "ugc")
     if job["type"] in ("scripts", "briefs"):
         report_key = (brandlib.brand_key(slug, f"reports/{job['report']}.md")
                       if job.get("report") else None)
         return stages.run_followup(storage, slug, job["type"],
-                                   [int(n) for n in job["ideas"]], report_key)
+                                   [int(n) for n in job["ideas"]], report_key,
+                                   fmt=job.get("format") or "ugc")
     if job["type"] == "setup":
         if not os.environ.get("ANTHROPIC_API_KEY"):  # web research has no handoff mode
             raise llm.HandoffPending("", "")
