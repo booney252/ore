@@ -140,3 +140,17 @@ def test_own_ads_need_a_page_id():
     from cse.ads import _own_entry
     assert _own_entry({"name": "Solis", "facebook_page_id": ""}) is None
     assert _own_entry({"name": "PeptidePal", "facebook_page_id": "1196136163591767"})["fb_page_id"] == "1196136163591767"
+
+
+def test_save_fields_keeps_ads_added_by_another_run(tmp_path):
+    import json
+    from cse.ads import save_fields
+    from cse.storage import LocalStorage
+    s = LocalStorage(tmp_path)
+    key = "brands/acme/ads.json"
+    s.write_text(key, json.dumps({"ads": {"1": {"ad_id": "1"}}}))
+    # another run adds ad 2 while a long creative run is still holding its old copy
+    s.write_text(key, json.dumps({"ads": {"1": {"ad_id": "1"}, "2": {"ad_id": "2"}}}))
+    save_fields(s, "acme", "1", {"analysis": {"length_s": 9}})
+    ads = json.loads(s.read_text(key))["ads"]
+    assert ads["1"]["analysis"] == {"length_s": 9} and "2" in ads

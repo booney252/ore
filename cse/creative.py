@@ -19,6 +19,7 @@ import tempfile
 from pathlib import Path
 
 from . import brand as brandlib
+from .ads import save_fields
 
 log = logging.getLogger("cse")
 
@@ -149,6 +150,7 @@ def run(storage, slug: str, limit: int | None = None, per_brand: int | None = No
                 analysis["frames"] = frame_keys
             ad["analysis"] = analysis
             ad.pop("analysis_error", None)
+            save_fields(storage, slug, ad["ad_id"], {"analysis": analysis}, drop=("analysis_error",))
             done += 1
             log.info("  %s %-20s %5.1fs  %2d cuts  hook: %s", ad["ad_id"], ad["brand"][:20],
                      analysis["length_s"], analysis["cut_count"], analysis["hook_line"][:60])
@@ -156,7 +158,7 @@ def run(storage, slug: str, limit: int | None = None, per_brand: int | None = No
             ad["analysis_error"] = str(e)[:200]
             failed += 1
             log.warning("  analysis failed for %s: %s", ad["ad_id"], ad["analysis_error"])
-        storage.write_text(ads_key, json.dumps(doc, indent=2) + "\n")  # save progress per ad
+            save_fields(storage, slug, ad["ad_id"], {"analysis_error": ad["analysis_error"]})
 
     log.info("creative: %d analyzed, %d failed, %d still to do",
              done, failed, len([a for a in doc["ads"].values()

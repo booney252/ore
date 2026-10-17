@@ -11,6 +11,7 @@ from pathlib import Path
 
 from . import brand as brandlib
 from . import llm
+from .ads import save_fields
 
 log = logging.getLogger("cse")
 
@@ -75,6 +76,8 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
                              build_prompt(template, ad, brand_name), image_keys=frames,
                              client=client, max_tokens=8000, effort="medium")
             ad["breakdown"] = llm.parse_json(answer)
+            save_fields(storage, slug, ad["ad_id"], {"breakdown": ad["breakdown"]},
+                        drop=("breakdown_error",))
             done += 1
         except llm.HandoffPending as p:
             waiting.append(p.prompt_key)
@@ -82,7 +85,7 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
             ad["breakdown_error"] = str(e)[:200]
             failed += 1
             log.warning("  breakdown failed for %s: %s", ad["ad_id"], e)
-    storage.write_text(ads_key, json.dumps(doc, indent=2) + "\n")
+            save_fields(storage, slug, ad["ad_id"], {"breakdown_error": ad["breakdown_error"]})
 
     log.info("breakdown: %d done, %d failed, %d waiting on handoff", done, failed, len(waiting))
     if waiting:

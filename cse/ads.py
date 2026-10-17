@@ -182,6 +182,20 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
     return summary
 
 
+def save_fields(storage, slug: str, ad_id: str, fields: dict, drop: tuple = ()) -> None:
+    """Re-read ads.json and change only this ad. Long runs (creative, breakdown) save this way,
+    so they never write back an old copy over ads that another run added in the meantime."""
+    key = brandlib.brand_key(slug, "ads.json")
+    doc = json.loads(storage.read_text(key))
+    ad = doc["ads"].get(ad_id)
+    if ad is None:
+        return
+    ad.update(fields)
+    for f in drop:
+        ad.pop(f, None)
+    storage.write_text(key, json.dumps(doc, indent=2) + "\n")
+
+
 def verify(storage, slug: str, ad_ids: list[str], source=None, today: date | None = None) -> dict:
     """Re-check ads in the Ad Library before they're cited. Marks removed ones and rescores."""
     today = today or datetime.now(timezone.utc).date()
