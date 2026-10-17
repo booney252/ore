@@ -42,6 +42,16 @@ def brand_name(storage: Storage, slug: str) -> str:
     return slug
 
 
+def cmd_verify(storage: Storage, slug: str, top: int) -> None:
+    """Check the ads the briefs will cite (top by score + own) before citing them."""
+    import json
+    from datetime import datetime, timezone
+
+    all_ads = json.loads(storage.read_text(brandlib.brand_key(slug, "ads.json")))["ads"].values()
+    picked = briefs.pick_ads(list(all_ads), datetime.now(timezone.utc).date())[:top]
+    ads.verify(storage, slug, [a["ad_id"] for a in picked])
+
+
 def cmd_seed(storage: Storage, slug: str) -> int:
     root = Path("seed") / brandlib.validate_slug(slug)
     if not root.is_dir():
@@ -89,6 +99,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pages", type=int, default=1)
     p.add_argument("--count", type=int, default=6)
 
+    p = sub.add_parser("verify", help="re-check top ads are still in the Ad Library (1 credit each)")
+    p.add_argument("brand")
+    p.add_argument("--top", type=int, default=30)
+
     p = sub.add_parser("seed", help="upload seed/<brand>/ files into storage")
     p.add_argument("brand")
 
@@ -128,7 +142,11 @@ def main(argv: list[str] | None = None) -> int:
             if breakdown.run(storage, args.brand, name)["waiting"]:
                 log.info("weekly: paused for handoff breakdowns; re-run `weekly` when answered.")
                 return 0
+            cmd_verify(storage, args.brand, 30)
             briefs.run(storage, args.brand, name, count=args.count)
+            return 0
+        if args.command == "verify":
+            cmd_verify(storage, args.brand, args.top)
             return 0
         if args.command == "seed":
             return cmd_seed(storage, args.brand)

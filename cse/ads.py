@@ -172,3 +172,39 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
              "%(media_downloaded)d media downloaded, %(media_failed)d failed, "
              "%(credits_used)s credits used", summary)
     return summary
+
+
+def verify(storage, slug: str, ad_ids: list[str], source=None, today: date | None = None) -> dict:
+    """Re-check ads in the Ad Library before they're cited. Marks removed ones and rescores."""
+    today = today or datetime.now(timezone.utc).date()
+    if source is None:
+        from .adsource import ScrapeCreatorsSource
+
+        source = ScrapeCreatorsSource()
+    ads_key = brandlib.brand_key(slug, "ads.json")
+    doc = json.loads(storage.read_text(ads_key))
+    removed = changed = 0
+    for ad_id in ad_ids:
+        ad = doc["ads"].get(ad_id)
+        if not ad or ad.get("removed_from_library"):
+            continue
+        live = source.get_ad(ad_id)
+        if live is None:
+            ad["removed_from_library"] = today.isoformat()
+            if ad.get("is_active"):
+                ad["is_active"], ad["end_date"] = False, today.isoformat()
+            removed += 1
+            log.info("  %s %s: removed from the Ad Library", ad_id, ad.get("brand"))
+        elif live["is_active"] != ad.get("is_active"):
+            ad["is_active"] = live["is_active"]
+            if not live["is_active"]:
+                ad["end_date"] = live["end_date"] or today.isoformat()
+            changed += 1
+            log.info("  %s %s: now %s", ad_id, ad.get("brand"),
+                     "active" if live["is_active"] else "inactive")
+        ad["days_running"] = days_running(ad, today)
+        ad["score"], ad["score_why"] = winner_score(ad, today)
+    storage.write_text(ads_key, json.dumps(doc, indent=2) + "\n")
+    log.info("verify: %d checked, %d removed, %d changed status, %s credits used",
+             len(ad_ids), removed, changed, getattr(source, "credits_used", None))
+    return {"removed": removed, "changed": changed}

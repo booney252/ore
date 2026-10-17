@@ -31,7 +31,10 @@ def winner_score(ad: dict, today: date) -> tuple[int, str]:
     score += 25 if active else 0
     score += (min(versions, FULL_VERSIONS) - 1) / (FULL_VERSIONS - 1) * 25
 
-    why = [f"Running {days} day{'s' if days != 1 else ''}",
-           "still active" if active else f"stopped {ad.get('end_date')}",
+    if ad.get("removed_from_library"):
+        status = f"removed from the Ad Library {ad['removed_from_library']}"
+    else:
+        status = "still active" if active else f"stopped {ad.get('end_date')}"
+    why = [f"Running {days} day{'s' if days != 1 else ''}", status,
            f"{versions} version{'s' if versions != 1 else ''}"]
     return round(score), ", ".join(why) + "."

@@ -94,6 +94,19 @@ class ScrapeCreatorsSource:
         self.credits_used += int(data.get("credits_charged") or 1)
         return data
 
+    def get_ad(self, ad_id: str) -> dict | None:
+        """Current state of one ad, or None if it's no longer in the Ad Library."""
+        resp = self.session.get(f"{self.BASE}/ad", params={"id": ad_id, "trim": "true"},
+                                headers={"x-api-key": self.api_key}, timeout=60)
+        if resp.status_code == 404:
+            self.credits_used += 1
+            return None
+        if resp.status_code != 200:
+            raise AdSourceError(f"ScrapeCreators ad returned {resp.status_code}: {resp.text[:200]}")
+        data = resp.json()
+        self.credits_used += int(data.get("credits_charged") or 1)
+        return {"is_active": bool(data.get("isActive")), "end_date": _date(data.get("endDate"))}
+
     def find_pages(self, name: str) -> list[dict]:
         data = self._get("search/companies", {"query": name})
         return [{"page_id": str(r.get("page_id")), "name": r.get("name") or "",

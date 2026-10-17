@@ -60,7 +60,9 @@ def format_ad(ad: dict, today: date) -> str:
     return "\n".join([
         f"### Ad {ad['ad_id']} | {who}{new}",
         f"- Score {ad.get('score')}/100: {ad.get('score_why')}",
-        f"- Link: {ad.get('ad_library_url')}",
+        (f"- REMOVED from the Ad Library on {ad['removed_from_library']}: don't link it; "
+         "cite it by ID as 'removed'" if ad.get("removed_from_library")
+         else f"- Link: {ad.get('ad_library_url')}"),
         f"- {ad.get('media_type')}, {a.get('length_s', 0)}s, {a.get('cuts_per_second', 0)} cuts/sec",
         f"- Primary text: {(ad.get('body') or '')[:500]}",
         f"- Breakdown: {json.dumps(b, ensure_ascii=False)}",

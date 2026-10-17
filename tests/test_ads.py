@@ -114,3 +114,23 @@ def test_run_pulls_scores_downloads_and_is_incremental(tmp_path):
     assert s2["new"] == 0 and session.calls == 1  # no re-download
     again = json.loads(storage.read_text("brands/pp/ads.json"))["ads"]["111"]
     assert again["breakdown"] == {"hook": "kept"}
+
+
+class VerifySource:
+    credits_used = 0
+
+    def get_ad(self, ad_id):
+        return None if ad_id == "gone" else {"is_active": False, "end_date": "2026-10-15"}
+
+
+def test_verify_marks_removed_and_stopped(tmp_path):
+    storage = LocalStorage(tmp_path)
+    base = {"start_date": "2026-08-01", "is_active": True, "versions": 1, "brand": "X"}
+    storage.write_text("brands/pp/ads.json", json.dumps({"ads": {
+        "gone": {**base, "ad_id": "gone"}, "off": {**base, "ad_id": "off"}}}))
+    out = ads.verify(storage, "pp", ["gone", "off"], source=VerifySource(), today=TODAY)
+    assert out == {"removed": 1, "changed": 1}
+    saved = json.loads(storage.read_text("brands/pp/ads.json"))["ads"]
+    assert saved["gone"]["removed_from_library"] == "2026-10-16"
+    assert "removed from the Ad Library 2026-10-16" in saved["gone"]["score_why"]
+    assert saved["off"]["is_active"] is False and saved["off"]["end_date"] == "2026-10-15"
