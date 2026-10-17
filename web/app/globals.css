@@ -1179,3 +1179,19 @@ select {
   .add-comp-foot { flex-direction: column; align-items: stretch; }
   .comp-remove { opacity: 1; }
 }
+
+/* ---------- Own idea ---------- */
+
+.or-rule { display: flex; align-items: center; gap: 14px; margin: 10px 0 2px; color: var(--muted); }
+.or-rule::before, .or-rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.or-rule span { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.own-idea { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 24px; align-items: start; }
+.own-idea > div { display: grid; gap: 8px; }
+.own-idea h2 { font-size: 1.2rem; }
+.own-idea .muted { font-size: 0.88rem; }
+.own-idea textarea { min-height: 140px; }
+.own-idea:has(textarea:not(:placeholder-shown)) {
+  border-color: rgba(25, 209, 139, 0.45);
+  box-shadow: 0 0 0 1px rgba(25, 209, 139, 0.2), 0 18px 40px -24px var(--emerald-glow);
+}
+@media (max-width: 860px) { .own-idea { grid-template-columns: 1fr; } }

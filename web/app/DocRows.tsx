@@ -21,6 +21,7 @@ export default function DocRows({
         const ads = f.match(/-ads-([\d-]+?)(?:-x\d|-broll|-static|-its|$)/)?.[1];
         const its = f.match(/-its-([\d-]+)$/)?.[1];
         const detail = [
+          /-idea-[0-9a-f]{6}/.test(f) ? "your idea" : "",
           ads ? `winners #${ads.split("-").join(", #")}` : "",
           its ? `iterations ${its.split("-").join(", ")}` : "",
           base.endsWith("/reports") ? "" : format,

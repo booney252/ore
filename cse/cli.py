@@ -104,11 +104,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("iterations", help="turn winners from a report into iterations for the brand")
     p.add_argument("brand")
-    p.add_argument("--ads", required=True, help="winner ranks from the report, e.g. 1,3,5-7")
+    p.add_argument("--ads", default="", help="winner ranks from the report, e.g. 1,3,5-7")
+    p.add_argument("--idea", help="your own idea to build iterations from (winners optional)")
     p.add_argument("--report", help="report date YYYY-MM-DD (default: latest)")
     p.add_argument("--format", choices=list(formats.FORMATS),
                    help="ugc, broll or static (asks if not given)")
-    p.add_argument("--per-ad", type=int, default=1, help="iterations per winner (default 1)")
+    p.add_argument("--per-ad", type=int, default=1,
+                   help="iterations per winner, or per idea with --idea (default 1)")
 
     p = sub.add_parser("briefs", help="turn chosen iterations into full creative briefs")
     p.add_argument("brand")
@@ -169,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
             report_key = (brandlib.brand_key(args.brand, f"reports/{args.report}.md")
                           if args.report else None)
             stages.run_iterations(storage, args.brand, report_key, stages.parse_numbers(args.ads),
-                                  fmt=ask_format(args.format), per_ad=args.per_ad)
+                                  fmt=ask_format(args.format), per_ad=args.per_ad, idea=args.idea)
             return 0
         if args.command == "briefs":
             its_key = (brandlib.brand_key(args.brand, f"iterations/{args.iterations}.md")

@@ -27,9 +27,18 @@ export async function newIterations(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
   const report = checkFile(String(form.get("report")));
   const ads = numbers(form, "ad");
-  if (ads.length === 0) redirect(`/b/${brand}/iterations?report=${report}&pick=1`);
+  const idea = String(form.get("idea") ?? "").trim().slice(0, 2000);
+  if (ads.length === 0 && !idea) redirect(`/b/${brand}/iterations?report=${report}&pick=1`);
   const perAd = Math.min(3, Math.max(1, Number(form.get("per_ad")) || 1));
-  await createJob({ type: "iterations", brand, report, ads, format: formatOf(form), per_ad: perAd });
+  await createJob({
+    type: "iterations",
+    brand,
+    report,
+    ads,
+    format: formatOf(form),
+    per_ad: perAd,
+    ...(idea && { idea }),
+  });
   redirect(`/b/${brand}/iterations?queued=1`);
 }
 

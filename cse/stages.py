@@ -12,6 +12,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import re
@@ -26,6 +27,7 @@ log = logging.getLogger("cse")
 PROMPTS = {
     "report": Path("prompts/05-winning-ads-report.md"),
     "iterations": Path("prompts/06-iterations.md"),
+    "own_idea": Path("prompts/06-iterations-own-idea.md"),
     "briefs": Path("prompts/07-creative-briefs.md"),
 }
 KNOWLEDGE_DIR = Path("knowledge")
@@ -209,10 +211,16 @@ def sections(md: str, heading: str, numbers: list[int], hashes: str = "{2,4}") -
 
 def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
                    fmt: str = formats.DEFAULT, per_ad: int = 1, today: date | None = None,
-                   client=None) -> str | None:
-    """Turn the report's winners #<ranks> into iterations for the brand, in the chosen format."""
+                   client=None, idea: str | None = None) -> str | None:
+    """Turn the report's winners #<ranks> into iterations for the brand, in the chosen format.
+
+    With `idea`, the reader's own idea leads instead: `per_ad` iterations of it, built from the
+    whole report and research brief, with any picked winners used as extra inspiration."""
     today = today or datetime.now(timezone.utc).date()
     fmt = formats.check(fmt)
+    idea = (idea or "").strip()
+    if not ranks and not idea:
+        raise llm.LLMError("pick at least one winner or write your own idea")
     report_key = report_key or latest_key(storage, slug, "reports")
     report_md = storage.read_text(report_key)
     index_key = report_key[:-3] + ".json"
@@ -224,20 +232,34 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
         raise llm.LLMError(f"{report_key} has no ad(s) ranked {missing}")
 
     ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
-    diagnosis = sections(report_md, r"(\d+)\.", ranks, hashes="{4}")
     ctx = with_format(brand_context(storage, slug), fmt)
-    prompt = llm.render(PROMPTS["iterations"].read_text(), {
-        **ctx,
-        "per_ad": per_ad,
-        "total": per_ad * len(ranks),
-        "report_sections": "\n\n".join(diagnosis.get(r, f"(ad #{r}: no section found)")
-                                        for r in ranks),
-        "source_ads": "\n\n".join(format_full(ads[by_rank[r]], r) for r in ranks
-                                   if by_rank[r] in ads),
-        "date": today.isoformat(),
-    })
-    stem = (f"{Path(report_key).stem}-ads-{'-'.join(map(str, ranks))}"
-            f"{f'-x{per_ad}' if per_ad > 1 else ''}{formats.suffix(fmt)}")
+    source_ads = "\n\n".join(format_full(ads[by_rank[r]], r) for r in ranks
+                              if by_rank[r] in ads)
+    picks = f"-ads-{'-'.join(map(str, ranks))}" if ranks else ""
+    if idea:
+        prompt = llm.render(PROMPTS["own_idea"].read_text(), {
+            **ctx,
+            "idea": idea,
+            "total": per_ad,
+            "report": report_md,
+            "source_ads": source_ads or "(none picked)",
+            "date": today.isoformat(),
+        })
+        tag = hashlib.sha1(idea.encode()).hexdigest()[:6]
+        stem = f"{Path(report_key).stem}-idea-{tag}{picks}{f'-x{per_ad}' if per_ad > 1 else ''}"
+    else:
+        diagnosis = sections(report_md, r"(\d+)\.", ranks, hashes="{4}")
+        prompt = llm.render(PROMPTS["iterations"].read_text(), {
+            **ctx,
+            "per_ad": per_ad,
+            "total": per_ad * len(ranks),
+            "report_sections": "\n\n".join(diagnosis.get(r, f"(ad #{r}: no section found)")
+                                            for r in ranks),
+            "source_ads": source_ads,
+            "date": today.isoformat(),
+        })
+        stem = f"{Path(report_key).stem}{picks}{f'-x{per_ad}' if per_ad > 1 else ''}"
+    stem += formats.suffix(fmt)
     try:
         answer = llm.ask(storage, slug, f"iterations-{stem}", prompt, client=client,
                          max_tokens=64000, effort="high")
@@ -247,9 +269,13 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
         return None
 
     out_key = brandlib.brand_key(slug, f"iterations/{stem}.md")
-    header = (f"# {ctx['brand_name']} iterations: {formats.FORMATS[fmt]['label']}\n\n"
-              f"_From winners #{', #'.join(map(str, ranks))} of the Winning Ads Report of "
-              f"{Path(report_key).stem}._\n\n")
+    source = (f"winners #{', #'.join(map(str, ranks))} of " if ranks else "") + \
+        f"the Winning Ads Report of {Path(report_key).stem}"
+    header = f"# {ctx['brand_name']} iterations: {formats.FORMATS[fmt]['label']}\n\n"
+    if idea:
+        header += "**Your idea:** " + " ".join(idea.split()) + f"\n\n_Built with {source}._\n\n"
+    else:
+        header += f"_From {source}._\n\n"
     storage.write_text(out_key, header + answer.strip() + "\n")
     log.info("iterations: saved %s", out_key)
     return out_key

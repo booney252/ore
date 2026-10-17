@@ -37,9 +37,9 @@ export default async function Iterations({
         <p className="mono muted">Step 2 · {name}</p>
         <h1 className="display tone-emerald">Iterations</h1>
         <p className="lede">
-          Pick winners from a report and a format. Each one comes back as an iteration for {name}: a
-          word-for-word script for UGC, a shot list with on-screen text for B-roll, or the image and
-          copy for a static.
+          Pick winners from a report, or bring your own idea, and choose a format. You get iterations
+          for {name}: a word-for-word script for UGC, a shot list with on-screen text for B-roll, or
+          the image and copy for a static.
         </p>
       </header>
 
@@ -88,8 +88,8 @@ export default async function Iterations({
             </Link>
           </div>
 
-          <p className="mono muted pick-label">1 · Pick the winners</p>
-          {pick && <p className="error">Pick at least one winner.</p>}
+          <p className="mono muted pick-label">1 · Pick winners to iterate on</p>
+          {pick && <p className="error">Pick a winner or write your own idea.</p>}
           {top ? (
             <div className="pick-grid">
               {top
@@ -102,14 +102,39 @@ export default async function Iterations({
             <p className="empty">This report has no ranked winners list. Re-run the report to pick from it.</p>
           )}
 
+          <div className="or-rule" aria-hidden="true">
+            <span>or</span>
+          </div>
+
+          <section className="panel own-idea">
+            <div>
+              <p className="mono muted">Bring your own idea</p>
+              <h2>Your idea, built on what's winning</h2>
+              <p className="muted">
+                Took something from the report? Mix it with what you want to make. It's written from
+                your idea, the whole report and your research brief. Winners you tick above are used
+                as extra inspiration; leave them all unticked to start from just your idea.
+              </p>
+            </div>
+            <label className="field">
+              <span className="sr-only">Your idea</span>
+              <textarea
+                name="idea"
+                rows={5}
+                maxLength={2000}
+                placeholder={`e.g. "Nobody in the report shows the morning. A guy's alarm goes off at 6, he reaches for his phone out of habit and it's locked until he's up. Use the 'you can't cheat this one' angle, but about the morning."`}
+              />
+            </label>
+          </section>
+
           <div className="iterate-foot panel">
             <FormatPicker label="2 · Pick the format" />
             <label className="per-ad">
-              <span className="mono muted">Per winner</span>
+              <span className="mono muted">How many</span>
               <select name="per_ad" defaultValue="1">
-                <option value="1">1 iteration</option>
-                <option value="2">2 iterations</option>
-                <option value="3">3 iterations</option>
+                <option value="1">1 each</option>
+                <option value="2">2 each</option>
+                <option value="3">3 each</option>
               </select>
             </label>
             <button type="submit" className="btn-primary emerald" disabled={!top}>

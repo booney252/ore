@@ -165,3 +165,24 @@ def test_report_cap_grows_with_few_advertisers(brand):
     stages.run_report(storage, "pp", today=TODAY)
     prompt = storage.read_text("brands/pp/handoff/report-2026-10-17.prompt.md")
     assert prompt.count("\n### #") == 10  # 2 advertisers fill all 10 slots
+
+
+def test_iterations_from_your_own_idea(brand):
+    storage = brand
+    storage.write_text("brands/pp/reports/2026-10-17.md",
+                       "#### 1. X: \"hook\"\n- why\n\n### 3. Patterns\n- Nobody shows the morning.\n")
+    storage.write_text("brands/pp/reports/2026-10-17.json",
+                       json.dumps({"top": [{"rank": 1, "ad_id": "2922821464729858"}]}))
+    idea = "A guy films his 6am alarm going off, then his phone locking."
+    assert stages.run_iterations(storage, "pp", None, [], fmt="broll", per_ad=2, idea=idea,
+                                 today=TODAY) is None
+    [key] = [k for k in storage.list("brands/pp/handoff/") if "idea" in k]
+    prompt = storage.read_text(key)
+    assert idea in prompt and "Nobody shows the morning." in prompt and "(none picked)" in prompt
+    assert "| Shot |" in prompt and "{{" not in prompt and "1 to 2" in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Iteration 1: 6am")
+    out = stages.run_iterations(storage, "pp", None, [], fmt="broll", per_ad=2, idea=idea, today=TODAY)
+    assert "-idea-" in out and out.endswith("-x2-broll.md")
+    assert "**Your idea:** A guy films" in storage.read_text(out)
+    with pytest.raises(llm.LLMError):
+        stages.run_iterations(storage, "pp", None, [], today=TODAY)

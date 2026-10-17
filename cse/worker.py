@@ -10,7 +10,8 @@ jobs/cancelled/. If the marker says remove_brand (a new brand's setup), the bran
 
 Job types:
   report      {brand}                          weekly run: ads -> creative -> breakdown -> verify -> report
-  iterations  {brand, report, ads, format, per_ad}  winners #ads of a report -> iterations
+  iterations  {brand, report, ads, format, per_ad, idea}  winners #ads of a report, and/or
+                                               your own idea -> iterations
                                                (format: ugc, broll, static)
   briefs      {brand, iterations, numbers}     chosen iterations -> creative briefs
   setup   {brand}                     new brand: profile, competitors, VOC, ads, research brief
@@ -72,9 +73,10 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "iterations":
         report_key = (brandlib.brand_key(slug, f"reports/{job['report']}.md")
                       if job.get("report") else None)
-        return stages.run_iterations(storage, slug, report_key, [int(n) for n in job["ads"]],
+        return stages.run_iterations(storage, slug, report_key,
+                                     [int(n) for n in job.get("ads") or []],
                                      fmt=job.get("format") or "ugc",
-                                     per_ad=int(job.get("per_ad") or 1))
+                                     per_ad=int(job.get("per_ad") or 1), idea=job.get("idea"))
     if job["type"] == "briefs":
         return stages.run_briefs(storage, slug,
                                  brandlib.brand_key(slug, f"iterations/{job['iterations']}.md"),

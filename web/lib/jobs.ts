@@ -9,6 +9,7 @@ export type Job = {
   report?: string;
   ads?: number[];
   per_ad?: number;
+  idea?: string;
   iterations?: string;
   numbers?: number[];
   created_at: string;

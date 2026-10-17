@@ -13,6 +13,7 @@ const ACTIVE = ["pending", "running", "waiting"];
 
 function what(j: Job): string {
   const parts = [LABEL[j.type] ?? j.type];
+  if (j.idea) parts.push(`your idea: “${j.idea.slice(0, 60)}${j.idea.length > 60 ? "…" : ""}”`);
   if (j.ads?.length) parts.push(`winners #${j.ads.join(", #")}`);
   if (j.numbers?.length) parts.push(`iterations ${j.numbers.join(", ")}`);
   if (j.format) parts.push(FORMAT_LABEL[j.format] ?? j.format);
