@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import LogOut from "@/app/LogOut";
 import Wordmark from "@/app/Wordmark";
-import { brandName, checkSlug, listDocs } from "@/lib/brands";
+import { checkSlug, listBrands, listDocs } from "@/lib/brands";
+import BrandSwitcher from "./BrandSwitcher";
 import Nav from "./Nav";
 
 export default async function BrandLayout({
@@ -18,8 +19,8 @@ export default async function BrandLayout({
   } catch {
     notFound();
   }
-  const [name, reports, iterations, briefs] = await Promise.all([
-    brandName(brand),
+  const [brands, reports, iterations, briefs] = await Promise.all([
+    listBrands(),
     listDocs(brand, "reports"),
     listDocs(brand, "iterations"),
     listDocs(brand, "briefs"),
@@ -30,10 +31,7 @@ export default async function BrandLayout({
     <div className="shell">
       <aside className="rail">
         <Wordmark />
-        <div className="rail-brand">
-          <span className="mono muted">Brand</span>
-          <strong>{name}</strong>
-        </div>
+        <BrandSwitcher current={brand} brands={brands} />
         <Nav brand={brand} counts={counts} />
         <div className="rail-foot">
           <Link href="/">All brands</Link>
