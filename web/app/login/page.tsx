@@ -1,3 +1,5 @@
+import Gem from "../Gem";
+
 export default async function Login({
   searchParams,
 }: {
@@ -5,16 +7,17 @@ export default async function Login({
 }) {
   const { wrong } = await searchParams;
   return (
-    <main className="narrow">
-      <h1>Ore</h1>
-      <p className="muted">Creative strategy engine</p>
-      <form method="post" action="/api/login" className="card stack">
+    <main className="login">
+      <Gem kind="diamond" size={92} />
+      <h1 className="gem-text">ORE</h1>
+      <p className="lede">Find what's winning in paid social. Turn it into ads.</p>
+      <form method="post" action="/api/login" className="card stack" data-gem="diamond">
         <label>
-          Password
+          <span className="label">Password</span>
           <input type="password" name="password" autoFocus required />
         </label>
         {wrong && <p className="error">That password didn't work.</p>}
-        <button type="submit">Sign in</button>
+        <button type="submit">Enter</button>
       </form>
     </main>
   );

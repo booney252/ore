@@ -22,7 +22,7 @@ export default async function Doc({
   return (
     <main>
       <p className="crumbs">
-        <Link href="/">Brands</Link> / <Link href={`/b/${brand}`}>{await brandName(brand)}</Link> /
+        <Link href="/">Brands</Link> / <Link href={`/b/${brand}`}>{await brandName(brand)}</Link>
       </p>
       <Markdown text={md} />
     </main>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fromIdeas } from "@/app/actions";
+import Gem from "@/app/Gem";
 import Markdown from "@/app/Markdown";
 import { brandName, parseIdeas, readDoc } from "@/lib/brands";
 
@@ -29,33 +30,40 @@ export default async function Report({
     <main className="with-side">
       <div>
         <p className="crumbs">
-          <Link href="/">Brands</Link> / <Link href={`/b/${brand}`}>{name}</Link> /
+          <Link href="/">Brands</Link> / <Link href={`/b/${brand}`}>{name}</Link>
         </p>
         <Markdown text={md} />
       </div>
-      <aside className="card side">
-        <h2>Turn ideas into ads</h2>
+      <aside className="card side" data-gem="diamond">
+        <div className="hero" style={{ marginBottom: 6, gap: 12 }}>
+          <Gem kind="diamond" size={30} />
+          <h2>Turn ideas into ads</h2>
+        </div>
         {ideas.length === 0 ? (
-          <p className="muted">No numbered ideas found in this report.</p>
+          <p className="empty">No numbered ideas in this report.</p>
         ) : (
           <form action={fromIdeas} className="stack">
             <input type="hidden" name="brand" value={brand} />
             <input type="hidden" name="report" value={date} />
-            {pick && <p className="error">Tick at least one idea.</p>}
+            <p className="muted" style={{ margin: 0 }}>
+              Pick the ideas you want to make.
+            </p>
+            {pick && <p className="error" style={{ margin: 0 }}>Pick at least one idea.</p>}
             <div className="checks">
               {ideas.map((i) => (
                 <label key={i.n} className="check">
                   <input type="checkbox" name="idea" value={i.n} />
                   <span>
-                    <strong>{i.n}.</strong> {i.title}
+                    <strong>{i.n}</strong>
+                    {i.title}
                   </span>
                 </label>
               ))}
             </div>
-            <button type="submit" name="type" value="scripts">
+            <button type="submit" name="type" value="scripts" data-gem="emerald">
               Get scripts
             </button>
-            <button type="submit" name="type" value="briefs" className="secondary">
+            <button type="submit" name="type" value="briefs" data-gem="ruby">
               Get creative briefs
             </button>
           </form>
