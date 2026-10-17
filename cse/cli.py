@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, competitors, creative, llm, stages
+from . import ads, breakdown, competitors, creative, llm, setup, stages
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -83,6 +83,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("competitors", help="build the 3-ring competitor map").add_argument("brand")
 
+    sub.add_parser("setup", help="new brand: draft brand.md by research, then map competitors"
+                   ).add_argument("brand")
+
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1, help="result pages per brand (1 credit each)")
@@ -134,6 +137,9 @@ def main(argv: list[str] | None = None) -> int:
         storage = from_env()
         if args.command == "init":
             return cmd_init(storage, args.brand, args.force)
+        if args.command == "setup":
+            setup.run(storage, args.brand)
+            return 0
         if args.command == "competitors":
             competitors.run(storage, args.brand)
             return 0

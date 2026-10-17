@@ -8,16 +8,18 @@ Job types:
   report  {brand, idea_count}         full weekly run: ads -> creative -> breakdown -> verify -> report
   scripts {brand, ideas, report}      scripts for chosen ideas
   briefs  {brand, ideas, report}      creative briefs for chosen ideas
+  setup   {brand}                     new brand: draft brand.md by research, map competitors
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, llm, stages
+from . import ads, breakdown, creative, llm, setup, stages
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -49,6 +51,10 @@ def run_job(storage, job: dict) -> str | None:
                       if job.get("report") else None)
         return stages.run_followup(storage, slug, job["type"],
                                    [int(n) for n in job["ideas"]], report_key)
+    if job["type"] == "setup":
+        if not os.environ.get("ANTHROPIC_API_KEY"):  # web research has no handoff mode
+            raise llm.HandoffPending("", "")
+        return setup.run(storage, slug)
     raise ValueError(f"unknown job type {job['type']!r}")
 
 

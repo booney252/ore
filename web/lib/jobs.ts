@@ -1,6 +1,6 @@
 import { listKeys, readText, writeText } from "./storage";
 
-export type JobType = "report" | "scripts" | "briefs";
+export type JobType = "report" | "scripts" | "briefs" | "setup";
 export type Job = {
   id: string;
   type: JobType;

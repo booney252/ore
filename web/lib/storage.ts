@@ -1,6 +1,7 @@
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
   GetObjectCommand,
+  HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
@@ -61,4 +62,15 @@ export async function signedUrl(key: string, seconds = 3600): Promise<string> {
   return getSignedUrl(client, new GetObjectCommand({ Bucket: bucket, Key: key }), {
     expiresIn: seconds,
   });
+}
+
+export async function exists(key: string): Promise<boolean> {
+  try {
+    await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
+    return true;
+  } catch (err) {
+    const e = err as { name?: string; $metadata?: { httpStatusCode?: number } };
+    if (e.name === "NotFound" || e.$metadata?.httpStatusCode === 404) return false;
+    throw err;
+  }
 }

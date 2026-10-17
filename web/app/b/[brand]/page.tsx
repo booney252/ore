@@ -3,7 +3,7 @@ import { newReport } from "@/app/actions";
 import AdCard from "@/app/AdCard";
 import { docLabel } from "@/app/dates";
 import { loadAds, stats, winners } from "@/lib/ads";
-import { brandName, listDocs, type Kind } from "@/lib/brands";
+import { brandName, listDocs, setupState, type Kind } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,12 @@ const KIND: Record<Kind, { label: string; tone: string }> = {
   scripts: { label: "Scripts", tone: "emerald" },
   briefs: { label: "Briefs", tone: "ruby" },
 };
-const JOB_LABEL = { report: "Winning Ads Report", scripts: "Scripts", briefs: "Creative briefs" };
+const JOB_LABEL = {
+  report: "Winning Ads Report",
+  scripts: "Scripts",
+  briefs: "Creative briefs",
+  setup: "Brand setup",
+};
 
 export default async function Overview({
   params,
@@ -25,7 +30,8 @@ export default async function Overview({
   const { brand } = await params;
   const { queued } = await searchParams;
   const kinds = Object.keys(KIND) as Kind[];
-  const [name, ads, jobs, ...docs] = await Promise.all([
+  const [setup, name, ads, jobs, ...docs] = await Promise.all([
+    setupState(brand),
     brandName(brand),
     loadAds(brand),
     listJobs(brand, 6),
@@ -52,30 +58,36 @@ export default async function Overview({
         </p>
       )}
 
-      <dl className="stats">
-        <Stat n={s.total} label="Ads tracked" />
-        <Stat n={s.advertisers} label="Advertisers" />
-        <Stat n={s.brokenDown} label="Taken apart" />
-        <Stat n={s.active} label="Still running" />
-      </dl>
+      {!setup.ready && <SetupSteps state={setup} />}
 
-      <section className="block">
-        <div className="block-head">
-          <h2>Winning right now</h2>
-          <Link href={`/b/${brand}/ads`} className="link-quiet">
-            All winners →
-          </Link>
-        </div>
-        {top.length === 0 ? (
-          <p className="empty">No broken-down ads yet.</p>
-        ) : (
-          <div className="ad-row">
-            {top.map((ad, i) => (
-              <AdCard key={ad.ad_id} brand={brand} ad={ad} rank={i + 1} />
-            ))}
-          </div>
-        )}
-      </section>
+      {s.total > 0 && (
+        <>
+          <dl className="stats">
+            <Stat n={s.total} label="Ads tracked" />
+            <Stat n={s.advertisers} label="Advertisers" />
+            <Stat n={s.brokenDown} label="Taken apart" />
+            <Stat n={s.active} label="Still running" />
+          </dl>
+
+          <section className="block">
+            <div className="block-head">
+              <h2>Winning right now</h2>
+              <Link href={`/b/${brand}/ads`} className="link-quiet">
+                All winners →
+              </Link>
+            </div>
+            {top.length === 0 ? (
+              <p className="empty">No broken-down ads yet.</p>
+            ) : (
+              <div className="ad-row">
+                {top.map((ad, i) => (
+                  <AdCard key={ad.ad_id} brand={brand} ad={ad} rank={i + 1} />
+                ))}
+              </div>
+            )}
+          </section>
+        </>
+      )}
 
       <div className="split">
         <section className="panel run">
@@ -91,10 +103,11 @@ export default async function Overview({
               <span className="mono muted">Ideas</span>
               <input type="number" name="idea_count" min={1} max={50} defaultValue={10} />
             </label>
-            <button type="submit" className="btn-primary">
+            <button type="submit" className="btn-primary" disabled={!setup.ready}>
               Run report
             </button>
           </form>
+          {!setup.ready && <p className="mono muted">Available once setup is done</p>}
         </section>
 
         <section className="panel">
@@ -140,6 +153,32 @@ export default async function Overview({
         </section>
       )}
     </main>
+  );
+}
+
+const STEPS: { key: "profile" | "competitors" | "ads" | "brief"; label: string; how: string }[] = [
+  { key: "profile", label: "Brand profile", how: "Researched from what you typed. Runs automatically." },
+  { key: "competitors", label: "Competitor map", how: "Direct, adjacent and relative rings. Runs automatically." },
+  { key: "ads", label: "Competitor ads", how: "Pulled, scored and taken apart by the first report." },
+  { key: "brief", label: "Research brief", how: "Buyer, pains, language, objections. Coming next to Ore." },
+];
+
+function SetupSteps({ state }: { state: Record<string, boolean> }) {
+  return (
+    <section className="panel setup">
+      <p className="mono muted">Getting set up</p>
+      <ol className="steps">
+        {STEPS.map((step) => (
+          <li key={step.key} className={state[step.key] ? "done" : ""}>
+            <span className="step-mark" aria-hidden="true">{state[step.key] ? "✓" : ""}</span>
+            <span>
+              <strong>{step.label}</strong>
+              <span className="muted">{state[step.key] ? "Done" : step.how}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 

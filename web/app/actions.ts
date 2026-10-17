@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { checkFile, checkSlug } from "@/lib/brands";
+import { brandExists, checkFile, checkSlug, createBrand, slugify } from "@/lib/brands";
 import { createJob } from "@/lib/jobs";
 
 export async function newReport(form: FormData) {
@@ -22,4 +22,22 @@ export async function fromIdeas(form: FormData) {
   if (ideas.length === 0) redirect(`/b/${brand}/reports/${report}?pick=1`);
   await createJob({ type, brand, ideas, report });
   redirect(`/b/${brand}?queued=${type}`);
+}
+
+export async function newBrand(form: FormData) {
+  const name = String(form.get("name") ?? "").trim().slice(0, 80);
+  const about = String(form.get("about") ?? "").trim().slice(0, 600);
+  let website = String(form.get("website") ?? "").trim().slice(0, 300);
+  if (website && !/^https?:\/\//i.test(website)) website = `https://${website}`;
+  const competitors = String(form.get("competitors") ?? "")
+    .split(/[,\n]/)
+    .map((c) => c.trim())
+    .filter(Boolean)
+    .slice(0, 30);
+  const slug = slugify(name);
+  if (!slug || !about) redirect("/?missing=1");
+  if (await brandExists(slug)) redirect(`/?taken=${slug}`);
+  await createBrand({ slug, name, about, website, competitors });
+  await createJob({ type: "setup", brand: slug });
+  redirect(`/b/${slug}?queued=setup`);
 }

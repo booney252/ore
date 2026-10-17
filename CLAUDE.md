@@ -92,6 +92,7 @@ brands/
 
 ```
 init <brand>              create the brand folder + a brand.md template for me to fill in
+setup <brand>             new brand: draft brand.md by research, then the competitor map
 competitors <brand>       build the 3-ring competitor map
 ads <brand>               pull competitor + own Meta ads, score them, break down new ones
 voc <brand>               mine voice of customer
@@ -239,6 +240,6 @@ The PeptidePal foundation already exists: my Unified Research Brief (Oct 6, 2026
 5. ~~Ads (competitors + own) and creative breakdown~~ (done: `ads`, `creative`, `breakdown`)
 6. ~~`knowledge/` loading + `briefs`~~ (done; first briefs 2026-10-16 in `exports/peptidepal/briefs/`)
 7. ~~`weekly`~~ (built). Next: Anthropic API key so it runs without a handoff session; scheduled cloud run.
-8. Auto-foundation from a one-line description: `init` drafts `brand.md` by research, then competitors → VOC → the 4 prompts → research brief. Needed for every user who isn't me; also refreshes PeptidePal's brief.
+8. Auto-foundation from a one-line description (started 2026-10-17: the site's "New brand" form + `setup` draft brand.md and the competitor map; VOC and the research brief still to build): `init` drafts `brand.md` by research, then competitors → VOC → the 4 prompts → research brief. Needed for every user who isn't me; also refreshes PeptidePal's brief.
 9. Split `knowledge/` into general (ships) and brand-specific (private).
 10. Release work: web UI, accounts, billing, terms review.

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import LogOut from "@/app/LogOut";
 import Wordmark from "@/app/Wordmark";
 import { winners, loadAds } from "@/lib/ads";
-import { brandName, checkSlug, listBrands, listDocs } from "@/lib/brands";
+import { brandName, checkSlug, listDocs } from "@/lib/brands";
 import Nav from "./Nav";
 
 export default async function BrandLayout({
@@ -18,13 +19,12 @@ export default async function BrandLayout({
   } catch {
     notFound();
   }
-  const [name, ads, reports, scripts, briefs, brands] = await Promise.all([
+  const [name, ads, reports, scripts, briefs] = await Promise.all([
     brandName(brand),
     loadAds(brand),
     listDocs(brand, "reports"),
     listDocs(brand, "scripts"),
     listDocs(brand, "briefs"),
-    listBrands(),
   ]);
   const counts = {
     ads: winners(ads, 99).length,
@@ -36,17 +36,16 @@ export default async function BrandLayout({
   return (
     <div className="shell">
       <aside className="rail">
-        <Wordmark href={`/b/${brand}`} />
+        <Wordmark />
         <div className="rail-brand">
           <span className="mono muted">Brand</span>
           <strong>{name}</strong>
         </div>
         <Nav brand={brand} counts={counts} />
-        {brands.length > 1 && (
-          <Link href="/" className="rail-foot">
-            All brands
-          </Link>
-        )}
+        <div className="rail-foot">
+          <Link href="/">All brands</Link>
+          <LogOut />
+        </div>
       </aside>
       <div className="stage">{children}</div>
     </div>
