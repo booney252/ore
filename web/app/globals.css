@@ -833,3 +833,6 @@ table.data td { vertical-align: middle; }
 .run-form .format-picker { flex: 1 1 100%; }
 .side-form .format-options { grid-template-columns: 1fr; }
 .side-form .format-option > span { grid-template-columns: auto 1fr; gap: 10px; align-items: baseline; }
+
+.pending-note { color: #d9a85c; font-weight: 400; font-size: 0.78rem; }
+.ad-frame .tag.ad-kind { left: auto; right: 10px; top: 10px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }

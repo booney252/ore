@@ -112,6 +112,14 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
             ))}
           </dl>
 
+          {!ad.breakdown && (
+            <p className="notice quiet">
+              <span className="dot" aria-hidden="true" />
+              Not taken apart yet. The diagnosis (why it works, what we can use) comes with the next
+              report run.
+            </p>
+          )}
+
           {b.why_it_works ? (
             <section className="ad-section">
               <h2>Why it works</h2>

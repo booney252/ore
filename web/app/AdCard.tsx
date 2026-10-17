@@ -8,6 +8,7 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
       <div className="ad-frame">
         {poster ? <img src={poster} alt="" loading="lazy" /> : <div className="ad-frame-empty" />}
         {rank ? <span className="ad-rank mono">#{rank}</span> : null}
+        {ad.media_type === "image" ? <span className="tag ad-kind">Static</span> : null}
         {ad.is_own ? <span className="tag emerald">Yours</span> : null}
         <div className="ad-over">
           <span className={`score-num ${tier(ad.score)}`}>{ad.score}</span>
@@ -15,7 +16,10 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
         </div>
       </div>
       <div className="ad-meta">
-        <strong>{ad.brand}</strong>
+        <strong>
+          {ad.brand}
+          {!ad.breakdown ? <span className="pending-note"> · not taken apart yet</span> : null}
+        </strong>
         <p>“{hook(ad) || "No spoken hook"}”</p>
       </div>
     </Link>

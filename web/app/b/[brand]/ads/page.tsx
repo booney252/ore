@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function Winners({ params }: { params: Promise<{ brand: string }> }) {
   const { brand } = await params;
   const ads = await loadAds(brand);
-  const top = winners(ads, 99);
+  const top = winners(ads, 10);
   const shown = new Set(top.map((a) => a.ad_id));
   const rest = ads
     .filter((a) => !shown.has(a.ad_id))
@@ -17,10 +17,10 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
     <main className="page">
       <header className="page-head">
         <p className="mono muted">Winning ads</p>
-        <h1 className="display">Taken apart</h1>
+        <h1 className="display">Winning ads</h1>
         <p className="lede">
-          Every ad we've broken down, best winner score first. Open one to watch it with its
-          transcript, frames and diagnosis.
+          The top ads by winner score, videos and statics. Open one to watch it with its
+          transcript and frames, and its diagnosis once it's been taken apart.
         </p>
       </header>
 
@@ -32,7 +32,7 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
 
       <section className="block">
         <h2>Also tracked</h2>
-        <p className="muted">The next {rest.length} by score, not broken down yet.</p>
+        <p className="muted">The next {rest.length} by score, without frames pulled yet.</p>
         <div className="table-wrap">
           <table className="data">
             <thead>

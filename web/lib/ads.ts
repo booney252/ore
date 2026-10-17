@@ -39,10 +39,14 @@ export const loadAds = cache(async (slug: string): Promise<Ad[]> => {
   return Object.values(JSON.parse(raw).ads as Record<string, Ad>);
 });
 
-/** Same ranking the report uses: broken-down, still in the Ad Library, best score first. */
+/**
+ * Best winner score first, still in the Ad Library, at most `perBrand` per advertiser.
+ * Ads not broken down yet are included (shown as "not taken apart yet") as long as there's
+ * something to look at: key frames, or the image itself for a static.
+ */
 export function winners(ads: Ad[], perBrand = 3): Ad[] {
   const pool = ads
-    .filter((a) => a.breakdown && !a.removed_from_library)
+    .filter((a) => !a.removed_from_library && (a.breakdown || viewable(a)))
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
   const counts = new Map<string, number>();
   return pool.filter((a) => {
@@ -73,6 +77,10 @@ export function hook(ad: Ad): string {
     .trim()
     .replace(/^["“”']+|["“”']+$/g, "")
     .trim();
+}
+
+export function viewable(ad: Ad): boolean {
+  return Boolean(ad.analysis?.frames?.length || (ad.media_type === "image" && ad.media_key));
 }
 
 export async function posterUrl(ad: Ad): Promise<string | null> {

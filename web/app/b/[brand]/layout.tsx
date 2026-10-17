@@ -27,7 +27,7 @@ export default async function BrandLayout({
     listDocs(brand, "briefs"),
   ]);
   const counts = {
-    ads: winners(ads, 99).length,
+    ads: winners(ads, 10).length,
     reports: reports.length,
     scripts: scripts.length,
     briefs: briefs.length,
