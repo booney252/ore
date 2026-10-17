@@ -1,10 +1,10 @@
 import { exists, listFolders, listKeys, readText, writeText } from "./storage";
 
-export type Kind = "reports" | "scripts" | "briefs";
+export type Kind = "reports" | "iterations" | "briefs";
 
 export const KIND_LABEL: Record<Kind, string> = {
-  reports: "Winning Ads Reports",
-  scripts: "Scripts",
+  reports: "Reports",
+  iterations: "Iterations",
   briefs: "Creative briefs",
 };
 
@@ -46,13 +46,22 @@ export async function readDoc(slug: string, kind: Kind, file: string): Promise<s
   return readText(`brands/${checkSlug(slug)}/${kind}/${checkFile(file)}.md`);
 }
 
-/** "#### Idea 3: Fridge" -> {n: 3, title: "Fridge"} */
-export function parseIdeas(reportMd: string): { n: number; title: string }[] {
+/** "### Iteration 3: Fridge" -> {n: 3, title: "Fridge"} */
+export function parseIterations(md: string): { n: number; title: string }[] {
   const out: { n: number; title: string }[] = [];
-  for (const m of reportMd.matchAll(/^#{2,4}\s*Idea\s+(\d+)\s*[:.\-]?\s*(.*)$/gm)) {
+  for (const m of md.matchAll(/^#{2,4}\s*Iteration\s+(\d+)\s*[:.\-]?\s*(.*)$/gm)) {
     out.push({ n: Number(m[1]), title: m[2].trim() });
   }
   return out;
+}
+
+/** A report's ranked winners (reports/<date>.json), or null for a report without one. */
+export async function reportTop(
+  slug: string,
+  file: string,
+): Promise<{ rank: number; ad_id: string }[] | null> {
+  const raw = await readText(`brands/${checkSlug(slug)}/reports/${checkFile(file)}.json`);
+  return raw ? (JSON.parse(raw).top as { rank: number; ad_id: string }[]) : null;
 }
 
 /** "Peptide Pal!" -> "peptide-pal" */

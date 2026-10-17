@@ -9,10 +9,10 @@ export const FORMAT_LABEL: Record<string, string> = Object.fromEntries(
 );
 
 /** Three-way choice for what kind of ad to write. Plain radios, so it works without JS. */
-export default function FormatPicker({ name = "format" }: { name?: string }) {
+export default function FormatPicker({ name = "format", label = "Format" }: { name?: string; label?: string }) {
   return (
     <fieldset className="format-picker">
-      <legend className="mono muted">Format</legend>
+      <legend className="mono muted">{label}</legend>
       <div className="format-options">
         {FORMATS.map((f, i) => (
           <label key={f.value} className="format-option">

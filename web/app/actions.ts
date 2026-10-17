@@ -11,22 +11,34 @@ function formatOf(form: FormData): string {
 
 export async function newReport(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
-  const ideaCount = Math.min(50, Math.max(1, Number(form.get("idea_count")) || 10));
-  await createJob({ type: "report", brand, idea_count: ideaCount, format: formatOf(form) });
-  redirect(`/b/${brand}?queued=report`);
+  await createJob({ type: "report", brand });
+  redirect(`/b/${brand}/reports?queued=1`);
 }
 
-export async function fromIdeas(form: FormData) {
+function numbers(form: FormData, field: string): number[] {
+  return form
+    .getAll(field)
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n > 0 && n < 100);
+}
+
+export async function newIterations(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
   const report = checkFile(String(form.get("report")));
-  const type = form.get("type") === "briefs" ? "briefs" : "scripts";
-  const ideas = form
-    .getAll("idea")
-    .map(Number)
-    .filter((n) => Number.isInteger(n) && n > 0);
-  if (ideas.length === 0) redirect(`/b/${brand}/reports/${report}?pick=1`);
-  await createJob({ type, brand, ideas, report, format: formatOf(form) });
-  redirect(`/b/${brand}?queued=${type}`);
+  const ads = numbers(form, "ad");
+  if (ads.length === 0) redirect(`/b/${brand}/iterations?report=${report}&pick=1`);
+  const perAd = Math.min(3, Math.max(1, Number(form.get("per_ad")) || 1));
+  await createJob({ type: "iterations", brand, report, ads, format: formatOf(form), per_ad: perAd });
+  redirect(`/b/${brand}/iterations?queued=1`);
+}
+
+export async function newBriefs(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  const iterations = checkFile(String(form.get("iterations")));
+  const picked = numbers(form, "number");
+  if (picked.length === 0) redirect(`/b/${brand}/iterations/${iterations}?pick=1`);
+  await createJob({ type: "briefs", brand, iterations, numbers: picked });
+  redirect(`/b/${brand}/briefs?queued=1`);
 }
 
 export async function newBrand(form: FormData) {
@@ -65,5 +77,7 @@ export async function pasteQuotes(form: FormData) {
 export async function cancelRequest(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
   const { brandRemoved } = await cancelJob(brand, String(form.get("id")));
-  redirect(brandRemoved ? "/?cancelled=1" : `/b/${brand}?cancelled=1`);
+  const back = String(form.get("back") ?? "");
+  if (brandRemoved) redirect("/?cancelled=1");
+  redirect(`${back.startsWith(`/b/${brand}`) ? back.split("?")[0] : `/b/${brand}`}?cancelled=1`);
 }

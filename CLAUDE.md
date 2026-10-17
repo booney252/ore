@@ -36,11 +36,11 @@ Two loops:
 2. Score which are winning (winner score below).
 3. **Diagnose the winners.** Take each strong ad apart element by element: spoken hook, on-screen text hook, frame 0, first 3 seconds, caption style, creator, setting, camera, edit and pacing, time to product, structure, emotion, persuasion devices, proof, offer, CTA. Mark which elements are load-bearing and why (evidence: days running, versions, reused across the advertiser's other ads).
 4. **Put the winning elements into PeptidePal ads.** That's the whole point: find why winners win, then build our ads out of those elements.
-5. **Three outputs, in order** (updated 2026-10-17):
-   1. **Winning Ads Report** (market research + ideas): the top 10 winning ads, each broken down line by line with visuals; patterns across them; why each works now and, for long-runners, why it still works; then N iteration ideas (the user is asked how many), each tied to a winner as a 90/10 hook or a pattern transfer.
-   2. **Scripts**: the user picks ideas from the report and gets full 20-60s UGC scripts.
-   3. **Creative briefs**: the user picks ideas and gets full creative strategy briefs for themselves or creators.
-   Each of the three is written in a format the user picks at run time (added 2026-10-17): **UGC video** (creator to camera, 20-60s, word-for-word script), **B-roll** (footage + on-screen text/voiceover, 15-45s, shot list) or **static** (image direction, every word on the image, primary text, headline). Formats live in `cse/formats.py`; the brand's `ad_format` in brand.md stays as notes (creator age, style rules), and the chosen format wins where they conflict. The winning-ads breakdown always covers videos and statics.
+5. **Three steps, in order** (updated 2026-10-17; the site has one tab per step: Overview, Reports, Iterations, Creative briefs, with Research at the bottom):
+   1. **Winning Ads Report** (Reports tab): the top winning ads, videos and statics, each broken down line by line (video) or piece by piece (static); why each works now and, for long-runners, why it still works; patterns and gaps. **No ideas or iterations in the report.** It also saves `reports/<date>.json`, the ranked ad list.
+   2. **Iterations** (Iterations tab): the user picks winners from a report, a format and how many per winner. Each becomes an iteration for our product, built from the winner's load-bearing elements (90/10 or pattern transfer). **UGC** gets a word-for-word script, **B-roll** a shot list with on-screen text and voiceover, **static** the image spec and copy. Saved to `iterations/<report>-ads-<ranks>[-format].md`.
+   3. **Creative briefs** (Creative briefs tab): the user picks iterations and gets full creative brief docs to hand to a creator, editor or designer. Saved to `briefs/<iterations file>-its-<numbers>.md`.
+   Formats live in `cse/formats.py`; the brand's `ad_format` in brand.md stays as notes (creator age, style rules), and the chosen format wins where they conflict.
 
 The weekly run only processes ads it hasn't seen before, so it stays cheap. It's the part that will later run in the cloud on a schedule.
 
@@ -98,10 +98,11 @@ competitors <brand>       build the 3-ring competitor map
 ads <brand>               pull competitor + own Meta ads, score them, break down new ones
 voc <brand>               mine voice of customer (App Store reviews + pasted text)
 research <brand>          the 4 research prompts -> research-brief.md (old brief kept in research/<date>/)
-report <brand>            write report.md + research-brief.md from everything above
+report <brand>            Winning Ads Report: top winners broken down, patterns, gaps (no ideas)
+iterations <brand>        --ads 1,3 [--report DATE] [--format ugc|broll|static] [--per-ad N]
+briefs <brand>            --numbers 1,2 [--iterations FILE]: full creative briefs from iterations
 run <brand>               foundation: all of the above in order
-briefs <brand>            write 6 new idea briefs from this week's winners + research brief
-weekly <brand>            weekly engine: ads, then briefs
+weekly <brand>            weekly engine: ads, creative, breakdown, verify, then the report
 ```
 
 **Handoff mode.** Until an Anthropic API key is added, every Claude step can run in "handoff" mode: the tool saves the fully filled-in prompt with our real data, Claude Code does the step in a session, and saves the answer back for the tool to continue. Same code path; switching to the API is a `.env` change.

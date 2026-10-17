@@ -1,21 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fromIdeas } from "@/app/actions";
-import FormatPicker from "@/app/FormatPicker";
 import Markdown from "@/app/Markdown";
-import { parseIdeas, readDoc } from "@/lib/brands";
+import { readDoc } from "@/lib/brands";
 
 export const dynamic = "force-dynamic";
 
-export default async function Report({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ brand: string; date: string }>;
-  searchParams: Promise<{ pick?: string }>;
-}) {
+export default async function Report({ params }: { params: Promise<{ brand: string; date: string }> }) {
   const { brand, date } = await params;
-  const { pick } = await searchParams;
   let md: string | null = null;
   try {
     md = await readDoc(brand, "reports", date);
@@ -23,7 +14,6 @@ export default async function Report({
     notFound();
   }
   if (!md) notFound();
-  const ideas = parseIdeas(md);
 
   return (
     <main className="page with-side">
@@ -34,33 +24,18 @@ export default async function Report({
         <Markdown text={md} />
       </div>
       <aside className="side">
-        <p className="mono muted">Next step</p>
-        <h2>Turn ideas into ads</h2>
-        {ideas.length === 0 ? (
-          <p className="empty">No numbered ideas in this report.</p>
-        ) : (
-          <form action={fromIdeas} className="side-form">
-            <input type="hidden" name="brand" value={brand} />
-            <input type="hidden" name="report" value={date} />
-            {pick && <p className="error">Pick at least one idea.</p>}
-            <div className="checks">
-              {ideas.map((i) => (
-                <label key={i.n} className="check">
-                  <input type="checkbox" name="idea" value={i.n} />
-                  <span className="mono">{String(i.n).padStart(2, "0")}</span>
-                  <span>{i.title}</span>
-                </label>
-              ))}
-            </div>
-            <FormatPicker />
-            <button type="submit" name="type" value="scripts" className="btn-primary emerald">
-              Get scripts
-            </button>
-            <button type="submit" name="type" value="briefs" className="btn-primary ruby">
-              Get creative briefs
-            </button>
-          </form>
-        )}
+        <p className="mono muted">Step 2</p>
+        <h2>Make it yours</h2>
+        <p className="muted side-note">
+          Pick the winners you want to iterate on, choose UGC, B-roll or static, and get ready-to-make
+          iterations for your product.
+        </p>
+        <Link href={`/b/${brand}/iterations?report=${date}`} className="btn-primary emerald btn-link">
+          Make iterations →
+        </Link>
+        <a href={`/api/doc?brand=${brand}&kind=reports&file=${date}`} className="link-quiet">
+          Download as Markdown
+        </a>
       </aside>
     </main>
   );

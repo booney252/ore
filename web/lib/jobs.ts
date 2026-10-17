@@ -1,14 +1,16 @@
 import { deleteKey, listKeys, readText, writeText } from "./storage";
 
-export type JobType = "report" | "scripts" | "briefs" | "setup" | "research";
+export type JobType = "report" | "iterations" | "briefs" | "setup" | "research";
 export type Job = {
   id: string;
   type: JobType;
   brand: string;
-  idea_count?: number;
   format?: string;
-  ideas?: number[];
   report?: string;
+  ads?: number[];
+  per_ad?: number;
+  iterations?: string;
+  numbers?: number[];
   created_at: string;
   status?: string;
   result?: string;
@@ -31,7 +33,7 @@ export async function createJob(job: Omit<Job, "id" | "created_at">): Promise<st
   return id;
 }
 
-export async function listJobs(brand: string, limit = 10): Promise<Job[]> {
+export async function listJobs(brand: string, limit = 10, types?: JobType[]): Promise<Job[]> {
   const [jobs, cancelling] = await Promise.all([
     Promise.all(
       STATES.map(async (state) => {
@@ -40,7 +42,9 @@ export async function listJobs(brand: string, limit = 10): Promise<Job[]> {
           const raw = await readText(key);
           if (!raw) continue;
           const job = JSON.parse(raw) as Job;
-          if (job.brand === brand) out.push({ ...job, status: state });
+          if (job.brand === brand && (!types || types.includes(job.type))) {
+            out.push({ ...job, status: state });
+          }
         }
         return out;
       }),
