@@ -134,3 +134,9 @@ def test_verify_marks_removed_and_stopped(tmp_path):
     assert saved["gone"]["removed_from_library"] == "2026-10-16"
     assert "removed from the Ad Library 2026-10-16" in saved["gone"]["score_why"]
     assert saved["off"]["is_active"] is False and saved["off"]["end_date"] == "2026-10-15"
+
+
+def test_own_ads_need_a_page_id():
+    from cse.ads import _own_entry
+    assert _own_entry({"name": "Solis", "facebook_page_id": ""}) is None
+    assert _own_entry({"name": "PeptidePal", "facebook_page_id": "1196136163591767"})["fb_page_id"] == "1196136163591767"

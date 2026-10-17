@@ -101,8 +101,10 @@ def download_media(storage, slug: str, ad: dict, session) -> None:
 
 
 def _own_entry(fields: dict) -> dict | None:
+    """The brand's own ads, only when its Ad Library page id is set: searching by name could
+    pull a different company with the same name (there are four other apps called Solis)."""
     name = fields.get("name")
-    if not name:
+    if not name or not fields.get("facebook_page_id"):
         return None
     return {"name": name, "ring": "own", "status": "approved",
             "fb_page_id": str(fields.get("facebook_page_id") or "")}
