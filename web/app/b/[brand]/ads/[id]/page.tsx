@@ -93,39 +93,31 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
           <div className="score-block">
             <Grade g={why.grade} size="lg" />
             <div>
-              <p className="mono muted">Winner grade · {why.verdict}</p>
-              <p>{why.reason}</p>
-              <p className="muted">{why.meaning}</p>
-              {ad.removed_from_library ? (
-                <span className="tag ruby">Removed {ad.removed_from_library}</span>
-              ) : ad.ad_library_url ? (
+              <p className="verdict-line">{why.verdict}</p>
+              <ul className="signs">
+                {why.parts.map((p) => {
+                  const move = p.effect.startsWith("up") ? "up" : p.effect.startsWith("down") ? "down" : "";
+                  const text =
+                    p.label === "Time live"
+                      ? `${p.value} live`
+                      : p.label === "Still running"
+                        ? p.value === "Yes" ? "Still running" : p.value
+                        : `${p.value} version${p.value === "1" ? "" : "s"}`;
+                  return (
+                    <li key={p.label} className={move} title={p.note}>
+                      {text}
+                      {p.grade ? <Grade g={p.grade} size="sm" /> : null}
+                      {move ? <span aria-label={`${move} one grade`}>{move === "up" ? "↑" : "↓"}</span> : null}
+                    </li>
+                  );
+                })}
+              </ul>
+              {ad.removed_from_library ? null : ad.ad_library_url ? (
                 <a href={ad.ad_library_url} target="_blank" rel="noreferrer" className="link-quiet">
                   Open in the Ad Library ↗
                 </a>
               ) : null}
             </div>
-          </div>
-
-          <div className="score-parts">
-            {why.parts.map((p) => (
-              <div key={p.label} className="score-part">
-                <div className="score-part-head">
-                  <span>
-                    {p.label}: <strong>{p.value}</strong>
-                  </span>
-                  <span className="score-part-grade">
-                    {p.grade ? (
-                      <Grade g={p.grade} size="sm" />
-                    ) : (
-                      <span className={`effect ${p.effect === "no change" ? "" : p.effect.startsWith("up") ? "up" : "down"}`}>
-                        {p.effect === "no change" ? "no change" : p.effect.startsWith("up") ? "↑ up one" : "↓ down one"}
-                      </span>
-                    )}
-                  </span>
-                </div>
-                <p className="muted">{p.note}</p>
-              </div>
-            ))}
           </div>
 
           <dl className="facts">

@@ -1270,3 +1270,21 @@ select {
 .effect { font-size: 0.8rem; color: var(--text-2); }
 .effect.up { color: var(--emerald); }
 .effect.down { color: var(--ruby); }
+
+/* Ad page: grade + its three signs, kept short */
+.verdict-line { font-size: 1.1rem; font-weight: 600; }
+.signs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.signs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.88rem;
+}
+.signs li .grade.sm { font-size: 1rem; }
+.signs li.up { border-color: rgba(25, 209, 139, 0.35); color: var(--emerald); }
+.signs li.down { border-color: rgba(255, 46, 99, 0.35); color: var(--ruby); }
+.score-block > div { gap: 10px; }
