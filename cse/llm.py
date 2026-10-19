@@ -38,9 +38,11 @@ def make_client():
 
 
 def _create(client, **kwargs):
-    response = client.beta.messages.create(
+    # Streamed: the SDK refuses non-streaming calls with large max_tokens (10-minute rule).
+    with client.beta.messages.stream(
         model=model(), betas=BETAS, fallbacks="default", **kwargs
-    )
+    ) as stream:
+        response = stream.get_final_message()
     if response.stop_reason == "refusal":
         raise LLMError(f"Claude declined the request: {response.stop_details}")
     return response

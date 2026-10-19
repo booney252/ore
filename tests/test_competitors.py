@@ -1,3 +1,4 @@
+import contextlib
 import json
 from types import SimpleNamespace
 
@@ -55,7 +56,11 @@ class FakeClient:
     def __init__(self, found):
         self.calls = []
         self.found = found
-        self.beta = SimpleNamespace(messages=SimpleNamespace(create=self._create))
+        self.beta = SimpleNamespace(messages=SimpleNamespace(stream=self._stream))
+
+    def _stream(self, **kwargs):
+        response = self._create(**kwargs)
+        return contextlib.nullcontext(SimpleNamespace(get_final_message=lambda: response))
 
     def _create(self, **kwargs):
         self.calls.append(kwargs)
