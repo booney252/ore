@@ -65,7 +65,7 @@ Build order: foundation first (briefs are only as good as the research under the
 ## Tech setup
 
 - Python pipeline, run from the command line or by the website's worker. Website: Next.js on Vercel in `web/` (started 2026-10-17).
-- Claude API for analysis and summarizing. Keys go in `.env`, never in code.
+- Claude API for analysis and summarizing. Keys go in `.env`, never in code. The Claude key is `ORE_ANTHROPIC_API_KEY` (cloud environments reserve `ANTHROPIC_API_KEY`).
 
 **Everything lives in the cloud, nothing only on one computer.** I switch between a Mac and a desktop, so:
 - **Code**: in a private GitHub repo. I pull it on whichever machine I'm on.

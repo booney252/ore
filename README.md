@@ -39,7 +39,7 @@ pytest
 
 ## Claude steps: API or handoff
 
-With `ANTHROPIC_API_KEY` in `.env`, Claude steps run through the API. Without it, they run in
+With `ORE_ANTHROPIC_API_KEY` in `.env` (or the cloud environment's variables; plain `ANTHROPIC_API_KEY` also works locally), Claude steps run through the API. Without it, they run in
 handoff mode: the tool writes the filled-in prompt to `brands/<brand>/handoff/<step>.prompt.md`,
 Claude Code answers it in `<step>.answer.md`, and re-running the command picks the answer up.
 Force a mode with `CSE_LLM=api` or `CSE_LLM=handoff`.
@@ -52,6 +52,6 @@ behind one password. "Run a new report" and "Get scripts / briefs" drop a reques
 
 - Deploy: import this repo in Vercel, set **Root Directory** to `web`, add the env vars from
   `web/.env.example` (same S3 values as `.env`, plus `SITE_PASSWORD`).
-- Worker: `cse worker` (keeps running) or `cse worker --once`. Needs `ANTHROPIC_API_KEY` to run
+- Worker: `cse worker` (keeps running) or `cse worker --once`. Needs `ORE_ANTHROPIC_API_KEY` to run
   Claude steps unattended; without it, requests stop at "waiting".
 - Local: `cd web && npm install && npm run dev` with a `web/.env.local`.

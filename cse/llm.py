@@ -23,12 +23,18 @@ def model() -> str:
     return os.environ.get("CSE_MODEL") or DEFAULT_MODEL
 
 
+def api_key() -> str:
+    """Ore's Claude API key. ORE_ANTHROPIC_API_KEY first: Claude Code cloud environments
+    reserve ANTHROPIC_API_KEY for their own login and don't pass it to sessions."""
+    return os.environ.get("ORE_ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_API_KEY") or ""
+
+
 def make_client():
     import anthropic
 
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise LLMError("ANTHROPIC_API_KEY is not set in .env")
-    return anthropic.Anthropic()
+    if not api_key():
+        raise LLMError("ORE_ANTHROPIC_API_KEY (or ANTHROPIC_API_KEY) is not set")
+    return anthropic.Anthropic(api_key=api_key())
 
 
 def _create(client, **kwargs):
@@ -83,11 +89,11 @@ class HandoffPending(Exception):
 
 
 def mode() -> str:
-    """'api' or 'handoff'. Default: api when ANTHROPIC_API_KEY is set, else handoff."""
+    """'api' or 'handoff'. Default: api when an API key is set, else handoff."""
     explicit = (os.environ.get("CSE_LLM") or "").strip().lower()
     if explicit in ("api", "handoff"):
         return explicit
-    return "api" if os.environ.get("ANTHROPIC_API_KEY") else "handoff"
+    return "api" if api_key() else "handoff"
 
 
 def render(template: str, values: dict) -> str:

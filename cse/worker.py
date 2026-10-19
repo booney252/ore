@@ -85,7 +85,7 @@ def run_job(storage, job: dict) -> str | None:
             (brandlib.brand_key(slug, f"iterations/{p['iterations']}.md"), int(p["number"]))
             for p in picks])
     if job["type"] == "setup":
-        if not os.environ.get("ANTHROPIC_API_KEY"):  # web research has no handoff mode
+        if not llm.api_key():  # web research has no handoff mode
             raise llm.HandoffPending("", "")
         return setup.run(storage, slug, check=check)
     if job["type"] == "research":
@@ -120,7 +120,7 @@ def process_one(storage) -> bool:
         log.info("worker: %s cancelled", job["id"])
     except llm.HandoffPending:
         _move(storage, job, "running", "waiting",
-              error="waiting on a Claude step: add ANTHROPIC_API_KEY to run unattended")
+              error="waiting on a Claude step: add ORE_ANTHROPIC_API_KEY to run unattended")
     except Exception as e:  # noqa: BLE001 - record any failure on the job
         log.exception("worker: job %s failed", job["id"])
         _move(storage, job, "running", "failed", error=str(e)[:300])
