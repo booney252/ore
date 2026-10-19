@@ -200,6 +200,7 @@ Two outputs:
 
 ## Rules
 
+- Push finished work straight to `main` (and the working branch); I'm the only one with access, so no need to ask first (decided 2026-10-19).
 - Respect rate limits and each platform's terms. If something would require breaking terms, stop and tell me instead of working around it.
 - Health products (peptides) have strict ad rules. Flag any competitor claims that look risky, but don't treat them as safe to copy.
 - Keep it simple. Only the cloud storage we need, no UI, auth, or multiple users for now.
