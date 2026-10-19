@@ -12,6 +12,7 @@ export type Job = {
   idea?: string;
   iterations?: string;
   numbers?: number[];
+  picks?: { iterations: string; number: number }[];
   created_at: string;
   status?: string;
   result?: string;

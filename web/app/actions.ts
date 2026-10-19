@@ -44,10 +44,21 @@ export async function newIterations(form: FormData) {
 
 export async function newBriefs(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
-  const iterations = checkFile(String(form.get("iterations")));
-  const picked = numbers(form, "number");
-  if (picked.length === 0) redirect(`/b/${brand}/iterations/${iterations}?pick=1`);
-  await createJob({ type: "briefs", brand, iterations, numbers: picked });
+  // "file:3" from the Creative briefs picker, or a file + numbers from an iterations page.
+  const picks = form
+    .getAll("pick")
+    .map((v) => String(v).match(/^([0-9]{4}-[0-9]{2}-[0-9]{2}[a-z0-9-]*):(\d{1,2})$/))
+    .filter((m): m is RegExpMatchArray => Boolean(m))
+    .map((m) => ({ iterations: checkFile(m[1]), number: Number(m[2]) }));
+  const single = form.get("iterations");
+  if (single) {
+    const file = checkFile(String(single));
+    for (const n of numbers(form, "number")) picks.push({ iterations: file, number: n });
+  }
+  if (picks.length === 0) {
+    redirect(single ? `/b/${brand}/iterations/${String(single)}?pick=1` : `/b/${brand}/briefs?pick=1`);
+  }
+  await createJob({ type: "briefs", brand, picks });
   redirect(`/b/${brand}/briefs?queued=1`);
 }
 

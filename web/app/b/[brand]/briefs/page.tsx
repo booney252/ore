@@ -1,25 +1,40 @@
+import Link from "next/link";
+import { newBriefs } from "@/app/actions";
+import { docLabel } from "@/app/dates";
 import DocRows from "@/app/DocRows";
 import Requests from "@/app/Requests";
-import { brandName, listDocs } from "@/lib/brands";
+import { brandName, listDocs, parseIterations, readDoc } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
+
+const FORMAT_TONE: Record<string, string> = { UGC: "diamond", "B-roll": "emerald", Static: "ruby" };
 
 export default async function Briefs({
   params,
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ queued?: string; cancelled?: string }>;
+  searchParams: Promise<{ queued?: string; cancelled?: string; pick?: string }>;
 }) {
   const { brand } = await params;
-  const { queued, cancelled } = await searchParams;
-  const [name, files, iterations, jobs] = await Promise.all([
+  const { queued, cancelled, pick } = await searchParams;
+  const [name, files, iterationFiles, jobs] = await Promise.all([
     brandName(brand),
     listDocs(brand, "briefs"),
     listDocs(brand, "iterations"),
     listJobs(brand, 6, ["briefs"]),
   ]);
+  const sets = (
+    await Promise.all(
+      iterationFiles.slice(0, 12).map(async (file) => ({
+        file,
+        label: docLabel(file),
+        idea: /-idea-[0-9a-f]{6}/.test(file),
+        its: parseIterations((await readDoc(brand, "iterations", file)) ?? ""),
+      })),
+    )
+  ).filter((s) => s.its.length > 0);
 
   return (
     <main className="page">
@@ -27,16 +42,16 @@ export default async function Briefs({
         <p className="mono muted">Step 3 · {name}</p>
         <h1 className="display tone-ruby">Creative briefs</h1>
         <p className="lede">
-          Full creative brief docs, ready to hand to a creator, editor or designer: the objective,
-          the winners it's built from, hooks, the script or spec, notes, deliverables and a
-          compliance check.
+          Pick any iterations, from any set and in any format, and get one creative brief doc with a
+          brief for each: objective, the winners it's built from, hooks, the script or spec, notes,
+          deliverables and a compliance check.
         </p>
       </header>
 
       {queued && (
         <p className="notice">
           <span className="dot emerald" aria-hidden="true" />
-          Queued. Your briefs show up below when they're written.
+          Queued. Your brief doc shows up below when it's written.
         </p>
       )}
       {cancelled && (
@@ -46,22 +61,53 @@ export default async function Briefs({
         </p>
       )}
 
-      <section className="block first">
-        <h2>Your briefs</h2>
-        <DocRows base={`/b/${brand}/briefs`} files={files} tone="ruby" empty="No briefs yet." />
-      </section>
+      {sets.length === 0 ? (
+        <section className="panel">
+          <h2 className="panel-title">No iterations yet</h2>
+          <p className="muted">
+            Briefs are built from iterations. <Link href={`/b/${brand}/iterations`}>Make some in Iterations</Link>.
+          </p>
+        </section>
+      ) : (
+        <form action={newBriefs} className="brief-pick">
+          <input type="hidden" name="brand" value={brand} />
+          <p className="mono muted pick-label">Pick the iterations to brief</p>
+          {pick && <p className="error">Pick at least one iteration.</p>}
+          <div className="brief-sets">
+            {sets.map((set) => (
+              <fieldset key={set.file} className="brief-set">
+                <legend>
+                  <span className={`tag ${FORMAT_TONE[set.label.format ?? "UGC"] ?? ""}`}>
+                    {set.label.format ?? "UGC"}
+                  </span>
+                  <Link href={`/b/${brand}/iterations/${set.file}`}>
+                    {set.label.date} · {set.idea ? "your idea" : `winners ${set.file.match(/-ads-([\d-]+?)(?:-x\d|-broll|-static|$)/)?.[1]?.split("-").map((n) => `#${n}`).join(", ") ?? ""}`}
+                  </Link>
+                </legend>
+                {set.its.map((it) => (
+                  <label key={it.n} className="check">
+                    <input type="checkbox" name="pick" value={`${set.file}:${it.n}`} />
+                    <span className="mono">{String(it.n).padStart(2, "0")}</span>
+                    <span>{it.title}</span>
+                  </label>
+                ))}
+              </fieldset>
+            ))}
+          </div>
+          <div className="brief-foot">
+            <p className="muted">Each brief is written in its own iteration's format, all in one doc.</p>
+            <button type="submit" className="btn-primary ruby">
+              Write creative brief
+            </button>
+          </div>
+        </form>
+      )}
 
       <Requests brand={brand} jobs={jobs} back={`/b/${brand}/briefs`} />
 
       <section className="block">
-        <h2>Make new briefs</h2>
-        <p className="muted">Open a set of iterations and pick the ones to brief.</p>
-        <DocRows
-          base={`/b/${brand}/iterations`}
-          files={iterations}
-          tone="emerald"
-          empty="No iterations yet. Make some in Iterations first."
-        />
+        <h2>Your briefs</h2>
+        <DocRows base={`/b/${brand}/briefs`} files={files} tone="ruby" empty="No briefs yet." />
       </section>
     </main>
   );

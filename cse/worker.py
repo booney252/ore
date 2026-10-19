@@ -13,7 +13,8 @@ Job types:
   iterations  {brand, report, ads, format, per_ad, idea}  winners #ads of a report, and/or
                                                your own idea -> iterations
                                                (format: ugc, broll, static)
-  briefs      {brand, iterations, numbers}     chosen iterations -> creative briefs
+  briefs      {brand, picks: [{iterations, number}]}  iterations from any files -> one
+                                               creative brief doc (or {iterations, numbers})
   setup   {brand}                     new brand: profile, competitors, VOC, ads, research brief
   research {brand}                    refresh: re-pull customer quotes, re-run the 4 research prompts
 """
@@ -78,9 +79,11 @@ def run_job(storage, job: dict) -> str | None:
                                      fmt=job.get("format") or "ugc",
                                      per_ad=int(job.get("per_ad") or 1), idea=job.get("idea"))
     if job["type"] == "briefs":
-        return stages.run_briefs(storage, slug,
-                                 brandlib.brand_key(slug, f"iterations/{job['iterations']}.md"),
-                                 [int(n) for n in job["numbers"]])
+        picks = job.get("picks") or [{"iterations": job["iterations"], "number": n}
+                                     for n in job["numbers"]]
+        return stages.run_brief_picks(storage, slug, [
+            (brandlib.brand_key(slug, f"iterations/{p['iterations']}.md"), int(p["number"]))
+            for p in picks])
     if job["type"] == "setup":
         if not os.environ.get("ANTHROPIC_API_KEY"):  # web research has no handoff mode
             raise llm.HandoffPending("", "")

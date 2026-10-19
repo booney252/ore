@@ -1195,3 +1195,25 @@ select {
   box-shadow: 0 0 0 1px rgba(25, 209, 139, 0.2), 0 18px 40px -24px var(--emerald-glow);
 }
 @media (max-width: 860px) { .own-idea { grid-template-columns: 1fr; } }
+
+/* ---------- Brief picker ---------- */
+
+.brief-pick { display: grid; gap: 14px; }
+.brief-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.brief-set {
+  margin: 0;
+  padding: 16px 18px 8px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  min-width: 0;
+}
+.brief-set legend { display: flex; align-items: center; gap: 10px; padding: 0 6px; margin-left: -6px; font-size: 0.86rem; }
+.brief-set legend a { color: var(--text-2); }
+.brief-set legend a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+.brief-set .check:last-child { border-bottom: 0; }
+.brief-set:has(input:checked) { border-color: rgba(255, 46, 99, 0.4); box-shadow: 0 18px 40px -26px var(--ruby-glow); }
+.brief-set .check:has(input:checked) .mono { color: #ff8eaa; }
+.brief-set .check input:checked { background: var(--g-ruby); }
+.brief-foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+@media (max-width: 860px) { .brief-foot { flex-direction: column; align-items: stretch; } }

@@ -115,7 +115,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("briefs", help="turn chosen iterations into full creative briefs")
     p.add_argument("brand")
     p.add_argument("--iterations", help="iterations file name (default: latest)")
-    p.add_argument("--numbers", required=True, help="iteration numbers, e.g. 1,2")
+    p.add_argument("--numbers", help="iteration numbers in that file, e.g. 1,2")
+    p.add_argument("--pick", action="append", default=[],
+                   help="FILE:N, repeatable, to mix iterations from different files")
 
     p = sub.add_parser("weekly", help="ads -> creative -> breakdown -> verify -> report")
     p.add_argument("brand")
@@ -174,9 +176,14 @@ def main(argv: list[str] | None = None) -> int:
                                   fmt=ask_format(args.format), per_ad=args.per_ad, idea=args.idea)
             return 0
         if args.command == "briefs":
-            its_key = (brandlib.brand_key(args.brand, f"iterations/{args.iterations}.md")
-                       if args.iterations else stages.latest_key(storage, args.brand, "iterations"))
-            stages.run_briefs(storage, args.brand, its_key, stages.parse_numbers(args.numbers))
+            picks = [(brandlib.brand_key(args.brand, f"iterations/{p.rsplit(':', 1)[0]}.md"),
+                      int(p.rsplit(":", 1)[1])) for p in args.pick]
+            if args.numbers:
+                its_key = (brandlib.brand_key(args.brand, f"iterations/{args.iterations}.md")
+                           if args.iterations
+                           else stages.latest_key(storage, args.brand, "iterations"))
+                picks += [(its_key, n) for n in stages.parse_numbers(args.numbers)]
+            stages.run_brief_picks(storage, args.brand, picks)
             return 0
         if args.command == "weekly":
             from . import worker

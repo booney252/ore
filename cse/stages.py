@@ -301,29 +301,59 @@ def format_of(file_stem: str) -> str:
 
 def run_briefs(storage, slug: str, iterations_key: str, numbers: list[int],
                today: date | None = None, client=None) -> str | None:
+    """Briefs for iterations from one iterations file."""
+    return run_brief_picks(storage, slug, [(iterations_key, n) for n in numbers],
+                           today=today, client=client)
+
+
+def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
+                    today: date | None = None, client=None) -> str | None:
+    """One creative brief doc for iterations picked from any iterations files, in any mix of
+    formats: each brief is written in its own iteration's format."""
     today = today or datetime.now(timezone.utc).date()
-    its_md = storage.read_text(iterations_key)
-    chosen = sections(its_md, r"Iteration\s+(\d+)\b", numbers)
-    missing = [n for n in numbers if n not in chosen]
-    if missing:
-        raise llm.LLMError(f"{iterations_key} has no iteration number(s) {missing}")
+    if not picks:
+        raise llm.LLMError("pick at least one iteration")
+    chosen: list[tuple[str, int, str, str]] = []  # (file stem, number, format, text)
+    for key in dict.fromkeys(k for k, _ in picks):
+        numbers = [n for k, n in picks if k == key]
+        found = sections(storage.read_text(key), r"Iteration\s+(\d+)\b", numbers)
+        missing = [n for n in numbers if n not in found]
+        if missing:
+            raise llm.LLMError(f"{key} has no iteration number(s) {missing}")
+        stem = Path(key).stem
+        chosen += [(stem, n, format_of(stem), found[n]) for n in numbers]
 
     ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
     cited = []
-    for text in chosen.values():
+    for *_, text in chosen:
         for ad_id in re.findall(r"\b\d{12,20}\b", text):
             if ad_id in ads and ad_id not in cited:
                 cited.append(ad_id)
 
-    stem = Path(iterations_key).stem
-    ctx = with_format(brand_context(storage, slug), format_of(stem))
+    used = list(dict.fromkeys(f for _, _, f, _ in chosen))
+    ctx = with_format(brand_context(storage, slug), used[0])
+    if len(used) > 1:  # mixed formats: describe each, and give each format's fields
+        ctx["ad_format"] = "each brief in its own iteration's format: " + "; ".join(
+            f"{formats.FORMATS[f]['label']} ({formats.describe(f)})" for f in used)
+        ctx["format_fields"] = "\n".join(
+            f"- *For a {formats.FORMATS[f]['label']}:*\n"
+            + "\n".join("  " + line for line in formats.FORMATS[f]["fields"].splitlines())
+            for f in used)
+    blocks = [f'<iteration from="{stem}" number="{n}" format="{formats.FORMATS[f]["label"]}">\n'
+              f"{text}\n</iteration>" for stem, n, f, text in chosen]
     prompt = llm.render(PROMPTS["briefs"].read_text(), {
         **ctx,
-        "iterations": "\n\n".join(chosen[n] for n in numbers),
+        "total": len(chosen),
+        "iterations": "\n\n".join(blocks),
         "source_ads": "\n\n".join(format_full(ads[i]) for i in cited) or "(none found)",
         "date": today.isoformat(),
     })
-    out_stem = f"{stem}-its-{'-'.join(map(str, numbers))}"
+    stems = list(dict.fromkeys(stem for stem, *_ in chosen))
+    if len(stems) == 1:
+        out_stem = f"{stems[0]}-its-{'-'.join(str(n) for _, n, _, _ in chosen)}"
+    else:
+        tag = hashlib.sha1("|".join(f"{st}#{n}" for st, n, _, _ in chosen).encode()).hexdigest()[:6]
+        out_stem = f"{today.isoformat()}-picks-{tag}"
     try:
         answer = llm.ask(storage, slug, f"briefs-{out_stem}", prompt, client=client,
                          max_tokens=64000, effort="high")
@@ -333,8 +363,10 @@ def run_briefs(storage, slug: str, iterations_key: str, numbers: list[int],
         return None
 
     out_key = brandlib.brand_key(slug, f"briefs/{out_stem}.md")
-    header = (f"# {ctx['brand_name']} creative briefs: iterations {', '.join(map(str, numbers))}"
-              f"\n\n_{formats.FORMATS[format_of(stem)]['label']}. From {stem}._\n\n")
+    listing = "\n".join(f"{i}. Iteration {n} of {stem} ({formats.FORMATS[f]['label']})"
+                         for i, (stem, n, f, _) in enumerate(chosen, start=1))
+    header = (f"# {ctx['brand_name']} creative briefs\n\n"
+              f"_{len(chosen)} brief{'s' if len(chosen) > 1 else ''}, from:_\n\n{listing}\n\n")
     storage.write_text(out_key, header + answer.strip() + "\n")
     log.info("briefs: saved %s", out_key)
     return out_key

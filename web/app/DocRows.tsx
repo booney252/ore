@@ -24,6 +24,7 @@ export default function DocRows({
           /-idea-[0-9a-f]{6}/.test(f) ? "your idea" : "",
           ads ? `winners #${ads.split("-").join(", #")}` : "",
           its ? `iterations ${its.split("-").join(", ")}` : "",
+          /-picks-[0-9a-f]{6}$/.test(f) ? "picked iterations" : "",
           base.endsWith("/reports") ? "" : format,
         ]
           .filter(Boolean)

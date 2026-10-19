@@ -199,3 +199,23 @@ def test_product_facts_from_brand_md_reach_the_prompts(brand):
     [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
     prompt = storage.read_text(key)
     assert "- product: a tracker" in prompt and "No snooze. Start mission." in prompt
+
+
+def test_one_brief_doc_from_iterations_in_different_files_and_formats(brand):
+    storage = brand
+    storage.write_text("brands/pp/iterations/2026-10-18-ads-3-4.md",
+                       "### Iteration 1: Three things\n- ugc a\n### Iteration 2: Day after\n- ugc b\n")
+    storage.write_text("brands/pp/iterations/2026-10-18-idea-abc123-broll.md",
+                       "### Iteration 1: Appointment pile\n- broll c\n")
+    picks = [("brands/pp/iterations/2026-10-18-ads-3-4.md", 1),
+             ("brands/pp/iterations/2026-10-18-ads-3-4.md", 2),
+             ("brands/pp/iterations/2026-10-18-idea-abc123-broll.md", 1)]
+    assert stages.run_brief_picks(storage, "pp", picks, today=TODAY) is None
+    [key] = [k for k in storage.list("brands/pp/handoff/") if "picks" in k]
+    prompt = storage.read_text(key)
+    assert prompt.count("<iteration from=") == 3 and "1 to 3" in prompt
+    assert "| They say |" in prompt and "| Shot |" in prompt and "{{" not in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Brief 1: x")
+    out = stages.run_brief_picks(storage, "pp", picks, today=TODAY)
+    assert "/briefs/2026-10-17-picks-" in out
+    assert "Iteration 1 of 2026-10-18-idea-abc123-broll (B-roll video)" in storage.read_text(out)

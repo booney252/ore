@@ -21,7 +21,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{knowledge}}
 </knowledge>
 
-3. **The chosen iterations**, as written:
+3. **The chosen iterations**, as written (each labelled with where it came from and its format):
 <iterations>
 {{iterations}}
 </iterations>
@@ -33,17 +33,21 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 
 ## Format (hard constraint)
 
-Every brief is this format: **{{ad_format}}**
+Format: **{{ad_format}}**. Each iteration below is labelled with its format; write its brief in that same format.
 
 ## Write one brief per iteration, in the order given
 
-### Brief <iteration number>: <name>
+Number the briefs 1 to {{total}}. They go in one document, so a reader can hand each brief to a different creator.
+
+### Brief <N>: <name>
+- **From:** which iteration it's built on (its name and the file it came from) and its format
 - **Objective:** what this ad has to do, for which segment, at which awareness stage (from the research brief)
 - **Placement:** where it runs (Meta feed, Reels, Stories) and the sizes to deliver (9:16 for video and Stories, 4:5 and 1:1 for statics)
 - **Built from:** the winning ads (IDs + advertiser), what about them is winning, with their score reason
 - **Single-minded message:** the one thing the viewer should walk away believing, in one line
 - **Winning elements we're using:** a table `| Element | From | How it shows up here |`, at least 3 rows, each citing the ad it comes from
 - **Hooks:** the main hook plus 2 alternates
+- **The ad** (the fields for this brief's format):
 {{format_fields}}
 - **CTA:** what the ad asks for, and the button
 - **Customer language to use:** phrases from the research brief, exact
