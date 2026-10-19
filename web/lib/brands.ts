@@ -1,4 +1,4 @@
-import { exists, listFolders, listKeys, readText, writeText } from "./storage";
+import { deleteKey, exists, listFolders, listKeys, readText, writeText } from "./storage";
 
 export type Kind = "reports" | "iterations" | "briefs";
 
@@ -181,3 +181,16 @@ export async function savePaste(slug: string, source: string, text: string): Pro
   const body = (source ? `source: ${source}\n\n` : "") + text.trim() + "\n";
   await writeText(`brands/${checkSlug(slug)}/voc-paste/${stamp}.md`, body, "text/markdown; charset=utf-8");
 }
+
+/**
+ * Delete an iteration set or brief doc from the site. It's moved to brands/<slug>/trash/<kind>/
+ * rather than erased, so it can be brought back by hand if it was a mistake.
+ */
+export async function deleteDoc(slug: string, kind: "iterations" | "briefs", file: string): Promise<void> {
+  const key = `brands/${checkSlug(slug)}/${kind}/${checkFile(file)}.md`;
+  const md = await readText(key);
+  if (md === null) return;
+  await writeText(`brands/${slug}/trash/${kind}/${file}.md`, md, "text/markdown; charset=utf-8");
+  await deleteKey(key);
+}
+

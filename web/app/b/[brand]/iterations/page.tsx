@@ -16,10 +16,10 @@ export default async function Iterations({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ report?: string; queued?: string; pick?: string; cancelled?: string }>;
+  searchParams: Promise<{ report?: string; queued?: string; pick?: string; cancelled?: string; deleted?: string }>;
 }) {
   const { brand } = await params;
-  const { report: wanted, queued, pick, cancelled } = await searchParams;
+  const { report: wanted, queued, pick, cancelled, deleted } = await searchParams;
   const [name, reports, files, jobs, ads] = await Promise.all([
     brandName(brand),
     listDocs(brand, "reports"),
@@ -49,6 +49,7 @@ export default async function Iterations({
           Queued. Your iterations show up below when they're written.
         </p>
       )}
+      {deleted && <p className="notice quiet">Iterations deleted.</p>}
       {cancelled && (
         <p className="notice quiet">
           <span className="dot" aria-hidden="true" />
@@ -154,6 +155,7 @@ export default async function Iterations({
           tone="emerald"
           empty="No iterations yet."
           titles={await docTitles(brand, "iterations", files)}
+          remove={{ brand, kind: "iterations" }}
         />
       </section>
     </main>

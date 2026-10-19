@@ -15,10 +15,10 @@ export default async function Briefs({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ queued?: string; cancelled?: string; pick?: string }>;
+  searchParams: Promise<{ queued?: string; cancelled?: string; deleted?: string; pick?: string }>;
 }) {
   const { brand } = await params;
-  const { queued, cancelled, pick } = await searchParams;
+  const { queued, cancelled, deleted, pick } = await searchParams;
   const [name, files, iterationFiles, jobs] = await Promise.all([
     brandName(brand),
     listDocs(brand, "briefs"),
@@ -54,6 +54,7 @@ export default async function Briefs({
           Queued. Your brief doc shows up below when it's written.
         </p>
       )}
+      {deleted && <p className="notice quiet">Brief deleted.</p>}
       {cancelled && (
         <p className="notice quiet">
           <span className="dot" aria-hidden="true" />
@@ -113,6 +114,7 @@ export default async function Briefs({
           tone="ruby"
           empty="No briefs yet."
           titles={await docTitles(brand, "briefs", files)}
+          remove={{ brand, kind: "briefs" }}
         />
       </section>
     </main>

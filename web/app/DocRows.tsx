@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DeleteDoc from "./DeleteDoc";
 import { docLabel } from "./dates";
 
 /** A list of dated documents (reports, iterations, briefs), newest first. */
@@ -8,12 +9,15 @@ export default function DocRows({
   tone,
   empty,
   titles,
+  remove,
 }: {
   base: string;
   files: string[];
   tone: string;
   empty: string;
   titles?: Record<string, string[]>;
+  /** Show a delete × on each row: the brand and which kind of doc these are. */
+  remove?: { brand: string; kind: "iterations" | "briefs" };
 }) {
   if (files.length === 0) return <p className="empty">{empty}</p>;
   return (
@@ -42,6 +46,14 @@ export default function DocRows({
               <span className="muted">{detail}</span>
               <span className="arrow" aria-hidden="true">→</span>
             </Link>
+            {remove ? (
+              <DeleteDoc
+                brand={remove.brand}
+                kind={remove.kind}
+                file={f}
+                label={titles?.[f]?.join(", ") || `${date}${detail ? ` (${detail})` : ""}`}
+              />
+            ) : null}
           </li>
         );
       })}

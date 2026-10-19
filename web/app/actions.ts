@@ -1,7 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { brandExists, checkFile, checkSlug, createBrand, savePaste, slugify } from "@/lib/brands";
+import { brandExists, checkFile, checkSlug, createBrand, deleteDoc, savePaste, slugify } from "@/lib/brands";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { cancelJob, createJob } from "@/lib/jobs";
 import { requireBrand, requireOwner } from "@/lib/session";
@@ -138,3 +139,14 @@ export async function removeCompetitorAction(form: FormData) {
   await removeCompetitor(brand, name);
   redirect(`/b/${brand}?competitor=removed&name=${encodeURIComponent(name)}#competitors`);
 }
+
+export async function deleteDocAction(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
+  const kind = String(form.get("kind"));
+  if (kind !== "iterations" && kind !== "briefs") redirect(`/b/${brand}`);
+  await deleteDoc(brand, kind, checkFile(String(form.get("file"))));
+  revalidatePath(`/b/${brand}`, "layout");
+  redirect(`/b/${brand}/${kind}?deleted=1`);
+}
+

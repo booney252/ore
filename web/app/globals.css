@@ -1292,3 +1292,10 @@ select {
 /* Doc rows: the names of the briefs or iterations inside each doc */
 .doc-name { display: grid; gap: 4px; min-width: 0; }
 .doc-titles { color: var(--text); font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Delete × on iteration and brief rows */
+.doc-rows li { display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+.doc-rows li a { flex: 1; min-width: 0; border-bottom: 0; }
+.doc-delete { padding: 0 8px; }
+.doc-delete .comp-remove { opacity: 0.45; }
+.doc-rows li:hover .doc-delete .comp-remove, .doc-delete .comp-remove:focus-visible { opacity: 1; }
