@@ -219,6 +219,27 @@ def sections(md: str, heading: str, numbers: list[int], hashes: str = "{2,4}") -
 
 # --- stage 2: iterations from chosen winners -------------------------------------------
 
+def already_made(storage, slug: str, skip: str | None = None) -> str:
+    """What the brand's earlier iterations already used: name, opening line and angle of each,
+    so a new iteration can take a different angle instead of repeating one."""
+    lines = []
+    for key in sorted(storage.list(brandlib.brand_key(slug, "iterations/"))):
+        if not key.endswith(".md") or (skip and key.endswith(f"/{skip}.md")):
+            continue
+        md = storage.read_text(key)
+        heads = list(re.finditer(r"^#{2,4}\s*Iteration\s+\d+\s*[:.\-]?\s*(.*)$", md, re.M))
+        for i, m in enumerate(heads):
+            part = md[m.end():heads[i + 1].start() if i + 1 < len(heads) else len(md)]
+            row = re.search(r"^\|\s*0[^|]*\|\s*([^|]+)\|", part, re.M)
+            why = re.search(r"\*\*Why it should work for us:\*\*\s*(.+)", part)
+            if not why:  # some files put it in sub-bullets
+                why = re.search(r"\*\*Segment:\*\*\s*(.+)", part)
+            lines.append(f"- {m.group(1).strip()} ({Path(key).stem})"
+                         + (f"\n  Opens: {row.group(1).strip()[:200]}" if row else "")
+                         + (f"\n  Angle: {why.group(1).strip()[:300]}" if why else ""))
+    return "\n".join(lines) or "(none yet)"
+
+
 def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
                    fmt: str = formats.DEFAULT, per_ad: int = 1, today: date | None = None,
                    client=None, idea: str | None = None) -> str | None:
@@ -243,6 +264,7 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
 
     ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
     ctx = with_format(brand_context(storage, slug), fmt)
+    ctx["already_made"] = already_made(storage, slug)
     source_ads = "\n\n".join(format_full(ads[by_rank[r]], r) for r in ranks
                               if by_rank[r] in ads)
     picks = f"-ads-{'-'.join(map(str, ranks))}" if ranks else ""

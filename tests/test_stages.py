@@ -219,3 +219,23 @@ def test_one_brief_doc_from_iterations_in_different_files_and_formats(brand):
     out = stages.run_brief_picks(storage, "pp", picks, today=TODAY)
     assert "/briefs/2026-10-17-picks-" in out
     assert "Iteration 1 of 2026-10-18-idea-abc123-broll (B-roll video)" in storage.read_text(out)
+
+
+def test_new_iterations_see_what_was_already_made(brand):
+    storage = brand
+    storage.write_text("brands/pp/iterations/2026-10-16-ads-1.md",
+                       "### Iteration 1: Second-One Warning\n"
+                       "- **Why it should work for us:** the buying moment, adding a second one.\n"
+                       "- **Script:**\n\n| Time | They say | On screen |\n|---|---|---|\n"
+                       "| 0-3s | \"If you just added a second shot, listen.\" | headphones off |\n")
+    made = stages.already_made(storage, "pp")
+    assert "Second-One Warning (2026-10-16-ads-1)" in made
+    assert 'Opens: "If you just added a second shot, listen."' in made
+    assert "Angle: the buying moment" in made
+    storage.write_text("brands/pp/reports/2026-10-17.md", "#### 1. X: \"hook\"\n- why\n")
+    storage.write_text("brands/pp/reports/2026-10-17.json",
+                       json.dumps({"top": [{"rank": 1, "ad_id": "2922821464729858"}]}))
+    stages.run_iterations(storage, "pp", None, [1], today=TODAY)
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "Second-One Warning" in prompt and "different angle" in prompt

@@ -39,6 +39,14 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{source_ads}}
 </source_ads>
 
+## Already made for {{brand_name}}
+
+These iterations exist already. Each new one needs a different angle from all of them: a different pain, moment, villain or segment, and a different opening line. Don't reuse an opening, a moment or a "why it should work" that's listed here, unless the reader's own idea asks for exactly that.
+
+<already_made>
+{{already_made}}
+</already_made>
+
 ## Format (chosen by the reader, a hard constraint)
 
 Every iteration is this format: **{{ad_format}}**
@@ -57,6 +65,7 @@ Number them 1 to {{total}}. If there's more than one, make them genuinely differ
 If part of the idea breaks a hard rule in the research brief or knowledge (a claim we can't make, a banned visual), keep the spirit of the idea, change that part, and say what you changed and why under **Built on**.
 
 ## Rules
+- The research brief's default lead segment and buying moment are a default, not the answer every time. Pick the segment, moment and pain that fit this winner best, and rotate across the brief's segments and pains so no two iterations sell the same thing.
 - Only use what's in the data. Don't invent stats, testimonials or customer quotes. Quotes come only from the research brief, word for word.
 - Competitor claims are never safe to copy just because they're running.
 - Follow every hard rule in the research brief and knowledge.
