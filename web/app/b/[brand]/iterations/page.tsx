@@ -6,7 +6,7 @@ import FormatPicker from "@/app/FormatPicker";
 import PickCard from "@/app/PickCard";
 import Requests from "@/app/Requests";
 import { loadAds } from "@/lib/ads";
-import { brandName, listDocs, reportTop } from "@/lib/brands";
+import { brandName, docTitles, listDocs, reportTop } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -148,7 +148,13 @@ export default async function Iterations({
 
       <section className="block">
         <h2>Your iterations</h2>
-        <DocRows base={`/b/${brand}/iterations`} files={files} tone="emerald" empty="No iterations yet." />
+        <DocRows
+          base={`/b/${brand}/iterations`}
+          files={files}
+          tone="emerald"
+          empty="No iterations yet."
+          titles={await docTitles(brand, "iterations", files)}
+        />
       </section>
     </main>
   );

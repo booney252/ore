@@ -3,7 +3,7 @@ import { newBriefs } from "@/app/actions";
 import { docLabel } from "@/app/dates";
 import DocRows from "@/app/DocRows";
 import Requests from "@/app/Requests";
-import { brandName, listDocs, parseIterations, readDoc } from "@/lib/brands";
+import { brandName, docTitles, listDocs, parseIterations, readDoc } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -107,7 +107,13 @@ export default async function Briefs({
 
       <section className="block">
         <h2>Your briefs</h2>
-        <DocRows base={`/b/${brand}/briefs`} files={files} tone="ruby" empty="No briefs yet." />
+        <DocRows
+          base={`/b/${brand}/briefs`}
+          files={files}
+          tone="ruby"
+          empty="No briefs yet."
+          titles={await docTitles(brand, "briefs", files)}
+        />
       </section>
     </main>
   );

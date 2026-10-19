@@ -55,6 +55,19 @@ export function parseIterations(md: string): { n: number; title: string }[] {
   return out;
 }
 
+/** Names of the briefs or iterations inside a doc: "### Brief 2: Fridge" -> "Fridge". */
+export async function docTitles(slug: string, kind: Kind, files: string[]): Promise<Record<string, string[]>> {
+  const word = kind === "briefs" ? "Brief" : "Iteration";
+  const re = new RegExp(`^#{2,4}\\s*${word}\\s+\\d+\\s*[:.\\-]?\\s*(.*)$`, "gm");
+  const entries = await Promise.all(
+    files.map(async (f) => {
+      const md = (await readDoc(slug, kind, f)) ?? "";
+      return [f, [...md.matchAll(re)].map((m) => m[1].trim()).filter(Boolean)] as const;
+    }),
+  );
+  return Object.fromEntries(entries);
+}
+
 /** A report's ranked winners (reports/<date>.json), or null for a report without one. */
 export async function reportTop(
   slug: string,

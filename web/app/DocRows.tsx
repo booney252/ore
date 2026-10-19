@@ -7,11 +7,13 @@ export default function DocRows({
   files,
   tone,
   empty,
+  titles,
 }: {
   base: string;
   files: string[];
   tone: string;
   empty: string;
+  titles?: Record<string, string[]>;
 }) {
   if (files.length === 0) return <p className="empty">{empty}</p>;
   return (
@@ -33,7 +35,10 @@ export default function DocRows({
           <li key={f}>
             <Link href={`${base}/${f}`}>
               <span className={`dot ${tone}`} aria-hidden="true" />
-              <span className="doc-date">{date}</span>
+              <span className="doc-name">
+                <span className="doc-date">{date}</span>
+                {titles?.[f]?.length ? <span className="doc-titles">{titles[f].join(" · ")}</span> : null}
+              </span>
               <span className="muted">{detail}</span>
               <span className="arrow" aria-hidden="true">→</span>
             </Link>
