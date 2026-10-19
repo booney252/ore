@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 from cse import ads
 from cse.adsource import normalize_scrapecreators
-from cse.score import winner_score
+from cse.score import letter, winner_score
 from cse.storage import LocalStorage
 
 TODAY = date(2026, 10, 16)
@@ -42,16 +42,25 @@ def test_normalize_image_and_empty():
 
 def test_winner_score_explains_itself():
     score, why = winner_score({"start_date": "2026-08-30", "is_active": True, "versions": 6}, TODAY)
-    assert why == "Running 47 days, still active, 6 versions."
-    assert score == round(47 / 90 * 50 + 25 + 5 / 9 * 25)
+    assert why == "Grade A: running 47 days (B), still active, 6 versions (up one)."
+    assert score == 100 and letter(score) == "A"
 
 
 def test_winner_score_inactive_uses_end_date_and_caps():
     score, why = winner_score({"start_date": "2025-01-01", "end_date": "2025-12-31",
                                "is_active": False, "versions": 40}, TODAY)
-    assert why == "Running 364 days, stopped 2025-12-31, 40 versions."
-    assert score == 75  # 50 days cap + 0 active + 25 versions cap
-    assert winner_score({"versions": 1}, TODAY) == (0, "Running 0 days, stopped None, 1 version.")
+    assert why == "Grade A: running 364 days (A), stopped 2025-12-31 (down one), 40 versions (up one)."
+    assert winner_score({"versions": 1}, TODAY) == (0, "Grade F: running 0 days (D), stopped None (down one), 1 version.")
+
+
+def test_grade_cutoffs():
+    grade = lambda ad: letter(winner_score(ad, TODAY)[0])
+    assert grade({"start_date": "2026-03-26", "is_active": True, "versions": 1}) == "A"  # 204 days, 1 version
+    assert grade({"start_date": "2026-08-01", "is_active": True, "versions": 2}) == "B"
+    assert grade({"start_date": "2026-09-25", "is_active": True, "versions": 1}) == "C"
+    assert grade({"start_date": "2026-10-14", "is_active": True, "versions": 1}) == "D"
+    assert grade({"start_date": "2026-10-01", "end_date": "2026-10-05", "is_active": False}) == "F"
+    assert letter(0) == "F" and letter(100) == "A"
 
 
 def test_pick_page_prefers_exact_name():
@@ -104,7 +113,7 @@ def test_run_pulls_scores_downloads_and_is_incremental(tmp_path):
     assert storage.read_bytes("brands/pp/media/111.mp4") == b"video-bytes"
 
     saved = json.loads(storage.read_text("brands/pp/ads.json"))["ads"]["111"]
-    assert saved["brand"] == "Pep AI" and saved["score_why"].startswith("Running 410 days")
+    assert saved["brand"] == "Pep AI" and saved["score_why"].startswith("Grade ") and "running 410 days" in saved["score_why"]
     comps = json.loads(storage.read_text("brands/pp/competitors.json"))["competitors"]
     assert comps[0]["fb_page_id"] == "9" and comps[0]["fb_page_match"] == "auto"
 

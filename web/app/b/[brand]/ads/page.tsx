@@ -1,6 +1,7 @@
 import AdCard from "@/app/AdCard";
 import ScoreKey from "@/app/ScoreKey";
-import { loadAds, tier, winners } from "@/lib/ads";
+import Grade from "@/app/Grade";
+import { loadAds, winners } from "@/lib/ads";
 import { explain } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
         <p className="mono muted">Winning ads</p>
         <h1 className="display">Winning ads</h1>
         <p className="lede">
-          The top ads by winner score, videos and statics. Open one to watch it with its
+          The top ads by winner grade, videos and statics. Open one to watch it with its
           transcript and frames, and its diagnosis once it's been taken apart.
         </p>
       </header>
@@ -36,12 +37,12 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
 
       <section className="block">
         <h2>Also tracked</h2>
-        <p className="muted">The next {rest.length} by score, without frames pulled yet.</p>
+        <p className="muted">The next {rest.length} by grade, without frames pulled yet.</p>
         <div className="table-wrap">
           <table className="data">
             <thead>
               <tr>
-                <th>Score</th>
+                <th>Grade</th>
                 <th>Advertiser</th>
                 <th>Why</th>
                 <th>Format</th>
@@ -52,7 +53,7 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
               {rest.map((a) => (
                 <tr key={a.ad_id}>
                   <td>
-                    <span className={`score-num sm ${tier(a.score)}`}>{a.score}</span>
+                    <Grade g={explain(a).grade} size="sm" />
                   </td>
                   <td>{a.brand}</td>
                   <td>

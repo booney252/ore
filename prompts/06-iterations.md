@@ -42,7 +42,7 @@ A winner in another format still lends its hook, structure, mechanism or graphic
 Number them 1 to {{total}} across all the chosen ads, in the order the ads are given. If you write more than one per ad, make them genuinely different (one close 90/10, one bolder pattern transfer).
 
 ### Iteration <N>: <short name>
-- **From:** ad #<rank> (<advertiser>, ID), with its score reason
+- **From:** ad #<rank> (<advertiser>, ID), with its grade reason
 - **Type:** 90/10 (keep their hook or core element almost word for word, change only what makes it {{brand_name}}) or pattern transfer (reuse their structure, format or mechanism with our message)
 - **What we're borrowing:** the exact load-bearing elements, quoted where they're words
 - **Why it should work for us:** the segment, pain and awareness stage from the research brief it hits

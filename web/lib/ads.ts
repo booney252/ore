@@ -40,14 +40,14 @@ export const loadAds = cache(async (slug: string): Promise<Ad[]> => {
 });
 
 /**
- * Best winner score first, still in the Ad Library, at most `perBrand` per advertiser.
+ * Best winner grade first, still in the Ad Library, at most `perBrand` per advertiser.
  * Ads not broken down yet are included (shown as "not taken apart yet") as long as there's
  * something to look at: key frames, or the image itself for a static.
  */
 export function winners(ads: Ad[], perBrand = 3): Ad[] {
   const pool = ads
     .filter((a) => !a.removed_from_library && (a.breakdown || viewable(a)))
-    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || (b.days_running ?? 0) - (a.days_running ?? 0));
   const counts = new Map<string, number>();
   return pool.filter((a) => {
     const n = (counts.get(a.brand) ?? 0) + 1;
@@ -65,10 +65,6 @@ export function stats(ads: Ad[]) {
   };
 }
 
-export type Tier = "diamond" | "emerald" | "ruby";
-export function tier(score = 0): Tier {
-  return score >= 75 ? "diamond" : score >= 50 ? "emerald" : "ruby";
-}
 
 /** The opening line, without the analyst's notes: '"best way?" (on-screen text, no speech)' -> 'best way?' */
 export function hook(ad: Ad): string {

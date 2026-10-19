@@ -43,7 +43,7 @@ Number the briefs 1 to {{total}}. They go in one document, so a reader can hand 
 - **From:** which iteration it's built on (its name and the file it came from) and its format
 - **Objective:** what this ad has to do, for which segment, at which awareness stage (from the research brief)
 - **Placement:** where it runs (Meta feed, Reels, Stories) and the sizes to deliver (9:16 for video and Stories, 4:5 and 1:1 for statics)
-- **Built from:** the winning ads (IDs + advertiser), what about them is winning, with their score reason
+- **Built from:** the winning ads (IDs + advertiser), what about them is winning, with their grade reason
 - **Single-minded message:** the one thing the viewer should walk away believing, in one line
 - **Winning elements we're using:** a table `| Element | From | How it shows up here |`, at least 3 rows, each citing the ad it comes from
 - **Hooks:** the main hook plus 2 alternates

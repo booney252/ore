@@ -1,6 +1,8 @@
-import { hook, posterUrl, tier, type Ad } from "@/lib/ads";
+import Grade from "@/app/Grade";
+import { hook, posterUrl, type Ad } from "@/lib/ads";
+import { explain } from "@/lib/score";
 
-/** A winner you can tick: its frame, rank, score and hook. Plain checkbox, works without JS. */
+/** A winner you can tick: its frame, rank, grade and hook. Plain checkbox, works without JS. */
 export default async function PickCard({ ad, rank, name }: { ad: Ad; rank: number; name: string }) {
   const poster = await posterUrl(ad);
   return (
@@ -11,7 +13,7 @@ export default async function PickCard({ ad, rank, name }: { ad: Ad; rank: numbe
         <span className="ad-rank mono">#{rank}</span>
         <span className="pick-tick" aria-hidden="true" />
         <span className="ad-over">
-          <span className={`score-num ${tier(ad.score)}`}>{ad.score}</span>
+          <Grade g={explain(ad).grade} />
           <span className="mono">{ad.media_type === "image" ? "static" : `${ad.days_running}d`}</span>
         </span>
       </span>

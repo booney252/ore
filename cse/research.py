@@ -46,7 +46,7 @@ def _load(storage, slug: str, name: str, field: str) -> list:
 
 
 def format_ads(ads: list[dict], limit: int = ADS_IN_PROMPT) -> str:
-    """Top ads by winner score, one JSON line each: who, why it scores, and what it says."""
+    """Top ads by winner grade, one JSON line each: who, why it scores, and what it says."""
     top = sorted((a for a in ads if not a.get("removed_from_library")),
                  key=lambda a: a.get("score", 0), reverse=True)[:limit]
     lines = []

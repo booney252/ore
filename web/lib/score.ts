@@ -1,70 +1,91 @@
 import type { Ad } from "./ads";
 
 /**
- * The winner score in plain words. Same formula as cse/score.py:
- * time live (up to 50) + still running (25) + versions (up to 25).
- * Nobody keeps paying for an ad that loses money, so time live and copies made
- * are the best public signs that an ad is working.
+ * The winner grade, like school. Same rules as cse/score.py: time live sets the grade
+ * (nobody keeps paying for an ad that loses money), then stopped = down one grade and
+ * 5+ versions = up one grade.
  */
 
-export type Part = { label: string; value: string; points: number; max: number; note: string };
-export type Explained = { verdict: string; meaning: string; reason: string; parts: Part[] };
+export type Grade = "A" | "B" | "C" | "D" | "F";
+export type Part = { label: string; value: string; effect: string; grade?: Grade; note: string };
+export type Explained = { grade: Grade; verdict: string; meaning: string; reason: string; parts: Part[] };
 
-export const VERDICTS = [
-  { min: 75, verdict: "Proven winner", meaning: "Months of paid spend and still running. Almost certainly making them money." },
-  { min: 50, verdict: "Strong signal", meaning: "They've kept paying for it well past testing. Very likely working." },
-  { min: 25, verdict: "Early signal", meaning: "Survived its first weeks. Promising, not proven." },
-  { min: 0, verdict: "Too early to tell", meaning: "New or already stopped. Could be a test that never won." },
+const GRADES: Grade[] = ["A", "B", "C", "D", "F"];
+const SCALE_VERSIONS = 5;
+
+export const VERDICTS: { grade: Grade; verdict: string; meaning: string }[] = [
+  { grade: "A", verdict: "Proven winner", meaning: "Months of paid spend and still running. Almost certainly making them money." },
+  { grade: "B", verdict: "Strong signal", meaning: "Ran well past testing. Very likely a winner." },
+  { grade: "C", verdict: "Early signal", meaning: "Got through its first weeks. Promising, not proven." },
+  { grade: "D", verdict: "Too early to tell", meaning: "Under two weeks and still being tested. Could go either way." },
+  { grade: "F", verdict: "Didn't make it", meaning: "Stopped within two weeks. Probably a test that lost." },
 ];
 
-function months(days: number): string {
+export const PART_SCALES = [
+  { label: "Time live", effect: "sets the grade", scale: "A 90+ days · B 30+ · C 14+ · D under 2 weeks" },
+  { label: "Still running", effect: "if stopped, down one grade", scale: "a stopped D becomes an F" },
+  { label: "Versions", effect: "5+ versions, up one grade", scale: "lots of copies means they're scaling it" },
+];
+
+function gradeTime(days: number): Grade {
+  return days >= 90 ? "A" : days >= 30 ? "B" : days >= 14 ? "C" : "D";
+}
+
+/** Colour family for a grade. */
+export function tone(g: Grade): "diamond" | "emerald" | "ruby" | "dim" {
+  return g === "A" ? "diamond" : g === "B" ? "emerald" : g === "C" ? "ruby" : "dim";
+}
+
+function span(days: number): string {
   if (days < 14) return `${days} day${days === 1 ? "" : "s"}`;
   if (days < 60) return `${Math.round(days / 7)} weeks`;
   return `${Math.round(days / 30)} months`;
 }
 
 export function explain(ad: Ad): Explained {
-  const score = ad.score ?? 0;
   const days = ad.days_running ?? 0;
   const versions = Math.max(1, ad.versions ?? 1);
   const live = Boolean(ad.is_active) && !ad.removed_from_library;
-  const { verdict, meaning } = VERDICTS.find((v) => score >= v.min)!;
 
   const time: Part = {
     label: "Time live",
     value: `${days} day${days === 1 ? "" : "s"}`,
-    points: Math.round((Math.min(days, 90) / 90) * 50),
-    max: 50,
+    grade: gradeTime(days),
+    effect: "sets the grade",
     note:
       days >= 90
         ? "3+ months of paid spend. Brands don't keep losing ads running this long."
         : days >= 30
           ? "Over a month. It made it past the first round of cuts."
-          : days >= 7
-            ? "Past its first test week, still early."
-            : "Brand new. Most ads get cut in the first week.",
+          : days >= 14
+            ? "Two weeks in. Past the first test, still early."
+            : "Under two weeks. Still being tested; most ads get cut around now.",
   };
   const status: Part = {
     label: "Still running",
     value: ad.removed_from_library ? "Removed" : live ? "Yes" : "Stopped",
-    points: live ? 25 : 0,
-    max: 25,
+    effect: live ? "no change" : "down one grade",
     note: live ? "They're still paying for it today." : "They've stopped paying for it.",
   };
   const copies: Part = {
     label: "Versions",
     value: String(versions),
-    points: Math.round(((Math.min(versions, 10) - 1) / 9) * 25),
-    max: 25,
+    effect: versions >= SCALE_VERSIONS ? "up one grade" : "no change",
     note:
-      versions >= 5
-        ? "Lots of copies with new captions, sizes or hooks: they're scaling it."
-        : versions >= 2
-          ? "They've remade it, a sign they want more of it."
-          : "Only one version so far.",
+      versions >= 10
+        ? "10+ copies with new captions, sizes or hooks: they're pouring money in."
+        : versions >= 5
+          ? "Lots of copies: they're scaling it."
+          : versions >= 2
+            ? "They've remade it a little. Not enough to count as scaling."
+            : "One version. Plenty of winners only ever have one.",
   };
 
-  const bits = [`Live ${months(days)}`, live ? "still running" : "now stopped"];
+  const i = GRADES.indexOf(time.grade!) - (versions >= SCALE_VERSIONS ? 1 : 0) + (live ? 0 : 1);
+  const grade = GRADES[Math.max(0, Math.min(4, i))];
+  const { verdict, meaning } = VERDICTS.find((v) => v.grade === grade)!;
+
+  const bits = [`Live ${span(days)}`, live ? "still running" : "now stopped"];
   if (versions > 1) bits.push(`${versions} versions`);
   const so =
     live && days >= 60 && versions >= 5
@@ -73,8 +94,9 @@ export function explain(ad: Ad): Explained {
         ? "they keep paying for it"
         : live
           ? "still being tested"
-          : "it may not have won";
-  const reason = `${bits.join(", ")}: ${so}.`;
+          : days >= 30
+            ? "it ran for a long time, so it likely worked"
+            : "it may not have won";
 
-  return { verdict, meaning, reason, parts: [time, status, copies] };
+  return { grade, verdict, meaning, reason: `${bits.join(", ")}: ${so}.`, parts: [time, status, copies] };
 }

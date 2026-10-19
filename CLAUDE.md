@@ -126,12 +126,12 @@ Ask me before picking anything that costs money. Build the data source as a swap
 
 For each ad, store: brand, ad ID, start date, days running, still active or not, platforms, ad copy, headline, CTA, link, media type, media URL.
 
-**Winner score** (simple and explainable, not a black box):
-- Days running (longer = more likely profitable)
-- Still active
-- Number of versions of the same creative or copy (many versions usually means they're scaling it)
+**Winner grade** (simple and explainable, A to F like school; changed from a 0-100 score 2026-10-19):
+- Time live sets the grade: A 90+ days, B 30+, C 14+, D under 2 weeks
+- Stopped (or removed from the Ad Library): down one grade (a stopped D is an F)
+- 5+ versions of the same creative or copy (they're scaling it): up one grade
 
-Every score must show *why*: "Running 47 days, still active, 6 versions."
+Every grade must show *why*: "Grade A: running 47 days (B), still active, 6 versions (up one)." The site says it in plain words too (Proven winner, Strong signal, Early signal, Too early to tell, Didn't make it).
 
 ### 2b. Creative breakdown (video + image)
 Every competitor ad needs its actual creative pulled and broken down, not just the copy.

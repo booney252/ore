@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { hook, loadAds, posterUrl, tier } from "@/lib/ads";
+import { hook, loadAds, posterUrl } from "@/lib/ads";
 import { explain } from "@/lib/score";
+import Grade from "@/app/Grade";
 import { signedUrl } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
@@ -90,10 +91,11 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
           </header>
 
           <div className="score-block">
-            <span className={`score-num lg ${tier(ad.score)}`}>{ad.score}</span>
+            <Grade g={why.grade} size="lg" />
             <div>
-              <p className="mono muted">Winner score · {why.verdict}</p>
-              <p>{why.meaning}</p>
+              <p className="mono muted">Winner grade · {why.verdict}</p>
+              <p>{why.reason}</p>
+              <p className="muted">{why.meaning}</p>
               {ad.removed_from_library ? (
                 <span className="tag ruby">Removed {ad.removed_from_library}</span>
               ) : ad.ad_library_url ? (
@@ -111,12 +113,15 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
                   <span>
                     {p.label}: <strong>{p.value}</strong>
                   </span>
-                  <span className="mono muted">
-                    +{p.points} / {p.max}
+                  <span className="score-part-grade">
+                    {p.grade ? (
+                      <Grade g={p.grade} size="sm" />
+                    ) : (
+                      <span className={`effect ${p.effect === "no change" ? "" : p.effect.startsWith("up") ? "up" : "down"}`}>
+                        {p.effect === "no change" ? "no change" : p.effect.startsWith("up") ? "↑ up one" : "↓ down one"}
+                      </span>
+                    )}
                   </span>
-                </div>
-                <div className="score-bar" aria-hidden="true">
-                  <span className={tier(ad.score)} style={{ width: `${(p.points / p.max) * 100}%` }} />
                 </div>
                 <p className="muted">{p.note}</p>
               </div>

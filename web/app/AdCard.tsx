@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { hook, posterUrl, tier, type Ad } from "@/lib/ads";
+import Grade from "@/app/Grade";
+import { hook, posterUrl, type Ad } from "@/lib/ads";
 import { explain } from "@/lib/score";
 
 export default async function AdCard({ brand, ad, rank }: { brand: string; ad: Ad; rank?: number }) {
@@ -13,8 +14,8 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
         {ad.media_type === "image" ? <span className="tag ad-kind">Static</span> : null}
         {ad.is_own ? <span className="tag emerald">Yours</span> : null}
         <div className="ad-over">
-          <span className={`score-num ${tier(ad.score)}`}>{ad.score}</span>
-          <span className={`verdict ${tier(ad.score)}`}>{why.verdict}</span>
+          <Grade g={why.grade} />
+          <span className="verdict">{why.verdict}</span>
         </div>
       </div>
       <div className="ad-meta">

@@ -5,7 +5,7 @@ You are a senior creative strategist diagnosing one paid social ad for {{brand_n
 ## The ad
 
 - Advertiser: {{advertiser}} ({{ring}})
-- Winner score: {{score}}/100. {{score_why}}
+- Winner grade (A-F): {{score_why}}
 - Media: {{media_type}}, {{length_s}}s, {{cut_count}} cuts ({{cuts_per_second}} cuts/sec)
 - Headline: {{headline}}
 - CTA button: {{cta}}
@@ -33,7 +33,7 @@ Frame times (seconds): {{frame_times}}
   "beats": ["ordered beats with timestamps, e.g. '0-3s: callout + phone in hand'"],
   "offer": "price, trial, discount, guarantee mentioned, or none",
   "cta": "what the viewer is told to do",
-  "why_it_works": "2-3 sentences on why this is likely working, tied to specifics in the video and the winner score",
+  "why_it_works": "2-3 sentences on why this is likely working, tied to specifics in the video and the winner grade",
   "hook_spoken": "first spoken line, exactly, or null",
   "hook_text": "first on-screen text, word for word, or null",
   "hook_visual": "what the eye lands on in frame 0 and why it stops the scroll",
@@ -46,7 +46,7 @@ Frame times (seconds): {{frame_times}}
   "emotion": "the main feeling it triggers and where (relief, recognition, embarrassment, curiosity, humor)",
   "persuasion": ["devices used, e.g. 'is anyone else' callout, reframe, repetition puzzle, confession, social proof, demo-as-proof, regret"],
   "proof": "what makes it believable (on-screen demo, ratings, real receipts), or none",
-  "load_bearing": [{"element": "the element", "what": "exactly what they do", "why": "why it works on this audience", "evidence": "why we think it's load-bearing: score, versions, reused across this advertiser's other ads"}],
+  "load_bearing": [{"element": "the element", "what": "exactly what they do", "why": "why it works on this audience", "evidence": "why we think it's load-bearing: grade, time live, versions, reused across this advertiser's other ads"}],
   "transferable": ["elements that would work for {{brand_name}} as-is or adapted"],
   "risky_claims": ["any health/results/before-after claims that would be risky to copy; [] if none"],
   "not_transferable": ["elements we can't use (claims, banned visuals, wrong audience) and why"]

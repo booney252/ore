@@ -5,7 +5,7 @@ You are a senior creative strategist diagnosing one static (single image) paid s
 ## The ad
 
 - Advertiser: {{advertiser}} ({{ring}})
-- Winner score: {{score}}/100. {{score_why}}
+- Winner grade (A-F): {{score_why}}
 - Media: static image
 - Headline: {{headline}}
 - CTA button: {{cta}}
@@ -38,11 +38,11 @@ You are a senior creative strategist diagnosing one static (single image) paid s
   "cta": "what the viewer is told to do",
   "why_the_graphic_works": "2-3 sentences on why the image itself works, tied to what's in it",
   "why_the_copy_works": "2-3 sentences on why the primary text and headline work, quoting the lines that do the work",
-  "why_it_works": "2-3 sentences on why the whole ad is likely working, tied to specifics and the winner score",
+  "why_it_works": "2-3 sentences on why the whole ad is likely working, tied to specifics and the winner grade",
   "emotion": "the main feeling it triggers (relief, recognition, curiosity, humor, envy)",
   "persuasion": ["devices used, e.g. social proof, specificity, us-vs-them, authority, scarcity, confession"],
   "proof": "what makes it believable (reviews, numbers, press, demo screenshot), or none",
-  "load_bearing": [{"element": "the element", "what": "exactly what they do", "why": "why it works on this audience", "evidence": "why we think it's load-bearing: score, versions, reused across this advertiser's other ads"}],
+  "load_bearing": [{"element": "the element", "what": "exactly what they do", "why": "why it works on this audience", "evidence": "why we think it's load-bearing: grade, time live, versions, reused across this advertiser's other ads"}],
   "transferable": ["elements that would work for {{brand_name}} as-is or adapted"],
   "risky_claims": ["any health/results/before-after claims that would be risky to copy; [] if none"],
   "not_transferable": ["elements we can't use (claims, banned visuals, wrong audience) and why"]

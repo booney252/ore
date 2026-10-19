@@ -21,7 +21,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{knowledge}}
 </knowledge>
 
-3. **The top {{top_count}} winning ads**, ranked by winner score (days running, still active, number of versions). Videos and statics compete on the same score: a static that's crushing belongs in the top list as much as a video. Each video has its transcript with timestamps, on-screen text, and a breakdown made from the actual frames; each static has a breakdown of its graphic and its copy made from the actual image.
+3. **The top {{top_count}} winning ads**, ranked by winner grade (A-F from time live, still running, and number of versions). Videos and statics compete on the same grade: a static that's crushing belongs in the top list as much as a video. Each video has its transcript with timestamps, on-screen text, and a breakdown made from the actual frames; each static has a breakdown of its graphic and its copy made from the actual image.
 <top_ads>
 {{top_ads}}
 </top_ads>
@@ -34,7 +34,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 ## Write the report in this order
 
 ### 1. The top {{top_count}}
-A table: `| # | Advertiser | Format | Hook | Score and why | Link |`. Use the score reason as given ("Running 47 days, still active, 6 versions."). For an ad marked REMOVED, write "removed" in the Link column instead of a link.
+A table: `| # | Advertiser | Format | Hook | Grade and why | Link |`. Use the grade reason as given ("Grade B: running 47 days (B), still active (A), 6 versions (B)."). For an ad marked REMOVED, write "removed" in the Link column instead of a link.
 
 ### 2. Each ad, broken down
 One section per ad, in rank order: `#### <#>. <Advertiser>: "<hook>"`, with "(video)" or "(static)" after the hook.

@@ -1234,24 +1234,39 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
 }
-.verdict.diamond { border-color: var(--diamond-glow); }
-.verdict.emerald { border-color: var(--emerald-glow); }
-.verdict.ruby { border-color: var(--ruby-glow); }
 .ad-meta p.why { color: var(--text); font-size: 0.82rem; -webkit-line-clamp: 3; }
 
 .score-parts { display: grid; gap: 14px; }
 .score-part { display: grid; gap: 6px; }
 .score-part-head { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; }
 .score-part p { font-size: 0.85rem; line-height: 1.45; }
-.score-bar { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
-.score-bar span { display: block; height: 100%; border-radius: inherit; }
-.score-bar .diamond { background: var(--g-diamond); }
-.score-bar .emerald { background: var(--g-emerald); }
-.score-bar .ruby { background: var(--g-ruby); }
-
 .score-key { margin: 4px 0 18px; font-size: 0.9rem; }
 .score-key summary { cursor: pointer; color: var(--text-2); width: fit-content; }
 .score-key summary:hover { color: var(--text); }
 .score-key-body { display: grid; gap: 12px; margin-top: 12px; max-width: 720px; line-height: 1.5; }
 .score-key ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.score-key li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: baseline; }
+.score-key li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: baseline; }
+
+/* Letter grades */
+.grade {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 1;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.grade.sm { font-size: 1.3rem; }
+.grade.lg { font-size: 5rem; }
+.grade.diamond { background-image: var(--g-diamond); filter: drop-shadow(0 0 14px var(--diamond-glow)); }
+.grade.emerald { background-image: var(--g-emerald); filter: drop-shadow(0 0 14px var(--emerald-glow)); }
+.grade.ruby { background-image: var(--g-ruby); filter: drop-shadow(0 0 14px var(--ruby-glow)); }
+.grade.dim { color: var(--text-2); background: none; }
+.score-part { padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.score-part-head { align-items: center; }
+.score-part-grade { display: inline-flex; align-items: center; gap: 12px; }
+.score-key-parts li { display: flex; flex-wrap: wrap; gap: 4px 10px; grid-template-columns: none; }
+@media (max-width: 640px) { .grade.lg { font-size: 3.6rem; } }
+.effect { font-size: 0.8rem; color: var(--text-2); }
+.effect.up { color: var(--emerald); }
+.effect.down { color: var(--ruby); }

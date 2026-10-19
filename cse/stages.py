@@ -93,7 +93,7 @@ def ranked(ads: list[dict], per_brand: int | None = PER_BRAND,
     """Broken-down ads by score, at most `per_brand` per advertiser."""
     pool = [a for a in ads if a.get("breakdown")
             and (include_removed or not a.get("removed_from_library"))]
-    pool.sort(key=lambda a: a.get("score", 0), reverse=True)
+    pool.sort(key=lambda a: (a.get("score", 0), a.get("days_running", 0)), reverse=True)
     if not per_brand:
         return pool
     counts: dict[str, int] = {}
@@ -122,7 +122,7 @@ def format_full(ad: dict, rank: int | None = None) -> str:
     title = f"### {'#' + str(rank) + ' | ' if rank else ''}Ad {ad['ad_id']} | {_who(ad)}"
     return "\n".join([
         title,
-        f"- Score {ad.get('score')}/100: {ad.get('score_why')}",
+        f"- Winner grade: {ad.get('score_why')}",
         f"- Link: {_link(ad)}",
         f"- {ad.get('media_type')}, {a.get('length_s', 0)}s, {a.get('cut_count', 0)} cuts "
         f"({a.get('cuts_per_second', 0)}/sec)",
@@ -136,7 +136,7 @@ def format_full(ad: dict, rank: int | None = None) -> str:
 
 def format_line(ad: dict) -> str:
     b = ad.get("breakdown") or {}
-    return (f"- Ad {ad['ad_id']} | {_who(ad)} | score {ad.get('score')}: {ad.get('score_why')} | "
+    return (f"- Ad {ad['ad_id']} | {_who(ad)} | {ad.get('score_why')} | "
             f"{b.get('format', ad.get('media_type'))} | hook: {b.get('hook_line', '')[:120]} | "
             f"angle: {b.get('angle', '')[:120]}")
 
