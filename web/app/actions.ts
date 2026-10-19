@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { brandExists, checkFile, checkSlug, createBrand, savePaste, slugify } from "@/lib/brands";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { cancelJob, createJob } from "@/lib/jobs";
+import { requireBrand, requireOwner } from "@/lib/session";
 
 function formatOf(form: FormData): string {
   const f = String(form.get("format") ?? "ugc");
@@ -12,6 +13,7 @@ function formatOf(form: FormData): string {
 
 export async function newReport(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   await createJob({ type: "report", brand });
   redirect(`/b/${brand}/reports?queued=1`);
 }
@@ -25,6 +27,7 @@ function numbers(form: FormData, field: string): number[] {
 
 export async function newIterations(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   const report = checkFile(String(form.get("report")));
   const ads = numbers(form, "ad");
   const idea = String(form.get("idea") ?? "").trim().slice(0, 2000);
@@ -44,6 +47,7 @@ export async function newIterations(form: FormData) {
 
 export async function newBriefs(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   // "file:3" from the Creative briefs picker, or a file + numbers from an iterations page.
   const picks = form
     .getAll("pick")
@@ -63,6 +67,7 @@ export async function newBriefs(form: FormData) {
 }
 
 export async function newBrand(form: FormData) {
+  await requireOwner();
   const name = String(form.get("name") ?? "").trim().slice(0, 80);
   const about = String(form.get("about") ?? "").trim().slice(0, 600);
   let website = String(form.get("website") ?? "").trim().slice(0, 300);
@@ -82,12 +87,14 @@ export async function newBrand(form: FormData) {
 
 export async function refreshResearch(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   await createJob({ type: "research", brand });
   redirect(`/b/${brand}/research?queued=1`);
 }
 
 export async function pasteQuotes(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   const text = String(form.get("text") ?? "").slice(0, 200_000);
   const source = String(form.get("source") ?? "").trim().slice(0, 500);
   if (!text.trim()) redirect(`/b/${brand}/research`);
@@ -97,6 +104,7 @@ export async function pasteQuotes(form: FormData) {
 
 export async function cancelRequest(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   const { brandRemoved } = await cancelJob(brand, String(form.get("id")));
   const back = String(form.get("back") ?? "");
   if (brandRemoved) redirect("/?cancelled=1");
@@ -105,6 +113,7 @@ export async function cancelRequest(form: FormData) {
 
 export async function addCompetitorAction(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   const name = String(form.get("name") ?? "").trim().slice(0, 80);
   const ring = String(form.get("ring")) as Ring;
   if (!name || !RINGS.includes(ring)) redirect(`/b/${brand}?competitor=missing#competitors`);
@@ -124,6 +133,7 @@ export async function addCompetitorAction(form: FormData) {
 
 export async function removeCompetitorAction(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
   const name = String(form.get("name") ?? "");
   await removeCompetitor(brand, name);
   redirect(`/b/${brand}?competitor=removed&name=${encodeURIComponent(name)}#competitors`);
