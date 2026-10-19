@@ -1,5 +1,7 @@
 import AdCard from "@/app/AdCard";
+import ScoreKey from "@/app/ScoreKey";
 import { loadAds, tier, winners } from "@/lib/ads";
+import { explain } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +25,8 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
           transcript and frames, and its diagnosis once it's been taken apart.
         </p>
       </header>
+
+      <ScoreKey />
 
       <div className="ad-grid">
         {top.map((ad, i) => (
@@ -51,7 +55,9 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
                     <span className={`score-num sm ${tier(a.score)}`}>{a.score}</span>
                   </td>
                   <td>{a.brand}</td>
-                  <td className="muted">{a.score_why}</td>
+                  <td>
+                    {explain(a).verdict}. <span className="muted">{explain(a).reason}</span>
+                  </td>
                   <td className="mono muted">{a.media_type}</td>
                   <td>
                     {a.removed_from_library ? (

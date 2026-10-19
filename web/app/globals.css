@@ -1222,3 +1222,36 @@ select {
 .doc-links { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
 .link-gdoc { color: var(--text); font-size: 0.88rem; font-weight: 500; border-bottom: 1px solid var(--text-2); }
 .link-gdoc:hover { border-bottom-color: var(--text); }
+
+/* Winner score in plain words */
+.verdict {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.verdict.diamond { border-color: var(--diamond-glow); }
+.verdict.emerald { border-color: var(--emerald-glow); }
+.verdict.ruby { border-color: var(--ruby-glow); }
+.ad-meta p.why { color: var(--text); font-size: 0.82rem; -webkit-line-clamp: 3; }
+
+.score-parts { display: grid; gap: 14px; }
+.score-part { display: grid; gap: 6px; }
+.score-part-head { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; }
+.score-part p { font-size: 0.85rem; line-height: 1.45; }
+.score-bar { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.score-bar span { display: block; height: 100%; border-radius: inherit; }
+.score-bar .diamond { background: var(--g-diamond); }
+.score-bar .emerald { background: var(--g-emerald); }
+.score-bar .ruby { background: var(--g-ruby); }
+
+.score-key { margin: 4px 0 18px; font-size: 0.9rem; }
+.score-key summary { cursor: pointer; color: var(--text-2); width: fit-content; }
+.score-key summary:hover { color: var(--text); }
+.score-key-body { display: grid; gap: 12px; margin-top: 12px; max-width: 720px; line-height: 1.5; }
+.score-key ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.score-key li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: baseline; }

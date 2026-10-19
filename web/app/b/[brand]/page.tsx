@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AdCard from "@/app/AdCard";
+import ScoreKey from "@/app/ScoreKey";
 import CancelButton from "@/app/CancelButton";
 import Competitors from "@/app/Competitors";
 import { listCompetitors } from "@/lib/competitors";
@@ -72,6 +73,7 @@ export default async function Overview({
                 All winners →
               </Link>
             </div>
+            <ScoreKey />
             {top.length === 0 ? (
               <p className="empty">No ads with frames yet.</p>
             ) : (

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { hook, loadAds, posterUrl, tier } from "@/lib/ads";
+import { explain } from "@/lib/score";
 import { signedUrl } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +43,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
   if (!ad) notFound();
   const b = ad.breakdown ?? {};
   const a = ad.analysis ?? {};
+  const why = explain(ad);
   const [poster, video, frames] = await Promise.all([
     posterUrl(ad),
     ad.media_type === "video" && ad.media_key ? signedUrl(ad.media_key) : null,
@@ -90,8 +92,8 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
           <div className="score-block">
             <span className={`score-num lg ${tier(ad.score)}`}>{ad.score}</span>
             <div>
-              <p className="mono muted">Winner score</p>
-              <p>{ad.score_why}</p>
+              <p className="mono muted">Winner score · {why.verdict}</p>
+              <p>{why.meaning}</p>
               {ad.removed_from_library ? (
                 <span className="tag ruby">Removed {ad.removed_from_library}</span>
               ) : ad.ad_library_url ? (
@@ -100,6 +102,25 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
                 </a>
               ) : null}
             </div>
+          </div>
+
+          <div className="score-parts">
+            {why.parts.map((p) => (
+              <div key={p.label} className="score-part">
+                <div className="score-part-head">
+                  <span>
+                    {p.label}: <strong>{p.value}</strong>
+                  </span>
+                  <span className="mono muted">
+                    +{p.points} / {p.max}
+                  </span>
+                </div>
+                <div className="score-bar" aria-hidden="true">
+                  <span className={tier(ad.score)} style={{ width: `${(p.points / p.max) * 100}%` }} />
+                </div>
+                <p className="muted">{p.note}</p>
+              </div>
+            ))}
           </div>
 
           <dl className="facts">
