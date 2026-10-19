@@ -63,6 +63,24 @@ export default async function Home({
             <span className="mono muted">Competitors you already know (optional)</span>
             <input name="competitors" maxLength={600} placeholder="Shotsy, Pep AI, MyFitnessPal" />
           </label>
+          <label className="field wide">
+            <span className="mono muted">Ingredients (if it has them)</span>
+            <textarea
+              name="ingredients"
+              maxLength={3000}
+              rows={3}
+              placeholder={"One per line, with the dose if you know it.\nAshwagandha root extract (600 mg)\nMagnesium glycinate"}
+            />
+          </label>
+          <label className="field wide">
+            <span className="mono muted">Unique mechanism (optional)</span>
+            <textarea
+              name="mechanism"
+              maxLength={1500}
+              rows={2}
+              placeholder="The mechanism your copy will use. Ore ties each ingredient's research back to it."
+            />
+          </label>
           {taken && (
             <p className="error wide">
               A brand called “{taken}” already exists. <Link href={`/b/${taken}`}>Open it</Link> or pick

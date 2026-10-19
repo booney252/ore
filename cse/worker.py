@@ -27,7 +27,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, llm, research, setup, stages, voc
+from . import ads, breakdown, creative, ingredients, llm, research, setup, stages, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -92,6 +92,10 @@ def run_job(storage, job: dict) -> str | None:
         voc.run(storage, slug)
         check()
         return research.run(storage, slug)
+    if job["type"] == "ingredients":
+        if not llm.api_key():  # the claims need web search, which has no handoff mode here
+            raise llm.HandoffPending("", "")
+        return ingredients.run(storage, slug)
     raise ValueError(f"unknown job type {job['type']!r}")
 
 

@@ -239,3 +239,29 @@ def test_new_iterations_see_what_was_already_made(brand):
     [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
     prompt = storage.read_text(key)
     assert "Second-One Warning" in prompt and "different angle" in prompt
+
+
+def test_ingredient_claims_only_run_when_ingredients_are_listed(brand):
+    from cse import ingredients
+    storage = brand
+    storage.write_text("brands/pp/brand.md", "---\nname: Calm Co\nproduct: a sleep gummy\n"
+                       "ingredients: []\n---\n\n# Calm Co\n")
+    assert ingredients.run(storage, "pp", today=TODAY) is None
+    assert not [k for k in storage.list("brands/pp/handoff/") if "ingredients" in k]
+
+    storage.write_text("brands/pp/brand.md", "---\nname: Calm Co\nproduct: a sleep gummy\n"
+                       "ingredients: \"Magnesium glycinate, L-theanine\"\n"
+                       "unique_mechanism: \"the cortisol off-switch\"\nhealth_product: true\n---\n")
+    storage.write_text("brands/pp/research-brief.md", "# Brief\nThey can't switch off at night.\n")
+    assert ingredients.run(storage, "pp", today=TODAY) is None  # handoff waits
+    [key] = [k for k in storage.list("brands/pp/handoff/") if "ingredients" in k and k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "- Magnesium glycinate\n- L-theanine" in prompt
+    assert "the cortisol off-switch" in prompt and "can't switch off at night" in prompt
+    assert "flag every claim for compliance review" in prompt and "{{" not in prompt
+
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Magnesium glycinate\n| 1 | claim | pain | RCT | n/a |")
+    out = ingredients.run(storage, "pp", today=TODAY)
+    assert out == "brands/pp/ingredient-claims.md"
+    assert "no PubMed, PMC or DOI links" in storage.read_text(out)
+    assert storage.exists("brands/pp/research/2026-10-17/ingredient-claims.md")

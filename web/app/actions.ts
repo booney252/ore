@@ -2,7 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { brandExists, checkFile, checkSlug, createBrand, deleteDoc, savePaste, slugify } from "@/lib/brands";
+import {
+  brandExists,
+  checkFile,
+  checkSlug,
+  createBrand,
+  deleteDoc,
+  savePaste,
+  setBrandFields,
+  slugify,
+  splitIngredients,
+} from "@/lib/brands";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { cancelJob, createJob } from "@/lib/jobs";
 import { requireBrand, requireOwner } from "@/lib/session";
@@ -81,7 +91,9 @@ export async function newBrand(form: FormData) {
   const slug = slugify(name);
   if (!slug || !about) redirect("/?missing=1");
   if (await brandExists(slug)) redirect(`/?taken=${slug}`);
-  await createBrand({ slug, name, about, website, competitors });
+  const ingredients = splitIngredients(String(form.get("ingredients") ?? "").slice(0, 3000));
+  const mechanism = String(form.get("mechanism") ?? "").trim().slice(0, 1500);
+  await createBrand({ slug, name, about, website, competitors, ingredients, mechanism });
   await createJob({ type: "setup", brand: slug });
   redirect(`/b/${slug}?queued=setup`);
 }
@@ -148,5 +160,15 @@ export async function deleteDocAction(form: FormData) {
   await deleteDoc(brand, kind, checkFile(String(form.get("file"))));
   revalidatePath(`/b/${brand}`, "layout");
   redirect(`/b/${brand}/${kind}?deleted=1`);
+}
+
+export async function saveIngredients(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
+  const ingredients = splitIngredients(String(form.get("ingredients") ?? "").slice(0, 3000));
+  const mechanism = String(form.get("mechanism") ?? "").trim().slice(0, 1500);
+  await setBrandFields(brand, { ingredients, unique_mechanism: mechanism });
+  if (ingredients.length) await createJob({ type: "ingredients", brand });
+  redirect(`/b/${brand}/research?step=ingredients${ingredients.length ? "&queued=ingredients" : "&saved=1"}`);
 }
 

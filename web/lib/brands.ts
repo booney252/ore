@@ -94,6 +94,8 @@ export async function createBrand(b: {
   about: string;
   website: string;
   competitors: string[];
+  ingredients?: string[];
+  mechanism?: string;
 }): Promise<void> {
   const v = (x: unknown) => JSON.stringify(x);
   const md = `---
@@ -113,6 +115,8 @@ app_store_url: ""
 play_store_url: ""
 known_competitors: ${v(b.competitors)}
 health_product: false
+ingredients: ${v(b.ingredients ?? [])}
+unique_mechanism: ${v(b.mechanism ?? "")}
 ad_format: "UGC: a real creator talking to camera, shot on a phone, 20-60s full video with a word-for-word script"
 ---
 
@@ -192,5 +196,50 @@ export async function deleteDoc(slug: string, kind: "iterations" | "briefs", fil
   if (md === null) return;
   await writeText(`brands/${slug}/trash/${kind}/${file}.md`, md, "text/markdown; charset=utf-8");
   await deleteKey(key);
+}
+
+/** Ingredients list from the form: one per line, or comma-separated if it's all on one line. */
+export function splitIngredients(text: string): string[] {
+  return text
+    .split(text.includes("\n") ? /\n/ : /,(?![^(]*\))/)
+    .map((i) => i.replace(/^[\s\-•*]+/, "").trim())
+    .filter(Boolean)
+    .slice(0, 40);
+}
+
+/** The brand's ingredients, unique mechanism and (once run) the claims doc. */
+export async function readIngredients(slug: string) {
+  const base = `brands/${checkSlug(slug)}/`;
+  const [md, claims] = await Promise.all([
+    readText(`${base}brand.md`),
+    readText(`${base}ingredient-claims.md`),
+  ]);
+  const head = md?.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
+  const field = (name: string) => head.match(new RegExp(`^${name}:\\s*(.*?)\\s*(?:#.*)?$`, "m"))?.[1] ?? "";
+  const parse = (raw: string): unknown => {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return raw.replace(/^["']|["']$/g, "");
+    }
+  };
+  const rawItems = parse(field("ingredients") || "[]");
+  const items = Array.isArray(rawItems) ? rawItems.map(String) : splitIngredients(String(rawItems));
+  return { items, mechanism: String(parse(field("unique_mechanism") || '""')), claims };
+}
+
+/** Set front-matter fields in brand.md (values written as JSON, which YAML reads as-is). */
+export async function setBrandFields(slug: string, values: Record<string, unknown>): Promise<void> {
+  const key = `brands/${checkSlug(slug)}/brand.md`;
+  const md = await readText(key);
+  if (!md) throw new Error("no brand.md");
+  const end = md.indexOf("\n---", 4);
+  let head = md.slice(0, end);
+  for (const [name, value] of Object.entries(values)) {
+    const line = `${name}: ${JSON.stringify(value)}`;
+    const re = new RegExp(`^${name}:.*$`, "m");
+    head = re.test(head) ? head.replace(re, line) : `${head}\n${line}`;
+  }
+  await writeText(key, head + md.slice(end), "text/markdown; charset=utf-8");
 }
 

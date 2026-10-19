@@ -30,6 +30,7 @@ Two loops:
 1. Competitor audit: direct, adjacent, and relative rings.
 2. Voice of customer: real quotes with sources.
 3. My 4 research prompts → `research-brief.md`, the brand brain.
+4. **Ingredient claims (if the product has ingredients)**, added 2026-10-19: brand.md `ingredients` (+ optional `unique_mechanism`), set on the New brand form or the Research page. `prompts/08-ingredient-claims.md` (from RMBC: private, rewrite before release) uses the research brief as the market overview and finds published studies (PubMed/journals, human RCTs first) for claims per ingredient → `ingredient-claims.md`, shown as a Research tab. Needs the API key (web search).
 
 **Weekly engine (the main goal)**
 1. Pull new Meta ads from competitors **and from PeptidePal itself**.
@@ -99,6 +100,7 @@ competitors <brand>       build the 3-ring competitor map
 ads <brand>               pull competitor + own Meta ads, score them, break down new ones
 voc <brand>               mine voice of customer (App Store reviews + pasted text)
 research <brand>          the 4 research prompts -> research-brief.md (old brief kept in research/<date>/)
+ingredients <brand>       study-backed claims per ingredient -> ingredient-claims.md (only if brand.md lists ingredients)
 report <brand>            Winning Ads Report: top winners broken down, patterns, gaps (no ideas)
 iterations <brand>        --ads 1,3 [--report DATE] [--format ugc|broll|static] [--per-ad N]
 briefs <brand>            --numbers 1,2 [--iterations FILE]: full creative briefs from iterations
