@@ -33,9 +33,14 @@ export default async function Report({ params }: { params: Promise<{ brand: stri
         <Link href={`/b/${brand}/iterations?report=${date}`} className="btn-primary emerald btn-link">
           Make iterations →
         </Link>
-        <a href={`/api/doc?brand=${brand}&kind=reports&file=${date}`} className="link-quiet">
-          Download as Markdown
-        </a>
+        <span className="doc-links">
+          <a href={`/api/gdoc?brand=${brand}&kind=reports&file=${date}`} className="link-gdoc">
+            Open in Google Docs ↗
+          </a>
+          <a href={`/api/doc?brand=${brand}&kind=reports&file=${date}`} className="link-quiet">
+            Download as Markdown
+          </a>
+        </span>
       </aside>
     </main>
   );

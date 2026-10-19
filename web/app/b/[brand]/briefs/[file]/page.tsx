@@ -20,9 +20,14 @@ export default async function BriefDoc({ params }: { params: Promise<{ brand: st
         <p className="crumbs mono">
           <Link href={`/b/${brand}/briefs`}>Creative briefs</Link> / {file}
         </p>
-        <a href={`/api/doc?brand=${brand}&kind=briefs&file=${file}`} className="link-quiet">
-          Download as Markdown
-        </a>
+        <span className="doc-links">
+          <a href={`/api/gdoc?brand=${brand}&kind=briefs&file=${file}`} className="link-gdoc">
+            Open in Google Docs ↗
+          </a>
+          <a href={`/api/doc?brand=${brand}&kind=briefs&file=${file}`} className="link-quiet">
+            Download as Markdown
+          </a>
+        </span>
       </div>
       <Markdown text={md} />
     </main>

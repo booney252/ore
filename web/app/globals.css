@@ -1217,3 +1217,8 @@ select {
 .brief-set .check input:checked { background: var(--g-ruby); }
 .brief-foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 @media (max-width: 860px) { .brief-foot { flex-direction: column; align-items: stretch; } }
+
+/* Doc export links: Google Docs + Markdown */
+.doc-links { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.link-gdoc { color: var(--text); font-size: 0.88rem; font-weight: 500; border-bottom: 1px solid var(--text-2); }
+.link-gdoc:hover { border-bottom-color: var(--text); }

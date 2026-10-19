@@ -60,9 +60,14 @@ export default async function IterationDoc({
             </button>
           </form>
         )}
-        <a href={`/api/doc?brand=${brand}&kind=iterations&file=${file}`} className="link-quiet">
-          Download as Markdown
-        </a>
+        <span className="doc-links">
+          <a href={`/api/gdoc?brand=${brand}&kind=iterations&file=${file}`} className="link-gdoc">
+            Open in Google Docs ↗
+          </a>
+          <a href={`/api/doc?brand=${brand}&kind=iterations&file=${file}`} className="link-quiet">
+            Download as Markdown
+          </a>
+        </span>
       </aside>
     </main>
   );
