@@ -5,7 +5,14 @@ import { listKeys, readText, writeText } from "./storage";
 
 /** Creator Studio: the creator-facing side. Brands opt in with `studio: true` in brand.md. */
 
-export type StudioBrand = { slug: string; name: string; product: string; winners: Ad[]; poster: string | null };
+export type StudioBrand = {
+  slug: string;
+  name: string;
+  product: string;
+  format: string;
+  winners: Ad[];
+  poster: string | null;
+};
 
 const field = (md: string, name: string) =>
   md.match(new RegExp(`^${name}:\\s*"?(.*?)"?\\s*(?:#.*)?$`, "m"))?.[1] ?? "";
@@ -21,6 +28,7 @@ async function brandInfo(slug: string, name: string): Promise<StudioBrand | null
     slug,
     name: field(md, "name") || name,
     product: field(md, "product"),
+    format: field(md, "default_format") || "ugc",
     winners,
     poster: winners[0] ? await posterUrl(winners[0]) : null,
   };

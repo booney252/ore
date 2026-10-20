@@ -42,7 +42,44 @@ function span(days: number): string {
   return `${Math.round(days / 30)} months`;
 }
 
+export const ORGANIC_VERDICTS: { grade: Grade; verdict: string; meaning: string }[] = [
+  { grade: "A", verdict: "Breakout", meaning: "5x+ the account's usual views. Something in it hit far beyond their audience." },
+  { grade: "B", verdict: "Strong signal", meaning: "2x+ the account's usual views. It beat their normal clearly." },
+  { grade: "C", verdict: "About normal", meaning: "Around the account's usual views, or too few views to call." },
+  { grade: "D", verdict: "Below usual", meaning: "Fewer views than the account normally gets." },
+  { grade: "F", verdict: "Below usual", meaning: "Fewer views than the account normally gets." },
+];
+
+function short(n: number): string {
+  return n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1000 ? `${(n / 1000).toFixed(n >= 10_000 ? 0 : 1)}K` : String(n);
+}
+
+/** Organic posts: views vs the account's usual (median). Same rules as cse/organic.py. */
+function explainOrganic(ad: Ad): Explained {
+  const views = ad.views ?? 0;
+  const usual = ad.usual_views ?? 0;
+  const ratio = usual ? views / usual : 1;
+  const raw: Grade = ratio >= 5 ? "A" : ratio >= 2 ? "B" : ratio >= 1 ? "C" : "D";
+  const capped = views < 1000 && (raw === "A" || raw === "B");
+  const grade: Grade = capped ? "C" : raw;
+  const { verdict, meaning } = ORGANIC_VERDICTS.find((v) => v.grade === grade)!;
+  const parts: Part[] = [
+    { label: "Views", value: short(views), effect: "", note: `${views.toLocaleString("en-US")} views.` },
+    { label: "Usual", value: short(usual), effect: "", note: `@${ad.handle}'s median views on recent posts.` },
+    {
+      label: "Times usual",
+      value: `${ratio.toFixed(1)}x`,
+      grade: raw,
+      effect: capped ? "capped at C: under 1,000 views" : "sets the grade",
+      note: "A 5x+ · B 2x+ · C about normal · D below usual",
+    },
+  ];
+  const reason = `${short(views)} views, ${ratio.toFixed(1)}x @${ad.handle}'s usual ${short(usual)}${capped ? " (too few views to call)" : ""}.`;
+  return { grade, verdict, meaning, reason, parts };
+}
+
 export function explain(ad: Ad): Explained {
+  if (ad.source === "organic") return explainOrganic(ad);
   const days = ad.days_running ?? 0;
   const versions = Math.max(1, ad.versions ?? 1);
   const live = Boolean(ad.is_active) && !ad.removed_from_library;

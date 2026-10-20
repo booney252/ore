@@ -118,10 +118,15 @@ def ranked(ads: list[dict], per_brand: int | None = PER_BRAND,
 
 
 def _who(ad: dict) -> str:
+    if ad.get("source") == "organic":
+        kind = "OUR AFFILIATE'S POST" if ad.get("is_own") else "NICHE CREATOR'S POST"
+        return f"{kind} @{ad.get('handle')} on {ad.get('platform')} (organic)"
     return "OWN AD" if ad.get("is_own") else f"{ad.get('brand')} ({ad.get('ring')})"
 
 
 def _link(ad: dict) -> str:
+    if ad.get("source") == "organic":
+        return ad.get("url") or ""
     if ad.get("removed_from_library"):
         return f"REMOVED from the Ad Library on {ad['removed_from_library']} (don't link it)"
     return ad.get("ad_library_url") or ""
@@ -138,8 +143,11 @@ def format_full(ad: dict, rank: int | None = None) -> str:
         f"- Link: {_link(ad)}",
         f"- {ad.get('media_type')}, {a.get('length_s', 0)}s, {a.get('cut_count', 0)} cuts "
         f"({a.get('cuts_per_second', 0)}/sec)",
-        f"- Headline: {ad.get('headline') or '(none)'} | CTA button: {ad.get('cta') or '(none)'}",
-        f"- Primary text: {(ad.get('body') or '').strip()[:700]}",
+        (f"- Views: {ad.get('views', 0):,} (account's usual {ad.get('usual_views', 0):,}), "
+         f"{ad.get('likes', 0):,} likes, {ad.get('comments', 0):,} comments | Text on the cover: "
+         f"{ad.get('headline') or '(none)'}" if ad.get("source") == "organic" else
+         f"- Headline: {ad.get('headline') or '(none)'} | CTA button: {ad.get('cta') or '(none)'}"),
+        f"- {'Caption' if ad.get('source') == 'organic' else 'Primary text'}: {(ad.get('body') or '').strip()[:700]}",
         "- Transcript:",
         *(f"  {l}" for l in lines or ["(no speech)"]),
         f"- Breakdown (from the video frames): {json.dumps(b, ensure_ascii=False)}",

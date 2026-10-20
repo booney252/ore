@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { hook, loadAds, posterUrl } from "@/lib/ads";
+import { hook, link, loadAds, posterUrl } from "@/lib/ads";
 import { explain } from "@/lib/score";
 import Grade from "@/app/Grade";
 import { signedUrl } from "@/lib/storage";
@@ -45,6 +45,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
   const b = ad.breakdown ?? {};
   const a = ad.analysis ?? {};
   const why = explain(ad);
+  const where = link(ad);
   const [poster, video, frames] = await Promise.all([
     posterUrl(ad),
     ad.media_type === "video" && ad.media_key ? signedUrl(ad.media_key) : null,
@@ -98,7 +99,9 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
                 {why.parts.map((p) => {
                   const move = p.effect.startsWith("up") ? "up" : p.effect.startsWith("down") ? "down" : "";
                   const text =
-                    p.label === "Time live"
+                    ad.source === "organic"
+                      ? p.label === "Times usual" ? `${p.value} usual` : `${p.value} ${p.label.toLowerCase()}`
+                      : p.label === "Time live"
                       ? `${p.value} live`
                       : p.label === "Still running"
                         ? p.value === "Yes" ? "Still running" : p.value
@@ -112,9 +115,9 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
                   );
                 })}
               </ul>
-              {ad.removed_from_library ? null : ad.ad_library_url ? (
-                <a href={ad.ad_library_url} target="_blank" rel="noreferrer" className="link-quiet">
-                  Open in the Ad Library ↗
+              {where ? (
+                <a href={where.href} target="_blank" rel="noreferrer" className="link-quiet">
+                  Open on {where.label} ↗
                 </a>
               ) : null}
             </div>
@@ -211,7 +214,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
 
           {ad.body ? (
             <section className="ad-section">
-              <h2>Ad copy</h2>
+              <h2>{ad.source === "organic" ? "Caption" : "Ad copy"}</h2>
               <p className="copy">{ad.body}</p>
               <p className="mono muted">
                 {ad.headline ? `${ad.headline} · ` : ""}

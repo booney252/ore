@@ -22,6 +22,15 @@ export type Ad = {
   score?: number;
   score_why?: string;
   removed_from_library?: string;
+  /** Organic posts (Reels, TikToks, Shorts) are graded on views vs the account's usual. */
+  source?: "organic";
+  platform?: string;
+  handle?: string;
+  url?: string;
+  views?: number;
+  likes?: number;
+  comments?: number;
+  usual_views?: number;
   analysis?: {
     length_s?: number;
     cut_count?: number;
@@ -73,6 +82,16 @@ export function hook(ad: Ad): string {
     .trim()
     .replace(/^["“”']+|["“”']+$/g, "")
     .trim();
+}
+
+/** Where to see it: the post itself, or the Ad Library. */
+export function link(ad: Ad): { href: string; label: string } | null {
+  if (ad.source === "organic" && ad.url) {
+    const where = ad.platform === "tiktok" ? "TikTok" : ad.platform === "youtube" ? "YouTube" : "Instagram";
+    return { href: ad.url, label: where };
+  }
+  if (ad.removed_from_library || !ad.ad_library_url) return null;
+  return { href: ad.ad_library_url, label: "the Ad Library" };
 }
 
 export function viewable(ad: Ad): boolean {

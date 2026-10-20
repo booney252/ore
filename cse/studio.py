@@ -78,7 +78,9 @@ def brand_winners(storage, slug: str, n: int = WINNERS) -> list[dict]:
         return []
     name = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0].get("name") or slug
     ads = [a for a in load_ads(storage, slug) if a.get("breakdown") and not a.get("removed_from_library")]
-    own = [a for a in ads if a.get("is_own") or a.get("brand", "").lower() == str(name).lower()]
+    # the brand's own ads, plus organic posts from its niche (for an organic offer they're the playbook)
+    own = [a for a in ads if a.get("is_own") or a.get("source") == "organic"
+           or a.get("brand", "").lower() == str(name).lower()]
     pool = own or ads
     pool.sort(key=lambda a: (a.get("score", 0), bool(a.get("is_active")), a.get("days_running", 0)),
               reverse=True)

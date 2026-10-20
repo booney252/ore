@@ -22,7 +22,7 @@ import { requireBrand, requireOwner } from "@/lib/session";
 
 function formatOf(form: FormData): string {
   const f = String(form.get("format") ?? "ugc");
-  return ["ugc", "broll", "static"].includes(f) ? f : "ugc";
+  return ["ugc", "broll", "static", "talking"].includes(f) ? f : "ugc";
 }
 
 export async function newReport(form: FormData) {

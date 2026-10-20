@@ -26,6 +26,12 @@ export async function listBrands(): Promise<{ slug: string; name: string }[]> {
   return Promise.all(slugs.map(async (slug) => ({ slug, name: await brandName(slug) })));
 }
 
+/** The format a brand's writing defaults to (brand.md `default_format`), e.g. "talking" for organic. */
+export async function defaultFormat(slug: string): Promise<string> {
+  const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";
+  return md.match(/^default_format:\s*"?([a-z]+)/m)?.[1] ?? "ugc";
+}
+
 export async function brandName(slug: string): Promise<string> {
   const md = await readText(`brands/${checkSlug(slug)}/brand.md`);
   const m = md?.match(/^name:\s*"?([^"\n]+)"?\s*$/m);

@@ -29,6 +29,18 @@ FORMATS = {
 - **Alternate hooks (2):** each a different first on-screen line (and first voiceover line, if any) AND its first shot
 - **Script:** a table `| Time | Shot | On-screen text | Voiceover |`, 0s to the end. Describe every shot; write every word of on-screen text and voiceover word for word ("none" where there's no voiceover). The first row is the main hook.""",
     },
+    "talking": {
+        "label": "Talking head (organic)",
+        "spec": "Organic talking-head video for the creator's own page (Reels, TikTok, Shorts): the "
+                "creator talking to their phone as themselves, often with a green-screen or text "
+                "overlay hook, 15-60s, ending in a soft call to action (comment a keyword, DM, link "
+                "in bio) instead of an ad button",
+        "fields": """\
+- **Setup:** where they film, what's behind them or green-screened behind them (a profile, a screenshot, a video), target length (15-60s)
+- **Alternate hooks (2):** each a different first line they say AND the text overlay on frame 0
+- **Script:** a table `| Time | They say | On screen |`, 0s to the end. "They say" is every spoken word, in the creator's own voice. "On screen" is the text overlay word for word, any green-screen background and any cut. The first row is the main hook.
+- **Call to action:** the exact line, and the comment keyword or DM word if there is one""",
+    },
     "static": {
         "label": "Static image",
         "spec": "Static image ad: one image plus its primary text, headline and button",
@@ -44,7 +56,8 @@ FORMATS = {
 
 def check(fmt: str | None) -> str:
     fmt = (fmt or DEFAULT).strip().lower().replace("-", "").replace(" ", "")
-    fmt = {"video": "ugc", "b-roll": "broll", "image": "static"}.get(fmt, fmt)
+    fmt = {"video": "ugc", "b-roll": "broll", "image": "static", "talkinghead": "talking",
+           "organic": "talking"}.get(fmt, fmt)
     if fmt not in FORMATS:
         raise ValueError(f"format must be one of {', '.join(FORMATS)}")
     return fmt

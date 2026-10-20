@@ -120,7 +120,7 @@ export default async function StudioSession({
             </div>
           </fieldset>
           <div className="studio-step studio-opts">
-            <FormatPicker label="Format" />
+            <FormatPicker label="Format" initial={b?.format} />
             <label className="per-ad">
               <span className="mono muted">Length</span>
               <select name="length" defaultValue="30s">

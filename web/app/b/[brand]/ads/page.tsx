@@ -1,7 +1,7 @@
 import AdCard from "@/app/AdCard";
 import ScoreKey from "@/app/ScoreKey";
 import Grade from "@/app/Grade";
-import { loadAds, winners } from "@/lib/ads";
+import { link, loadAds, winners } from "@/lib/ads";
 import { explain } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
@@ -63,9 +63,9 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
                   <td>
                     {a.removed_from_library ? (
                       <span className="tag ruby">Removed</span>
-                    ) : a.ad_library_url ? (
-                      <a href={a.ad_library_url} target="_blank" rel="noreferrer" className="link-quiet">
-                        Ad Library ↗
+                    ) : link(a) ? (
+                      <a href={link(a)!.href} target="_blank" rel="noreferrer" className="link-quiet">
+                        {link(a)!.label === "the Ad Library" ? "Ad Library" : link(a)!.label} ↗
                       </a>
                     ) : null}
                   </td>

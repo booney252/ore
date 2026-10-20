@@ -7,7 +7,7 @@ import FormatPicker from "@/app/FormatPicker";
 import PickCard from "@/app/PickCard";
 import Requests from "@/app/Requests";
 import { loadAds } from "@/lib/ads";
-import { brandName, docTitles, listDocs, reportTop } from "@/lib/brands";
+import { brandName, defaultFormat, docTitles, listDocs, reportTop } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -21,12 +21,13 @@ export default async function Iterations({
 }) {
   const { brand } = await params;
   const { report: wanted, queued, pick, cancelled, deleted } = await searchParams;
-  const [name, reports, files, jobs, ads] = await Promise.all([
+  const [name, reports, files, jobs, ads, format] = await Promise.all([
     brandName(brand),
     listDocs(brand, "reports"),
     listDocs(brand, "iterations"),
     listJobs(brand, 6, ["iterations"]),
     loadAds(brand),
+    defaultFormat(brand),
   ]);
   const report = reports.includes(wanted ?? "") ? wanted! : reports[0];
   const top = report ? await reportTop(brand, report) : null;
@@ -130,7 +131,7 @@ export default async function Iterations({
           </section>
 
           <div className="iterate-foot panel">
-            <FormatPicker label="2 · Pick the format" />
+            <FormatPicker label="2 · Pick the format" initial={format} />
             <label className="per-ad">
               <span className="mono muted">How many</span>
               <select name="per_ad" defaultValue="1">

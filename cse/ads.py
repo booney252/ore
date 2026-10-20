@@ -222,7 +222,7 @@ def verify(storage, slug: str, ad_ids: list[str], source=None, today: date | Non
     removed = changed = 0
     for ad_id in ad_ids:
         ad = doc["ads"].get(ad_id)
-        if not ad or ad.get("removed_from_library"):
+        if not ad or ad.get("removed_from_library") or ad.get("source") == "organic":
             continue
         live = source.get_ad(ad_id)
         if live is None:

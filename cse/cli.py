@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, studio, voc
+from . import ads, breakdown, organic, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, studio, voc
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -88,6 +88,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("studio", help="Creator Studio: run a session's next step (angles, scripts)")
     p.add_argument("session", help="a session id from studio/sessions/")
     p.add_argument("step", choices=["angles", "scripts"])
+    p = sub.add_parser("organic", help="import organic posts (Reels, TikToks, Shorts) and grade them on views")
+    p.add_argument("brand")
+    p.add_argument("--file", required=True, help="TSV/CSV: handle, own, code, views, likes, comments, secs, date, caption, cover_text")
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -168,6 +171,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "studio":
             (studio.run_angles if args.step == "angles" else studio.run_scripts)(storage, args.session)
+            return 0
+        if args.command == "organic":
+            print(organic.import_posts(storage, args.brand, organic.read_table(Path(args.file).read_text())))
             return 0
         if args.command == "ingredients":
             ingredients.run(storage, args.brand)

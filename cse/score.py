@@ -34,6 +34,9 @@ def letter(score: float) -> str:
 
 
 def winner_score(ad: dict, today: date) -> tuple[float, str]:
+    if ad.get("source") == "organic":  # graded on views vs the account's usual, not time live
+        from .organic import organic_score
+        return organic_score(ad)
     days = days_running(ad, today)
     versions = max(1, int(ad.get("versions") or 1))
     active = bool(ad.get("is_active")) and not ad.get("removed_from_library")
