@@ -1485,3 +1485,57 @@ select {
   .creator-story { display: none; }
   .creator-form { grid-template-columns: 1fr; }
 }
+
+/* ---------- Sidebar: cards in the brand-brain style (desktop) ---------- */
+@media (min-width: 861px) {
+  .nav { gap: 8px; }
+  .flow { gap: 8px; }
+  .nav-item, .flow-step, .brain-link { margin-left: 0; margin-right: 0; }
+  .nav-item, .flow-step { gap: 10px; padding: 11px 10px; }
+  .nav-item, .flow-step {
+    position: relative;
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#0b0d11, #0b0d11) padding-box,
+      linear-gradient(110deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)) border-box;
+    transition: box-shadow 240ms var(--ease), transform 160ms var(--ease), color 200ms var(--ease);
+  }
+  .nav-item:hover, .flow-step:hover { background:
+      linear-gradient(#0e1015, #0e1015) padding-box,
+      linear-gradient(110deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06)) border-box; }
+  .flow-step.diamond { background: linear-gradient(#0b0d11, #0b0d11) padding-box, linear-gradient(110deg, rgba(207, 234, 255, 0.42), rgba(207, 234, 255, 0.06)) border-box; }
+  .flow-step.emerald { background: linear-gradient(#0b0d11, #0b0d11) padding-box, linear-gradient(110deg, rgba(25, 209, 139, 0.5), rgba(25, 209, 139, 0.06)) border-box; }
+  .flow-step.ruby { background: linear-gradient(#0b0d11, #0b0d11) padding-box, linear-gradient(110deg, rgba(255, 46, 99, 0.5), rgba(255, 46, 99, 0.06)) border-box; }
+  .nav-item.on { color: var(--text); box-shadow: 0 0 30px -10px var(--diamond-glow); background:
+      linear-gradient(#0d1016, #0d1016) padding-box,
+      linear-gradient(110deg, rgba(207, 234, 255, 0.55), rgba(207, 234, 255, 0.1)) border-box; }
+  .flow-step.diamond.on { box-shadow: 0 0 30px -10px var(--diamond-glow); background: linear-gradient(#0d1016, #0d1016) padding-box, linear-gradient(110deg, rgba(207, 234, 255, 0.75), rgba(207, 234, 255, 0.12)) border-box; }
+  .flow-step.emerald.on { box-shadow: 0 0 30px -10px var(--emerald-glow); background: linear-gradient(#0b1310, #0b1310) padding-box, linear-gradient(110deg, rgba(25, 209, 139, 0.8), rgba(25, 209, 139, 0.12)) border-box; }
+  .flow-step.ruby.on { box-shadow: 0 0 30px -10px var(--ruby-glow); background: linear-gradient(#140b0f, #140b0f) padding-box, linear-gradient(110deg, rgba(255, 46, 99, 0.8), rgba(255, 46, 99, 0.12)) border-box; }
+
+  .nav-item .flow-text strong, .flow-text strong {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.84rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  .flow-text small {
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .nav-icon { border-radius: 10px; color: var(--diamond); border-color: rgba(207, 234, 255, 0.28); box-shadow: 0 0 12px -4px var(--diamond-glow); }
+  .node { border-width: 1.5px; }
+  .flow-step.diamond .node { color: var(--diamond); border-color: rgba(207, 234, 255, 0.7); box-shadow: 0 0 12px -3px var(--diamond-glow); }
+  .flow-step.emerald .node { color: var(--emerald); border-color: rgba(25, 209, 139, 0.75); box-shadow: 0 0 12px -3px var(--emerald-glow); }
+  .flow-step.ruby .node { color: #ff7a9a; border-color: rgba(255, 46, 99, 0.75); box-shadow: 0 0 12px -3px var(--ruby-glow); }
+  .nav-label { margin: 18px 4px 2px; letter-spacing: 0.18em; }
+  .flow::before { opacity: 0.6; }
+}

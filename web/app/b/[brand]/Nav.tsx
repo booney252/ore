@@ -5,9 +5,9 @@ import { FOLDS, HEMI } from "@/app/BrainMap";
 import { usePathname } from "next/navigation";
 
 const STEPS = [
-  { href: "/reports", label: "Reports", note: "Find and break down winners", tone: "diamond" },
-  { href: "/iterations", label: "Iterations", note: "Turn winners into your ads", tone: "emerald" },
-  { href: "/briefs", label: "Creative briefs", note: "Docs ready to hand off", tone: "ruby" },
+  { href: "/reports", label: "Reports", note: "Find winners", tone: "diamond" },
+  { href: "/iterations", label: "Iterations", note: "Make it yours", tone: "emerald" },
+  { href: "/briefs", label: "Creative briefs", note: "Hand them off", tone: "ruby" },
 ];
 
 function OverviewIcon() {
@@ -59,7 +59,10 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
         <span className="nav-icon">
           <OverviewIcon />
         </span>
-        Overview
+        <span className="flow-text">
+          <strong>Overview</strong>
+          <small>What's winning</small>
+        </span>
       </Link>
       <Link
         href={`${base}/creators`}
@@ -69,7 +72,10 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
         <span className="nav-icon">
           <CreatorsIcon />
         </span>
-        Creators
+        <span className="flow-text">
+          <strong>Creators</strong>
+          <small>Who films</small>
+        </span>
         {counts.creators ? <span className="count">{counts.creators}</span> : null}
       </Link>
 
