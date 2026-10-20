@@ -27,20 +27,26 @@ RANK_PROMPT = Path("prompts/10-rank-mechanisms.md")
 DEFAULT_AWARENESS = "Problem Aware"
 STAGES = ["Most Aware", "Product Aware", "Solution Aware", "Problem Aware", "Unaware"]
 STAGE_RE = re.compile("|".join(STAGES), re.I)
-VERDICT_RE = re.compile(r"final call|campaign target|\(primary\)|primary target|target stage", re.I)
+VERDICT_RE = re.compile(r"final (?:call|pick|selection)|campaign target|\(primary\)|primary target|target stage", re.I)
 
 
 def stages_in(text: str) -> str:
     """The awareness stage(s) the research says to target, e.g. "Problem Aware", or ""."""
     found: list[str] = []
     for line in text.splitlines():
-        if VERDICT_RE.search(line):
-            for m in STAGE_RE.finditer(line):
-                stage = next(s for s in STAGES if s.lower() == m.group(0).lower())
-                if stage not in found:
-                    found.append(stage)
-            if found and re.search(r"final call", line, re.I):
-                break  # the final call is the verdict; stop there
+        verdict = VERDICT_RE.search(line)
+        if not verdict:
+            continue
+        if re.search(r"final (?:call|pick|selection)", verdict.group(0), re.I):
+            # the final call is the verdict: take the stage right after it, not the rest of the line
+            first = STAGE_RE.search(line, verdict.end())
+            if first:
+                return next(s for s in STAGES if s.lower() == first.group(0).lower())
+            continue
+        for m in STAGE_RE.finditer(line):
+            stage = next(s for s in STAGES if s.lower() == m.group(0).lower())
+            if stage not in found:
+                found.append(stage)
     return " and ".join(found)
 
 
