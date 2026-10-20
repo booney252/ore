@@ -1363,3 +1363,46 @@ select {
 .ranked > .mono { margin-bottom: 8px; }
 .all-ideas > summary { cursor: pointer; color: var(--text-2); margin: 8px 0 20px; width: fit-content; }
 .all-ideas > summary:hover { color: var(--text); }
+
+/* ---------- Brand brain map (Research navigation) ---------- */
+.brain-map { margin: 4px 0 28px; max-width: 1060px; }
+.brain-map svg { width: 100%; height: auto; display: block; overflow: visible; }
+.research-tabs { display: none; }
+.brain-aura { animation: brain-breathe 6s ease-in-out infinite; transform-origin: 500px 220px; }
+.hemi { fill: rgba(10, 12, 16, 0.55); stroke-width: 2.2; }
+.brain-pill { fill: #07090c; stroke: rgba(255, 255, 255, 0.14); }
+.fold { fill: none; stroke: rgba(242, 241, 237, 0.42); stroke-width: 1.6; stroke-linecap: round; }
+.brain-word { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.28em; fill: rgba(242, 241, 237, 0.85); }
+.brain-node { cursor: pointer; }
+.brain-node .stem { fill: none; stroke-width: 1.6; stroke-dasharray: 4 6; animation: stem-flow 2.4s linear infinite; opacity: 0.55; transition: opacity 200ms var(--ease); }
+.brain-node .stem-glow { fill: none; stroke-width: 6; opacity: 0; transition: opacity 200ms var(--ease); }
+.brain-node.left .stem, .brain-node.left .stem-glow { stroke: var(--ruby); }
+.brain-node.right .stem, .brain-node.right .stem-glow { stroke: var(--emerald); animation-direction: reverse; }
+.brain-node .node-dot { stroke-width: 2; transition: r 200ms var(--ease); }
+.brain-node.left .node-dot { stroke: var(--ruby); }
+.brain-node.right .node-dot { stroke: var(--emerald); }
+.brain-node.is-done.left .node-dot { fill: var(--ruby); }
+.brain-node.is-done.right .node-dot { fill: var(--emerald); }
+.brain-node.is-todo .node-dot { fill: var(--bg); }
+.brain-node .node-halo { fill: none; stroke: transparent; stroke-width: 1.5; }
+.brain-node .node-end { fill: rgba(242, 241, 237, 0.7); }
+.brain-node .node-label { font-family: var(--font-display); font-size: 21px; fill: var(--text-2); transition: fill 200ms var(--ease); }
+.brain-node .node-sub { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; fill: var(--muted); text-transform: uppercase; }
+.brain-node:hover .stem, .brain-node.on .stem { opacity: 1; }
+.brain-node:hover .stem-glow { opacity: 0.12; }
+.brain-node.on .stem-glow { opacity: 0.22; }
+.brain-node:hover .node-label, .brain-node.on .node-label { fill: var(--text); }
+.brain-node.on .node-dot { r: 9; }
+.brain-node.on.left .node-halo { stroke: var(--ruby-glow); }
+.brain-node.on.right .node-halo { stroke: var(--emerald-glow); }
+.brain-node:focus-visible { outline: none; }
+.brain-node:focus-visible .node-halo { stroke: var(--diamond); }
+@keyframes stem-flow { to { stroke-dashoffset: -20; } }
+@keyframes brain-breathe { 0%, 100% { opacity: 0.75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) {
+  .brain-node .stem, .brain-aura { animation: none; }
+}
+@media (max-width: 820px) {
+  .brain-map { display: none; }
+  .research-tabs { display: flex; }
+}

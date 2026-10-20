@@ -2,6 +2,7 @@ import Link from "next/link";
 import { findMechanisms, pasteQuotes, refreshResearch, saveIngredients } from "@/app/actions";
 import Markdown from "@/app/Markdown";
 import MechanismPicker from "@/app/MechanismPicker";
+import BrainMap from "@/app/BrainMap";
 import { docLabel } from "@/app/dates";
 import { brandName, readIngredients, readResearch, vocCounts } from "@/lib/brands";
 
@@ -35,6 +36,32 @@ export default async function Research({
     { key: "ingredients", label: "Ingredients" },
     { key: "quotes", label: "Quotes" },
   ];
+  const step1 = research.steps;
+  const brainNodes = [
+    { key: "quotes", label: "Customer quotes", sub: voc ? `${voc.total.toLocaleString()} real quotes` : "none yet", has: Boolean(voc?.total) },
+    ...step1.map((st, i) => ({
+      key: st.file,
+      label: st.label,
+      sub: `Research step ${i + 1}`,
+      has: Boolean(st.text),
+    })),
+  ].map((n) => ({ ...n, side: "left" as const, href: href(n.key) }));
+  const brainRight = [
+    { key: "brief", label: "Unified brief", sub: research.brief ? "The brand brain" : "not built yet", has: Boolean(research.brief) },
+    {
+      key: "mechanisms",
+      label: "Unique mechanisms",
+      sub: ing.chosen.length ? `${ing.chosen.length} picked${ing.ranked ? ", ranked" : ""}` : ing.mechanisms ? "pick your favorites" : "not run yet",
+      has: Boolean(ing.mechanisms),
+    },
+    {
+      key: "ingredients",
+      label: "Ingredient claims",
+      sub: ing.claims ? `${ing.items.length} ingredients` : ing.items.length ? "waiting to run" : "if it has any",
+      has: Boolean(ing.claims),
+    },
+  ].map((n) => ({ ...n, side: "right" as const, href: href(n.key) }));
+
   const notice = queued
     ? queued === "rank"
       ? `Saved ${ing.chosen.length} unique mechanisms. Ore will now rank them against your research brief, best first.`
@@ -73,7 +100,9 @@ export default async function Research({
         </form>
       </header>
 
-      <nav className="tabs" aria-label="Research">
+      <BrainMap nodes={[...brainNodes, ...brainRight]} active={tab} />
+
+      <nav className="tabs research-tabs" aria-label="Research">
         {tabs.map((t) => (
           <Link key={t.key} href={href(t.key)} className={tab === t.key ? "on" : ""}>
             {"n" in t ? <span className="mono">{t.n}</span> : null} {t.label}
