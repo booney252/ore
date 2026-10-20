@@ -10,9 +10,6 @@ export default function MechanismPicker({ brand, md, chosen }: { brand: string; 
     <>
       <form action={chooseMechanisms} className="mech-form">
         <input type="hidden" name="brand" value={brand} />
-        <p className="muted">
-          Tick the mechanisms you like. They're saved as your unique mechanisms, and every iteration, brief and ingredient claim uses them from then on.
-        </p>
         <div className="mech-list">
           {ideas.map((i) => (
             <label key={i.n} className="mech-card">

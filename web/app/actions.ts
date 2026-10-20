@@ -113,7 +113,7 @@ export async function pasteQuotes(form: FormData) {
   const source = String(form.get("source") ?? "").trim().slice(0, 500);
   if (!text.trim()) redirect(`/b/${brand}/research`);
   await savePaste(brand, /^https?:\/\//i.test(source) ? source : "", text);
-  redirect(`/b/${brand}/research?pasted=1`);
+  redirect(`/b/${brand}/research?step=quotes&pasted=1`);
 }
 
 export async function cancelRequest(form: FormData) {
@@ -167,9 +167,9 @@ export async function saveIngredients(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
   await requireBrand(brand);
   const ingredients = splitIngredients(String(form.get("ingredients") ?? "").slice(0, 3000));
-  const mechanism = String(form.get("mechanism") ?? "").trim().slice(0, 1500);
-  await setBrandFields(brand, { ingredients, unique_mechanism: mechanism });
+  await setBrandFields(brand, { ingredients });
   if (ingredients.length) await createJob({ type: "ingredients", brand });
+  revalidatePath(`/b/${brand}`, "layout");
   redirect(`/b/${brand}/research?step=ingredients${ingredients.length ? "&queued=ingredients" : "&saved=1"}`);
 }
 
