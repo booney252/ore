@@ -31,9 +31,17 @@ export default async function Home({
           </p>
         )}
 
+        <section className="home-tag">
+          <h1 className="display">Never stare at a blank page again.</h1>
+          <p className="lede">
+            Your market, your customers and everything that's winning, in one place. The next idea is
+            always waiting.
+          </p>
+        </section>
+
         <section className="home-hero">
           <p className="mono muted">New brand</p>
-          <h1 className="display">What are we mining?</h1>
+          <h2 className="display home-new">What are we mining?</h2>
           <p className="lede">
             Tell Ore what you sell. It researches the market, maps your competitors in three rings,
             pulls their ads, and finds what's winning.

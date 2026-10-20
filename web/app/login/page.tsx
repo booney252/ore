@@ -8,7 +8,11 @@ export default async function Login({
     <main className="login">
       <div className="login-light" aria-hidden="true" />
       <h1 className="login-word">ORE</h1>
-      <p className="login-line">Find what's winning in paid social. Take it apart. Make your own.</p>
+      <p className="login-tag">Never stare at a blank page again.</p>
+      <p className="login-line">
+        Your market, your customers and everything that's winning, in one place. The next idea is
+        always waiting.
+      </p>
       <form method="post" action="/api/login" className="login-form">
         <label className="sr-only" htmlFor="pw">Password</label>
         <input id="pw" type="password" name="password" placeholder="Password" autoFocus required />

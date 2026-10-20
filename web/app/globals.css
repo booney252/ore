@@ -1539,3 +1539,23 @@ select {
   .nav-label { margin: 18px 4px 2px; letter-spacing: 0.18em; }
   .flow::before { opacity: 0.6; }
 }
+
+/* Tagline: login + home */
+.login-tag {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-align: center;
+  max-width: 30ch;
+  text-wrap: balance;
+  background: var(--metal);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 4px 0 -4px;
+}
+.home-tag { display: grid; gap: 14px; margin-bottom: 56px; max-width: 780px; }
+.home-tag h1 { font-size: clamp(2.2rem, 5.2vw, 4rem); line-height: 1.02; letter-spacing: -0.02em; text-wrap: balance; }
+.home-tag .lede { max-width: 56ch; }
+.home-new { font-size: clamp(1.6rem, 3vw, 2.4rem); }
