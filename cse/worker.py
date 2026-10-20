@@ -27,7 +27,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, ingredients, llm, mechanisms, research, setup, stages, studio, voc
+from . import ads, breakdown, creative, organic, ingredients, llm, mechanisms, research, setup, stages, studio, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -39,8 +39,13 @@ class Cancelled(Exception):
 
 def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | None:
     name = stages.brand_context(storage, slug)["brand_name"]
-    ads.run(storage, slug, max_pages=pages)
-    check()
+    fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    if storage.exists(brandlib.brand_key(slug, "competitors.json")):
+        ads.run(storage, slug, max_pages=pages)
+        check()
+    if organic.accounts(fields):  # organic brands (e.g. an affiliate campaign): Reels, TikToks, Shorts
+        organic.pull(storage, slug)
+        check()
     creative.run(storage, slug, per_brand=5)
     check()
     if breakdown.run(storage, slug, name, per_brand=5)["waiting"]:
