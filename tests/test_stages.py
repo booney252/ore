@@ -307,3 +307,20 @@ def test_ranking_runs_on_the_chosen_mechanisms(brand):
     assert "to people on weekly shots" in prompt and "who are Problem Aware" in prompt and "{{" not in prompt
     storage.write_text(key.replace(".prompt.md", ".answer.md"), "### #1. The Memory Gap")
     assert mechanisms.rank(storage, "pp", today=TODAY) == "brands/pp/unique-mechanisms-ranked.md"
+
+
+def test_mechanism_prompts_use_the_brands_own_awareness_stage(brand):
+    from cse import mechanisms
+    storage = brand
+    assert mechanisms.stages_in("| **Problem Aware** (campaign target) | 38% |\n"
+                                "| **Solution Aware** (campaign target) | 19% |") == "Problem Aware and Solution Aware"
+    assert mechanisms.stages_in("Unaware 20%\n**Final call: Solution Aware.** Most know apps exist.") == "Solution Aware"
+    storage.write_text("brands/pp/brand.md", "---\nname: X\nproduct: a gummy\n---\n")
+    storage.write_text("brands/pp/research-brief.md", "# Brief\n")
+    storage.write_text("brands/pp/research/2026-10-01/03-awareness.md", "**Final call: Product Aware.**")
+    fields = {"name": "X"}
+    assert mechanisms.target_awareness(storage, "pp", fields) == "Product Aware"
+    assert mechanisms.target_awareness(storage, "pp", {"target_awareness": "Most Aware"}) == "Most Aware"
+    mechanisms.run(storage, "pp", today=TODAY)
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
+    assert "who are Product Aware" in storage.read_text(key)

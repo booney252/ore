@@ -123,7 +123,7 @@ export default async function Research({
             <div className="tab-intro">
               <p className="muted">
                 Why buyers failed before (the problem) and why your product is the fix (the solution),
-                for Problem Aware buyers. Tick the ones you like to save them.
+                written for the awareness stage your research says to target. Tick the ones you like to save them.
               </p>
               <form action={findMechanisms}>
                 <input type="hidden" name="brand" value={brand} />

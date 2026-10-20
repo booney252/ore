@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FOLDS, HEMI } from "@/app/BrainMap";
 import { usePathname } from "next/navigation";
 
 const STEPS = [
@@ -20,11 +21,18 @@ function OverviewIcon() {
   );
 }
 
-function ResearchIcon() {
+/** A small version of the Research page's brand brain: ruby left, emerald right. */
+function BrainIcon() {
   return (
-    <svg viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M4 3.5h8.5a3 3 0 0 1 3 3v10H7a3 3 0 0 1-3-3z" />
-      <path d="M4 13.5a3 3 0 0 1 3-3h8.5" />
+    <svg viewBox="300 70 400 310" aria-hidden="true" className="brain-icon">
+      {[false, true].map((mirror) => (
+        <g key={String(mirror)} transform={mirror ? "translate(1000,0) scale(-1,1)" : undefined}>
+          <path d={HEMI} className={mirror ? "bi-hemi emerald" : "bi-hemi ruby"} />
+          {FOLDS.slice(0, 4).map((f) => (
+            <path key={f} d={f} className="bi-fold" />
+          ))}
+        </g>
+      ))}
     </svg>
   );
 }
@@ -71,15 +79,13 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
 
       <Link
         href={`${base}/research`}
-        className={`nav-item nav-research${on("/research") ? " on" : ""}`}
+        className={`brain-link${on("/research") ? " on" : ""}`}
         aria-current={on("/research") ? "page" : undefined}
       >
-        <span className="nav-icon">
-          <ResearchIcon />
-        </span>
-        <span className="flow-text">
-          <strong>Research</strong>
-          <small>The brand brain</small>
+        <BrainIcon />
+        <span className="brain-link-text">
+          <strong>BRAND BRAIN</strong>
+          <small>RESEARCH</small>
         </span>
       </Link>
     </nav>

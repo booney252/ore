@@ -30,7 +30,7 @@ Two loops:
 1. Competitor audit: direct, adjacent, and relative rings.
 2. Voice of customer: real quotes with sources.
 3. My 4 research prompts → `research-brief.md`, the brand brain.
-4. **Unique mechanisms**, added 2026-10-20: after the unified research brief (so after prompts 1-3 and 4), `prompts/09-unique-mechanisms.md` (from RMBC: private, rewrite before release) writes 10-15 UMP + UMS ideas for brand.md's `target_awareness` (Problem Aware by default) → `unique-mechanisms.md`, a Research tab. Runs in setup and on Refresh research, or alone from the Research page.
+4. **Unique mechanisms**, added 2026-10-20: after the unified research brief (so after prompts 1-3 and 4), `prompts/09-unique-mechanisms.md` (from RMBC: private, rewrite before release) writes 10-15 UMP + UMS ideas for the brand's market awareness (brand.md `target_awareness` if set, else the awareness research's final call / campaign target, else Problem Aware). The user ticks the ones they like (saved to `unique-mechanisms-chosen.md`, fed into every writing prompt), and 2+ picks are ranked by `prompts/10-rank-mechanisms.md` → `unique-mechanisms-ranked.md` → `unique-mechanisms.md`, a Research tab. Runs in setup and on Refresh research, or alone from the Research page.
 5. **Ingredient claims (if the product has ingredients)**, added 2026-10-19: brand.md `ingredients` (+ optional `unique_mechanism`), set on the New brand form or the Research page. `prompts/08-ingredient-claims.md` (from RMBC: private, rewrite before release) uses the research brief as the market overview and finds published studies (PubMed/journals, human RCTs first) for claims per ingredient → `ingredient-claims.md`, shown as a Research tab. Needs the API key (web search).
 
 **Weekly engine (the main goal)**

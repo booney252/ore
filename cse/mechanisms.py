@@ -2,7 +2,8 @@
 
 Runs prompts/09-unique-mechanisms.md after the research brief and saves
 brands/<brand>/unique-mechanisms.md (a dated copy goes in research/<date>/). The awareness stage
-it targets is brand.md's `target_awareness`, Problem Aware by default.
+it targets is brand.md's `target_awareness` if set, otherwise the market-awareness research's final
+call (research step 3, then the research brief), Problem Aware if neither names one.
 
 Once the brand picks the ones it likes (the site saves unique-mechanisms-chosen.md), `rank` runs
 prompts/10-rank-mechanisms.md and saves unique-mechanisms-ranked.md.
@@ -11,6 +12,7 @@ prompts/10-rank-mechanisms.md and saves unique-mechanisms-ranked.md.
 from __future__ import annotations
 
 import logging
+import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -23,6 +25,39 @@ log = logging.getLogger("cse")
 PROMPT = Path("prompts/09-unique-mechanisms.md")
 RANK_PROMPT = Path("prompts/10-rank-mechanisms.md")
 DEFAULT_AWARENESS = "Problem Aware"
+STAGES = ["Most Aware", "Product Aware", "Solution Aware", "Problem Aware", "Unaware"]
+STAGE_RE = re.compile("|".join(STAGES), re.I)
+VERDICT_RE = re.compile(r"final call|campaign target|\(primary\)|primary target|target stage", re.I)
+
+
+def stages_in(text: str) -> str:
+    """The awareness stage(s) the research says to target, e.g. "Problem Aware", or ""."""
+    found: list[str] = []
+    for line in text.splitlines():
+        if VERDICT_RE.search(line):
+            for m in STAGE_RE.finditer(line):
+                stage = next(s for s in STAGES if s.lower() == m.group(0).lower())
+                if stage not in found:
+                    found.append(stage)
+            if found and re.search(r"final call", line, re.I):
+                break  # the final call is the verdict; stop there
+    return " and ".join(found)
+
+
+def target_awareness(storage, slug: str, fields: dict) -> str:
+    """The brand's market awareness: brand.md, else the awareness research, else Problem Aware."""
+    if str(fields.get("target_awareness") or "").strip():
+        return str(fields["target_awareness"]).strip()
+    step3 = sorted(k for k in storage.list(brandlib.brand_key(slug, "research/"))
+                   if k.endswith("03-awareness.md"))
+    sources = [step3[-1]] if step3 else []
+    sources.append(brandlib.brand_key(slug, "research-brief.md"))
+    for key in sources:
+        if storage.exists(key):
+            found = stages_in(storage.read_text(key))
+            if found:
+                return found
+    return DEFAULT_AWARENESS
 
 
 def build_prompt(storage, slug: str, today: date) -> str | None:
@@ -36,7 +71,7 @@ def build_prompt(storage, slug: str, today: date) -> str | None:
         "niche": fields.get("niche") or "its",
         "research_brief": storage.read_text(brief_key),
         "product_facts": product_facts(fields, notes),
-        "awareness": str(fields.get("target_awareness") or "").strip() or DEFAULT_AWARENESS,
+        "awareness": target_awareness(storage, slug, fields),
         "compliance": ("This is a health product: flag any UMP or UMS that implies a medical "
                        "result, cure or a specific number, and suggest a safer version."
                        if fields.get("health_product") else
@@ -82,7 +117,7 @@ def rank(storage, slug: str, today: date | None = None, client=None) -> str | No
         "research_brief": storage.read_text(brief_key),
         "mechanisms": storage.read_text(chosen_key),
         "product_facts": product_facts(fields, notes),
-        "awareness": str(fields.get("target_awareness") or "").strip() or DEFAULT_AWARENESS,
+        "awareness": target_awareness(storage, slug, fields),
         "date": today.isoformat(),
     })
     try:

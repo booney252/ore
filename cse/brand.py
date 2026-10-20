@@ -44,7 +44,7 @@ known_competitors: []  # names you already know; the tool marks these as "listed
 health_product: false  # true = flag every promise for compliance review
 ingredients: []        # if it has them, e.g. ["Ashwagandha (600 mg)", "Magnesium glycinate"]; Ore finds study-backed claims for each
 unique_mechanism: ""   # optional: the unique mechanism the copy will use
-target_awareness: "Problem Aware"  # the awareness stage unique mechanisms are written for
+target_awareness: ""   # optional override; blank = the stage your market-awareness research picks
 ad_format: "UGC: a real creator talking to camera, shot on a phone, 20-60s full video with a word-for-word script"  # what every brief must be
 ---
 
