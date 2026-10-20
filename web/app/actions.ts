@@ -16,6 +16,7 @@ import {
 } from "@/lib/brands";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
+import { addBrainItem, fileText, MAX_FILE_BYTES, removeBrainItem } from "@/lib/brain";
 import { cancelJob, createJob } from "@/lib/jobs";
 import { createSession, readSession, saveMe, studioBrand, updateSession } from "@/lib/studio";
 import { requireBrand, requireOwner } from "@/lib/session";
@@ -273,4 +274,45 @@ export async function tweakScript(form: FormData) {
   }
   await createJob({ type: "tweak", brand: found!.session.brand, session: id, script, action });
   redirect(`/studio/s/${id}?tweaking=1#script-${script}`);
+}
+
+
+/** Research page: add a note or a document to the brand brain. */
+export async function addToBrain(form: FormData) {
+  const brand = String(form.get("brand") ?? "");
+  await requireBrand(brand);
+  const note = String(form.get("note") ?? "").trim();
+  const title = String(form.get("title") ?? "").trim().slice(0, 120);
+  const file = form.get("file");
+  let result = "added";
+  if (file instanceof File && file.size > 0) {
+    if (file.size > MAX_FILE_BYTES) redirect(`/b/${brand}/research?step=notes&brainerror=size`);
+    let text = "";
+    try {
+      text = (await fileText(file)).replace(/\n{3,}/g, "\n\n").trim();
+    } catch {
+      redirect(`/b/${brand}/research?step=notes&brainerror=type`);
+    }
+    if (!text) redirect(`/b/${brand}/research?step=notes&brainerror=empty`);
+    await addBrainItem(brand, {
+      title: title || file.name.replace(/\.[^.]+$/, ""),
+      kind: "doc",
+      filename: file.name,
+      text: note ? `${note}\n\n${text}` : text,
+    });
+  } else if (note) {
+    await addBrainItem(brand, { title: title || note.split(/\s+/).slice(0, 6).join(" "), kind: "note", text: note });
+  } else {
+    result = "nothing";
+  }
+  revalidatePath(`/b/${brand}/research`);
+  redirect(`/b/${brand}/research?step=notes&brain=${result}`);
+}
+
+export async function removeFromBrain(form: FormData) {
+  const brand = String(form.get("brand") ?? "");
+  await requireBrand(brand);
+  await removeBrainItem(brand, String(form.get("id") ?? ""));
+  revalidatePath(`/b/${brand}/research`);
+  redirect(`/b/${brand}/research?step=notes&brain=removed`);
 }

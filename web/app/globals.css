@@ -1671,3 +1671,16 @@ select {
   padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line, rgba(255,255,255,0.12));
   color: var(--muted); white-space: nowrap;
 }
+
+/* Research page: "Your notes", what the brand adds to its brain by hand */
+.brain-add { display: grid; gap: 10px; margin-bottom: 20px; }
+.brain-add-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.file-pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.85rem; }
+.file-pick input[type="file"] { color: var(--muted); font-size: 0.85rem; max-width: 100%; }
+.brain-items { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.brain-items li { padding: 14px 16px; }
+.brain-item-head { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; }
+.brain-item-head p { margin: 4px 0 0; font-size: 11px; }
+.brain-items details { margin-top: 8px; }
+.brain-items summary { cursor: pointer; font-size: 0.85rem; }
+.brain-text { white-space: pre-wrap; font-size: 0.8rem; line-height: 1.5; max-height: 320px; overflow: auto; margin: 8px 0 0; color: var(--muted); }

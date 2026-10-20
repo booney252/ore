@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { findMechanisms, pasteQuotes, refreshResearch, saveIngredients } from "@/app/actions";
+import { addToBrain, findMechanisms, pasteQuotes, refreshResearch, removeFromBrain, saveIngredients } from "@/app/actions";
 import Markdown from "@/app/Markdown";
 import MechanismPicker from "@/app/MechanismPicker";
 import BrainMap from "@/app/BrainMap";
 import { docLabel } from "@/app/dates";
+import { brainItems } from "@/lib/brain";
 import { brandName, readIngredients, readResearch, vocCounts } from "@/lib/brands";
 
 export const dynamic = "force-dynamic";
@@ -13,18 +14,27 @@ export default async function Research({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ step?: string; queued?: string; pasted?: string; saved?: string; chosen?: string }>;
+  searchParams: Promise<{
+    step?: string;
+    queued?: string;
+    pasted?: string;
+    saved?: string;
+    chosen?: string;
+    brain?: string;
+    brainerror?: string;
+  }>;
 }) {
   const { brand } = await params;
-  const { step, queued, pasted, saved, chosen } = await searchParams;
-  const [name, research, voc, ing] = await Promise.all([
+  const { step, queued, pasted, saved, chosen, brain, brainerror } = await searchParams;
+  const [name, research, voc, ing, added] = await Promise.all([
     brandName(brand),
     readResearch(brand),
     vocCounts(brand),
     readIngredients(brand),
+    brainItems(brand),
   ]);
   const tab =
-    step === "ingredients" || step === "mechanisms" || step === "quotes"
+    step === "ingredients" || step === "mechanisms" || step === "quotes" || step === "notes"
       ? step
       : research.steps.find((s) => s.file === step)?.file ?? "brief";
   const current = research.steps.find((s) => s.file === tab);
@@ -35,6 +45,7 @@ export default async function Research({
     { key: "mechanisms", label: "Mechanisms" },
     { key: "ingredients", label: "Ingredients" },
     { key: "quotes", label: "Quotes" },
+    { key: "notes", label: "Your notes" },
   ];
   const step1 = research.steps;
   const brainNodes = [
@@ -45,6 +56,12 @@ export default async function Research({
       sub: `Research step ${i + 1}`,
       has: Boolean(st.text),
     })),
+    {
+      key: "notes",
+      label: "Your notes",
+      sub: added.length ? `${added.length} added by you` : "add anything",
+      has: added.length > 0,
+    },
   ].map((n) => ({ ...n, side: "left" as const, href: href(n.key) }));
   const brainRight = [
     { key: "brief", label: "Unified brief", sub: research.brief ? "The brand brain" : "not built yet", has: Boolean(research.brief) },
@@ -62,7 +79,21 @@ export default async function Research({
     },
   ].map((n) => ({ ...n, side: "right" as const, href: href(n.key) }));
 
-  const notice = queued
+  const brainNotice =
+    brainerror === "size"
+      ? "That file is over 8 MB. Try a smaller one, or paste the part that matters."
+      : brainerror === "type"
+        ? "Ore can read PDFs, Word docs (.docx), and text, Markdown or CSV files."
+        : brainerror === "empty"
+          ? "Ore couldn't find any text in that file (a scanned PDF?). Paste the text instead."
+          : brain === "added"
+            ? "Added to the brand brain. Every report, iteration, brief and script reads it from now on. Refresh the research to work it into the brief too."
+            : brain === "removed"
+              ? "Removed from the brand brain."
+              : brain === "nothing"
+                ? "Type something or attach a file first."
+                : null;
+  const notice = brainNotice ?? (queued
     ? queued === "rank"
       ? `Saved ${ing.chosen.length} unique mechanisms. Ore will now rank them against your research brief, best first.`
       : queued === "ingredients"
@@ -78,7 +109,7 @@ export default async function Research({
         ? "Quotes saved. Refresh the research to use them."
         : saved
           ? "Saved. Add ingredients to get study-backed claims."
-          : null;
+          : null);
 
   return (
     <main className="page research-page">
@@ -177,6 +208,65 @@ export default async function Research({
               <Markdown text={ing.claims} />
             ) : (
               <p className="empty">No ingredient claims yet.</p>
+            )}
+          </>
+        ) : tab === "notes" ? (
+          <>
+            <form action={addToBrain} className="tab-form brain-add">
+              <input type="hidden" name="brand" value={brand} />
+              <p className="muted">
+                Tell Ore anything about the brand, or attach a doc: a new price, a word to never use, a
+                sales call summary, a strategy deck, a customer survey. Every report, iteration, brief
+                and script reads it, and where it disagrees with the research, your words win.
+              </p>
+              <label className="field">
+                <span className="sr-only">Title</span>
+                <input name="title" placeholder="Title (optional)" maxLength={120} />
+              </label>
+              <label className="field">
+                <span className="sr-only">Note</span>
+                <textarea name="note" rows={5} placeholder="e.g. We just dropped the price to $9.99 a month. Never call it a 'shot', say 'your weekly dose'." />
+              </label>
+              <div className="brain-add-row">
+                <label className="file-pick">
+                  <input type="file" name="file" accept=".pdf,.docx,.md,.markdown,.txt,.csv,.json,.html,text/*" />
+                  <span className="muted">PDF, Word, text or CSV, up to 8 MB</span>
+                </label>
+                <button type="submit" className="btn-primary">
+                  Add to the brain
+                </button>
+              </div>
+            </form>
+            {added.length ? (
+              <ul className="brain-items">
+                {added.map((it) => (
+                  <li key={it.id} className="panel">
+                    <div className="brain-item-head">
+                      <div>
+                        <strong>{it.title}</strong>
+                        <p className="mono muted">
+                          {it.kind === "doc" ? `Document · ${it.filename}` : "Note"} ·{" "}
+                          {new Date(it.added).toLocaleDateString("en-US", { month: "short", day: "numeric" })} ·{" "}
+                          {it.text.length.toLocaleString()} characters
+                        </p>
+                      </div>
+                      <form action={removeFromBrain}>
+                        <input type="hidden" name="brand" value={brand} />
+                        <input type="hidden" name="id" value={it.id} />
+                        <button type="submit" className="btn-quiet btn-small">
+                          Remove
+                        </button>
+                      </form>
+                    </div>
+                    <details>
+                      <summary className="muted">Show what Ore reads</summary>
+                      <pre className="brain-text">{it.text.slice(0, 4000)}{it.text.length > 4000 ? "\n…" : ""}</pre>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="empty">Nothing added yet.</p>
             )}
           </>
         ) : tab === "quotes" ? (

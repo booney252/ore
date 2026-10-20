@@ -21,6 +21,7 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+from . import brain as brainlib
 from . import brand as brandlib
 from . import creators as creatorlib
 from . import formats, llm
@@ -93,7 +94,7 @@ def _context(storage, slug: str) -> tuple[dict, str, str]:
     brief_key = brandlib.brand_key(slug, "research-brief.md")
     brief = (storage.read_text(brief_key) if storage.exists(brief_key)
              else "(No research brief yet: rely on the product facts and the winning ads.)")
-    return fields, product_facts(fields, body), brief
+    return fields, product_facts(fields, body), brainlib.with_brief(brief, storage, slug)
 
 
 def _winners_for(storage, session: dict) -> tuple[list[dict], str]:

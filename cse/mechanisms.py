@@ -16,6 +16,7 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+from . import brain as brainlib
 from . import brand as brandlib
 from . import llm
 from .stages import product_facts
@@ -75,7 +76,7 @@ def build_prompt(storage, slug: str, today: date) -> str | None:
         "brand_name": fields.get("name") or slug,
         "product": fields.get("product") or "this product",
         "niche": fields.get("niche") or "its",
-        "research_brief": storage.read_text(brief_key),
+        "research_brief": brainlib.with_brief(storage.read_text(brief_key), storage, slug),
         "product_facts": product_facts(fields, notes),
         "awareness": target_awareness(storage, slug, fields),
         "compliance": ("This is a health product: flag any UMP or UMS that implies a medical "
@@ -120,7 +121,7 @@ def rank(storage, slug: str, today: date | None = None, client=None) -> str | No
         "brand_name": fields.get("name") or slug,
         "product": fields.get("product") or "this product",
         "niche": fields.get("audience") or fields.get("niche") or "this market",
-        "research_brief": storage.read_text(brief_key),
+        "research_brief": brainlib.with_brief(storage.read_text(brief_key), storage, slug),
         "mechanisms": storage.read_text(chosen_key),
         "product_facts": product_facts(fields, notes),
         "awareness": target_awareness(storage, slug, fields),

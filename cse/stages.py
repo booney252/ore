@@ -20,6 +20,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from . import brand as brandlib
+from . import brain as brainlib
 from . import creators as creatorlib
 from . import formats, llm
 from .score import strength
@@ -89,7 +90,8 @@ def brand_context(storage, slug: str) -> dict:
         "brand_name": fields.get("name") or slug,
         "ad_format": fields.get("ad_format") or DEFAULT_AD_FORMAT,
         "format_notes": fields.get("ad_format") or "",
-        "research_brief": storage.read_text(brandlib.brand_key(slug, "research-brief.md")),
+        "research_brief": brainlib.with_brief(
+            storage.read_text(brandlib.brand_key(slug, "research-brief.md")), storage, slug),
         "knowledge": load_knowledge(),
         "creator": creatorlib.describe(None),
     }

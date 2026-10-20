@@ -19,6 +19,7 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+from . import brain as brainlib
 from . import brand as brandlib
 from . import llm, voc
 
@@ -100,13 +101,15 @@ def unverified_quotes(text: str, sources: list[str]) -> list[str]:
 def run(storage, slug: str, today: date | None = None, client=None) -> str | None:
     today = today or datetime.now(timezone.utc).date()
     vals = values(storage, slug)
+    added = brainlib.section(storage, slug)  # the brand's own notes and documents, after each prompt
+    added = f"\n\n{added}" if added else ""
     folder = f"research/{today.isoformat()}"
 
     outputs, pending = {}, []
     for i, (name, path, web) in enumerate(STEPS, start=1):
         try:
             answer = llm.ask(storage, slug, f"research-{today.isoformat()}-{name}",
-                             llm.render(path.read_text(), vals), client=client,
+                             llm.render(path.read_text(), vals) + added, client=client,
                              max_tokens=32000, effort="high", web=web)
         except llm.HandoffPending as p:
             pending.append(p.prompt_key)
@@ -120,7 +123,7 @@ def run(storage, slug: str, today: date | None = None, client=None) -> str | Non
 
     try:
         brief = llm.ask(storage, slug, f"research-{today.isoformat()}-04-research-brief",
-                        llm.render(BRIEF.read_text(), {**vals, **outputs}), client=client,
+                        llm.render(BRIEF.read_text(), {**vals, **outputs}) + added, client=client,
                         max_tokens=32000, effort="high")
     except llm.HandoffPending as p:
         log.info("research: answer %s, then re-run.", p.prompt_key)
