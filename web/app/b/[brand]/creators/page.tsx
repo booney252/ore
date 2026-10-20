@@ -1,30 +1,10 @@
 import { saveCreatorAction } from "@/app/actions";
 import RemoveCreator from "@/app/RemoveCreator";
 import { brandName } from "@/lib/brands";
-import { CREATOR_FIELDS, listCreators, type Creator } from "@/lib/creators";
+import CreatorFields from "@/app/CreatorFields";
+import { listCreators } from "@/lib/creators";
 
 export const dynamic = "force-dynamic";
-
-function CreatorFields({ c }: { c?: Creator }) {
-  return (
-    <>
-      <label className="field">
-        <span className="mono muted">Name</span>
-        <input name="name" required maxLength={80} defaultValue={c?.name} placeholder="Maya" />
-      </label>
-      {CREATOR_FIELDS.map((f) => (
-        <label key={f.key} className={`field${f.long ? " wide" : ""}`}>
-          <span className="mono muted">{f.label}</span>
-          {f.long ? (
-            <textarea name={f.key} rows={3} maxLength={1500} defaultValue={c?.[f.key]} placeholder={f.hint} />
-          ) : (
-            <input name={f.key} maxLength={1500} defaultValue={c?.[f.key]} placeholder={f.hint} />
-          )}
-        </label>
-      ))}
-    </>
-  );
-}
 
 export default async function Creators({
   params,

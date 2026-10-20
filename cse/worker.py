@@ -27,7 +27,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, ingredients, llm, mechanisms, research, setup, stages, voc
+from . import ads, breakdown, creative, ingredients, llm, mechanisms, research, setup, stages, studio, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -99,6 +99,9 @@ def run_job(storage, job: dict) -> str | None:
         return out
     if job["type"] == "mechanisms":
         return mechanisms.run(storage, slug)
+    if job["type"] == "scripts":
+        return studio.run_scripts(storage, slug, job.get("creator"), fmt=job.get("format") or "ugc",
+                                  count=int(job.get("count") or 3), notes=job.get("notes") or "")
     if job["type"] == "rank_mechanisms":
         return mechanisms.rank(storage, slug)
     if job["type"] == "ingredients":

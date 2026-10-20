@@ -17,6 +17,7 @@ import {
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { cancelJob, createJob } from "@/lib/jobs";
+import { isStudioBrand, saveStudioCreator, studioCreators } from "@/lib/studio";
 import { requireBrand, requireOwner } from "@/lib/session";
 
 function formatOf(form: FormData): string {
@@ -214,5 +215,36 @@ export async function removeCreatorAction(form: FormData) {
   await removeCreator(brand, String(form.get("id") ?? ""));
   revalidatePath(`/b/${brand}`, "layout");
   redirect(`/b/${brand}/creators?removed=1`);
+}
+
+// --- Creator Studio ---
+
+export async function writeScripts(form: FormData) {
+  await requireOwner();
+  const brand = checkSlug(String(form.get("brand") ?? ""));
+  if (!(await isStudioBrand(brand))) redirect("/studio?pick=1");
+  const id = String(form.get("creator") ?? "");
+  const creator = id && (await studioCreators()).some((c) => c.id === id) ? id : undefined;
+  const count = Math.min(5, Math.max(1, Number(form.get("count")) || 3));
+  const notes = String(form.get("notes") ?? "").trim().slice(0, 500);
+  await createJob({
+    type: "scripts",
+    brand,
+    format: formatOf(form),
+    count,
+    ...(creator && { creator }),
+    ...(notes && { notes }),
+  });
+  redirect("/studio?queued=1");
+}
+
+export async function saveStudioCreatorAction(form: FormData) {
+  await requireOwner();
+  const name = String(form.get("name") ?? "").trim();
+  if (!name) redirect("/studio/me?missing=1");
+  const data = Object.fromEntries(CREATOR_FIELDS.map((f) => [f.key, String(form.get(f.key) ?? "")]));
+  const id = await saveStudioCreator({ name, ...data }, String(form.get("id") ?? "") || undefined);
+  revalidatePath("/studio", "layout");
+  redirect(`/studio?me=${id}`);
 }
 

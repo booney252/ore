@@ -349,3 +349,28 @@ def test_iterations_and_briefs_can_be_written_for_one_creator(brand):
     stages.run_iterations(storage, "pp", None, [1], today=TODAY)
     plain = [k for k in storage.list("brands/pp/handoff/") if k.endswith("2026-10-17-ads-1.prompt.md")]
     assert "No specific creator" in storage.read_text(plain[0])
+
+
+def test_studio_scripts_for_a_creator_from_the_brands_own_winners(brand):
+    from cse import studio
+    storage = brand
+    storage.write_text("brands/pp/brand.md", "---\nname: Cal AI\nproduct: snap a photo, it logs calories\n---\n")
+    storage.write_text("brands/pp/ads.json", json.dumps({"ads": {
+        "1": {**_ad("1", 100, brand="Cal AI"), "is_active": True},
+        "2": {**_ad("2", 25, brand="Cal AI")},
+        "3": {**_ad("3", 100, brand="Other")},
+    }}))
+    storage.write_text("studio/creators.json", json.dumps({"creators": [
+        {"id": "maya", "name": "Maya", "voice": "says 'okay so'", "can_claim": "uses it daily"}]}))
+    assert [a["ad_id"] for a in studio.brand_winners(storage, "pp")] == ["1", "2"]  # own ads only
+    assert studio.run_scripts(storage, "pp", "maya", fmt="ugc", count=2, notes="gym angle",
+                              today=TODAY) is None
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "**Maya** will film" in prompt and "snap a photo" in prompt and "gym angle" in prompt
+    assert "2 script(s)" in prompt and "Ad 1 |" in prompt and "Ad 3 |" not in prompt and "{{" not in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Script 1: Gym bag\n- x")
+    out = studio.run_scripts(storage, "pp", "maya", fmt="ugc", count=2, notes="gym angle", today=TODAY)
+    meta = json.loads(storage.read_text(out[:-3] + ".json"))
+    assert meta["brand"] == "pp" and meta["creator"] == "maya" and meta["ads"] == ["1", "2"]
+    assert "Gym bag" in studio.already_written(storage, "pp", "maya")

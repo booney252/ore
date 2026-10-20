@@ -20,7 +20,12 @@ export default async function Home({
     <div className="home-wrap">
       <header className="home-top">
         <Wordmark />
-        <LogOut />
+        <nav className="studio-nav">
+          <Link href="/studio" className="studio-badge mono">
+            Creator Studio →
+          </Link>
+          <LogOut />
+        </nav>
       </header>
 
       <main className="home">
