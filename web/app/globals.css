@@ -1663,3 +1663,11 @@ select {
 .script-card header { display: grid; gap: 4px; margin-bottom: 8px; }
 .script-card h2 { margin: 0; font-size: 1.5rem; }
 .tweak-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+/* organic posts: outlier, comments, posted date on the card */
+.organic-stats { display: flex; flex-wrap: wrap; gap: 4px; margin: 2px 0 4px; }
+.organic-stats span {
+  font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.02em;
+  padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line, rgba(255,255,255,0.12));
+  color: var(--muted); white-space: nowrap;
+}

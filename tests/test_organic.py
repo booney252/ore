@@ -88,3 +88,21 @@ def test_pull_grades_accounts_and_fetches_only_the_winners(tmp_path, monkeypatch
     assert ads["in-reedo.io0"]["is_own"] and ads["in-reedo.io0"]["media_key"]
     yt = ads["yo-tommycetty0"]
     assert yt["analysis"]["hook_line"] == "nobody tells you this" and yt["url"].endswith("/shorts/tommycetty0")
+
+
+def test_comments_per_view_move_the_grade_one_step():
+    base = {"handle": "x", "views": 30000, "usual_views": 10000, "usual_comment_rate": 0.002}
+    assert organic.organic_score({**base, "comments": 60})[0] == 75   # 3x usual (B), normal comments
+    assert organic.organic_score({**base, "comments": 200})[0] == 100  # comments 3.3x usual: up to A
+    score, why = organic.organic_score({**base, "comments": 20})      # 0.07%, a third of usual
+    assert score == 50 and "(down one)" in why
+    assert organic.organic_score({**base, "comments": 5})[0] == 75    # under 10 comments: no move
+
+
+def test_posts_before_organic_since_are_dropped(tmp_path):
+    s = LocalStorage(tmp_path)
+    s.write_text("brands/aicl/brand.md", "---\nname: AICL\norganic_since: '2026-04-01'\n---\n")
+    old = {**post("OLD", 900000), "date": "2025-01-05"}
+    organic.import_posts(s, "aicl", [old, post("NEW", 1000)], date(2026, 10, 20))
+    ads = json.loads(s.read_text("brands/aicl/ads.json"))["ads"]
+    assert list(ads) == ["in-NEW"]

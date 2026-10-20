@@ -47,34 +47,58 @@ export const ORGANIC_VERDICTS: { grade: Grade; verdict: string; meaning: string 
   { grade: "B", verdict: "Strong signal", meaning: "2x+ the account's usual views. It beat their normal clearly." },
   { grade: "C", verdict: "About normal", meaning: "Around the account's usual views, or too few views to call." },
   { grade: "D", verdict: "Below usual", meaning: "Fewer views than the account normally gets." },
-  { grade: "F", verdict: "Below usual", meaning: "Fewer views than the account normally gets." },
+  { grade: "F", verdict: "Missed", meaning: "Below the account's usual views, and few people commented." },
 ];
 
-function short(n: number): string {
+export function short(n: number): string {
   return n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1000 ? `${(n / 1000).toFixed(n >= 10_000 ? 0 : 1)}K` : String(n);
 }
 
-/** Organic posts: views vs the account's usual (median). Same rules as cse/organic.py. */
+/** Organic posts: views vs the account's usual, then comments per view. Same rules as cse/organic.py. */
+export const ORGANIC_SCALES = [
+  { label: "Outlier", effect: "sets the grade", scale: "views vs the account's usual: A 5x+ · B 2x+ · C about normal · D below" },
+  { label: "Comments per view", effect: "up or down one", scale: "2x the account's usual: up one · half or less: down one (10+ comments)" },
+  { label: "Views", effect: "under 1,000", scale: "too few to call: stops at C" },
+];
+
+export function commentRate(ad: Ad): number {
+  return ad.views ? (ad.comments ?? 0) / ad.views : 0;
+}
+
+export function pct(n: number): string {
+  return `${(n * 100).toFixed(n >= 0.1 ? 0 : n >= 0.01 ? 1 : 2)}%`;
+}
+
 function explainOrganic(ad: Ad): Explained {
   const views = ad.views ?? 0;
   const usual = ad.usual_views ?? 0;
   const ratio = usual ? views / usual : 1;
-  const raw: Grade = ratio >= 5 ? "A" : ratio >= 2 ? "B" : ratio >= 1 ? "C" : "D";
-  const capped = views < 1000 && (raw === "A" || raw === "B");
-  const grade: Grade = capped ? "C" : raw;
+  const base: Grade = ratio >= 5 ? "A" : ratio >= 2 ? "B" : ratio >= 1 ? "C" : "D";
+  const rate = commentRate(ad);
+  const usualRate = ad.usual_comment_rate ?? 0;
+  const move = (ad.comments ?? 0) < 10 || !usualRate ? 0 : rate >= 2 * usualRate ? -1 : rate <= usualRate / 2 ? 1 : 0;
+  let grade = GRADES[Math.max(0, Math.min(4, GRADES.indexOf(base) + move))];
+  const capped = views < 1000 && (grade === "A" || grade === "B");
+  if (capped) grade = "C";
   const { verdict, meaning } = ORGANIC_VERDICTS.find((v) => v.grade === grade)!;
   const parts: Part[] = [
-    { label: "Views", value: short(views), effect: "", note: `${views.toLocaleString("en-US")} views.` },
-    { label: "Usual", value: short(usual), effect: "", note: `@${ad.handle}'s median views on recent posts.` },
     {
-      label: "Times usual",
+      label: "Outlier",
       value: `${ratio.toFixed(1)}x`,
-      grade: raw,
+      grade: base,
       effect: capped ? "capped at C: under 1,000 views" : "sets the grade",
-      note: "A 5x+ · B 2x+ · C about normal · D below usual",
+      note: `${views.toLocaleString("en-US")} views vs @${ad.handle}'s usual ${usual.toLocaleString("en-US")}.`,
+    },
+    {
+      label: "Comments",
+      value: pct(rate),
+      effect: move < 0 ? "up one grade" : move > 0 ? "down one grade" : "no change",
+      note: `${(ad.comments ?? 0).toLocaleString("en-US")} comments, ${pct(rate)} of views; @${ad.handle}'s usual is ${pct(usualRate)}.`,
     },
   ];
-  const reason = `${short(views)} views, ${ratio.toFixed(1)}x @${ad.handle}'s usual ${short(usual)}${capped ? " (too few views to call)" : ""}.`;
+  const bits = [`${short(views)} views, ${ratio.toFixed(1)}x usual`];
+  if (usualRate) bits.push(`comments ${pct(rate)} vs usual ${pct(usualRate)}`);
+  const reason = `${bits.join(", ")}${capped ? " (too few views to call)" : ""}.`;
   return { grade, verdict, meaning, reason, parts };
 }
 

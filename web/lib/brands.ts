@@ -26,6 +26,12 @@ export async function listBrands(): Promise<{ slug: string; name: string }[]> {
   return Promise.all(slugs.map(async (slug) => ({ slug, name: await brandName(slug) })));
 }
 
+/** brand.md `campaign_type`: "organic" (affiliates or creators posting on their own pages) or "paid" (Meta ads). */
+export async function campaignType(slug: string): Promise<"organic" | "paid"> {
+  const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";
+  return /^campaign_type:\s*"?organic/m.test(md) ? "organic" : "paid";
+}
+
 /** The format a brand's writing defaults to (brand.md `default_format`), e.g. "talking" for organic. */
 export async function defaultFormat(slug: string): Promise<string> {
   const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";

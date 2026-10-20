@@ -1,10 +1,16 @@
 """Organic winners: posts (Reels, TikToks, Shorts) graded on views against the account's usual.
 
 Paid ads prove themselves by running for months; an organic post proves itself by beating the
-account's normal views. So an organic post's grade is its views divided by the median views of
-that account's recent posts:
+account's normal views. So an organic post's grade starts from its views divided by the median
+views of that account's posts (the outlier):
   A 5x+ the usual, B 2x+, C 1x+ (about normal), D below the usual.
+Then engagement moves it, comments per view against the account's usual comment rate (comments
+are what a comment-keyword CTA runs on, and like counts are often hidden):
+  2x+ the usual comment rate: up one grade; half or less: down one (a D drops to F).
+  Only with 10+ comments, so a handful of comments can't swing it.
 Under 1,000 views is too few to call: the grade stops at C.
+brand.md `organic_since` (e.g. 2026-04-01) drops older posts, so an account's old content from
+before it changed direction doesn't set its "usual".
 
 Organic posts live in the same ads.json as paid ads (`source: "organic"`), so reports,
 iterations, briefs and the Creator Studio use them the same way. `import_posts` merges a batch
@@ -36,15 +42,38 @@ def grade_ratio(ratio: float) -> str:
     return "A" if ratio >= 5 else "B" if ratio >= 2 else "C" if ratio >= 1 else "D"
 
 
+MIN_COMMENTS = 10
+
+
+def comment_rate(post: dict) -> float:
+    views = int(post.get("views") or 0)
+    return int(post.get("comments") or 0) / views if views else 0.0
+
+
+def engagement_move(post: dict) -> int:
+    """-1 (up one grade), +1 (down one) or 0, from comments per view vs the account's usual."""
+    usual = float(post.get("usual_comment_rate") or 0)
+    if int(post.get("comments") or 0) < MIN_COMMENTS or not usual:
+        return 0
+    rate = comment_rate(post)
+    return -1 if rate >= 2 * usual else 1 if rate <= usual / 2 else 0
+
+
 def organic_score(post: dict) -> tuple[float, str]:
     views, usual = int(post.get("views") or 0), int(post.get("usual_views") or 0)
     ratio = views / usual if usual else 1.0
-    grade = grade_ratio(ratio)
+    base = grade_ratio(ratio)
+    move = engagement_move(post)
+    grade = GRADES[max(0, min(4, GRADES.index(base) + move))]
     capped = views < MIN_VIEWS and grade in "AB"
     if capped:
         grade = "C"
     why = (f"Grade {grade}: {views:,} views, {ratio:.1f}x @{post.get('handle')}'s usual "
-           f"{usual:,} ({grade_ratio(ratio)})")
+           f"{usual:,} ({base})")
+    if post.get("usual_comment_rate"):
+        why += (f", comments {comment_rate(post):.2%} of views vs usual "
+                f"{float(post['usual_comment_rate']):.2%}"
+                + (" (up one)" if move < 0 else " (down one)" if move > 0 else ""))
     why += ", under 1,000 views so too few to call (capped at C)." if capped else "."
     return (4 - GRADES.index(grade)) * 25, why
 
@@ -104,13 +133,18 @@ def to_entry(post: dict, brand_name: str, today: date) -> dict:
 
 
 def import_posts(storage, slug: str, posts: list[dict], today: date | None = None) -> dict:
-    """Merge posts into ads.json (keeping any breakdown/analysis already there) and regrade."""
+    """Merge posts into ads.json (keeping any breakdown/analysis already there) and regrade.
+    Posts from before brand.md `organic_since` are left out, and dropped if already there."""
     today = today or datetime.now(timezone.utc).date()
     key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(key)) if storage.exists(key) else {"brand": slug, "ads": {}}
-    name = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0].get("name") or slug
+    fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    name = fields.get("name") or slug
+    since = str(fields.get("organic_since") or "")
     added = updated = 0
     for post in posts:
+        if since and str(post.get("posted_at") or post.get("date") or "9999") < since:
+            continue
         entry = to_entry(post, name, today)
         old = doc["ads"].get(entry["ad_id"])
         if old:
@@ -119,6 +153,10 @@ def import_posts(storage, slug: str, posts: list[dict], today: date | None = Non
         else:
             added += 1
         doc["ads"][entry["ad_id"]] = {**(old or {}), **entry}
+    if since:
+        for ad_id in [k for k, a in doc["ads"].items()
+                      if a.get("source") == "organic" and str(a.get("start_date") or "") < since]:
+            del doc["ads"][ad_id]
     regrade(doc["ads"].values())
     storage.write_text(key, json.dumps(doc, indent=2) + "\n")
     log.info("organic: %s: %d new, %d updated posts", slug, added, updated)
@@ -126,13 +164,19 @@ def import_posts(storage, slug: str, posts: list[dict], today: date | None = Non
 
 
 def regrade(ads) -> None:
-    """Set each organic post's usual views (its account's median) and its grade."""
+    """Set each organic post's usual views and comment rate (its account's medians) and grade."""
     ads = [a for a in ads if a.get("source") == "organic"]
-    by_handle: dict[str, list[int]] = {}
+    views: dict[str, list[int]] = {}
+    rates: dict[str, list[float]] = {}
     for a in ads:
-        by_handle.setdefault(a["handle"], []).append(int(a.get("views") or 0))
+        account = f"{a.get('platform')}:{a['handle']}"
+        views.setdefault(account, []).append(int(a.get("views") or 0))
+        if a.get("views"):
+            rates.setdefault(account, []).append(comment_rate(a))
     for a in ads:
-        a["usual_views"] = int(statistics.median(by_handle[a["handle"]]))
+        account = f"{a.get('platform')}:{a['handle']}"
+        a["usual_views"] = int(statistics.median(views[account]))
+        a["usual_comment_rate"] = round(statistics.median(rates[account]), 6) if rates.get(account) else 0
         a["score"], a["score_why"] = organic_score(a)
 
 

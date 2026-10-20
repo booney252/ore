@@ -1,14 +1,16 @@
 import AdCard from "@/app/AdCard";
 import ScoreKey from "@/app/ScoreKey";
 import Grade from "@/app/Grade";
-import { link, loadAds, winners } from "@/lib/ads";
+import { link, loadAds, posted, winners } from "@/lib/ads";
+import { campaignType } from "@/lib/brands";
 import { explain } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
 export default async function Winners({ params }: { params: Promise<{ brand: string }> }) {
   const { brand } = await params;
-  const ads = await loadAds(brand);
+  const [ads, type] = await Promise.all([loadAds(brand), campaignType(brand)]);
+  const organic = type === "organic";
   const top = winners(ads, 10);
   const shown = new Set(top.map((a) => a.ad_id));
   const rest = ads
@@ -19,15 +21,16 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
   return (
     <main className="page">
       <header className="page-head">
-        <p className="mono muted">Winning ads</p>
-        <h1 className="display">Winning ads</h1>
+        <p className="mono muted">{organic ? "Winning posts" : "Winning ads"}</p>
+        <h1 className="display">{organic ? "Winning posts" : "Winning ads"}</h1>
         <p className="lede">
-          The top ads by winner grade, videos and statics. Open one to watch it with its
-          transcript and frames, and its diagnosis once it's been taken apart.
+          {organic
+            ? "The posts that beat their account's usual views the most, ours and the niche's. Open one to watch it with its transcript and frames, and its diagnosis once it's been taken apart."
+            : "The top ads by winner grade, videos and statics. Open one to watch it with its transcript and frames, and its diagnosis once it's been taken apart."}
         </p>
       </header>
 
-      <ScoreKey />
+      <ScoreKey organic={organic} />
 
       <div className="ad-grid">
         {top.map((ad, i) => (
@@ -43,9 +46,9 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
             <thead>
               <tr>
                 <th>Grade</th>
-                <th>Advertiser</th>
+                <th>{organic ? "Account" : "Advertiser"}</th>
                 <th>Why</th>
-                <th>Format</th>
+                <th>{organic ? "Posted" : "Format"}</th>
                 <th />
               </tr>
             </thead>
@@ -59,7 +62,7 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
                   <td>
                     {explain(a).verdict}. <span className="muted">{explain(a).reason}</span>
                   </td>
-                  <td className="mono muted">{a.media_type}</td>
+                  <td className="mono muted">{organic ? posted(a) : a.media_type}</td>
                   <td>
                     {a.removed_from_library ? (
                       <span className="tag ruby">Removed</span>

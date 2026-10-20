@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Grade from "@/app/Grade";
-import { hook, posterUrl, type Ad } from "@/lib/ads";
-import { explain } from "@/lib/score";
+import { hook, posted, posterUrl, type Ad } from "@/lib/ads";
+import { commentRate, explain, pct, short } from "@/lib/score";
 
 export default async function AdCard({ brand, ad, rank }: { brand: string; ad: Ad; rank?: number }) {
   const poster = await posterUrl(ad);
@@ -12,7 +12,7 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
         {poster ? <img src={poster} alt="" loading="lazy" /> : <div className="ad-frame-empty" />}
         {rank ? <span className="ad-rank mono">#{rank}</span> : null}
         {ad.media_type === "image" ? <span className="tag ad-kind">Static</span> : null}
-        {ad.is_own ? <span className="tag emerald">Yours</span> : null}
+        {ad.is_own ? <span className="tag emerald">{ad.source === "organic" ? "Ours" : "Yours"}</span> : null}
         <div className="ad-over">
           <Grade g={why.grade} />
           <span className="verdict">{why.verdict}</span>
@@ -20,10 +20,18 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
       </div>
       <div className="ad-meta">
         <strong>
-          {ad.brand}
+          {ad.source === "organic" ? `${ad.brand} · ${ad.platform === "tiktok" ? "TikTok" : ad.platform === "youtube" ? "YouTube" : "IG"}` : ad.brand}
           {!ad.breakdown ? <span className="pending-note"> · not taken apart yet</span> : null}
         </strong>
-        <p className="why">{why.reason}</p>
+        {ad.source === "organic" ? (
+          <div className="organic-stats">
+            <span>{short(ad.views ?? 0)} views</span>
+            <span title="views vs the account's usual">{((ad.views ?? 0) / Math.max(1, ad.usual_views ?? 1)).toFixed(1)}x usual</span>
+            <span title={`${(ad.comments ?? 0).toLocaleString("en-US")} comments`}>{pct(commentRate(ad))} comments</span>
+            <span>Posted {posted(ad)}</span>
+          </div>
+        ) : null}
+        {ad.source === "organic" ? null : <p className="why">{why.reason}</p>}
         <p>“{hook(ad) || "No spoken hook"}”</p>
       </div>
     </Link>

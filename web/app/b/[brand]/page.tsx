@@ -5,7 +5,7 @@ import CancelButton from "@/app/CancelButton";
 import Competitors from "@/app/Competitors";
 import { listCompetitors } from "@/lib/competitors";
 import { loadAds, stats, winners } from "@/lib/ads";
-import { brandName, setupState } from "@/lib/brands";
+import { brandName, campaignType, setupState } from "@/lib/brands";
 import { listJobs, type Job } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +27,7 @@ export default async function Overview({
     listCompetitors(brand),
   ]);
   const s = stats(ads);
+  const organic = (await campaignType(brand)) === "organic";
   const top = winners(ads, 2).slice(0, 5);
 
   return (
@@ -59,12 +60,21 @@ export default async function Overview({
 
       {s.total > 0 && (
         <>
-          <dl className="stats">
-            <Stat n={s.total} label="Ads tracked" />
-            <Stat n={s.advertisers} label="Advertisers" />
-            <Stat n={s.brokenDown} label="Taken apart" />
-            <Stat n={s.active} label="Still running" />
-          </dl>
+          {organic ? (
+            <dl className="stats">
+              <Stat n={s.total} label="Posts tracked" />
+              <Stat n={s.advertisers} label="Accounts" />
+              <Stat n={s.brokenDown} label="Taken apart" />
+              <Stat n={ads.filter((a) => (a.score ?? 0) >= 75).length} label="Breakouts (A/B)" />
+            </dl>
+          ) : (
+            <dl className="stats">
+              <Stat n={s.total} label="Ads tracked" />
+              <Stat n={s.advertisers} label="Advertisers" />
+              <Stat n={s.brokenDown} label="Taken apart" />
+              <Stat n={s.active} label="Still running" />
+            </dl>
+          )}
 
           <section className="block">
             <div className="block-head">
@@ -73,9 +83,9 @@ export default async function Overview({
                 All winners →
               </Link>
             </div>
-            <ScoreKey />
+            <ScoreKey organic={organic} />
             {top.length === 0 ? (
-              <p className="empty">No ads with frames yet.</p>
+              <p className="empty">{organic ? "No posts with frames yet." : "No ads with frames yet."}</p>
             ) : (
               <div className="ad-row">
                 {top.map((ad, i) => (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { hook, link, loadAds, posterUrl } from "@/lib/ads";
+import { hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
 import { explain } from "@/lib/score";
 import Grade from "@/app/Grade";
 import { signedUrl } from "@/lib/storage";
@@ -57,7 +57,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
   return (
     <main className="page">
       <p className="crumbs mono">
-        <Link href={`/b/${brand}/ads`}>Winning ads</Link> / {ad.brand}
+        <Link href={`/b/${brand}/ads`}>{ad.source === "organic" ? "Winning posts" : "Winning ads"}</Link> / {ad.brand}
       </p>
 
       <div className="ad-detail">
@@ -85,8 +85,9 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
           <header>
             <p className="mono muted">
               {ad.brand}
-              {ad.ring ? ` · ${ad.ring}` : ""}
-              {ad.is_own ? " · yours" : ""}
+              {ad.source === "organic"
+                ? ` · ${ad.is_own ? "ours" : "niche"} · posted ${posted(ad)}`
+                : `${ad.ring ? ` · ${ad.ring}` : ""}${ad.is_own ? " · yours" : ""}`}
             </p>
             <h1 className="hook-quote">“{hook(ad) || "No spoken hook"}”</h1>
           </header>
@@ -100,7 +101,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
                   const move = p.effect.startsWith("up") ? "up" : p.effect.startsWith("down") ? "down" : "";
                   const text =
                     ad.source === "organic"
-                      ? p.label === "Times usual" ? `${p.value} usual` : `${p.value} ${p.label.toLowerCase()}`
+                      ? p.label === "Outlier" ? `${p.value} usual` : `${p.value} comments`
                       : p.label === "Time live"
                       ? `${p.value} live`
                       : p.label === "Still running"
@@ -127,7 +128,10 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
             <Fact k="Length" v={a.length_s ? `${a.length_s}s` : null} />
             <Fact k="Cuts" v={a.cut_count != null ? `${a.cut_count} (${a.cuts_per_second}/s)` : null} />
             <Fact k="Product shows at" v={b.time_to_product_s != null ? `${b.time_to_product_s}s` : null} />
-            <Fact k="Started" v={ad.start_date} />
+            <Fact k={ad.source === "organic" ? "Posted" : "Started"} v={ad.start_date} />
+            {ad.source === "organic" ? (
+              <Fact k="Views · likes · comments" v={`${(ad.views ?? 0).toLocaleString("en-US")} · ${(ad.likes ?? 0).toLocaleString("en-US")} · ${(ad.comments ?? 0).toLocaleString("en-US")}`} />
+            ) : null}
             {facts.map((k) => (
               <Fact key={k} k={LABELS[k] ?? k.replace(/_/g, " ")} v={text(b[k])} wide />
             ))}

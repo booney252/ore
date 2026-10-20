@@ -31,6 +31,7 @@ export type Ad = {
   likes?: number;
   comments?: number;
   usual_views?: number;
+  usual_comment_rate?: number;
   analysis?: {
     length_s?: number;
     cut_count?: number;
@@ -87,6 +88,14 @@ export function hook(ad: Ad): string {
     .trim()
     .replace(/^["“”']+|["“”']+$/g, "")
     .trim();
+}
+
+/** "Oct 10" (this year) or "Oct 10, 2025". */
+export function posted(ad: Ad): string {
+  if (!ad.start_date) return "";
+  const d = new Date(`${ad.start_date}T12:00:00Z`);
+  const sameYear = d.getUTCFullYear() === new Date().getUTCFullYear();
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", ...(sameYear ? {} : { year: "numeric" }), timeZone: "UTC" });
 }
 
 /** Where to see it: the post itself, or the Ad Library. */
