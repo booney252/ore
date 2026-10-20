@@ -27,7 +27,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, ingredients, llm, research, setup, stages, voc
+from . import ads, breakdown, creative, ingredients, llm, mechanisms, research, setup, stages, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -91,7 +91,13 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "research":
         voc.run(storage, slug)
         check()
-        return research.run(storage, slug)
+        out = research.run(storage, slug)
+        check()
+        if out:
+            mechanisms.run(storage, slug)
+        return out
+    if job["type"] == "mechanisms":
+        return mechanisms.run(storage, slug)
     if job["type"] == "ingredients":
         if not llm.api_key():  # the claims need web search, which has no handoff mode here
             raise llm.HandoffPending("", "")

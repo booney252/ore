@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, competitors, creative, formats, ingredients, llm, research, setup, stages, voc
+from . import ads, breakdown, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, voc
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -83,6 +83,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("run", help="same as setup: the whole foundation in order").add_argument("brand")
     sub.add_parser("voc", help="customer quotes: App Store reviews + pasted text").add_argument("brand")
     sub.add_parser("research", help="the 4 research prompts -> research-brief.md").add_argument("brand")
+    sub.add_parser("mechanisms", help="unique mechanism ideas (UMP + UMS) -> unique-mechanisms.md").add_argument("brand")
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -152,6 +153,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "research":
             research.run(storage, args.brand)
+            return 0
+        if args.command == "mechanisms":
+            mechanisms.run(storage, args.brand)
             return 0
         if args.command == "ingredients":
             ingredients.run(storage, args.brand)

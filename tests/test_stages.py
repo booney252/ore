@@ -265,3 +265,20 @@ def test_ingredient_claims_only_run_when_ingredients_are_listed(brand):
     assert out == "brands/pp/ingredient-claims.md"
     assert "no PubMed, PMC or DOI links" in storage.read_text(out)
     assert storage.exists("brands/pp/research/2026-10-17/ingredient-claims.md")
+
+
+def test_unique_mechanisms_need_a_brief_and_aim_at_problem_aware(brand):
+    from cse import mechanisms
+    storage = brand
+    storage.write_text("brands/pp/brand.md", "---\nname: PeptidePal\nproduct: a tracker\n"
+                       "niche: tracking apps\n---\n\n## How it works\nOne calm screen.\n")
+    assert mechanisms.run(storage, "pp", today=TODAY) is None  # no brief yet
+    storage.write_text("brands/pp/research-brief.md", "# Brief\nSticky notes and four Reddit tabs.\n")
+    assert mechanisms.run(storage, "pp", today=TODAY) is None  # handoff waits
+    [key] = [k for k in storage.list("brands/pp/handoff/") if "mechanisms" in k and k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "four Reddit tabs" in prompt and "One calm screen." in prompt
+    assert "who are Problem Aware" in prompt and "tracking apps niche" in prompt and "{{" not in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### 1. The Memory Gap\n- **UMP:** x")
+    assert mechanisms.run(storage, "pp", today=TODAY) == "brands/pp/unique-mechanisms.md"
+    assert storage.exists("brands/pp/research/2026-10-17/unique-mechanisms.md")

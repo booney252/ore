@@ -6,7 +6,8 @@ The website (or `cse setup`) writes a brand.md with just the name, website and w
 3. voc: customer quotes (App Store reviews + anything pasted)
 4. ads: pull competitor + own ads from the Ad Library and score them
 5. research: the 4 research prompts -> research-brief.md
-6. ingredients: study-backed claims per ingredient, when brand.md lists ingredients
+6. mechanisms: unique mechanism ideas (UMP + UMS) from the research brief
+7. ingredients: study-backed claims per ingredient, when brand.md lists ingredients
 """
 
 from __future__ import annotations
@@ -17,7 +18,7 @@ import os
 import re
 
 from . import brand as brandlib
-from . import ads, competitors, ingredients, llm, research, voc
+from . import ads, competitors, ingredients, llm, mechanisms, research, voc
 
 log = logging.getLogger("cse")
 
@@ -119,6 +120,8 @@ def run(storage, slug: str, client=None, check=lambda: None) -> str | None:
         log.warning("setup: SCRAPECREATORS_API_KEY not set, so the research runs without ads")
     check()
     out = research.run(storage, slug, client=client)
+    check()
+    mechanisms.run(storage, slug, client=client)
     check()
     ingredients.run(storage, slug, client=client)
     return out

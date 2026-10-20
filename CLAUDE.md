@@ -30,7 +30,8 @@ Two loops:
 1. Competitor audit: direct, adjacent, and relative rings.
 2. Voice of customer: real quotes with sources.
 3. My 4 research prompts → `research-brief.md`, the brand brain.
-4. **Ingredient claims (if the product has ingredients)**, added 2026-10-19: brand.md `ingredients` (+ optional `unique_mechanism`), set on the New brand form or the Research page. `prompts/08-ingredient-claims.md` (from RMBC: private, rewrite before release) uses the research brief as the market overview and finds published studies (PubMed/journals, human RCTs first) for claims per ingredient → `ingredient-claims.md`, shown as a Research tab. Needs the API key (web search).
+4. **Unique mechanisms**, added 2026-10-20: after the unified research brief (so after prompts 1-3 and 4), `prompts/09-unique-mechanisms.md` (from RMBC: private, rewrite before release) writes 10-15 UMP + UMS ideas for brand.md's `target_awareness` (Problem Aware by default) → `unique-mechanisms.md`, a Research tab. Runs in setup and on Refresh research, or alone from the Research page.
+5. **Ingredient claims (if the product has ingredients)**, added 2026-10-19: brand.md `ingredients` (+ optional `unique_mechanism`), set on the New brand form or the Research page. `prompts/08-ingredient-claims.md` (from RMBC: private, rewrite before release) uses the research brief as the market overview and finds published studies (PubMed/journals, human RCTs first) for claims per ingredient → `ingredient-claims.md`, shown as a Research tab. Needs the API key (web search).
 
 **Weekly engine (the main goal)**
 1. Pull new Meta ads from competitors **and from PeptidePal itself**.
@@ -100,6 +101,7 @@ competitors <brand>       build the 3-ring competitor map
 ads <brand>               pull competitor + own Meta ads, score them, break down new ones
 voc <brand>               mine voice of customer (App Store reviews + pasted text)
 research <brand>          the 4 research prompts -> research-brief.md (old brief kept in research/<date>/)
+mechanisms <brand>        unique mechanism ideas (UMP + UMS) from the research brief -> unique-mechanisms.md
 ingredients <brand>       study-backed claims per ingredient -> ingredient-claims.md (only if brand.md lists ingredients)
 report <brand>            Winning Ads Report: top winners broken down, patterns, gaps (no ideas)
 iterations <brand>        --ads 1,3 [--report DATE] [--format ugc|broll|static] [--per-ad N]

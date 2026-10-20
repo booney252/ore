@@ -210,9 +210,10 @@ export function splitIngredients(text: string): string[] {
 /** The brand's ingredients, unique mechanism and (once run) the claims doc. */
 export async function readIngredients(slug: string) {
   const base = `brands/${checkSlug(slug)}/`;
-  const [md, claims] = await Promise.all([
+  const [md, claims, mechanisms] = await Promise.all([
     readText(`${base}brand.md`),
     readText(`${base}ingredient-claims.md`),
+    readText(`${base}unique-mechanisms.md`),
   ]);
   const head = md?.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
   const field = (name: string) => head.match(new RegExp(`^${name}:\\s*(.*?)\\s*(?:#.*)?$`, "m"))?.[1] ?? "";
@@ -225,7 +226,7 @@ export async function readIngredients(slug: string) {
   };
   const rawItems = parse(field("ingredients") || "[]");
   const items = Array.isArray(rawItems) ? rawItems.map(String) : splitIngredients(String(rawItems));
-  return { items, mechanism: String(parse(field("unique_mechanism") || '""')), claims };
+  return { items, mechanism: String(parse(field("unique_mechanism") || '""')), claims, mechanisms };
 }
 
 /** Set front-matter fields in brand.md (values written as JSON, which YAML reads as-is). */

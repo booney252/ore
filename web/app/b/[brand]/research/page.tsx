@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { pasteQuotes, refreshResearch, saveIngredients } from "@/app/actions";
+import { findMechanisms, pasteQuotes, refreshResearch, saveIngredients } from "@/app/actions";
 import Markdown from "@/app/Markdown";
 import { docLabel } from "@/app/dates";
 import { brandName, readIngredients, readResearch, vocCounts } from "@/lib/brands";
@@ -22,8 +22,15 @@ export default async function Research({
     readIngredients(brand),
   ]);
   const onIngredients = step === "ingredients";
+  const onMechanisms = step === "mechanisms";
   const current = research.steps.find((s) => s.file === step);
-  const text = onIngredients ? ing.claims : current ? current.text : research.brief;
+  const text = onIngredients
+    ? ing.claims
+    : onMechanisms
+      ? ing.mechanisms
+      : current
+        ? current.text
+        : research.brief;
 
   return (
     <main className="page with-side">
@@ -42,13 +49,15 @@ export default async function Research({
             <span className="dot emerald" aria-hidden="true" />
             {queued === "ingredients"
               ? "Queued. The worker searches published studies for each ingredient and writes the claims."
-              : "Queued. The worker re-pulls customer quotes and re-runs all four prompts."}
+              : queued === "mechanisms"
+                ? "Queued. The worker writes unique mechanism ideas from your research brief."
+                : "Queued. The worker re-pulls customer quotes and re-runs all four prompts, then the unique mechanisms."}
           </p>
         )}
         {saved && <p className="notice quiet">Saved. Add ingredients to get study-backed claims.</p>}
 
         <nav className="tabs" aria-label="Research steps">
-          <Link href={`/b/${brand}/research`} className={!current && !onIngredients ? "on" : ""}>
+          <Link href={`/b/${brand}/research`} className={!current && !onIngredients && !onMechanisms ? "on" : ""}>
             Unified brief
           </Link>
           {research.steps.map((s, i) => (
@@ -60,6 +69,9 @@ export default async function Research({
               <span className="mono">{i + 1}</span> {s.label}
             </Link>
           ))}
+          <Link href={`/b/${brand}/research?step=mechanisms`} className={onMechanisms ? "on" : ""}>
+            Unique mechanisms
+          </Link>
           {ing.items.length || ing.claims ? (
             <Link href={`/b/${brand}/research?step=ingredients`} className={onIngredients ? "on" : ""}>
               Ingredient claims
@@ -71,7 +83,11 @@ export default async function Research({
           <Markdown text={text} />
         ) : (
           <p className="empty">
-            {onIngredients
+            {onMechanisms
+              ? research.brief
+                ? "No unique mechanisms yet. Use the button on the right to write them from your research brief."
+                : "Unique mechanisms are written from the research brief, so they come after it."
+              : onIngredients
               ? "No ingredient claims yet. They're written once the ingredients are saved and the worker runs."
               : current
               ? "This step hasn't run yet. It runs when the research is built or refreshed."
@@ -92,6 +108,18 @@ export default async function Research({
           <input type="hidden" name="brand" value={brand} />
           <button type="submit" className="btn-primary">
             Refresh research
+          </button>
+        </form>
+
+        <form action={findMechanisms} className="side-form paste">
+          <p className="mono muted">Unique mechanisms</p>
+          <p className="muted side-note">
+            Ideas for the real reason buyers failed before (the problem) and why your product is the
+            fix (the solution), written for Problem Aware buyers from your research brief.
+          </p>
+          <input type="hidden" name="brand" value={brand} />
+          <button type="submit" className="btn-primary" disabled={!research.brief}>
+            {ing.mechanisms ? "Re-run unique mechanisms" : "Find unique mechanisms"}
           </button>
         </form>
 

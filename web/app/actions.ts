@@ -172,3 +172,10 @@ export async function saveIngredients(form: FormData) {
   redirect(`/b/${brand}/research?step=ingredients${ingredients.length ? "&queued=ingredients" : "&saved=1"}`);
 }
 
+export async function findMechanisms(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
+  await createJob({ type: "mechanisms", brand });
+  redirect(`/b/${brand}/research?step=mechanisms&queued=mechanisms`);
+}
+
