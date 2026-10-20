@@ -25,6 +25,7 @@ from . import brain as brainlib
 from . import brand as brandlib
 from . import creators as creatorlib
 from . import formats, llm
+from . import lessons as lessonlib
 from .score import strength
 from .stages import format_full, load_ads, product_facts
 
@@ -141,6 +142,7 @@ def run_angles(storage, session_id: str, today: date | None = None, client=None)
         "winning_ads": "\n\n".join(format_full(a, i) for i, a in enumerate(winners, start=1))
         or "(No winning ads pulled yet.)",
         "creator": creatorlib.describe(me(storage)),
+        "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
         "already_made": already_made(storage, session["brand"]),
         "count": ANGLES,
         "date": today.isoformat(),
@@ -175,6 +177,7 @@ def run_scripts(storage, session_id: str, today: date | None = None, client=None
         "winning_ads": "\n\n".join(format_full(a, i) for i, a in enumerate(winners, start=1))
         or "(No winning ads pulled yet.)",
         "creator": creatorlib.describe(me(storage)),
+        "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
         "angles": "\n\n".join(f"### Angle {a['n']}: {a['title']}\n{a['body']}" for a in picked),
         "count": max(1, min(3, int(session.get("per_angle") or 1))),
         "format_label": formats.FORMATS[fmt]["label"],
@@ -229,6 +232,7 @@ def run_tweak(storage, session_id: str, number: str, action: str, today: date | 
         "script": original,
         "instruction": TWEAKS[action],
         "creator": creatorlib.describe(me(storage)),
+        "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
         "product_facts": facts,
         "heading": heading,
     })

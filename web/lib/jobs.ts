@@ -1,6 +1,6 @@
 import { deleteKey, listKeys, readText, writeText } from "./storage";
 
-export type JobType = "report" | "iterations" | "briefs" | "setup" | "research" | "ingredients" | "mechanisms" | "rank_mechanisms" | "angles" | "scripts" | "tweak";
+export type JobType = "report" | "iterations" | "briefs" | "setup" | "research" | "ingredients" | "mechanisms" | "rank_mechanisms" | "angles" | "scripts" | "tweak" | "lessons";
 export type Job = {
   id: string;
   type: JobType;
@@ -12,6 +12,7 @@ export type Job = {
   idea?: string;
   creator?: string;
   session?: string;
+  feedback?: string;
   script?: string;
   action?: string;
   iterations?: string;

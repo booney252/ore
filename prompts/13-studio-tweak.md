@@ -21,4 +21,6 @@ You wrote this ad script for a creator making paid social ads for {{brand_name}}
 {{product_facts}}
 </product>
 
+{{copy_lessons}}
+
 Return only the new version, starting with a heading `### {{heading}}`, in the same layout as the original (hooks, script table, caption, why it should work).

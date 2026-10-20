@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, organic, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, studio, voc
+from . import ads, breakdown, lessons, organic, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, studio, voc
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -91,6 +91,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("studio", help="Creator Studio: run a session's next step (angles, scripts)")
     p.add_argument("session", help="a session id from studio/sessions/")
     p.add_argument("step", choices=["angles", "scripts"])
+    p = sub.add_parser("lessons", help="fold a piece of copy feedback into the brand and craft lessons")
+    p.add_argument("brand")
+    p.add_argument("feedback", help="a feedback id from brands/<brand>/feedback/")
     p = sub.add_parser("organic", help="import organic posts (Reels, TikToks, Shorts) and grade them on views")
     p.add_argument("brand")
     p.add_argument("--file", help="TSV/CSV: handle, own, code, views, likes, comments, secs, date, caption, cover_text")
@@ -177,6 +180,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "studio":
             (studio.run_angles if args.step == "angles" else studio.run_scripts)(storage, args.session)
+            return 0
+        if args.command == "lessons":
+            print(lessons.learn(storage, args.brand, args.feedback))
             return 0
         if args.command == "organic":
             if args.pull:

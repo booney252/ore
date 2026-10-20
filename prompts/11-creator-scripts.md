@@ -45,6 +45,8 @@ For each one:
 - **Caption:** the post caption, {{caption_rule}}.
 - **Why it should work:** one or two lines tying it to the winner and the market.
 
+{{copy_lessons}}
+
 ## Rules
 - Write the way this creator talks: contractions, short lines, real words. No ad-speak.
 - Only claim what the product facts and research support, and only what this creator can honestly say. Never invent results, numbers, testimonials or experiences for them.

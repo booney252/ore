@@ -47,6 +47,8 @@ Write each as:
 - **Why buyers care:** the pain, want or objection it hits, with the brief's words.
 - **Why it fits you:** why this creator is the right person to say it.
 
+{{copy_lessons}}
+
 ## Rules
 - Only claims the product facts support and the creator can honestly make. No invented results, numbers or testimonials.
 - Plain words, no hype. Today's date: {{date}}.

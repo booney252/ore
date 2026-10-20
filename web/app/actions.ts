@@ -18,6 +18,7 @@ import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competi
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { addBrainItem, fileText, MAX_FILE_BYTES, removeBrainItem } from "@/lib/brain";
 import { cancelJob, createJob } from "@/lib/jobs";
+import { addFeedback, saveLessons } from "@/lib/lessons";
 import { createSession, readSession, saveMe, studioBrand, updateSession } from "@/lib/studio";
 import { requireBrand, requireOwner } from "@/lib/session";
 
@@ -315,4 +316,35 @@ export async function removeFromBrain(form: FormData) {
   await removeBrainItem(brand, String(form.get("id") ?? ""));
   revalidatePath(`/b/${brand}/research`);
   redirect(`/b/${brand}/research?step=notes&brain=removed`);
+}
+
+
+/** Feedback on Ore's copy (from a doc page or the Copy lessons page): saved, then Ore learns from it. */
+export async function giveFeedback(form: FormData) {
+  const brand = String(form.get("brand") ?? "");
+  await requireBrand(brand);
+  const text = String(form.get("text") ?? "").trim().slice(0, 20000);
+  const back = String(form.get("back") ?? `/b/${brand}/lessons`);
+  const safeBack = back.startsWith(`/b/${brand}/`) ? back : `/b/${brand}/lessons`;
+  if (!text) redirect(`${safeBack}?feedback=empty`);
+  const doc = String(form.get("doc") ?? "");
+  const id = await addFeedback(brand, {
+    text,
+    who: String(form.get("who") ?? "").trim().slice(0, 80),
+    about: String(form.get("about") ?? "").trim().slice(0, 200),
+    doc: /^(briefs|iterations|reports|studio)\/[A-Za-z0-9._-]+$/.test(doc) ? doc : "",
+  });
+  await createJob({ type: "lessons", brand, feedback: id });
+  revalidatePath(`/b/${brand}/lessons`);
+  redirect(`${safeBack}?feedback=sent`);
+}
+
+export async function editLessons(form: FormData) {
+  const brand = String(form.get("brand") ?? "");
+  await requireBrand(brand);
+  const which = form.get("which") === "craft" ? "craft" : "brand";
+  if (which === "craft") await requireOwner();
+  await saveLessons(brand, which, String(form.get("text") ?? ""));
+  revalidatePath(`/b/${brand}/lessons`);
+  redirect(`/b/${brand}/lessons?saved=${which}`);
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import FeedbackBox from "@/app/FeedbackBox";
 import Markdown from "@/app/Markdown";
 import { readDoc } from "@/lib/brands";
 
@@ -30,6 +31,7 @@ export default async function BriefDoc({ params }: { params: Promise<{ brand: st
         </span>
       </div>
       <Markdown text={md} />
+      <FeedbackBox brand={brand} doc={`briefs/${file}`} about={`creative brief ${file}`} back={`/b/${brand}/briefs/${file}`} />
     </main>
   );
 }

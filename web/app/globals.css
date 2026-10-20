@@ -1684,3 +1684,17 @@ select {
 .brain-items details { margin-top: 8px; }
 .brain-items summary { cursor: pointer; font-size: 0.85rem; }
 .brain-text { white-space: pre-wrap; font-size: 0.8rem; line-height: 1.5; max-height: 320px; overflow: auto; margin: 8px 0 0; color: var(--muted); }
+
+/* Copy lessons: feedback on Ore's copy and what it learned */
+.lessons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 18px 0 28px; }
+.lessons-col { padding: 18px 20px; min-width: 0; }
+.lessons-col .block-head h2 { margin: 0; }
+.lessons-col .small, .small { font-size: 0.85rem; }
+.lessons-col textarea { width: 100%; font-family: var(--font-mono, monospace); font-size: 0.82rem; }
+.feedback-form { padding: 18px 20px; display: grid; gap: 10px; }
+.feedback-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.feedback-list li { padding: 12px 16px; }
+.feedback-list summary { cursor: pointer; }
+.feedback-box { margin: 28px 0 8px; padding: 14px 18px; }
+.feedback-box summary { cursor: pointer; }
+.feedback-box form { margin-top: 12px; display: grid; gap: 10px; }

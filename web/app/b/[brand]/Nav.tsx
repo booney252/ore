@@ -37,6 +37,15 @@ function BrainIcon() {
   );
 }
 
+function LessonsIcon() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M4 3.5h9.5l2.5 2.5v10.5H4z" />
+      <path d="M7 8h6M7 11h6M7 14h3.5" />
+    </svg>
+  );
+}
+
 function CreatorsIcon() {
   return (
     <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -77,6 +86,19 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
           <small>Who films</small>
         </span>
         {counts.creators ? <span className="count">{counts.creators}</span> : null}
+      </Link>
+      <Link
+        href={`${base}/lessons`}
+        className={`nav-item${on("/lessons") ? " on" : ""}`}
+        aria-current={on("/lessons") ? "page" : undefined}
+      >
+        <span className="nav-icon">
+          <LessonsIcon />
+        </span>
+        <span className="flow-text">
+          <strong>Copy lessons</strong>
+          <small>What Ore learned</small>
+        </span>
       </Link>
 
       <p className="nav-label mono">Workflow</p>

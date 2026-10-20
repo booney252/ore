@@ -10,6 +10,7 @@ jobs/cancelled/. If the marker says remove_brand (a new brand's setup), the bran
 
 Job types:
   report      {brand}                          weekly run: ads -> creative -> breakdown -> verify -> report
+  lessons     {brand, feedback}                  copy feedback -> brand and craft lessons
   iterations  {brand, report, ads, format, per_ad, idea}  winners #ads of a report, and/or
                                                your own idea -> iterations
                                                (format: ugc, broll, static)
@@ -27,7 +28,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, organic, ingredients, llm, mechanisms, research, setup, stages, studio, voc
+from . import ads, breakdown, creative, lessons, organic, ingredients, llm, mechanisms, research, setup, stages, studio, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -112,6 +113,8 @@ def run_job(storage, job: dict) -> str | None:
         return studio.run_tweak(storage, job["session"], str(job["script"]), job["action"])
     if job["type"] == "rank_mechanisms":
         return mechanisms.rank(storage, slug)
+    if job["type"] == "lessons":  # fold one piece of copy feedback into the brand + craft lessons
+        return lessons.learn(storage, slug, job["feedback"])
     if job["type"] == "ingredients":
         if not llm.api_key():  # the claims need web search, which has no handoff mode here
             raise llm.HandoffPending("", "")

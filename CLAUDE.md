@@ -49,6 +49,8 @@ Two loops:
 
 The weekly run only processes ads it hasn't seen before, so it stays cheap. It's the part that will later run in the cloud on a schedule.
 
+**Copy lessons** (built 2026-10-20): feedback on Ore's copy (a "Give feedback" box on every iteration and brief, or the brand's Copy lessons page) is saved to `brands/<brand>/feedback/`, and job `lessons` (`cse/lessons.py`, `prompts/14-copy-lessons.md`) folds it into rules: brand lessons (`brands/<brand>/copy-lessons.md`) and craft lessons for every brand (`workspace/copy-lessons.md`). Both go into every report, iteration, brief and Studio prompt; rules marked (decide) need a person to confirm. First batch: Michael's (PeptidePal owner) feedback on the 3 MOFU creator briefs.
+
 **Copywriting skill.** Research tells the tool *what* to say; it also needs to know *how* to write: hooks, angles, structure, short-form video, direct response, and the RMBC method (I'm taking the RMBC course). This lives in a `knowledge/` folder in the repo, editable like `prompts/`, and is loaded every time briefs are written. I add my own notes and summaries there over time (not verbatim course material).
 
 **Own ads.** Start by pulling PeptidePal's ads from the public Ad Library like any competitor (no performance data). Later, connect my Meta ad account (official Marketing API) so own-ad winners are judged on real results (spend, CPA, ROAS).

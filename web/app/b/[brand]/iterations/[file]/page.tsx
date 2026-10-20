@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { newBriefs } from "@/app/actions";
 import CreatorPicker from "@/app/CreatorPicker";
+import FeedbackBox from "@/app/FeedbackBox";
 import Markdown from "@/app/Markdown";
 import { parseIterations, readDoc } from "@/lib/brands";
 
@@ -32,6 +33,7 @@ export default async function IterationDoc({
           <Link href={`/b/${brand}/iterations`}>Iterations</Link> / {file}
         </p>
         <Markdown text={md} />
+      <FeedbackBox brand={brand} doc={`iterations/${file}`} about={`iteration ${file}`} back={`/b/${brand}/iterations/${file}`} />
       </div>
       <aside className="side">
         <p className="mono muted">Step 3</p>

@@ -22,6 +22,7 @@ from pathlib import Path
 from . import brand as brandlib
 from . import brain as brainlib
 from . import creators as creatorlib
+from . import lessons as lessonlib
 from . import formats, llm
 from .score import strength
 
@@ -92,7 +93,7 @@ def brand_context(storage, slug: str) -> dict:
         "format_notes": fields.get("ad_format") or "",
         "research_brief": brainlib.with_brief(
             storage.read_text(brandlib.brand_key(slug, "research-brief.md")), storage, slug),
-        "knowledge": load_knowledge(),
+        "knowledge": "\n\n".join(x for x in (load_knowledge(), lessonlib.for_prompt(storage, slug)) if x),
         "creator": creatorlib.describe(None),
     }
 
