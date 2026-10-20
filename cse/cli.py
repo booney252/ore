@@ -85,12 +85,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("research", help="the 4 research prompts -> research-brief.md").add_argument("brand")
     sub.add_parser("mechanisms", help="unique mechanism ideas (UMP + UMS) -> unique-mechanisms.md").add_argument("brand")
     sub.add_parser("rank-mechanisms", help="rank the chosen unique mechanisms -> unique-mechanisms-ranked.md").add_argument("brand")
-    p = sub.add_parser("scripts", help="Creator Studio: ready-to-film scripts for one creator and brand")
-    p.add_argument("brand")
-    p.add_argument("--creator", help="a studio creator id (studio/creators.json)")
-    p.add_argument("--format", choices=["ugc", "broll", "static"], default="ugc")
-    p.add_argument("--count", type=int, default=3)
-    p.add_argument("--notes", default="", help="anything the creator wants (angle, product, length)")
+    p = sub.add_parser("studio", help="Creator Studio: run a session's next step (angles, scripts)")
+    p.add_argument("session", help="a session id from studio/sessions/")
+    p.add_argument("step", choices=["angles", "scripts"])
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -169,9 +166,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "rank-mechanisms":
             mechanisms.rank(storage, args.brand)
             return 0
-        if args.command == "scripts":
-            studio.run_scripts(storage, args.brand, args.creator, fmt=args.format, count=args.count,
-                               notes=args.notes)
+        if args.command == "studio":
+            (studio.run_angles if args.step == "angles" else studio.run_scripts)(storage, args.session)
             return 0
         if args.command == "ingredients":
             ingredients.run(storage, args.brand)

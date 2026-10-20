@@ -12,7 +12,7 @@ export default function StudioLayout({ children }: { children: React.ReactNode }
           <span className="studio-badge mono">Creator Studio</span>
         </div>
         <nav className="studio-nav">
-          <Link href="/studio">Write</Link>
+          <Link href="/studio">Brands</Link>
           <Link href="/studio/me">My profile</Link>
           <LogOut />
         </nav>

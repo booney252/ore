@@ -99,9 +99,12 @@ def run_job(storage, job: dict) -> str | None:
         return out
     if job["type"] == "mechanisms":
         return mechanisms.run(storage, slug)
+    if job["type"] == "angles":
+        return studio.run_angles(storage, job["session"])
     if job["type"] == "scripts":
-        return studio.run_scripts(storage, slug, job.get("creator"), fmt=job.get("format") or "ugc",
-                                  count=int(job.get("count") or 3), notes=job.get("notes") or "")
+        return studio.run_scripts(storage, job["session"])
+    if job["type"] == "tweak":
+        return studio.run_tweak(storage, job["session"], str(job["script"]), job["action"])
     if job["type"] == "rank_mechanisms":
         return mechanisms.rank(storage, slug)
     if job["type"] == "ingredients":

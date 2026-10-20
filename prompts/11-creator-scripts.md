@@ -24,23 +24,23 @@ These are {{brand_name}}'s own ads that are working, ranked by winner grade, wit
 
 {{creator}}
 
-## Already written for this creator and brand
+## The angles to write
 
-Don't repeat these hooks or angles; each new script needs a different angle.
+The creator picked these angles. Write {{count}} script(s) for each one, in order, and keep each script true to its angle.
 
-<already_written>
-{{already_written}}
-</already_written>
+<angles>
+{{angles}}
+</angles>
 
 ## What to write
 
-{{count}} script(s), format: **{{format_label}}**. {{format_spec}}
+Format: **{{format_label}}**. {{format_spec}} Target length: **{{length}}**.
 {{notes}}
 
 For each one:
 
 ### Script <N>: <short name>
-- **Angle:** the one idea, in a line, and which winning ad (by its ad ID) it's built from and why that ad works.
+- **Angle:** which of the picked angles this is, and the winning ad (by ID) it's built from.
 {{format_fields}}
 - **Caption:** the post caption, short, with the disclosure the platform needs (e.g. #ad).
 - **Why it should work:** one or two lines tying it to the winner and the market.

@@ -351,7 +351,7 @@ def test_iterations_and_briefs_can_be_written_for_one_creator(brand):
     assert "No specific creator" in storage.read_text(plain[0])
 
 
-def test_studio_scripts_for_a_creator_from_the_brands_own_winners(brand):
+def test_studio_session_angles_then_scripts_then_a_tweak(brand):
     from cse import studio
     storage = brand
     storage.write_text("brands/pp/brand.md", "---\nname: Cal AI\nproduct: snap a photo, it logs calories\n---\n")
@@ -360,17 +360,36 @@ def test_studio_scripts_for_a_creator_from_the_brands_own_winners(brand):
         "2": {**_ad("2", 25, brand="Cal AI")},
         "3": {**_ad("3", 100, brand="Other")},
     }}))
-    storage.write_text("studio/creators.json", json.dumps({"creators": [
-        {"id": "maya", "name": "Maya", "voice": "says 'okay so'", "can_claim": "uses it daily"}]}))
+    storage.write_text("studio/me.json", json.dumps(
+        {"id": "me", "name": "Maya", "voice": "says 'okay so'", "can_claim": "uses it daily"}))
     assert [a["ad_id"] for a in studio.brand_winners(storage, "pp")] == ["1", "2"]  # own ads only
-    assert studio.run_scripts(storage, "pp", "maya", fmt="ugc", count=2, notes="gym angle",
-                              today=TODAY) is None
-    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
+    sid = "20261020120000-abc123"
+    studio.save_session(storage, {"id": sid, "brand": "pp", "ad_id": "2", "status": "new"})
+
+    assert studio.run_angles(storage, sid, today=TODAY) is None  # handoff waits
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith("-angles.prompt.md")]
     prompt = storage.read_text(key)
-    assert "**Maya** will film" in prompt and "snap a photo" in prompt and "gym angle" in prompt
-    assert "2 script(s)" in prompt and "Ad 1 |" in prompt and "Ad 3 |" not in prompt and "{{" not in prompt
-    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Script 1: Gym bag\n- x")
-    out = studio.run_scripts(storage, "pp", "maya", fmt="ugc", count=2, notes="gym angle", today=TODAY)
-    meta = json.loads(storage.read_text(out[:-3] + ".json"))
-    assert meta["brand"] == "pp" and meta["creator"] == "maya" and meta["ads"] == ["1", "2"]
-    assert "Gym bag" in studio.already_written(storage, "pp", "maya")
+    assert "**Maya** will film" in prompt and "picked ad 2" in prompt and "{{" not in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"),
+                       "### Angle 1: Gym bag\n- **The idea:** a\n\n### Angle 2: Lazy tracker\n- **The idea:** b")
+    studio.run_angles(storage, sid, today=TODAY)
+    session = studio.load_session(storage, sid)
+    assert [a["title"] for a in session["angles"]] == ["Gym bag", "Lazy tracker"]
+
+    session.update(picked=[2], format="broll", length="15s", per_angle=1)
+    studio.save_session(storage, session)
+    studio.run_scripts(storage, sid, today=TODAY)
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith("-scripts.prompt.md")]
+    prompt = storage.read_text(key)
+    assert "Angle 2: Lazy tracker" in prompt and "Gym bag" not in prompt and "**15s**" in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"),
+                       "### Script 1: Lazy tracker\n- a\n\n### Script 2: Other\n- b")
+    studio.run_scripts(storage, sid, today=TODAY)
+
+    studio.run_tweak(storage, sid, "1", "shorter", today=TODAY)
+    [key] = [k for k in storage.list("brands/pp/handoff/") if "shorter" in k and k.endswith(".prompt.md")]
+    assert "Script 1.2: Lazy tracker (shorter)" in storage.read_text(key)
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Script 1.2: Lazy tracker (shorter)\n- c")
+    studio.run_tweak(storage, sid, "1", "shorter", today=TODAY)
+    md = storage.read_text(studio.session_key(sid, "md"))
+    assert md.index("Script 1:") < md.index("Script 1.2") < md.index("Script 2:")
