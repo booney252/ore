@@ -170,16 +170,19 @@ export const RESEARCH_STEPS = [
 /** The research brief plus the latest run's step outputs (research/<date>/0N-*.md). */
 export async function readResearch(slug: string) {
   const base = `brands/${checkSlug(slug)}/`;
-  const keys = await listKeys(`${base}research/`);
-  const dates = [...new Set(keys.map((k) => k.slice(base.length + 9).split("/")[0]))]
+  const keys = new Set(await listKeys(`${base}research/`));
+  const dates = [...new Set([...keys].map((k) => k.slice(base.length + 9).split("/")[0]))]
     .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))
     .sort();
-  const date = dates.at(-1) ?? null;
+  // each step from the newest run that has it (a later run, e.g. unique mechanisms, may not redo 1-3)
+  const latest = (file: string) => [...dates].reverse().find((d) => keys.has(`${base}research/${d}/${file}.md`)) ?? null;
+  const stepDates = RESEARCH_STEPS.map((s) => latest(s.file));
   const [brief, ...steps] = await Promise.all([
     readText(`${base}research-brief.md`),
-    ...RESEARCH_STEPS.map((s) => (date ? readText(`${base}research/${date}/${s.file}.md`) : null)),
+    ...RESEARCH_STEPS.map((s, i) => (stepDates[i] ? readText(`${base}research/${stepDates[i]}/${s.file}.md`) : null)),
   ]);
-  return { brief, date, steps: RESEARCH_STEPS.map((s, i) => ({ ...s, text: steps[i] })) };
+  const date = stepDates.filter(Boolean).sort().at(-1) ?? dates.at(-1) ?? null;
+  return { brief, date, steps: RESEARCH_STEPS.map((s, i) => ({ ...s, text: steps[i], date: stepDates[i] })) };
 }
 
 export async function vocCounts(slug: string): Promise<{ total: number; pasted: number } | null> {
