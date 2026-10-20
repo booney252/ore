@@ -42,7 +42,7 @@ For each one:
 ### Script <N>: <short name>
 - **Angle:** which of the picked angles this is, and the winning ad (by ID) it's built from.
 {{format_fields}}
-- **Caption:** the post caption, short, with the disclosure the platform needs (e.g. #ad).
+- **Caption:** the post caption, {{caption_rule}}.
 - **Why it should work:** one or two lines tying it to the winner and the market.
 
 ## Rules
