@@ -37,6 +37,17 @@ function BrainIcon() {
   );
 }
 
+function CreatorsIcon() {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="7.5" cy="7" r="2.8" />
+      <path d="M2.5 16c.6-2.8 2.6-4.3 5-4.3s4.4 1.5 5 4.3" />
+      <circle cx="14" cy="7.8" r="2.2" />
+      <path d="M13.6 11.8c2 .1 3.4 1.4 3.9 3.6" />
+    </svg>
+  );
+}
+
 export default function Nav({ brand, counts }: { brand: string; counts: Record<string, number> }) {
   const path = usePathname();
   const base = `/b/${brand}`;
@@ -49,6 +60,17 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
           <OverviewIcon />
         </span>
         Overview
+      </Link>
+      <Link
+        href={`${base}/creators`}
+        className={`nav-item${on("/creators") ? " on" : ""}`}
+        aria-current={on("/creators") ? "page" : undefined}
+      >
+        <span className="nav-icon">
+          <CreatorsIcon />
+        </span>
+        Creators
+        {counts.creators ? <span className="count">{counts.creators}</span> : null}
       </Link>
 
       <p className="nav-label mono">Workflow</p>

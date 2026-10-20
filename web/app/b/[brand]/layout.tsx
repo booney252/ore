@@ -5,6 +5,7 @@ import Wordmark from "@/app/Wordmark";
 import { checkSlug, listBrands, listDocs } from "@/lib/brands";
 import BrandSwitcher from "./BrandSwitcher";
 import Nav from "./Nav";
+import { listCreators } from "@/lib/creators";
 import { current } from "@/lib/session";
 
 export default async function BrandLayout({
@@ -21,15 +22,21 @@ export default async function BrandLayout({
     notFound();
   }
   const who = await current();
-  const [all, reports, iterations, briefs] = await Promise.all([
+  const [all, reports, iterations, briefs, creators] = await Promise.all([
     listBrands(),
     listDocs(brand, "reports"),
     listDocs(brand, "iterations"),
     listDocs(brand, "briefs"),
+    listCreators(brand),
   ]);
   // A guest only ever sees their own brand in the switcher.
   const brands = who?.owner ? all : all.filter((b) => b.slug === brand);
-  const counts = { reports: reports.length, iterations: iterations.length, briefs: briefs.length };
+  const counts = {
+    reports: reports.length,
+    iterations: iterations.length,
+    briefs: briefs.length,
+    creators: creators.length,
+  };
 
   return (
     <div className="shell">

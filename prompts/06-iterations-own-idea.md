@@ -17,6 +17,10 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{product_facts}}
 </product>
 
+## Who's speaking
+
+{{creator}}
+
 ## What you're working with
 
 1. **The research brief** (buyer, pains, desires, language, objections, promises, hard rules). Its rules are hard constraints.

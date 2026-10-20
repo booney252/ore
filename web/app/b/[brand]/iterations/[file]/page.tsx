@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { newBriefs } from "@/app/actions";
+import CreatorPicker from "@/app/CreatorPicker";
 import Markdown from "@/app/Markdown";
 import { parseIterations, readDoc } from "@/lib/brands";
 
@@ -55,6 +56,7 @@ export default async function IterationDoc({
                 </label>
               ))}
             </div>
+            <CreatorPicker brand={brand} />
             <button type="submit" className="btn-primary ruby">
               Write creative briefs
             </button>

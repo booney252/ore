@@ -15,6 +15,7 @@ import {
   splitIngredients,
 } from "@/lib/brands";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
+import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { cancelJob, createJob } from "@/lib/jobs";
 import { requireBrand, requireOwner } from "@/lib/session";
 
@@ -28,6 +29,12 @@ export async function newReport(form: FormData) {
   await requireBrand(brand);
   await createJob({ type: "report", brand });
   redirect(`/b/${brand}/reports?queued=1`);
+}
+
+/** The creator picked on an iterations or briefs form, if any (and only if it exists). */
+async function creatorOf(brand: string, form: FormData): Promise<{ creator?: string }> {
+  const id = String(form.get("creator") ?? "");
+  return id && (await creatorExists(brand, id)) ? { creator: id } : {};
 }
 
 function numbers(form: FormData, field: string): number[] {
@@ -53,6 +60,7 @@ export async function newIterations(form: FormData) {
     format: formatOf(form),
     per_ad: perAd,
     ...(idea && { idea }),
+    ...(await creatorOf(brand, form)),
   });
   redirect(`/b/${brand}/iterations?queued=1`);
 }
@@ -74,7 +82,7 @@ export async function newBriefs(form: FormData) {
   if (picks.length === 0) {
     redirect(single ? `/b/${brand}/iterations/${String(single)}?pick=1` : `/b/${brand}/briefs?pick=1`);
   }
-  await createJob({ type: "briefs", brand, picks });
+  await createJob({ type: "briefs", brand, picks, ...(await creatorOf(brand, form)) });
   redirect(`/b/${brand}/briefs?queued=1`);
 }
 
@@ -187,5 +195,24 @@ export async function chooseMechanisms(form: FormData) {
   if (picked > 1) await createJob({ type: "rank_mechanisms", brand });
   revalidatePath(`/b/${brand}`, "layout");
   redirect(`/b/${brand}/research?step=mechanisms&chosen=1${picked > 1 ? "&queued=rank" : ""}`);
+}
+
+export async function saveCreatorAction(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
+  const name = String(form.get("name") ?? "").trim();
+  if (!name) redirect(`/b/${brand}/creators?missing=1`);
+  const data = Object.fromEntries(CREATOR_FIELDS.map((f) => [f.key, String(form.get(f.key) ?? "")]));
+  const id = await saveCreator(brand, { name, ...data }, String(form.get("id") ?? "") || undefined);
+  revalidatePath(`/b/${brand}`, "layout");
+  redirect(`/b/${brand}/creators?saved=${id}#${id}`);
+}
+
+export async function removeCreatorAction(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
+  await removeCreator(brand, String(form.get("id") ?? ""));
+  revalidatePath(`/b/${brand}`, "layout");
+  redirect(`/b/${brand}/creators?removed=1`);
 }
 

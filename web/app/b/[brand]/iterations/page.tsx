@@ -2,6 +2,7 @@ import Link from "next/link";
 import { newIterations } from "@/app/actions";
 import { docLabel } from "@/app/dates";
 import DocRows from "@/app/DocRows";
+import CreatorPicker from "@/app/CreatorPicker";
 import FormatPicker from "@/app/FormatPicker";
 import PickCard from "@/app/PickCard";
 import Requests from "@/app/Requests";
@@ -138,6 +139,7 @@ export default async function Iterations({
                 <option value="3">3 each</option>
               </select>
             </label>
+            <CreatorPicker brand={brand} />
             <button type="submit" className="btn-primary emerald" disabled={!top}>
               Write iterations
             </button>

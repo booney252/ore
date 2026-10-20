@@ -42,6 +42,7 @@ Two loops:
    1. **Winning Ads Report** (Reports tab): the top winning ads, videos and statics, each broken down line by line (video) or piece by piece (static); why each works now and, for long-runners, why it still works; patterns and gaps. **No ideas or iterations in the report.** It also saves `reports/<date>.json`, the ranked ad list.
    2. **Iterations** (Iterations tab): the user picks winners from a report, a format and how many per winner, **or writes their own idea** (added 2026-10-17: "something I took from the report + what I want to make"; built from the idea, the whole report and the research brief, with any ticked winners as inspiration; `prompts/06-iterations-own-idea.md`, files `iterations/<report>-idea-<hash>...md`). Each becomes an iteration for our product, built from the winner's load-bearing elements (90/10 or pattern transfer). **UGC** gets a word-for-word script, **B-roll** a shot list with on-screen text and voiceover, **static** the image spec and copy. Saved to `iterations/<report>-ads-<ranks>[-format].md`.
    3. **Creative briefs** (Creative briefs tab): the user picks iterations and gets full creative brief docs to hand to a creator, editor or designer. Saved to `briefs/<iterations file>-its-<numbers>.md`.
+   **Creators** (added 2026-10-20, the start of creator/strategist modes): each brand has a roster in `creators.json` (Creators page: who they are, their story with the offer, audience, what they can film, voice, what they can honestly claim, avoid). Iterations and briefs can be written for one creator ("Who's filming it"; files get `-for-<id>`); the prompts' "Who's speaking" block holds their profile.
    Every report, iteration and brief prompt also gets **the product facts from brand.md** (the `product` field plus its notes, e.g. Solis's "How Solis works"); they win over the research brief where they differ (added 2026-10-17 after an iteration described Solis wrong).
    Formats live in `cse/formats.py`; the brand's `ad_format` in brand.md stays as notes (creator age, style rules), and the chosen format wins where they conflict.
 
@@ -215,6 +216,10 @@ Two outputs:
 - Input: this week's scored + broken-down ads (competitors and own), `research-brief.md`, `voc.json`, and everything in `knowledge/`.
 - Output: `brands/<brand>/briefs/<YYYY-MM-DD>.md` with 6 briefs. Each brief: idea name, type (iteration or new), source ads and why they win, angle, hook options (spoken line + first frame), format, structure/beats, on-screen text, CTA, VOC quotes to use (exact, with links), and creator notes.
 - PeptidePal is a health-adjacent product: every brief flags claims needing compliance review. No results, cures, or numbers without proof. Competitor claims are never treated as safe to copy.
+
+## Where Ore is going (decided 2026-10-20)
+
+Ore becomes a copywriter for anyone selling with short-form video, not just a paid-social iteration machine. Two kinds of users: **creators** (write for themselves, e.g. affiliates) and **strategists** (write for others: brands, clients, a roster of creators; for now they export docs). A strategist can share a **brand brain** with their creators (read-only, revocable, kept live); creators on a shared brain use Ore free, billed to the strategist's allowance. Organic winners (views vs the creator's normal) join paid ads as a source. Phases: 1 creator profiles (done), 2 brand brain export/share, 3 organic winners (paid data: ask first), 4 creator front door (signup choice, today's ideas, free seats), 5 plans and billing.
 
 ## Later (not now)
 

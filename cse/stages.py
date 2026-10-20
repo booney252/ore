@@ -20,6 +20,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from . import brand as brandlib
+from . import creators as creatorlib
 from . import formats, llm
 
 log = logging.getLogger("cse")
@@ -89,6 +90,7 @@ def brand_context(storage, slug: str) -> dict:
         "format_notes": fields.get("ad_format") or "",
         "research_brief": storage.read_text(brandlib.brand_key(slug, "research-brief.md")),
         "knowledge": load_knowledge(),
+        "creator": creatorlib.describe(None),
     }
 
 
@@ -252,7 +254,7 @@ def already_made(storage, slug: str, skip: str | None = None) -> str:
 
 def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
                    fmt: str = formats.DEFAULT, per_ad: int = 1, today: date | None = None,
-                   client=None, idea: str | None = None) -> str | None:
+                   client=None, idea: str | None = None, creator: str | None = None) -> str | None:
     """Turn the report's winners #<ranks> into iterations for the brand, in the chosen format.
 
     With `idea`, the reader's own idea leads instead: `per_ad` iterations of it, built from the
@@ -275,6 +277,8 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
     ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
     ctx = with_format(brand_context(storage, slug), fmt)
     ctx["already_made"] = already_made(storage, slug)
+    who = creatorlib.get(storage, slug, creator)
+    ctx["creator"] = creatorlib.describe(who)
     source_ads = "\n\n".join(format_full(ads[by_rank[r]], r) for r in ranks
                               if by_rank[r] in ads)
     picks = f"-ads-{'-'.join(map(str, ranks))}" if ranks else ""
@@ -301,7 +305,7 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
             "date": today.isoformat(),
         })
         stem = f"{Path(report_key).stem}{picks}{f'-x{per_ad}' if per_ad > 1 else ''}"
-    stem += formats.suffix(fmt)
+    stem += (f"-for-{who['id']}" if who else "") + formats.suffix(fmt)
     try:
         answer = llm.ask(storage, slug, f"iterations-{stem}", prompt, client=client,
                          max_tokens=64000, effort="high")
@@ -314,6 +318,8 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
     source = (f"winners #{', #'.join(map(str, ranks))} of " if ranks else "") + \
         f"the Winning Ads Report of {Path(report_key).stem}"
     header = f"# {ctx['brand_name']} iterations: {formats.FORMATS[fmt]['label']}\n\n"
+    if who:
+        header += f"**Written for:** {who['name']}\n\n"
     if idea:
         header += "**Your idea:** " + " ".join(idea.split()) + f"\n\n_Built with {source}._\n\n"
     else:
@@ -339,7 +345,7 @@ def run_briefs(storage, slug: str, iterations_key: str, numbers: list[int],
 
 
 def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
-                    today: date | None = None, client=None) -> str | None:
+                    today: date | None = None, client=None, creator: str | None = None) -> str | None:
     """One creative brief doc for iterations picked from any iterations files, in any mix of
     formats: each brief is written in its own iteration's format."""
     today = today or datetime.now(timezone.utc).date()
@@ -371,6 +377,8 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
             f"- *For a {formats.FORMATS[f]['label']}:*\n"
             + "\n".join("  " + line for line in formats.FORMATS[f]["fields"].splitlines())
             for f in used)
+    who = creatorlib.get(storage, slug, creator)
+    ctx["creator"] = creatorlib.describe(who)
     blocks = [f'<iteration from="{stem}" number="{n}" format="{formats.FORMATS[f]["label"]}">\n'
               f"{text}\n</iteration>" for stem, n, f, text in chosen]
     prompt = llm.render(PROMPTS["briefs"].read_text(), {
@@ -386,6 +394,8 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
     else:
         tag = hashlib.sha1("|".join(f"{st}#{n}" for st, n, _, _ in chosen).encode()).hexdigest()[:6]
         out_stem = f"{today.isoformat()}-picks-{tag}"
+    if who:
+        out_stem += f"-for-{who['id']}"
     try:
         answer = llm.ask(storage, slug, f"briefs-{out_stem}", prompt, client=client,
                          max_tokens=64000, effort="high")
@@ -398,7 +408,8 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
     listing = "\n".join(f"{i}. Iteration {n} of {stem} ({formats.FORMATS[f]['label']})"
                          for i, (stem, n, f, _) in enumerate(chosen, start=1))
     header = (f"# {ctx['brand_name']} creative briefs\n\n"
-              f"_{len(chosen)} brief{'s' if len(chosen) > 1 else ''}, from:_\n\n{listing}\n\n")
+              f"_{len(chosen)} brief{'s' if len(chosen) > 1 else ''}, from:_\n\n{listing}\n\n"
+              + (f"**Written for:** {who['name']}\n\n" if who else ""))
     storage.write_text(out_key, header + answer.strip() + "\n")
     log.info("briefs: saved %s", out_key)
     return out_key

@@ -77,13 +77,14 @@ def run_job(storage, job: dict) -> str | None:
         return stages.run_iterations(storage, slug, report_key,
                                      [int(n) for n in job.get("ads") or []],
                                      fmt=job.get("format") or "ugc",
-                                     per_ad=int(job.get("per_ad") or 1), idea=job.get("idea"))
+                                     per_ad=int(job.get("per_ad") or 1), idea=job.get("idea"),
+                                     creator=job.get("creator"))
     if job["type"] == "briefs":
         picks = job.get("picks") or [{"iterations": job["iterations"], "number": n}
                                      for n in job["numbers"]]
         return stages.run_brief_picks(storage, slug, [
             (brandlib.brand_key(slug, f"iterations/{p['iterations']}.md"), int(p["number"]))
-            for p in picks])
+            for p in picks], creator=job.get("creator"))
     if job["type"] == "setup":
         if not llm.api_key():  # web research has no handoff mode
             raise llm.HandoffPending("", "")

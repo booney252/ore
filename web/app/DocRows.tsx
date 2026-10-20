@@ -24,13 +24,15 @@ export default function DocRows({
     <ul className="doc-rows">
       {files.map((f) => {
         const { date, format } = docLabel(f);
-        const ads = f.match(/-ads-([\d-]+?)(?:-x\d|-broll|-static|-its|$)/)?.[1];
-        const its = f.match(/-its-([\d-]+)$/)?.[1];
+        const ads = f.match(/-ads-([\d-]+?)(?:-x\d|-for-|-broll|-static|-its|$)/)?.[1];
+        const forWho = f.match(/-for-([a-z0-9-]+?)(?:-broll|-static|-its|$)/)?.[1];
+        const its = f.match(/-its-([\d-]+?)(?:-for-|$)/)?.[1];
         const detail = [
           /-idea-[0-9a-f]{6}/.test(f) ? "your idea" : "",
           ads ? `winners #${ads.split("-").join(", #")}` : "",
           its ? `iterations ${its.split("-").join(", ")}` : "",
-          /-picks-[0-9a-f]{6}$/.test(f) ? "picked iterations" : "",
+          /-picks-[0-9a-f]{6}/.test(f) ? "picked iterations" : "",
+          forWho ? `for ${forWho.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}` : "",
           base.endsWith("/reports") ? "" : format,
         ]
           .filter(Boolean)

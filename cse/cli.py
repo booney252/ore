@@ -109,6 +109,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--ads", default="", help="winner ranks from the report, e.g. 1,3,5-7")
     p.add_argument("--idea", help="your own idea to build iterations from (winners optional)")
+    p.add_argument("--creator", help="write for this creator (an id from the brand's creators.json)")
     p.add_argument("--report", help="report date YYYY-MM-DD (default: latest)")
     p.add_argument("--format", choices=list(formats.FORMATS),
                    help="ugc, broll or static (asks if not given)")
@@ -119,6 +120,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--iterations", help="iterations file name (default: latest)")
     p.add_argument("--numbers", help="iteration numbers in that file, e.g. 1,2")
+    p.add_argument("--creator", help="write the briefs for this creator (an id from creators.json)")
     p.add_argument("--pick", action="append", default=[],
                    help="FILE:N, repeatable, to mix iterations from different files")
 
@@ -185,7 +187,8 @@ def main(argv: list[str] | None = None) -> int:
             report_key = (brandlib.brand_key(args.brand, f"reports/{args.report}.md")
                           if args.report else None)
             stages.run_iterations(storage, args.brand, report_key, stages.parse_numbers(args.ads),
-                                  fmt=ask_format(args.format), per_ad=args.per_ad, idea=args.idea)
+                                  fmt=ask_format(args.format), per_ad=args.per_ad, idea=args.idea,
+                                  creator=args.creator)
             return 0
         if args.command == "briefs":
             picks = [(brandlib.brand_key(args.brand, f"iterations/{p.rsplit(':', 1)[0]}.md"),
@@ -195,7 +198,7 @@ def main(argv: list[str] | None = None) -> int:
                            if args.iterations
                            else stages.latest_key(storage, args.brand, "iterations"))
                 picks += [(its_key, n) for n in stages.parse_numbers(args.numbers)]
-            stages.run_brief_picks(storage, args.brand, picks)
+            stages.run_brief_picks(storage, args.brand, picks, creator=args.creator)
             return 0
         if args.command == "weekly":
             from . import worker

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { newBriefs } from "@/app/actions";
 import { docLabel } from "@/app/dates";
+import CreatorPicker from "@/app/CreatorPicker";
 import DocRows from "@/app/DocRows";
 import Requests from "@/app/Requests";
 import { brandName, docTitles, listDocs, parseIterations, readDoc } from "@/lib/brands";
@@ -97,6 +98,7 @@ export default async function Briefs({
           </div>
           <div className="brief-foot">
             <p className="muted">Each brief is written in its own iteration's format, all in one doc.</p>
+            <CreatorPicker brand={brand} />
             <button type="submit" className="btn-primary ruby">
               Write creative brief
             </button>

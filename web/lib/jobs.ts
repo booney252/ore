@@ -10,6 +10,7 @@ export type Job = {
   ads?: number[];
   per_ad?: number;
   idea?: string;
+  creator?: string;
   iterations?: string;
   numbers?: number[];
   picks?: { iterations: string; number: number }[];

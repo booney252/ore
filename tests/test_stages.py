@@ -324,3 +324,28 @@ def test_mechanism_prompts_use_the_brands_own_awareness_stage(brand):
     mechanisms.run(storage, "pp", today=TODAY)
     [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
     assert "who are Product Aware" in storage.read_text(key)
+
+
+def test_iterations_and_briefs_can_be_written_for_one_creator(brand):
+    storage = brand
+    storage.write_text("brands/pp/creators.json", json.dumps({"creators": [{
+        "id": "maya", "name": "Maya", "story": "Started the course in March, first brand deal in June.",
+        "voice": "fast, funny, says 'okay so'", "can_claim": "one $500 brand deal; nothing about income"}]}))
+    storage.write_text("brands/pp/reports/2026-10-17.md", "#### 1. X: \"hook\"\n- why\n")
+    storage.write_text("brands/pp/reports/2026-10-17.json",
+                       json.dumps({"top": [{"rank": 1, "ad_id": "2922821464729858"}]}))
+    assert stages.run_iterations(storage, "pp", None, [1], fmt="broll", creator="maya", today=TODAY) is None
+    [key] = [k for k in storage.list("brands/pp/handoff/") if k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "**Maya** will film and say this ad" in prompt and "first brand deal in June" in prompt
+    assert "nothing about income" in prompt and key.endswith("-for-maya-broll.prompt.md")
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Iteration 1: Okay so")
+    out = stages.run_iterations(storage, "pp", None, [1], fmt="broll", creator="maya", today=TODAY)
+    assert out.endswith("-ads-1-for-maya-broll.md") and stages.format_of(Path(out).stem) == "broll"
+    assert "**Written for:** Maya" in storage.read_text(out)
+    with pytest.raises(ValueError):
+        stages.run_iterations(storage, "pp", None, [1], creator="nobody", today=TODAY)
+    # without a creator, the prompt says so
+    stages.run_iterations(storage, "pp", None, [1], today=TODAY)
+    plain = [k for k in storage.list("brands/pp/handoff/") if k.endswith("2026-10-17-ads-1.prompt.md")]
+    assert "No specific creator" in storage.read_text(plain[0])
