@@ -56,13 +56,18 @@ export const loadAds = cache(async (slug: string): Promise<Ad[]> => {
 export function winners(ads: Ad[], perBrand = 3): Ad[] {
   const pool = ads
     .filter((a) => !a.removed_from_library && (a.breakdown || viewable(a)))
-    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || (b.days_running ?? 0) - (a.days_running ?? 0));
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || strength(b) - strength(a));
   const counts = new Map<string, number>();
   return pool.filter((a) => {
     const n = (counts.get(a.brand) ?? 0) + 1;
     counts.set(a.brand, n);
     return n <= perBrand;
   });
+}
+
+/** Tie-breaker inside a grade: views vs the account's usual for organic posts, days live for ads. */
+export function strength(ad: Ad): number {
+  return ad.source === "organic" ? (ad.views ?? 0) / Math.max(1, ad.usual_views ?? 1) : ad.days_running ?? 0;
 }
 
 export function stats(ads: Ad[]) {

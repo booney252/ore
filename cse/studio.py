@@ -24,6 +24,7 @@ from pathlib import Path
 from . import brand as brandlib
 from . import creators as creatorlib
 from . import formats, llm
+from .score import strength
 from .stages import format_full, load_ads, product_facts
 
 log = logging.getLogger("cse")
@@ -82,7 +83,7 @@ def brand_winners(storage, slug: str, n: int = WINNERS) -> list[dict]:
     own = [a for a in ads if a.get("is_own") or a.get("source") == "organic"
            or a.get("brand", "").lower() == str(name).lower()]
     pool = own or ads
-    pool.sort(key=lambda a: (a.get("score", 0), bool(a.get("is_active")), a.get("days_running", 0)),
+    pool.sort(key=lambda a: (a.get("score", 0), bool(a.get("is_active")), strength(a)),
               reverse=True)
     return pool[:n]
 

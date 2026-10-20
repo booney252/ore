@@ -22,6 +22,7 @@ from pathlib import Path
 from . import brand as brandlib
 from . import creators as creatorlib
 from . import formats, llm
+from .score import strength
 
 log = logging.getLogger("cse")
 
@@ -105,7 +106,7 @@ def ranked(ads: list[dict], per_brand: int | None = PER_BRAND,
     """Broken-down ads by score, at most `per_brand` per advertiser."""
     pool = [a for a in ads if a.get("breakdown")
             and (include_removed or not a.get("removed_from_library"))]
-    pool.sort(key=lambda a: (a.get("score", 0), a.get("days_running", 0)), reverse=True)
+    pool.sort(key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
     if not per_brand:
         return pool
     counts: dict[str, int] = {}

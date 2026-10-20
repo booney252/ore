@@ -54,3 +54,11 @@ def winner_score(ad: dict, today: date) -> tuple[float, str]:
         copies += " (up one)"
     why = f"Grade {grade}: running {days} day{'s' if days != 1 else ''} ({time}), {status}, {copies}."
     return (4 - GRADES.index(grade)) * 25, why
+
+
+def strength(ad: dict) -> float:
+    """Tie-breaker inside a grade: how far an organic post beat its account's usual views,
+    or how long a paid ad has run."""
+    if ad.get("source") == "organic":
+        return (ad.get("views") or 0) / max(1, ad.get("usual_views") or 1)
+    return float(ad.get("days_running") or 0)

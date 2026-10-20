@@ -1,4 +1,4 @@
-import { loadAds, posterUrl, type Ad } from "./ads";
+import { loadAds, posterUrl, strength, type Ad } from "./ads";
 import { checkSlug, listBrands } from "./brands";
 import type { Creator } from "./creators";
 import { listKeys, readText, writeText } from "./storage";
@@ -23,7 +23,7 @@ async function brandInfo(slug: string, name: string): Promise<StudioBrand | null
   const ads = await loadAds(slug);
   const winners = ads
     .filter((a) => a.breakdown && !a.removed_from_library)
-    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || (b.days_running ?? 0) - (a.days_running ?? 0));
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || strength(b) - strength(a));
   return {
     slug,
     name: field(md, "name") || name,
