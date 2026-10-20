@@ -210,10 +210,11 @@ export function splitIngredients(text: string): string[] {
 /** The brand's ingredients, unique mechanism and (once run) the claims doc. */
 export async function readIngredients(slug: string) {
   const base = `brands/${checkSlug(slug)}/`;
-  const [md, claims, mechanisms] = await Promise.all([
+  const [md, claims, mechanisms, chosen] = await Promise.all([
     readText(`${base}brand.md`),
     readText(`${base}ingredient-claims.md`),
     readText(`${base}unique-mechanisms.md`),
+    readText(`${base}unique-mechanisms-chosen.md`),
   ]);
   const head = md?.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
   const field = (name: string) => head.match(new RegExp(`^${name}:\\s*(.*?)\\s*(?:#.*)?$`, "m"))?.[1] ?? "";
@@ -226,7 +227,13 @@ export async function readIngredients(slug: string) {
   };
   const rawItems = parse(field("ingredients") || "[]");
   const items = Array.isArray(rawItems) ? rawItems.map(String) : splitIngredients(String(rawItems));
-  return { items, mechanism: String(parse(field("unique_mechanism") || '""')), claims, mechanisms };
+  return {
+    items,
+    mechanism: String(parse(field("unique_mechanism") || '""')),
+    claims,
+    mechanisms,
+    chosen: chosen ? parseMechanisms(chosen).ideas.map((i) => i.name) : [],
+  };
 }
 
 /** Set front-matter fields in brand.md (values written as JSON, which YAML reads as-is). */
@@ -242,5 +249,45 @@ export async function setBrandFields(slug: string, values: Record<string, unknow
     head = re.test(head) ? head.replace(re, line) : `${head}\n${line}`;
   }
   await writeText(key, head + md.slice(end), "text/markdown; charset=utf-8");
+}
+
+export type Mechanism = { n: number; name: string; body: string };
+
+/** Split the unique-mechanisms report into its numbered ideas ("### 3. The Memory Gap") and the rest. */
+export function parseMechanisms(md: string): { ideas: Mechanism[]; after: string } {
+  const heads = [...md.matchAll(/^#{2,4}\s*(\d+)[.)]\s*(.+)$/gm)];
+  const ideas: Mechanism[] = [];
+  let end = md.length;
+  const tail = md.search(/^##\s+(?!\d)/m);
+  heads.forEach((m, i) => {
+    const start = m.index! + m[0].length;
+    let stop = i + 1 < heads.length ? heads[i + 1].index! : md.length;
+    if (tail > start && tail < stop) stop = tail;
+    ideas.push({ n: Number(m[1]), name: m[2].trim(), body: md.slice(start, stop).trim() });
+  });
+  if (tail > (heads.at(-1)?.index ?? -1)) end = tail;
+  return { ideas, after: end < md.length ? md.slice(end).trim() : "" };
+}
+
+/** Save the mechanisms the user picked: their full write-ups, and a short version in brand.md. */
+export async function saveChosenMechanisms(slug: string, numbers: number[]): Promise<void> {
+  const base = `brands/${checkSlug(slug)}/`;
+  const md = await readText(`${base}unique-mechanisms.md`);
+  if (!md) return;
+  const picked = parseMechanisms(md).ideas.filter((i) => numbers.includes(i.n));
+  if (!picked.length) {
+    await deleteKey(`${base}unique-mechanisms-chosen.md`);
+    await setBrandFields(slug, { unique_mechanism: "" });
+    return;
+  }
+  const doc = picked.map((i) => `### ${i.n}. ${i.name}\n\n${i.body}`).join("\n\n");
+  await writeText(`${base}unique-mechanisms-chosen.md`, doc + "\n", "text/markdown; charset=utf-8");
+  const short = picked
+    .map((i) => {
+      const line = i.body.match(/two-part connection[^:]*:\**\s*(.+)/i)?.[1]?.trim();
+      return line ? `${i.name}: ${line}` : i.name;
+    })
+    .join(" | ");
+  await setBrandFields(slug, { unique_mechanism: short });
 }
 

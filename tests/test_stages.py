@@ -282,3 +282,11 @@ def test_unique_mechanisms_need_a_brief_and_aim_at_problem_aware(brand):
     storage.write_text(key.replace(".prompt.md", ".answer.md"), "### 1. The Memory Gap\n- **UMP:** x")
     assert mechanisms.run(storage, "pp", today=TODAY) == "brands/pp/unique-mechanisms.md"
     assert storage.exists("brands/pp/research/2026-10-17/unique-mechanisms.md")
+
+
+def test_chosen_mechanisms_reach_every_writing_prompt(brand):
+    storage = brand
+    storage.write_text("brands/pp/brand.md", "---\nname: PeptidePal\nproduct: a tracker\n---\n")
+    storage.write_text("brands/pp/unique-mechanisms-chosen.md", "### The Memory Gap\n- **UMP:** notes don't remember")
+    ctx = stages.brand_context(storage, "pp")
+    assert "## Our unique mechanism" in ctx["product_facts"] and "The Memory Gap" in ctx["product_facts"]

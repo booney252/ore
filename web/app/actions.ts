@@ -9,6 +9,7 @@ import {
   createBrand,
   deleteDoc,
   savePaste,
+  saveChosenMechanisms,
   setBrandFields,
   slugify,
   splitIngredients,
@@ -177,5 +178,13 @@ export async function findMechanisms(form: FormData) {
   await requireBrand(brand);
   await createJob({ type: "mechanisms", brand });
   redirect(`/b/${brand}/research?step=mechanisms&queued=mechanisms`);
+}
+
+export async function chooseMechanisms(form: FormData) {
+  const brand = checkSlug(String(form.get("brand")));
+  await requireBrand(brand);
+  await saveChosenMechanisms(brand, numbers(form, "pick"));
+  revalidatePath(`/b/${brand}`, "layout");
+  redirect(`/b/${brand}/research?step=mechanisms&chosen=1`);
 }
 

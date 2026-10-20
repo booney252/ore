@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { findMechanisms, pasteQuotes, refreshResearch, saveIngredients } from "@/app/actions";
 import Markdown from "@/app/Markdown";
+import MechanismPicker from "@/app/MechanismPicker";
 import { docLabel } from "@/app/dates";
 import { brandName, readIngredients, readResearch, vocCounts } from "@/lib/brands";
 
@@ -11,10 +12,10 @@ export default async function Research({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ step?: string; queued?: string; pasted?: string; saved?: string }>;
+  searchParams: Promise<{ step?: string; queued?: string; pasted?: string; saved?: string; chosen?: string }>;
 }) {
   const { brand } = await params;
-  const { step, queued, pasted, saved } = await searchParams;
+  const { step, queued, pasted, saved, chosen } = await searchParams;
   const [name, research, voc, ing] = await Promise.all([
     brandName(brand),
     readResearch(brand),
@@ -55,6 +56,14 @@ export default async function Research({
           </p>
         )}
         {saved && <p className="notice quiet">Saved. Add ingredients to get study-backed claims.</p>}
+        {chosen && (
+          <p className="notice">
+            <span className="dot emerald" aria-hidden="true" />
+            {ing.chosen.length
+              ? `Saved ${ing.chosen.length} unique mechanism${ing.chosen.length > 1 ? "s" : ""}. Iterations, briefs and ingredient claims use ${ing.chosen.length > 1 ? "them" : "it"} from now on.`
+              : "Cleared. No unique mechanism is saved."}
+          </p>
+        )}
 
         <nav className="tabs" aria-label="Research steps">
           <Link href={`/b/${brand}/research`} className={!current && !onIngredients && !onMechanisms ? "on" : ""}>
@@ -79,7 +88,9 @@ export default async function Research({
           ) : null}
         </nav>
 
-        {text ? (
+        {onMechanisms && text ? (
+          <MechanismPicker brand={brand} md={text} chosen={ing.chosen} />
+        ) : text ? (
           <Markdown text={text} />
         ) : (
           <p className="empty">

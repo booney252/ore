@@ -72,8 +72,13 @@ def brand_context(storage, slug: str) -> dict:
     fields, notes = {}, ""
     if storage.exists(brandlib.brand_key(slug)):
         fields, notes = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))
+    facts = product_facts(fields, notes)
+    chosen_key = brandlib.brand_key(slug, "unique-mechanisms-chosen.md")
+    if storage.exists(chosen_key):  # the mechanisms the user picked: the copy should use them
+        facts += ("\n\n## Our unique mechanism (chosen by the brand; use it where it fits)\n\n"
+                  + storage.read_text(chosen_key).strip())
     return {
-        "product_facts": product_facts(fields, notes),
+        "product_facts": facts,
         "brand_name": fields.get("name") or slug,
         "ad_format": fields.get("ad_format") or DEFAULT_AD_FORMAT,
         "format_notes": fields.get("ad_format") or "",
