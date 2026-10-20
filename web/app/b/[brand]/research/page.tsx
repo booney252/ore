@@ -247,7 +247,7 @@ export default async function Research({
                         <p className="mono muted">
                           {it.kind === "doc" ? `Document · ${it.filename}` : "Note"} ·{" "}
                           {new Date(it.added).toLocaleDateString("en-US", { month: "short", day: "numeric" })} ·{" "}
-                          {it.text.length.toLocaleString()} characters
+                          {it.text.length.toLocaleString()} characters{it.source_key ? " (a digest; the full file is kept)" : ""}
                         </p>
                       </div>
                       <form action={removeFromBrain}>

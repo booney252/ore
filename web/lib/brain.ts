@@ -11,6 +11,8 @@ export type BrainItem = {
   title: string;
   kind: "note" | "doc";
   filename?: string;
+  /** the full original file, when Ore reads a shorter digest of it */
+  source_key?: string;
   added: string;
   text: string;
 };
