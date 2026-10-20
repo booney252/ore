@@ -82,7 +82,10 @@ def build_parser() -> argparse.ArgumentParser:
                    ).add_argument("brand")
     sub.add_parser("run", help="same as setup: the whole foundation in order").add_argument("brand")
     sub.add_parser("voc", help="customer quotes: App Store reviews + pasted text").add_argument("brand")
-    sub.add_parser("research", help="the 4 research prompts -> research-brief.md").add_argument("brand")
+    p = sub.add_parser("research", help="the 4 research prompts -> research-brief.md")
+    p.add_argument("brand")
+    p.add_argument("--brief-only", action="store_true",
+                   help="keep the latest steps 1-3; rebuild only the unified brief (prompt 4)")
     sub.add_parser("mechanisms", help="unique mechanism ideas (UMP + UMS) -> unique-mechanisms.md").add_argument("brand")
     sub.add_parser("rank-mechanisms", help="rank the chosen unique mechanisms -> unique-mechanisms-ranked.md").add_argument("brand")
     p = sub.add_parser("studio", help="Creator Studio: run a session's next step (angles, scripts)")
@@ -164,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
             voc.run(storage, args.brand)
             return 0
         if args.command == "research":
-            research.run(storage, args.brand)
+            research.run(storage, args.brand, brief_only=args.brief_only)
             return 0
         if args.command == "mechanisms":
             mechanisms.run(storage, args.brand)

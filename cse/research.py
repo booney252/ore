@@ -88,17 +88,41 @@ def _norm(text: str) -> str:
 
 
 def unverified_quotes(text: str, sources: list[str]) -> list[str]:
-    """Quoted passages that appear in none of our collected text (customer quotes, ad copy)."""
+    """Quoted passages that appear in none of our collected text (customer quotes, ad copy).
+    Skips labels the doc writes as quotes (bold headings, table cells, markdown bits), and checks a
+    quote shortened with "…" piece by piece."""
     corpus = " | ".join(_norm(s) for s in sources)
     out = []
-    for q in _QUOTE.findall(text):
-        n = _norm(q.rstrip(".…"))
-        if len(n.split()) >= 5 and n not in corpus and q not in out:
-            out.append(q)
+    for line in text.splitlines():
+        if line.lstrip().startswith(("**\"", "**“", "|", "#")):  # headings and table rows: labels
+            continue
+        for q in _QUOTE.findall(line):
+            if any(m in q for m in ("**", "](", "|")):
+                continue
+            pieces = [_norm(p) for p in re.split(r"…|\.\.\.", q.rstrip(".…")) if _norm(p)]
+            missing = [p for p in pieces if len(p.split()) >= 4 and p not in corpus]
+            if missing and len(_norm(q).split()) >= 5 and q not in out:
+                out.append(q)
     return out
 
 
-def run(storage, slug: str, today: date | None = None, client=None) -> str | None:
+def latest_steps(storage, slug: str) -> dict:
+    """step1_output.. from the newest research/<date>/ folder that has each step, or {}."""
+    keys = set(storage.list(brandlib.brand_key(slug, "research/")))
+    dates = sorted({k.split("/research/")[1].split("/")[0] for k in keys}, reverse=True)
+    out = {}
+    for i, (name, _, _) in enumerate(STEPS, start=1):
+        found = next((brandlib.brand_key(slug, f"research/{d}/{name}.md") for d in dates
+                      if brandlib.brand_key(slug, f"research/{d}/{name}.md") in keys), None)
+        if found:
+            out[f"step{i}_output"] = storage.read_text(found)
+    return out
+
+
+def run(storage, slug: str, today: date | None = None, client=None,
+        brief_only: bool = False) -> str | None:
+    """The 4 research prompts. With brief_only, steps 1-3 aren't redone: prompt 4 rebuilds the
+    brief from the latest saved steps (e.g. imported ones) plus quotes and the brand's own notes."""
     today = today or datetime.now(timezone.utc).date()
     vals = values(storage, slug)
     added = brainlib.section(storage, slug)  # the brand's own notes and documents, after each prompt
@@ -106,7 +130,12 @@ def run(storage, slug: str, today: date | None = None, client=None) -> str | Non
     folder = f"research/{today.isoformat()}"
 
     outputs, pending = {}, []
-    for i, (name, path, web) in enumerate(STEPS, start=1):
+    if brief_only:
+        outputs = latest_steps(storage, slug)
+        missing = [n for i, (n, _, _) in enumerate(STEPS, start=1) if f"step{i}_output" not in outputs]
+        if missing:
+            raise ValueError(f"research: no saved {', '.join(missing)} to rebuild the brief from")
+    for i, (name, path, web) in enumerate([] if brief_only else STEPS, start=1):
         try:
             answer = llm.ask(storage, slug, f"research-{today.isoformat()}-{name}",
                              llm.render(path.read_text(), vals) + added, client=client,
@@ -133,7 +162,9 @@ def run(storage, slug: str, today: date | None = None, client=None) -> str | Non
     ads_text = [f"{a.get('body', '')} {a.get('headline', '')} "
                 f"{(a.get('analysis') or {}).get('transcript_text', '')}"
                 for a in _load(storage, slug, "ads.json", "ads")]
-    flagged = unverified_quotes(brief, quotes + ads_text)
+    # the research steps and the brand's own notes are sources too (imported docs carry their own quotes)
+    flagged = unverified_quotes(brief, quotes + ads_text + list(outputs.values())
+                                + [it.get("text", "") for it in brainlib.items(storage, slug)])
     if flagged:
         brief = brief.rstrip() + "\n\n## Quote check\n\nThese quoted lines weren't found in the " \
             "customer quotes or ads we collected. Verify them or remove them:\n\n" + \

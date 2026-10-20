@@ -39,7 +39,9 @@ def section(storage, slug: str) -> str:
     if not parts:
         return ""
     return ("## Added to the brand brain by the brand\n\nNotes and documents the brand added itself. "
-            "They're the brand's own words: where they disagree with the research above, they win.\n\n"
+            "They're the brand's own words and data: where they disagree with the research above (much of "
+            "which is estimated from the web), they win. Real data about the brand's own customers beats "
+            "any estimate of the market.\n\n"
             + "\n\n".join(parts))
 
 

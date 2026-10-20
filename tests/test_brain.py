@@ -17,3 +17,14 @@ def test_brain_additions_follow_the_brief(tmp_path):
     assert out.startswith("BRIEF\n\n## Added to the brand brain by the brand")
     assert "### New price, added 2026-10-20\n\nWe're $9.99 a month now." in out
     assert "### Sales deck (from deck.pdf)" in out and "[... cut for length]" in out
+
+
+def test_rebuild_brief_only_reuses_the_latest_saved_steps(tmp_path):
+    from cse import research
+    s = LocalStorage(tmp_path)
+    s.write_text("brands/pp/research/2026-10-06/01-competitors.md", "C")
+    s.write_text("brands/pp/research/2026-10-06/02-psychographics.md", "P")
+    s.write_text("brands/pp/research/2026-10-06/03-awareness.md", "old A")
+    s.write_text("brands/pp/research/2026-10-10/03-awareness.md", "new A")
+    s.write_text("brands/pp/research/2026-10-20/unique-mechanisms.md", "M")
+    assert research.latest_steps(s, "pp") == {"step1_output": "C", "step2_output": "P", "step3_output": "new A"}
