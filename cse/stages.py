@@ -77,6 +77,11 @@ def brand_context(storage, slug: str) -> dict:
     if storage.exists(chosen_key):  # the mechanisms the user picked: the copy should use them
         facts += ("\n\n## Our unique mechanism (chosen by the brand; use it where it fits)\n\n"
                   + storage.read_text(chosen_key).strip())
+        ranked_key = brandlib.brand_key(slug, "unique-mechanisms-ranked.md")
+        if storage.exists(ranked_key):  # lead with the one the ranking put first
+            bottom = storage.read_text(ranked_key).split("## Bottom line", 1)
+            if len(bottom) == 2:
+                facts += "\n\nWhich to lead with:" + bottom[1].split("\n## ", 1)[0].rstrip()
     return {
         "product_facts": facts,
         "brand_name": fields.get("name") or slug,

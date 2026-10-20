@@ -98,6 +98,8 @@ def run_job(storage, job: dict) -> str | None:
         return out
     if job["type"] == "mechanisms":
         return mechanisms.run(storage, slug)
+    if job["type"] == "rank_mechanisms":
+        return mechanisms.rank(storage, slug)
     if job["type"] == "ingredients":
         if not llm.api_key():  # the claims need web search, which has no handoff mode here
             raise llm.HandoffPending("", "")

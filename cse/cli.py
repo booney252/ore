@@ -84,6 +84,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("voc", help="customer quotes: App Store reviews + pasted text").add_argument("brand")
     sub.add_parser("research", help="the 4 research prompts -> research-brief.md").add_argument("brand")
     sub.add_parser("mechanisms", help="unique mechanism ideas (UMP + UMS) -> unique-mechanisms.md").add_argument("brand")
+    sub.add_parser("rank-mechanisms", help="rank the chosen unique mechanisms -> unique-mechanisms-ranked.md").add_argument("brand")
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -156,6 +157,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "mechanisms":
             mechanisms.run(storage, args.brand)
+            return 0
+        if args.command == "rank-mechanisms":
+            mechanisms.rank(storage, args.brand)
             return 0
         if args.command == "ingredients":
             ingredients.run(storage, args.brand)

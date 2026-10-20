@@ -210,11 +210,12 @@ export function splitIngredients(text: string): string[] {
 /** The brand's ingredients, unique mechanism and (once run) the claims doc. */
 export async function readIngredients(slug: string) {
   const base = `brands/${checkSlug(slug)}/`;
-  const [md, claims, mechanisms, chosen] = await Promise.all([
+  const [md, claims, mechanisms, chosen, ranked] = await Promise.all([
     readText(`${base}brand.md`),
     readText(`${base}ingredient-claims.md`),
     readText(`${base}unique-mechanisms.md`),
     readText(`${base}unique-mechanisms-chosen.md`),
+    readText(`${base}unique-mechanisms-ranked.md`),
   ]);
   const head = md?.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
   const field = (name: string) => head.match(new RegExp(`^${name}:\\s*(.*?)\\s*(?:#.*)?$`, "m"))?.[1] ?? "";
@@ -233,6 +234,7 @@ export async function readIngredients(slug: string) {
     claims,
     mechanisms,
     chosen: chosen ? parseMechanisms(chosen).ideas.map((i) => i.name) : [],
+    ranked,
   };
 }
 
@@ -270,15 +272,16 @@ export function parseMechanisms(md: string): { ideas: Mechanism[]; after: string
 }
 
 /** Save the mechanisms the user picked: their full write-ups, and a short version in brand.md. */
-export async function saveChosenMechanisms(slug: string, numbers: number[]): Promise<void> {
+export async function saveChosenMechanisms(slug: string, numbers: number[]): Promise<number> {
   const base = `brands/${checkSlug(slug)}/`;
   const md = await readText(`${base}unique-mechanisms.md`);
-  if (!md) return;
+  if (!md) return 0;
+  await deleteKey(`${base}unique-mechanisms-ranked.md`); // a new pick needs a new ranking
   const picked = parseMechanisms(md).ideas.filter((i) => numbers.includes(i.n));
   if (!picked.length) {
     await deleteKey(`${base}unique-mechanisms-chosen.md`);
     await setBrandFields(slug, { unique_mechanism: "" });
-    return;
+    return 0;
   }
   const doc = picked.map((i) => `### ${i.n}. ${i.name}\n\n${i.body}`).join("\n\n");
   await writeText(`${base}unique-mechanisms-chosen.md`, doc + "\n", "text/markdown; charset=utf-8");
@@ -289,5 +292,6 @@ export async function saveChosenMechanisms(slug: string, numbers: number[]): Pro
     })
     .join(" | ");
   await setBrandFields(slug, { unique_mechanism: short });
+  return picked.length;
 }
 

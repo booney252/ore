@@ -36,7 +36,9 @@ export default async function Research({
     { key: "quotes", label: "Quotes" },
   ];
   const notice = queued
-    ? queued === "ingredients"
+    ? queued === "rank"
+      ? `Saved ${ing.chosen.length} unique mechanisms. Ore will now rank them against your research brief, best first.`
+      : queued === "ingredients"
       ? "Queued. Ore will search published studies for each ingredient and write the claims."
       : queued === "mechanisms"
         ? "Queued. Ore will write unique mechanism ideas from your research brief."
@@ -101,7 +103,18 @@ export default async function Research({
                 </button>
               </form>
             </div>
-            {ing.mechanisms ? (
+            {ing.ranked ? (
+              <section className="ranked panel">
+                <p className="mono muted">Your picks, ranked</p>
+                <Markdown text={ing.ranked} />
+              </section>
+            ) : null}
+            {ing.mechanisms && ing.ranked ? (
+              <details className="all-ideas">
+                <summary>All ideas · change your picks</summary>
+                <MechanismPicker brand={brand} md={ing.mechanisms} chosen={ing.chosen} />
+              </details>
+            ) : ing.mechanisms ? (
               <MechanismPicker brand={brand} md={ing.mechanisms} chosen={ing.chosen} />
             ) : (
               <p className="empty">

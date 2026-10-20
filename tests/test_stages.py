@@ -290,3 +290,20 @@ def test_chosen_mechanisms_reach_every_writing_prompt(brand):
     storage.write_text("brands/pp/unique-mechanisms-chosen.md", "### The Memory Gap\n- **UMP:** notes don't remember")
     ctx = stages.brand_context(storage, "pp")
     assert "## Our unique mechanism" in ctx["product_facts"] and "The Memory Gap" in ctx["product_facts"]
+
+
+def test_ranking_runs_on_the_chosen_mechanisms(brand):
+    from cse import mechanisms
+    storage = brand
+    storage.write_text("brands/pp/brand.md", "---\nname: PeptidePal\nproduct: a tracker\n"
+                       "audience: people on weekly shots\n---\n")
+    assert mechanisms.rank(storage, "pp", today=TODAY) is None  # nothing chosen
+    storage.write_text("brands/pp/research-brief.md", "# Brief\nFour Reddit tabs.\n")
+    storage.write_text("brands/pp/unique-mechanisms-chosen.md", "### 1. The Memory Gap\n- x\n\n### 4. The Scroll\n- y")
+    assert mechanisms.rank(storage, "pp", today=TODAY) is None  # handoff waits
+    [key] = [k for k in storage.list("brands/pp/handoff/") if "rank" in k and k.endswith(".prompt.md")]
+    prompt = storage.read_text(key)
+    assert "The Memory Gap" in prompt and "The Scroll" in prompt and "Four Reddit tabs." in prompt
+    assert "to people on weekly shots" in prompt and "who are Problem Aware" in prompt and "{{" not in prompt
+    storage.write_text(key.replace(".prompt.md", ".answer.md"), "### #1. The Memory Gap")
+    assert mechanisms.rank(storage, "pp", today=TODAY) == "brands/pp/unique-mechanisms-ranked.md"

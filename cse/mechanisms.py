@@ -3,6 +3,9 @@
 Runs prompts/09-unique-mechanisms.md after the research brief and saves
 brands/<brand>/unique-mechanisms.md (a dated copy goes in research/<date>/). The awareness stage
 it targets is brand.md's `target_awareness`, Problem Aware by default.
+
+Once the brand picks the ones it likes (the site saves unique-mechanisms-chosen.md), `rank` runs
+prompts/10-rank-mechanisms.md and saves unique-mechanisms-ranked.md.
 """
 
 from __future__ import annotations
@@ -18,6 +21,7 @@ from .stages import product_facts
 log = logging.getLogger("cse")
 
 PROMPT = Path("prompts/09-unique-mechanisms.md")
+RANK_PROMPT = Path("prompts/10-rank-mechanisms.md")
 DEFAULT_AWARENESS = "Problem Aware"
 
 
@@ -60,3 +64,35 @@ def run(storage, slug: str, today: date | None = None, client=None) -> str | Non
                        answer.strip() + "\n")
     log.info("mechanisms: saved %s", key)
     return key
+
+
+def rank(storage, slug: str, today: date | None = None, client=None) -> str | None:
+    """Rank the brand's chosen mechanisms. None when nothing is chosen or a handoff is waiting."""
+    today = today or datetime.now(timezone.utc).date()
+    chosen_key = brandlib.brand_key(slug, "unique-mechanisms-chosen.md")
+    brief_key = brandlib.brand_key(slug, "research-brief.md")
+    if not storage.exists(chosen_key) or not storage.exists(brief_key):
+        log.info("mechanisms: %s has no chosen mechanisms to rank, skipping", slug)
+        return None
+    fields, notes = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))
+    prompt = llm.render(RANK_PROMPT.read_text(), {
+        "brand_name": fields.get("name") or slug,
+        "product": fields.get("product") or "this product",
+        "niche": fields.get("audience") or fields.get("niche") or "this market",
+        "research_brief": storage.read_text(brief_key),
+        "mechanisms": storage.read_text(chosen_key),
+        "product_facts": product_facts(fields, notes),
+        "awareness": str(fields.get("target_awareness") or "").strip() or DEFAULT_AWARENESS,
+        "date": today.isoformat(),
+    })
+    try:
+        answer = llm.ask(storage, slug, f"mechanisms-rank-{today.isoformat()}", prompt, client=client,
+                         max_tokens=16000, effort="high")
+    except llm.HandoffPending as p:
+        log.info("mechanisms: answer %s, then re-run.", p.prompt_key)
+        return None
+    key = brandlib.brand_key(slug, "unique-mechanisms-ranked.md")
+    storage.write_text(key, answer.strip() + "\n")
+    log.info("mechanisms: saved %s", key)
+    return key
+

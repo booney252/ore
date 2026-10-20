@@ -183,8 +183,9 @@ export async function findMechanisms(form: FormData) {
 export async function chooseMechanisms(form: FormData) {
   const brand = checkSlug(String(form.get("brand")));
   await requireBrand(brand);
-  await saveChosenMechanisms(brand, numbers(form, "pick"));
+  const picked = await saveChosenMechanisms(brand, numbers(form, "pick"));
+  if (picked > 1) await createJob({ type: "rank_mechanisms", brand });
   revalidatePath(`/b/${brand}`, "layout");
-  redirect(`/b/${brand}/research?step=mechanisms&chosen=1`);
+  redirect(`/b/${brand}/research?step=mechanisms&chosen=1${picked > 1 ? "&queued=rank" : ""}`);
 }
 
