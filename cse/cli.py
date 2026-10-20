@@ -90,7 +90,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("step", choices=["angles", "scripts"])
     p = sub.add_parser("organic", help="import organic posts (Reels, TikToks, Shorts) and grade them on views")
     p.add_argument("brand")
-    p.add_argument("--file", required=True, help="TSV/CSV: handle, own, code, views, likes, comments, secs, date, caption, cover_text")
+    p.add_argument("--file", help="TSV/CSV: handle, own, code, views, likes, comments, secs, date, caption, cover_text")
+    p.add_argument("--pull", action="store_true", help="fetch brand.md organic_accounts from ScrapeCreators (1 credit a page)")
+    p.add_argument("--pages", type=int, default=8, help="pages per account with --pull (12 reels a page on Instagram)")
+    p.add_argument("--only", help="with --pull: comma-separated handles (or platform:handle) to fetch")
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -173,7 +176,14 @@ def main(argv: list[str] | None = None) -> int:
             (studio.run_angles if args.step == "angles" else studio.run_scripts)(storage, args.session)
             return 0
         if args.command == "organic":
-            print(organic.import_posts(storage, args.brand, organic.read_table(Path(args.file).read_text())))
+            if args.pull:
+                only = [h.strip() for h in args.only.split(",")] if args.only else None
+                print(organic.pull(storage, args.brand, max_pages=args.pages, only=only))
+            elif args.file:
+                print(organic.import_posts(storage, args.brand, organic.read_table(Path(args.file).read_text())))
+            else:
+                print("organic: pass --pull or --file", file=sys.stderr)
+                return 2
             return 0
         if args.command == "ingredients":
             ingredients.run(storage, args.brand)

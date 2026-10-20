@@ -55,3 +55,36 @@ def test_read_table_takes_tsv_or_csv():
 def test_talking_head_format():
     assert formats.check("talking") == "talking" and formats.check("organic") == "talking"
     assert "soft call to action" in formats.describe("talking")
+
+
+class FakeSource:
+    credits_used = 0
+
+    def fetch_posts(self, platform, handle, max_pages=8):
+        self.credits_used += 1
+        views = {"instagram": [50000, 1000, 1200, 900, 1100], "youtube": [9000, 1000, 1000]}[platform]
+        return [{"platform": platform, "handle": handle, "code": f"{handle}{i}", "views": v,
+                 "date": "2026-10-01", "caption": "c", "secs": 20,
+                 "media_url": "" if platform == "youtube" else f"https://x/{i}.mp4"}
+                for i, v in enumerate(views)]
+
+    def youtube_transcript(self, url):
+        return [{"start": 0.0, "end": 2.0, "text": "nobody tells you this"}]
+
+
+def test_pull_grades_accounts_and_fetches_only_the_winners(tmp_path, monkeypatch):
+    from cse import ads as adslib
+    s = LocalStorage(tmp_path)
+    s.write_text("brands/aicl/brand.md", "---\nname: AICL\norganic_accounts: ['instagram:reedo.io:own', "
+                                         "'youtube:tommycetty']\n---\n")
+    got = []
+    monkeypatch.setattr(adslib, "download_media",
+                        lambda storage, slug, ad, session: (got.append(ad["ad_id"]),
+                                                            ad.update(media_key=f"media/{ad['ad_id']}.mp4")))
+    summary = organic.pull(s, "aicl", FakeSource(), today=date(2026, 10, 20))
+    assert summary["added"] == 8 and summary["credits_used"] == 2
+    assert got == ["in-reedo.io0", "in-reedo.io2"]  # the breakout, plus our creator's next best
+    ads = json.loads(s.read_text("brands/aicl/ads.json"))["ads"]
+    assert ads["in-reedo.io0"]["is_own"] and ads["in-reedo.io0"]["media_key"]
+    yt = ads["yo-tommycetty0"]
+    assert yt["analysis"]["hook_line"] == "nobody tells you this" and yt["url"].endswith("/shorts/tommycetty0")

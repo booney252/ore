@@ -9,6 +9,11 @@ Under 1,000 views is too few to call: the grade stops at C.
 Organic posts live in the same ads.json as paid ads (`source: "organic"`), so reports,
 iterations, briefs and the Creator Studio use them the same way. `import_posts` merges a batch
 of posts (from a CSV/TSV export, a paste, or a data provider) and regrades every account.
+
+`pull` fetches the accounts listed in brand.md `organic_accounts` ("platform:handle", with
+":own" for the brand's own affiliates or creators) from a source (organic_source), grades them,
+and downloads the winners' videos right away (the links expire) so `creative` can transcribe
+them. YouTube Shorts have no video link: their transcripts come from the source instead.
 """
 
 from __future__ import annotations
@@ -88,7 +93,11 @@ def to_entry(post: dict, brand_name: str, today: date) -> dict:
         "days_running": (today - date.fromisoformat(posted)).days if posted else 0,
     }
     if post.get("secs"):
-        entry["analysis"] = {"length_s": float(post["secs"])}
+        entry["secs"] = float(post["secs"])
+    if post.get("media_url"):
+        entry["media_url"] = post["media_url"]
+    if post.get("cover_url"):
+        entry["thumbnail_url"] = post["cover_url"]
     if own:
         entry["promotes"] = brand_name
     return entry
@@ -105,10 +114,6 @@ def import_posts(storage, slug: str, posts: list[dict], today: date | None = Non
         entry = to_entry(post, name, today)
         old = doc["ads"].get(entry["ad_id"])
         if old:
-            for k in ("breakdown", "media_key"):
-                if k in old:
-                    entry[k] = old[k]
-            entry["analysis"] = {**(old.get("analysis") or {}), **(entry.get("analysis") or {})}
             entry["first_seen"] = old.get("first_seen", entry["first_seen"])
             updated += 1
         else:
@@ -137,3 +142,93 @@ def read_table(text: str) -> list[dict]:
     import io
     dialect = "excel-tab" if "\t" in text.splitlines()[0] else "excel"
     return [dict(r) for r in csv.DictReader(io.StringIO(text), dialect=dialect)]
+
+
+# --- pulling accounts from a data source ----------------------------------------------
+
+WINNERS_PER_ACCOUNT = 6
+
+
+def accounts(fields: dict) -> list[dict]:
+    """brand.md `organic_accounts`: ["instagram:reedo.io:own", "tiktok:dizzsells:own", ...]."""
+    out = []
+    for raw in fields.get("organic_accounts") or []:
+        parts = str(raw).split(":")
+        if len(parts) >= 2:
+            out.append({"platform": parts[0].strip().lower(), "handle": parts[1].strip().lstrip("@"),
+                        "own": len(parts) > 2 and parts[2].strip().lower() == "own"})
+    return out
+
+
+def winners_to_fetch(ads: list[dict], per_account: int = WINNERS_PER_ACCOUNT) -> list[dict]:
+    """Each account's A and B posts (best first), plus its top 2 if it's one of ours (so our own
+    creators' videos get looked at even when nothing broke out), not yet analyzed."""
+    by_handle: dict[str, list[dict]] = {}
+    for a in ads:
+        if a.get("source") == "organic":
+            by_handle.setdefault(f"{a['platform']}:{a['handle']}", []).append(a)
+    out = []
+    for posts in by_handle.values():
+        posts.sort(key=lambda a: (a.get("score", 0), (a.get("views") or 0) / max(1, a.get("usual_views") or 1)),
+                   reverse=True)
+        out += [a for i, a in enumerate(posts[:per_account])
+                if a.get("score", 0) >= 75 or (a.get("is_own") and i < 2)]
+    return [a for a in out if "transcript" not in (a.get("analysis") or {}) and not a.get("media_key")]
+
+
+def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None = None,
+         only: list[str] | None = None) -> dict:
+    """Fetch every account in brand.md `organic_accounts`, grade, and get the winners' media."""
+    from . import ads as adslib
+    from .organic_source import ScrapeCreatorsOrganic
+
+    today = today or datetime.now(timezone.utc).date()
+    fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    source = source or ScrapeCreatorsOrganic()
+    posts, counts = [], {}
+    for acc in accounts(fields):
+        if only and acc["handle"] not in only and f"{acc['platform']}:{acc['handle']}" not in only:
+            continue
+        try:
+            got = source.fetch_posts(acc["platform"], acc["handle"], max_pages)
+        except Exception as e:  # noqa: BLE001 - one bad account shouldn't stop the run
+            log.warning("organic: %s:%s failed: %s", acc["platform"], acc["handle"], e)
+            got = []
+        for p in got:
+            p["own"] = "1" if acc["own"] else "0"
+        counts[f"{acc['platform']}:{acc['handle']}"] = len(got)
+        log.info("organic: %s:%s %d posts", acc["platform"], acc["handle"], len(got))
+        posts += got
+    result = import_posts(storage, slug, posts, today)
+
+    key = brandlib.brand_key(slug, "ads.json")
+    doc = json.loads(storage.read_text(key))
+    import requests
+
+    session = requests.Session()
+    downloaded = transcribed = 0
+    for ad in winners_to_fetch(list(doc["ads"].values())):
+        stale = ad.get("analysis") or {}
+        if ad["platform"] == "youtube":
+            try:
+                lines = source.youtube_transcript(ad["url"])
+            except Exception as e:  # noqa: BLE001
+                log.warning("organic: transcript failed for %s: %s", ad["ad_id"], e)
+                continue
+            text = " ".join(l["text"] for l in lines)
+            ad["analysis"] = {**stale, "transcript": lines, "transcript_text": text,
+                              "hook_line": lines[0]["text"] if lines else "", "length_s": ad.get("secs") or 0}
+            transcribed += 1
+        elif ad.get("media_url"):
+            adslib.download_media(storage, slug, ad, session)
+            if ad.get("media_key"):
+                ad.pop("analysis", None)  # a cover-only analysis: `creative` redoes it from the video
+                downloaded += 1
+        if (ad.get("breakdown") or {}).get("source_note", "").startswith("From the cover"):
+            ad.pop("breakdown", None)  # written from the cover and caption: redo from the real video
+    storage.write_text(key, json.dumps(doc, indent=2) + "\n")
+    summary = {**result, "accounts": counts, "videos_downloaded": downloaded,
+               "youtube_transcripts": transcribed,
+               "credits_used": getattr(source, "credits_used", None)}
+    log.info("organic: %s", summary)
+    return summary
