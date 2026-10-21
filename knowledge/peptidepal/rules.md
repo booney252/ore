@@ -3,7 +3,7 @@
 From the Unified Research Brief (`brands/peptidepal/research-brief.md`). If a brief breaks one of these, fix it or drop it.
 
 1. Sell tracking, clarity and control. Never sell results (weight lost, healing, younger skin, pain relief, muscle gain).
-2. Paid Meta: no peptide or drug names, no injection sites, no vials, no needles, no body-part focus, no before and after. Landing page and App Store screenshots need neutral demo accounts.
+2. Paid Meta: no compound or drug names (e.g. BPC-157, semaglutide, tirzepatide). The word "peptides" itself and call-outs like "If you're taking peptides" or "If you're on a weekly shot and just added a second peptide" are fine. No injection sites, no vials, no needles, no body-part focus, no before and after. Landing page and App Store screenshots need neutral demo accounts.
 3. TikTok paid: strict reading. No "GLP", no weight, no appetite language.
 4. Never give or imply dosing advice. The app records the user's own plan and does unit math on what they enter.
 5. The villain is the chaos (sticky notes, spreadsheets, four Reddit tabs, a chatbot that forgets), never the doctor.
