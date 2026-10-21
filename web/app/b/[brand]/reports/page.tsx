@@ -51,10 +51,11 @@ export default async function Reports({
       <section className="panel run run-wide">
         <div>
           <p className="mono muted">This week</p>
-          <h2>Run the Winning Ads Report</h2>
+          <h2>Run the Winning {setup.organic ? "Posts" : "Ads"} Report</h2>
           <p className="muted">
-            Pulls new ads from every competitor (and you), scores them, transcribes and breaks down
-            the top ones, re-checks they're still live, then writes the report.
+            {setup.organic
+              ? "Pulls the newest posts from every account you track, grades them against each account's usual, transcribes and breaks down the winners, then writes the report."
+              : "Pulls new ads from every competitor (and you), scores them, transcribes and breaks down the top ones, re-checks they're still live, then writes the report."}
           </p>
         </div>
         <form action={newReport}>

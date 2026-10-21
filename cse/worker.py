@@ -38,6 +38,9 @@ class Cancelled(Exception):
     pass
 
 
+WEEKLY_ORGANIC_PAGES = 2  # newest ~24 posts per account: what's new since last week (1 credit a page)
+
+
 def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | None:
     name = stages.brand_context(storage, slug)["brand_name"]
     fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
@@ -45,7 +48,7 @@ def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | 
         ads.run(storage, slug, max_pages=pages)
         check()
     if organic.accounts(fields):  # organic brands (e.g. an affiliate campaign): Reels, TikToks, Shorts
-        organic.pull(storage, slug)
+        organic.pull(storage, slug, max_pages=WEEKLY_ORGANIC_PAGES)
         check()
     creative.run(storage, slug, per_brand=5)
     check()

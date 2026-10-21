@@ -170,7 +170,9 @@ export async function setupState(slug: string) {
     exists(`${base}research-brief.md`),
   ]);
   const profile = /^audience:\s*"?[^"\s#]/m.test(md ?? "");
-  return { profile, competitors, voc, ads, brief, ready: profile && competitors && ads && brief };
+  // an organic brand (affiliates posting on their own pages) tracks accounts, not competitors' Meta ads
+  const organic = /^organic_accounts:/m.test(md ?? "");
+  return { profile, competitors, voc, ads, brief, organic, ready: profile && (competitors || organic) && ads && brief };
 }
 
 export const RESEARCH_STEPS = [
