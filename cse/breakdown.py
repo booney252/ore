@@ -80,13 +80,18 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
 
     def one(ad: dict) -> str:
         frames = [f["key"] for f in ad["analysis"].get("frames", [])]
+        prompt = build_prompt(templates["image" if ad.get("media_type") == "image" else "video"],
+                              ad, brand_name)
         try:
-            answer = llm.ask(storage, slug, f"breakdown-{ad['ad_id']}",
-                             build_prompt(templates["image" if ad.get("media_type") == "image"
-                                                    else "video"], ad, brand_name),
-                             image_keys=frames,
-                             client=client, max_tokens=8000, effort="medium")
-            ad["breakdown"] = llm.parse_json(answer)
+            for attempt in (1, 2):  # a long answer now and then has a JSON slip: ask once more
+                answer = llm.ask(storage, slug, f"breakdown-{ad['ad_id']}", prompt,
+                                 image_keys=frames, client=client, max_tokens=8000, effort="medium")
+                try:
+                    ad["breakdown"] = llm.parse_json(answer)
+                    break
+                except llm.LLMError:
+                    if attempt == 2 or llm.mode() == "handoff":
+                        raise
             save_fields(storage, slug, ad["ad_id"], {"breakdown": ad["breakdown"]},
                         drop=("breakdown_error",))
             log.info("  broke down %s %s", ad["ad_id"], ad.get("brand"))
