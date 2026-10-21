@@ -33,6 +33,8 @@ export type Ad = {
   usual_views?: number;
   usual_comment_rate?: number;
   min_views?: number; // views a post needs to count as a winner (A or B)
+  on_topic?: boolean; // false: blew up, but not about the niche (cse/organic.py check_topics)
+  topic_why?: string;
   analysis?: {
     length_s?: number;
     cut_count?: number;

@@ -114,3 +114,23 @@ def test_posts_before_organic_since_are_dropped(tmp_path):
     organic.import_posts(s, "aicl", [old, post("NEW", 1000)], date(2026, 10, 20))
     ads = json.loads(s.read_text("brands/aicl/ads.json"))["ads"]
     assert list(ads) == ["in-NEW"]
+
+
+def test_off_topic_winners_drop_out(tmp_path, monkeypatch):
+    from cse import llm
+    s = LocalStorage(tmp_path)
+    s.write_text("brands/aicl/brand.md", "---\nname: AICL\nniche: making money with AI content\n---\n")
+    posts = [post("AI", 90000), post("MEME", 90000), post("N1", 10000), post("N2", 10000), post("N3", 10000)]
+    organic.import_posts(s, "aicl", posts, date(2026, 10, 20))
+    seen = []
+
+    def fake_ask(storage, slug, step, prompt, **kw):
+        seen.append(prompt)
+        return '[{"id": "in-AI", "on_topic": true, "why": "AI pages"}, {"id": "in-MEME", "on_topic": false, "why": "budget meme"}]'
+    monkeypatch.setattr(llm, "ask", fake_ask)
+    assert organic.check_topics(s, "aicl") == {"checked": 2, "off_topic": 1}
+    ads = json.loads(s.read_text("brands/aicl/ads.json"))["ads"]
+    assert ads["in-AI"]["score"] == 100 and ads["in-MEME"]["score"] == 0
+    assert "Off topic" in ads["in-MEME"]["score_why"] and "budget meme" in ads["in-MEME"]["score_why"]
+    assert "making money with AI content" in seen[0]
+    assert organic.check_topics(s, "aicl") == {"checked": 0, "off_topic": 0}  # each post checked once

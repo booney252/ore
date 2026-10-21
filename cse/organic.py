@@ -26,10 +26,12 @@ them. YouTube Shorts have no video link: their transcripts come from the source 
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import statistics
 from datetime import date, datetime, timezone
+from pathlib import Path
 
 from . import brand as brandlib
 
@@ -72,6 +74,9 @@ def engagement_move(post: dict) -> int:
 
 def organic_score(post: dict) -> tuple[float, str]:
     views, usual = int(post.get("views") or 0), int(post.get("usual_views") or 0)
+    if post.get("on_topic") is False:  # blew up, but not about the niche: nothing to learn from it
+        return 0, (f"Off topic: {views:,} views, but it isn't about the niche"
+                   f" ({post.get('topic_why') or 'general content on the account'}). Left out of winners.")
     ratio = views / usual if usual else 1.0
     outlier = grade_ratio(ratio)
     reach = grade_reach(views, ratio)
@@ -357,3 +362,45 @@ def pull_comments(storage, slug: str, handles: list[str], top: int = 15, pages: 
     storage.write_text(voc_key, json.dumps(doc, indent=1) + "\n")
     counts["credits"] = getattr(source, "credits_used", 0)
     return counts
+
+
+TOPIC_PROMPT = Path("prompts/15-on-topic.md")
+TOPIC_BATCH = 60
+
+
+def check_topics(storage, slug: str, client=None) -> dict:
+    """Mark winners (A/B) that aren't about the brand's niche (a creator's lifestyle, general money
+    memes, sports...) as `on_topic: false`, so they drop out of winners and the report. Each post
+    is checked once (it keeps its `on_topic`)."""
+    from . import llm
+
+    key = brandlib.brand_key(slug, "ads.json")
+    doc = json.loads(storage.read_text(key))
+    fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    todo = [a for a in doc["ads"].values() if a.get("source") == "organic"
+            and a.get("score", 0) >= 75 and "on_topic" not in a]
+    checked = off = 0
+    for i in range(0, len(todo), TOPIC_BATCH):
+        batch = todo[i:i + TOPIC_BATCH]
+        lines = [json.dumps({"id": a["ad_id"], "account": f"@{a.get('handle')}",
+                             "caption": (a.get("body") or "")[:300],
+                             "spoken": ((a.get("analysis") or {}).get("transcript_text") or "")[:400]},
+                            ensure_ascii=False) for a in batch]
+        prompt = llm.render(TOPIC_PROMPT.read_text(), {
+            "brand_name": fields.get("name") or slug, "product": fields.get("product") or "",
+            "niche": fields.get("niche") or "", "posts": "\n".join(lines)})
+        tag = hashlib.sha1("|".join(a["ad_id"] for a in batch).encode()).hexdigest()[:8]
+        answers = llm.parse_json(llm.ask(storage, slug, f"topics-{tag}", prompt, client=client,
+                                          max_tokens=8000, effort="low"))
+        for ans in answers if isinstance(answers, list) else []:
+            ad = doc["ads"].get(str(ans.get("id")))
+            if ad is None:
+                continue
+            ad["on_topic"] = bool(ans.get("on_topic", True))
+            ad["topic_why"] = str(ans.get("why") or "")[:120]
+            checked += 1
+            off += not ad["on_topic"]
+    regrade(doc["ads"].values(), int(fields.get("breakout_min_views") or MIN_VIEWS))
+    storage.write_text(key, json.dumps(doc, indent=2) + "\n")
+    log.info("topics: %d winners checked, %d off topic", checked, off)
+    return {"checked": checked, "off_topic": off}

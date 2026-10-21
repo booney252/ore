@@ -49,6 +49,7 @@ def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | 
         check()
     if organic.accounts(fields):  # organic brands (e.g. an affiliate campaign): Reels, TikToks, Shorts
         organic.pull(storage, slug, max_pages=WEEKLY_ORGANIC_PAGES)
+        organic.check_topics(storage, slug)  # winners that aren't about the niche drop out
         check()
     creative.run(storage, slug, per_brand=5)
     check()

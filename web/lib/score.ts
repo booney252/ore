@@ -72,6 +72,15 @@ export function pct(n: number): string {
 
 function explainOrganic(ad: Ad): Explained {
   const views = ad.views ?? 0;
+  if (ad.on_topic === false) {
+    return {
+      grade: "F",
+      verdict: "Off topic",
+      meaning: "It blew up, but it isn't about the niche, so there's nothing to copy from it.",
+      reason: `${short(views)} views, but not about the niche${ad.topic_why ? ` (${ad.topic_why})` : ""}.`,
+      parts: [],
+    };
+  }
   const usual = ad.usual_views ?? 0;
   const ratio = usual ? views / usual : 1;
   const outlier: Grade = ratio >= 5 ? "A" : ratio >= 2 ? "B" : ratio >= 1 ? "C" : "D";
