@@ -41,7 +41,7 @@ offer: ""              # price, trial, guarantee
 app_store_url: ""
 play_store_url: ""
 known_competitors: []  # names you already know; the tool marks these as "listed by you"
-health_product: false  # true = flag every promise for compliance review
+health_product: false  # true for health, supplements, medical (info only; claim rules go in your own rules)
 ingredients: []        # if it has them, e.g. ["Ashwagandha (600 mg)", "Magnesium glycinate"]; Ore finds study-backed claims for each
 unique_mechanism: ""   # optional: the unique mechanism the copy will use
 target_awareness: ""   # optional override; blank = the stage your market-awareness research picks

@@ -27,7 +27,7 @@ Frame times (seconds): {{frame_times}}
   "first_frame": "what's literally in frame 0: face/product/text/before shot/setting, plus any text overlay word for word",
   "time_to_product_s": "seconds until the product/app is first shown, or null if never",
   "on_screen_text": ["each distinct text overlay, word for word, in order"],
-  "format": "talking head | UGC selfie | b-roll + voiceover | screen recording | slideshow | static image | skit | mixed",
+  "format": "talking head | UGC selfie | b-roll + voiceover | screen recording | slideshow | static image | skit | mixed. If a person talks to the camera anywhere (including cut out over a green screen with b-roll behind them), use talking head or UGC selfie, not mixed or b-roll",
   "angle": "the core reason-to-care in one line",
   "structure": "problem/solution | before/after | story | list | demo | testimonial | comparison | other",
   "beats": ["ordered beats with timestamps, e.g. '0-3s: callout + phone in hand'"],
@@ -48,7 +48,6 @@ Frame times (seconds): {{frame_times}}
   "proof": "what makes it believable (on-screen demo, ratings, real receipts), or none",
   "load_bearing": [{"element": "the element", "what": "exactly what they do", "why": "why it works on this audience", "evidence": "why we think it's load-bearing: grade, time live, versions, reused across this advertiser's other ads"}],
   "transferable": ["elements that would work for {{brand_name}} as-is or adapted"],
-  "risky_claims": ["only for a health product: health or before-after claims an ad platform would reject; [] otherwise"],
-  "not_transferable": ["elements we can't use (claims, banned visuals, wrong audience) and why"]
+  "not_transferable": ["elements that don't fit {{brand_name}} (a different audience, a feature or offer we don't have) and why. Don't judge claims as risky or deceptive: the brand's own rules decide that, not the breakdown"]
 }
 ```

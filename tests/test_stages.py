@@ -258,7 +258,7 @@ def test_ingredient_claims_only_run_when_ingredients_are_listed(brand):
     prompt = storage.read_text(key)
     assert "- Magnesium glycinate\n- L-theanine" in prompt
     assert "the cortisol off-switch" in prompt and "can't switch off at night" in prompt
-    assert "flag every claim for compliance review" in prompt and "{{" not in prompt
+    assert "Only claim what the studies show." in prompt and "{{" not in prompt
 
     storage.write_text(key.replace(".prompt.md", ".answer.md"), "### Magnesium glycinate\n| 1 | claim | pain | RCT | n/a |")
     out = ingredients.run(storage, "pp", today=TODAY)

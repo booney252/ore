@@ -93,8 +93,14 @@ export function kind(ad: Ad): Kind | null {
   const format = String(ad.breakdown?.format ?? "").toLowerCase();
   if (ad.media_type === "image" || format.startsWith("static")) return "static";
   if (!format) return null;
-  if (/ugc|talking head|selfie|skit|creator|testimonial|interview|podcast/.test(format)) return "ugc";
-  return "broll";
+  if (/ugc|talking.head|selfie|skit|creator|testimonial|interview|podcast/.test(format)) return "ugc";
+  // "mixed" and other loose labels: UGC when someone talks to the camera (selfie, green screen...).
+  // Only an explicit b-roll, voiceover, slideshow, screen recording or animation stays B-roll.
+  if (/b-roll|broll|voiceover|slideshow|screen recording|animation|montage/.test(format)) return "broll";
+  const camera = String(ad.breakdown?.camera ?? "").toLowerCase();
+  const creator = String(ad.breakdown?.creator ?? "").toLowerCase().trim();
+  const onCamera = /talking.head|selfie|front.facing|to.camera|green.screen|webcam|propped phone/.test(camera);
+  return onCamera && !/^(none|no |n\/a|faceless)/.test(creator) ? "ugc" : "broll";
 }
 
 /** Tie-breaker inside a grade: views vs the account's usual for organic posts, days live for ads. */

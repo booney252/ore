@@ -41,15 +41,13 @@ def build_prompt(storage, slug: str, today: date) -> str | None:
               else f"(No research brief yet. What we know about the market:)\n"
                    f"- audience: {fields.get('audience', '')}\n- problem: {fields.get('problem', '')}\n"
                    f"{notes.strip()}")
-    health = fields.get("health_product")
     return llm.render(PROMPT.read_text(), {
         "brand_name": fields.get("name") or slug,
         "product": fields.get("product") or "this product",
         "ingredients": "\n".join(f"- {i}" for i in items),
         "market_overview": brainlib.with_brief(market, storage, slug),
         "unique_mechanism": str(fields.get("unique_mechanism") or "").strip() or "(none given)",
-        "compliance": ("This is a health product: flag every claim for compliance review."
-                       if health else "Only claim what the studies show."),
+        "compliance": "Only claim what the studies show.",
         "date": today.isoformat(),
     })
 

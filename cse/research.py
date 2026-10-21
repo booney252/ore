@@ -86,8 +86,6 @@ def values(storage, slug: str) -> dict:
         "ads_json": format_ads(_load(storage, slug, "ads.json", "ads")),
         "voc_json": voc.for_prompt(_load(storage, slug, "voc.json", "quotes")),
     })
-    if fields.get("health_product"):
-        out["product"] += " (a health product: flag every promise for compliance review)"
     return out
 
 

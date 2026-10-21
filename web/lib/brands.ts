@@ -38,12 +38,6 @@ export async function brandSegments(slug: string): Promise<Segment[]> {
   }));
 }
 
-/** brand.md `health_product: true`: the only brands whose ad breakdowns flag risky health claims. */
-export async function isHealthProduct(slug: string): Promise<boolean> {
-  const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";
-  return /^health_product:\s*"?true/m.test(md);
-}
-
 /** brand.md `campaign_type`: "organic" (affiliates or creators posting on their own pages) or "paid" (Meta ads). */
 export async function campaignType(slug: string): Promise<"organic" | "paid"> {
   const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";
