@@ -1763,16 +1763,6 @@ select {
 .st-key.craft { border-color: var(--diamond); background: rgba(207, 234, 255, 0.25); }
 .st-key.pending { border-color: var(--diamond); border-style: dashed; }
 .st-key.decide { border-color: var(--ruby); background: rgba(255, 46, 99, 0.25); }
-.st-branches { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; align-items: start; }
-.st-list h3 { margin: 0 0 12px; font-size: 1.05rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 10px; }
-.st-list h3 .small { white-space: nowrap; font-size: 0.66rem; letter-spacing: 0.14em; }
-.st-list ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
-.st-list li { display: grid; gap: 4px; padding: 8px 10px; margin: 0 -10px; border-radius: 10px; scroll-margin-top: 90px; transition: background 300ms var(--ease); }
-.st-list li p { margin: 0; line-height: 1.5; }
-.st-list li .st-key { margin: -2px 9px 0 0; }
-.st-list li .tag { margin-left: 8px; vertical-align: middle; }
-.st-list li small { padding-left: 19px; font-size: 0.75rem; }
-.st-list li:target, .suggestion-list li:target { background: rgba(207, 234, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(207, 234, 255, 0.25); }
 .suggestion-list li { scroll-margin-top: 90px; }
 @media (prefers-reduced-motion: reduce) { .st-node { transition: none; } }
 
@@ -1782,3 +1772,46 @@ select {
 .rail-foot > *, .rail-foot a, .rail-foot button { white-space: nowrap; }
 .rail-foot { gap: 10px; font-size: 0.82rem; }
 .rail-foot button { font-size: inherit; }
+
+.st-hit:focus-visible .st-node { stroke-width: 3; }
+.st-hit:hover .st-label { fill: var(--diamond); }
+.st-legend .st-edit { margin-left: auto; gap: 16px; }
+.st-hint { color: var(--muted); opacity: 0.8; }
+.skilltree-panel + .block { margin-top: 28px; }
+.suggestion-list li:target { background: rgba(207, 234, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(207, 234, 255, 0.25); }
+.feedback-history > summary { display: flex; align-items: baseline; gap: 10px; cursor: pointer; list-style: none; }
+.feedback-history > summary::-webkit-details-marker { display: none; }
+.feedback-history > summary h2 { margin: 0; }
+.feedback-history > summary::before { content: "▸"; color: var(--muted); transition: transform 160ms var(--ease); }
+.feedback-history[open] > summary::before { transform: rotate(90deg); }
+.feedback-history[open] > summary { margin-bottom: 14px; }
+
+/* Skill Tree popup: one branch's skills */
+.st-dialog {
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(78vh, 720px);
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 18px;
+  color: var(--text);
+  background: var(--panel-2);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8), 0 0 40px -18px var(--emerald-glow);
+}
+.st-dialog::backdrop { background: rgba(4, 5, 7, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.st-dialog[open] { animation: st-pop 200ms var(--ease); }
+@keyframes st-pop { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+.st-dialog-body { display: grid; gap: 14px; padding: 22px 24px 24px; }
+.st-dialog header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.st-dialog h2 { margin: 0 0 4px; font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; }
+.st-dialog header p { margin: 0; letter-spacing: 0.14em; font-size: 0.68rem; }
+.st-close { width: 32px; height: 32px; flex: none; border-radius: 50%; border: 1px solid var(--line-2); background: rgba(255, 255, 255, 0.04); color: var(--text-2); font-size: 1.2rem; line-height: 1; cursor: pointer; }
+.st-close:hover { color: var(--text); background: rgba(255, 255, 255, 0.08); }
+.st-dialog ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.st-dialog li { display: grid; gap: 4px; padding: 10px 12px; border-radius: 12px; border: 1px solid transparent; }
+.st-dialog li.on { background: rgba(207, 234, 255, 0.07); border-color: rgba(207, 234, 255, 0.22); }
+.st-dialog li p { margin: 0; line-height: 1.55; }
+.st-dialog li .st-key { margin: -2px 9px 0 0; }
+.st-dialog li small { padding-left: 19px; font-size: 0.75rem; }
+@media (prefers-reduced-motion: reduce) { .st-dialog[open] { animation: none; } }
+.st-legend .st-edit a { font-size: inherit; color: var(--text-2); }
+.st-legend .st-edit a:hover { color: var(--text); }

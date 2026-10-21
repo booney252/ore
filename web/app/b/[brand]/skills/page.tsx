@@ -3,7 +3,7 @@ import SkillTree from "@/app/SkillTree";
 import { brandName } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 import { craftSuggestions, listFeedback, readLessons } from "@/lib/lessons";
-import { BRANCHES, grow } from "@/lib/skilltree";
+import { grow } from "@/lib/skilltree";
 
 export const dynamic = "force-dynamic";
 
@@ -45,8 +45,8 @@ export default async function Skills({
         <p className="mono muted">{name}</p>
         <h1 className="display">Skill Tree</h1>
         <p className="lede">
-          What Ore has learned about writing, from feedback on its copy. Every report, iteration, brief and script
-          follows these. Give feedback on any brief or iteration, or paste it below, and the tree grows.
+          What Ore has learned about writing from your feedback. Everything it writes follows these skills. Teach it
+          more below and the tree grows.
         </p>
       </header>
 
@@ -64,7 +64,7 @@ export default async function Skills({
       )}
 
       <section className="panel skilltree-panel">
-        <SkillTree tree={tree} />
+        <SkillTree tree={tree} brandName={name} />
         <ul className="st-legend mono">
           <li>
             <span className="st-key brand" /> {name} only
@@ -78,7 +78,43 @@ export default async function Skills({
           <li>
             <span className="st-key decide" /> Needs your call
           </li>
+          <li className="st-edit">
+            <span className="st-hint">Click a skill to read it</span>
+            <a href="?edit=brand" className="link-quiet">
+              Edit {name}'s
+            </a>
+            <a href="?edit=craft" className="link-quiet">
+              Edit craft
+            </a>
+          </li>
         </ul>
+      </section>
+
+      <section className="block first-after-tree">
+        <h2>Teach Ore</h2>
+        <form action={giveFeedback} className="tab-form panel feedback-form">
+          <input type="hidden" name="brand" value={brand} />
+          <input type="hidden" name="back" value={`/b/${brand}/skills`} />
+          <label className="field">
+            <span className="sr-only">Who's it from</span>
+            <input name="who" placeholder="Who's it from? (you, the brand owner, a creator…)" maxLength={80} />
+          </label>
+          <label className="field">
+            <span className="sr-only">What it's about</span>
+            <input
+              name="about"
+              placeholder="What's it about? (e.g. the 3 creator briefs from last week)"
+              maxLength={200}
+            />
+          </label>
+          <label className="field">
+            <span className="sr-only">Feedback</span>
+            <textarea name="text" rows={5} required placeholder="Paste the feedback as it is." />
+          </label>
+          <button type="submit" className="btn-primary">
+            Send to Ore
+          </button>
+        </form>
       </section>
 
       {editing ? (
@@ -94,55 +130,7 @@ export default async function Skills({
             </button>
           </form>
         </section>
-      ) : (
-        <section className="block">
-          <div className="block-head">
-            <h2>Skills learned</h2>
-            <span className="doc-links">
-              <a href="?edit=brand" className="link-quiet">
-                Edit {name}'s
-              </a>
-              <a href="?edit=craft" className="link-quiet">
-                Edit craft
-              </a>
-            </span>
-          </div>
-          <div className="st-branches">
-            {BRANCHES.map((b) => {
-              const learned = (tree.get(b.key) ?? []).filter((l) => l.kind !== "pending");
-              if (!learned.length) return null;
-              return (
-                <section key={b.key} className="panel st-list">
-                  <h3>
-                    {b.label}{" "}
-                    <span className="mono muted small">
-                      LV {learned.length} · {b.note}
-                    </span>
-                  </h3>
-                  <ol>
-                    {learned.map((l) => (
-                      <li key={l.id} id={l.id} className={l.kind}>
-                        <p>
-                          <span className={`st-key ${l.kind}${l.decide ? " decide" : ""}`} aria-hidden="true" />
-                          {l.text.replace(/\s*\((?:decide)\)/i, "")}
-                          {l.decide ? <span className="tag ruby">Needs your call</span> : null}
-                        </p>
-                        <small className="muted">
-                          {l.kind === "craft" ? "Craft, every brand" : `${name} only`}
-                          {l.source ? ` · ${l.source}` : ""}
-                        </small>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-              );
-            })}
-          </div>
-          {!lessons.brand && !lessons.craft ? (
-            <p className="empty">Nothing learned yet. Give Ore some feedback below.</p>
-          ) : null}
-        </section>
-      )}
+      ) : null}
 
       {pending.length ? (
         <section className="block">
@@ -181,35 +169,11 @@ export default async function Skills({
         </section>
       ) : null}
 
-      <section className="block">
-        <h2>Add feedback</h2>
-        <form action={giveFeedback} className="tab-form panel feedback-form">
-          <input type="hidden" name="brand" value={brand} />
-          <input type="hidden" name="back" value={`/b/${brand}/skills`} />
-          <label className="field">
-            <span className="sr-only">Who's it from</span>
-            <input name="who" placeholder="Who's it from? (you, the brand owner, a creator…)" maxLength={80} />
-          </label>
-          <label className="field">
-            <span className="sr-only">What it's about</span>
-            <input
-              name="about"
-              placeholder="What's it about? (e.g. the 3 creator briefs from last week)"
-              maxLength={200}
-            />
-          </label>
-          <label className="field">
-            <span className="sr-only">Feedback</span>
-            <textarea name="text" rows={8} required placeholder="Paste the feedback as it is." />
-          </label>
-          <button type="submit" className="btn-primary">
-            Send to Ore
-          </button>
-        </form>
-      </section>
-
-      <section className="block">
-        <h2>Feedback so far</h2>
+      <details className="block feedback-history">
+        <summary>
+          <h2>Feedback so far</h2>
+          <span className="muted small">{items.length}</span>
+        </summary>
         {items.length ? (
           <ul className="feedback-list">
             {items.map((f) => (
@@ -229,7 +193,7 @@ export default async function Skills({
         ) : (
           <p className="empty">No feedback yet.</p>
         )}
-      </section>
+      </details>
     </main>
   );
 }
