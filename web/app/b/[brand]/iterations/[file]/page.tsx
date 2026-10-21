@@ -33,7 +33,7 @@ export default async function IterationDoc({
           <Link href={`/b/${brand}/iterations`}>Iterations</Link> / {file}
         </p>
         <Markdown text={md} />
-      <FeedbackBox brand={brand} doc={`iterations/${file}`} about={`iteration ${file}`} back={`/b/${brand}/skills`} />
+        <FeedbackBox brand={brand} doc={`iterations/${file}`} about={`iteration ${file}`} />
       </div>
       <aside className="side">
         <p className="mono muted">Step 3</p>
@@ -45,8 +45,7 @@ export default async function IterationDoc({
             <input type="hidden" name="brand" value={brand} />
             <input type="hidden" name="iterations" value={file} />
             <p className="muted side-note">
-              Pick the iterations to turn into full creative brief docs for a creator, editor or
-              designer.
+              Pick the iterations to turn into full creative brief docs for a creator, editor or designer.
             </p>
             {pick && <p className="error">Pick at least one iteration.</p>}
             <div className="checks">

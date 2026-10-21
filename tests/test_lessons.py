@@ -7,9 +7,13 @@ ANSWER = """## Brand lessons
 
 - Every reason to track ties back to half-life: exact day and amount matter. [Michael, 2026-10-20]
 
-## Suggested craft lessons
+## Suggested playbook rules
 
 - Every list item gets its own "why it matters" line. [Michael, 2026-10-20]
+
+## Reply
+
+Got it. From now on every item gets its why.
 """
 
 
@@ -42,4 +46,10 @@ def test_feedback_becomes_brand_and_craft_lessons(tmp_path, monkeypatch):
     assert "why it matters" in s.read_text("workspace/copy-lessons.md")
     block = lessons.for_prompt(s, "pp")
     assert "### For this brand" in block and "### Craft (any brand)" in block
-    assert json.loads(s.read_text(f"brands/pp/feedback/{item['id']}.json"))["learned"]
+    saved = json.loads(s.read_text(f"brands/pp/feedback/{item['id']}.json"))
+    assert saved["learned"] and saved["reply"] == "Got it. From now on every item gets its why."
+
+
+def test_old_answer_shape_still_splits():
+    brand, craft = lessons.split_lists("## Brand lessons\n\n- a\n\n## Suggested craft lessons\n\n- b\n")
+    assert (brand, craft) == ("- a", "- b") and lessons.reply("## Brand lessons\n- a") == ""

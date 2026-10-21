@@ -1,13 +1,14 @@
 """Copy lessons: feedback on Ore's copy, turned into rules every writing prompt follows.
 
-Feedback (pasted on a brief, an iteration, a Studio script, or on the brand's Copy lessons page)
+Feedback (given on a brief or an iteration, or pasted on the Research page's "What Ore learned" tab)
 is saved as brands/<brand>/feedback/<id>.json. `learn` runs prompts/14-copy-lessons.md, which
 folds it into two lists:
   - brand lessons, brands/<brand>/copy-lessons.md: this brand only (the owner's taste, the
     product's real "why", words to use or avoid);
-  - craft lessons, workspace/copy-lessons.md: good copy for any brand. The model only
-    suggests these (brands/<brand>/craft-suggestions.json); a person approves each one before it
-    joins the shared list, so one brand's taste doesn't leak into every brand.
+  - the playbook, workspace/copy-lessons.md: good copy for any brand. The model only suggests
+    these (brands/<brand>/craft-suggestions.json); Ore's owner approves each one on the Playbook
+    page before it joins, so one brand's taste doesn't leak into every brand.
+It also writes a short reply to the person ("Got it. From now on I'll..."), saved on the feedback.
 `for_prompt` puts the brand's lessons and the approved craft lessons in front of the writer in
 every report, iteration, brief and Studio prompt.
 """
@@ -102,8 +103,7 @@ def for_prompt(storage, slug: str) -> str:
     if not brand and not craft:
         return ""
     parts = ["## Copy lessons (learned from feedback on earlier copy; follow them)",
-             "These come from real feedback on what Ore wrote before. Treat them as rules. "
-             "A rule marked (decide) is a recommendation a person hasn't confirmed yet."]
+             "These come from real feedback on what Ore wrote before. Treat them as rules."]
     if brand:
         parts.append(f"### For this brand\n\n{brand}")
     if craft:
@@ -122,11 +122,21 @@ def add_feedback(storage, slug: str, text: str, about: str = "", who: str = "", 
     return item
 
 
+CRAFT_HEAD = r"##\s*(?:Suggested\s+)?(?:craft lessons|playbook rules)"
+
+
 def split_lists(answer: str) -> tuple[str, str]:
-    """The model's answer -> (brand lessons, craft lessons), each a bullet list."""
-    m = re.search(r"##\s*Brand lessons\s*\n(.*?)(?=\n##\s*(?:Suggested )?craft lessons|\Z)", answer, re.S | re.I)
-    c = re.search(r"##\s*(?:Suggested )?craft lessons\s*\n(.*)", answer, re.S | re.I)
+    """The model's answer -> (brand lessons, suggested playbook rules), each a bullet list."""
+    m = re.search(rf"##\s*Brand lessons\s*\n(.*?)(?=\n{CRAFT_HEAD}|\n##\s*Reply|\Z)", answer, re.S | re.I)
+    c = re.search(rf"{CRAFT_HEAD}\s*\n(.*?)(?=\n##\s*Reply|\Z)", answer, re.S | re.I)
     return (m.group(1).strip() if m else ""), (c.group(1).strip() if c else "")
+
+
+def reply(answer: str) -> str:
+    """Ore's short reply to the person who gave the feedback ("" if the answer has none)."""
+    r = re.search(r"##\s*Reply\s*\n(.*)", answer, re.S | re.I)
+    text = r.group(1).strip() if r else ""
+    return "" if text in ("", "...") else text
 
 
 def _doc_text(storage, slug: str, doc: str) -> str:
@@ -178,6 +188,7 @@ def learn(storage, slug: str, fid: str, client=None) -> str | None:
         storage.write_text(brand_key(slug), brand + "\n")
     if craft:  # waits for a person to approve before it applies to every brand
         suggest_craft(storage, slug, bullets(craft), fid)
+    item["reply"] = reply(answer)
     item["learned"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     storage.write_text(feedback_key(slug, fid), json.dumps(item, indent=2) + "\n")
     log.info("lessons: %s folded into %s lessons (+ craft suggestions to approve)", fid, slug)

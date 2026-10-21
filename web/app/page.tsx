@@ -2,6 +2,7 @@ import Link from "next/link";
 import { newBrand } from "./actions";
 import { loadAds, stats } from "@/lib/ads";
 import { listBrands } from "@/lib/brands";
+import { playbookInbox } from "@/lib/lessons";
 import LogOut from "./LogOut";
 import Wordmark from "./Wordmark";
 
@@ -14,13 +15,19 @@ export default async function Home({
 }) {
   const { taken, missing, cancelled } = await searchParams;
   const brands = await listBrands();
-  const rows = await Promise.all(brands.map(async (b) => ({ ...b, s: stats(await loadAds(b.slug)) })));
+  const [rows, inbox] = await Promise.all([
+    Promise.all(brands.map(async (b) => ({ ...b, s: stats(await loadAds(b.slug)) }))),
+    playbookInbox(),
+  ]);
 
   return (
     <div className="home-wrap">
       <header className="home-top">
         <Wordmark />
         <nav className="studio-nav">
+          <Link href="/playbook" className="link-quiet playbook-link">
+            Ore's playbook{inbox.length ? <span className="count">{inbox.length}</span> : null}
+          </Link>
           <Link href="/studio" className="studio-badge mono">
             Creator Studio →
           </Link>
@@ -39,8 +46,7 @@ export default async function Home({
         <section className="home-tag">
           <h1 className="display">Never stare at a blank page again.</h1>
           <p className="lede">
-            Your market, your customers and everything that's winning, in one place. The next idea is
-            always waiting.
+            Your market, your customers and everything that's winning, in one place. The next idea is always waiting.
           </p>
         </section>
 
@@ -48,8 +54,8 @@ export default async function Home({
           <p className="mono muted">New brand</p>
           <h2 className="display home-new">What are we mining?</h2>
           <p className="lede">
-            Tell Ore what you sell. It researches the market, maps your competitors in three rings,
-            pulls their ads, and finds what's winning.
+            Tell Ore what you sell. It researches the market, maps your competitors in three rings, pulls their ads, and
+            finds what's winning.
           </p>
         </section>
 
@@ -82,7 +88,9 @@ export default async function Home({
               name="ingredients"
               maxLength={3000}
               rows={3}
-              placeholder={"One per line, with the dose if you know it.\nAshwagandha root extract (600 mg)\nMagnesium glycinate"}
+              placeholder={
+                "One per line, with the dose if you know it.\nAshwagandha root extract (600 mg)\nMagnesium glycinate"
+              }
             />
           </label>
           <label className="field wide">
@@ -96,8 +104,7 @@ export default async function Home({
           </label>
           {taken && (
             <p className="error wide">
-              A brand called “{taken}” already exists. <Link href={`/b/${taken}`}>Open it</Link> or pick
-              another name.
+              A brand called “{taken}” already exists. <Link href={`/b/${taken}`}>Open it</Link> or pick another name.
             </p>
           )}
           {missing && <p className="error wide">Add a name and a line about what you sell.</p>}
@@ -120,7 +127,9 @@ export default async function Home({
                     <span className="mono muted">
                       {b.s.total ? `${b.s.total} ads · ${b.s.advertisers} advertisers` : "Setting up"}
                     </span>
-                    <span aria-hidden="true" className="arrow">→</span>
+                    <span aria-hidden="true" className="arrow">
+                      →
+                    </span>
                   </Link>
                 </li>
               ))}

@@ -18,7 +18,7 @@ import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competi
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { addBrainItem, fileText, MAX_FILE_BYTES, removeBrainItem } from "@/lib/brain";
 import { cancelJob, createJob } from "@/lib/jobs";
-import { addFeedback, changeSkill, decideCraft, editSuggestion } from "@/lib/lessons";
+import { addFeedback, changeRule, decideCraft, editSuggestion } from "@/lib/lessons";
 import { createSession, readSession, saveMe, studioBrand, updateSession } from "@/lib/studio";
 import { requireBrand, requireOwner } from "@/lib/session";
 
@@ -319,14 +319,16 @@ export async function removeFromBrain(form: FormData) {
 }
 
 
-/** Feedback on Ore's copy (from a doc page or the Skill Tree page): saved, then Ore learns from it. */
+/** Feedback on Ore's copy (from a doc page or the Research page's "What Ore learned" tab): saved, then Ore learns from it. */
 export async function giveFeedback(form: FormData) {
   const brand = String(form.get("brand") ?? "");
   await requireBrand(brand);
   const text = String(form.get("text") ?? "").trim().slice(0, 20000);
-  const back = String(form.get("back") ?? `/b/${brand}/skills`);
-  const safeBack = back.startsWith(`/b/${brand}/`) ? back : `/b/${brand}/skills`;
-  if (!text) redirect(`${safeBack}?feedback=empty`);
+  const learned = `/b/${brand}/research?step=learned`;
+  const back = String(form.get("back") ?? learned);
+  const safeBack = back.startsWith(`/b/${brand}/`) ? back : learned;
+  const join = safeBack.includes("?") ? "&" : "?";
+  if (!text) redirect(`${safeBack}${join}feedback=empty`);
   const doc = String(form.get("doc") ?? "");
   const id = await addFeedback(brand, {
     text,
@@ -335,45 +337,50 @@ export async function giveFeedback(form: FormData) {
     doc: /^(briefs|iterations|reports|studio)\/[A-Za-z0-9._-]+$/.test(doc) ? doc : "",
   });
   await createJob({ type: "lessons", brand, feedback: id });
-  revalidatePath(`/b/${brand}/skills`);
-  redirect(`${safeBack}?feedback=sent`);
+  revalidatePath(`/b/${brand}/research`);
+  redirect(`${safeBack}${join}feedback=sent#feedback`);
+}
+
+/** "What Ore learned" tab: edit or remove one of the rules Ore follows for this brand. */
+export async function brandRuleAction(form: FormData) {
+  const brand = String(form.get("brand") ?? "");
+  await requireBrand(brand);
+  const back = `/b/${brand}/research?step=learned`;
+  const op = String(form.get("op") ?? "");
+  const text = String(form.get("text") ?? "").trim().slice(0, 4000);
+  const source = String(form.get("source") ?? "");
+  const next = op === "delete" ? null : text ? `${text}${source ? ` [${source}]` : ""}` : undefined;
+  if (next === undefined) redirect(back);
+  const ok = await changeRule(brand, "brand", Number(form.get("index")), String(form.get("raw") ?? ""), next);
+  revalidatePath(`/b/${brand}/research`);
+  redirect(`${back}&rule=${ok ? op : "stale"}`);
 }
 
 /**
- * Skill Tree popup: change one skill. op = save | delete | confirm (drop the "(decide)" mark) for a
- * learned skill, or approve | dismiss | save for one Ore suggested. Craft skills are shared by every
- * brand, so changing them (or approving one) needs the owner.
+ * Playbook page (owner only): Ore's rules for every brand. op = edit | delete | new for a playbook
+ * rule; add | reword | skip for a rule a brand's feedback suggested.
  */
-export async function changeSkillAction(form: FormData) {
-  const brand = String(form.get("brand") ?? "");
-  await requireBrand(brand);
-  const kind = String(form.get("kind") ?? "");
+export async function playbookAction(form: FormData) {
+  await requireOwner();
   const op = String(form.get("op") ?? "");
   const text = String(form.get("text") ?? "").trim().slice(0, 4000);
-  const back = `/b/${brand}/skills`;
-  if (kind === "pending") {
-    await requireOwner();
+  const back = "/playbook";
+  let done = op;
+  if (op === "add" || op === "reword" || op === "skip") {
+    const brand = String(form.get("brand") ?? "");
     const id = String(form.get("id") ?? "");
+    checkSlug(brand);
     if (!/^[a-f0-9]{8}$/.test(id)) redirect(back);
-    if (op === "approve") await decideCraft(brand, [id], []);
-    else if (op === "dismiss") await decideCraft(brand, [], [id]);
-    else if (op === "save" && text) await editSuggestion(brand, id, text);
-  } else if (kind === "brand" || kind === "craft") {
-    if (kind === "craft") await requireOwner();
-    const index = Number(form.get("index"));
-    const raw = String(form.get("raw") ?? "");
+    if (op === "reword" && text) await editSuggestion(brand, id, text);
+    if (op === "skip") await decideCraft(brand, [], [id]);
+    else await decideCraft(brand, [id], []);
+  } else {
     const source = String(form.get("source") ?? "");
-    const decide = form.get("decide") === "1" && op !== "confirm";
-    const body = op === "confirm" ? String(form.get("rule") ?? "") : text;
-    const next =
-      op === "delete" ? null : `${body}${decide ? " (decide)" : ""}${source ? ` [${source}]` : ""}`;
-    if (!Number.isInteger(index) || index < 0 || (next !== null && !body)) redirect(back);
-    const ok = await changeSkill(brand, kind, index, raw, next);
-    if (!ok) {
-      revalidatePath(back);
-      redirect(`${back}?skill=stale`);
-    }
+    const next = op === "delete" ? null : text ? `${text}${source ? ` [${source}]` : ""}` : undefined;
+    if (next === undefined) redirect(back);
+    const index = Number(form.get("index"));
+    if (!(await changeRule("", "craft", index, String(form.get("raw") ?? ""), next))) done = "stale";
   }
   revalidatePath(back);
-  redirect(`${back}?skill=${op}`);
+  redirect(`${back}?done=${done}`);
 }

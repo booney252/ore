@@ -1,11 +1,11 @@
-import { checkSlug } from "./brands";
-import { bullets } from "./skilltree";
+import { checkSlug, listBrands } from "./brands";
 import { listKeys, readText, writeText } from "./storage";
 
 /**
  * Copy feedback and what Ore learned from it (cse/lessons.py reads and writes the same files):
- * brands/<brand>/feedback/<id>.json, brands/<brand>/copy-lessons.md (this brand) and
- * workspace/copy-lessons.md (craft, every brand).
+ * brands/<brand>/feedback/<id>.json, brands/<brand>/copy-lessons.md (the rules Ore follows for this
+ * brand) and workspace/copy-lessons.md (Ore's playbook, every brand). Rules Ore thinks belong in the
+ * playbook wait in brands/<brand>/craft-suggestions.json until the owner reviews them.
  */
 
 export type Feedback = {
@@ -16,7 +16,28 @@ export type Feedback = {
   doc: string;
   text: string;
   learned: string | null;
+  reply?: string;
 };
+
+/** One rule: a bullet in a lessons file, split from its "[source]" tag. */
+export type Rule = { index: number; raw: string; text: string; source: string };
+
+/** A markdown bullet list -> one string per bullet (continuation lines kept), like cse/lessons.py bullets. */
+export function bullets(md: string): string[] {
+  const out: string[] = [];
+  for (const line of md.split("\n")) {
+    if (/^\s*[-*]\s+/.test(line)) out.push(line.replace(/^\s*[-*]\s+/, "").trim());
+    else if (line.trim() && out.length) out[out.length - 1] += " " + line.trim();
+  }
+  return out.filter((b) => b && b !== "...");
+}
+
+export function rules(md: string): Rule[] {
+  return bullets(md).map((raw, index) => {
+    const m = raw.match(/^(.*?)\s*\[([^\]]+)\]\s*$/s);
+    return { index, raw, text: (m ? m[1] : raw).trim(), source: m ? m[2].trim() : "" };
+  });
+}
 
 export const CRAFT_KEY = "workspace/copy-lessons.md";
 const brandKey = (slug: string) => `brands/${checkSlug(slug)}/copy-lessons.md`;
@@ -27,11 +48,11 @@ export async function readLessons(slug: string): Promise<{ brand: string; craft:
 }
 
 /**
- * Change one skill (one bullet) in the brand's or the shared craft lessons: replace it with `next`,
+ * Change one rule (one bullet) in the brand's rules or the shared playbook: replace it with `next`,
  * or remove it when `next` is null. `expected` must still match, so a stale page can't clobber a
  * rule that changed underneath it. Returns false when it didn't.
  */
-export async function changeSkill(
+export async function changeRule(
   slug: string,
   which: "brand" | "craft",
   index: number,
@@ -40,10 +61,12 @@ export async function changeSkill(
 ): Promise<boolean> {
   const key = which === "brand" ? brandKey(slug) : CRAFT_KEY;
   const list = bullets((await readText(key)) ?? "");
-  if (list[index] !== expected) return false;
-  if (next === null) list.splice(index, 1);
-  else list[index] = next.replace(/\s*\n\s*/g, " ").trim();
-  await writeText(key, list.map((b) => `- ${b}`).join("\n") + (list.length ? "\n" : ""), "text/markdown");
+  if (index === list.length && expected === "" && next) list.push(next); // a new rule
+  else if (list[index] !== expected) return false;
+  else if (next === null) list.splice(index, 1);
+  else list[index] = next;
+  const clean = list.map((b) => b.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean);
+  await writeText(key, clean.map((b) => `- ${b}`).join("\n") + (clean.length ? "\n" : ""), "text/markdown");
   return true;
 }
 
@@ -97,4 +120,17 @@ export async function decideCraft(slug: string, approve: string[], dismiss: stri
     await writeText(CRAFT_KEY, [craft, ...added.map((t) => `- ${t}`)].filter(Boolean).join("\n") + "\n", "text/markdown");
   }
   return added.length;
+}
+
+/** Every brand's suggestions still waiting for the owner, newest brand activity first. */
+export async function playbookInbox(): Promise<(CraftSuggestion & { brand: string; brandName: string })[]> {
+  const brands = await listBrands();
+  const all = await Promise.all(
+    brands.map(async (b) =>
+      (await craftSuggestions(b.slug))
+        .filter((s) => s.status === "pending")
+        .map((s) => ({ ...s, brand: b.slug, brandName: b.name })),
+    ),
+  );
+  return all.flat();
 }
