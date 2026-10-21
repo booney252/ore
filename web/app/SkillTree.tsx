@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { changeSkillAction } from "@/app/actions";
 import { BRANCHES, type Lesson } from "@/lib/skilltree";
 
 const W = 960;
@@ -23,7 +24,17 @@ const KIND = { brand: "This brand only", craft: "Craft, every brand", pending: "
  * The skill tree picture: Ore at the root, one branch per kind of lesson, one node per lesson.
  * Click a node (or a branch name) to read that branch's skills in a popup.
  */
-export default function SkillTree({ tree, brandName }: { tree: Map<string, Lesson[]>; brandName: string }) {
+export default function SkillTree({
+  tree,
+  brand,
+  brandName,
+  owner,
+}: {
+  tree: Map<string, Lesson[]>;
+  brand: string;
+  brandName: string;
+  owner: boolean;
+}) {
   const learned = [...tree.values()].flat().filter((l) => l.kind !== "pending").length;
   const col = W / BRANCHES.length;
   const slotsOf = (n: number) => Math.min(MAX, Math.max(MIN_SLOTS, n));
@@ -35,6 +46,7 @@ export default function SkillTree({ tree, brandName }: { tree: Map<string, Lesso
   const wrap = useRef<HTMLDivElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState<{ branch: string; id?: string } | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
   useEffect(() => {
     // on a narrow screen the tree scrolls sideways: start at the trunk, not the first branch
     const el = wrap.current;
@@ -137,7 +149,10 @@ export default function SkillTree({ tree, brandName }: { tree: Map<string, Lesso
       <dialog
         ref={dialog}
         className="st-dialog"
-        onClose={() => setOpen(null)}
+        onClose={() => {
+          setOpen(null);
+          setEditing(null);
+        }}
         onClick={(e) => e.target === e.currentTarget && dialog.current?.close()}
       >
         {branch && (
@@ -155,23 +170,133 @@ export default function SkillTree({ tree, brandName }: { tree: Map<string, Lesso
             </header>
             <ol>
               {items.map((l) => (
-                <li key={l.id} id={`skill-${l.id}`} className={l.id === open?.id ? "on" : undefined}>
-                  <p>
-                    <span className={`st-key ${l.kind}${l.decide ? " decide" : ""}`} aria-hidden="true" />
-                    {l.text.replace(/\s*\(decide\)/i, "")}
-                  </p>
-                  <small className="muted">
-                    {l.kind === "brand" ? `${brandName} only` : KIND[l.kind]}
-                    {l.decide ? " · needs your call" : ""}
-                    {l.kind === "pending" ? " · approve it under Ready to unlock" : ""}
-                    {l.source ? ` · ${l.source}` : ""}
-                  </small>
-                </li>
+                <Skill
+                  key={l.id}
+                  l={l}
+                  on={l.id === open?.id}
+                  brand={brand}
+                  brandName={brandName}
+                  canChange={owner || l.kind === "brand"}
+                  editing={editing === l.id}
+                  setEditing={(v) => setEditing(v ? l.id : null)}
+                />
               ))}
             </ol>
           </div>
         )}
       </dialog>
     </>
+  );
+}
+
+/** One skill in the popup, with what you can do to it. */
+function Skill({
+  l,
+  on,
+  brand,
+  brandName,
+  canChange,
+  editing,
+  setEditing,
+}: {
+  l: Lesson;
+  on: boolean;
+  brand: string;
+  brandName: string;
+  canChange: boolean;
+  editing: boolean;
+  setEditing: (v: boolean) => void;
+}) {
+  const rule = l.text.replace(/\s*\(decide\)/i, "");
+  const fields = (
+    <>
+      <input type="hidden" name="brand" value={brand} />
+      <input type="hidden" name="kind" value={l.kind} />
+      <input type="hidden" name="index" value={l.index} />
+      <input type="hidden" name="raw" value={l.raw} />
+      <input type="hidden" name="source" value={l.source} />
+      <input type="hidden" name="decide" value={l.decide ? "1" : ""} />
+      <input type="hidden" name="rule" value={rule} />
+      <input type="hidden" name="id" value={l.id.replace(/^s-/, "")} />
+    </>
+  );
+  const sure = (msg: string) => (e: React.FormEvent) => {
+    if (!window.confirm(msg)) e.preventDefault();
+  };
+  return (
+    <li id={`skill-${l.id}`} className={on ? "on" : undefined}>
+      {editing ? (
+        <form action={changeSkillAction} className="st-edit-form">
+          {fields}
+          <input type="hidden" name="op" value="save" />
+          <textarea name="text" rows={5} defaultValue={rule} required autoFocus />
+          <div className="st-actions">
+            <button type="submit" className="btn-primary">
+              Save
+            </button>
+            <button type="button" className="st-btn" onClick={() => setEditing(false)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <p>
+          <span className={`st-key ${l.kind}${l.decide ? " decide" : ""}`} aria-hidden="true" />
+          {rule}
+        </p>
+      )}
+      <small className="muted">
+        {l.kind === "brand" ? `${brandName} only` : KIND[l.kind]}
+        {l.decide ? " · needs your call" : ""}
+        {l.source ? ` · ${l.source}` : ""}
+      </small>
+      {canChange && !editing && (
+        <div className="st-actions">
+          {l.kind === "pending" && (
+            <form action={changeSkillAction}>
+              {fields}
+              <input type="hidden" name="op" value="approve" />
+              <button type="submit" className="st-btn go">
+                Approve for every brand
+              </button>
+            </form>
+          )}
+          {l.decide && (
+            <form action={changeSkillAction}>
+              {fields}
+              <input type="hidden" name="op" value="confirm" />
+              <button type="submit" className="st-btn go">
+                Confirm
+              </button>
+            </form>
+          )}
+          <button type="button" className="st-btn" onClick={() => setEditing(true)}>
+            Edit
+          </button>
+          {l.kind === "pending" ? (
+            <form action={changeSkillAction}>
+              {fields}
+              <input type="hidden" name="op" value="dismiss" />
+              <button type="submit" className="st-btn">
+                Dismiss
+              </button>
+            </form>
+          ) : (
+            <form
+              action={changeSkillAction}
+              onSubmit={sure(
+                l.kind === "craft" ? "Delete this skill for every brand?" : `Delete this skill from ${brandName}?`,
+              )}
+            >
+              {fields}
+              <input type="hidden" name="op" value="delete" />
+              <button type="submit" className="st-btn danger">
+                Delete
+              </button>
+            </form>
+          )}
+        </div>
+      )}
+    </li>
   );
 }

@@ -34,6 +34,8 @@ export type Lesson = {
   kind: "brand" | "craft" | "pending";
   decide: boolean;
   branch: string;
+  raw: string; // the bullet as stored (for edits)
+  index: number; // its place in the stored list
 };
 
 /** A markdown bullet list -> one string per bullet (continuation lines kept), like cse/lessons.py bullets. */
@@ -60,16 +62,16 @@ function split(text: string): { text: string; source: string } {
   return m ? { text: m[1].trim(), source: m[2].trim() } : { text, source: "" };
 }
 
-export function lesson(raw: string, kind: Lesson["kind"], id: string): Lesson {
+export function lesson(raw: string, kind: Lesson["kind"], id: string, index = 0): Lesson {
   const { text, source } = split(raw);
-  return { id, text, source, kind, decide: /\(decide\)/i.test(text), branch: branchOf(text) };
+  return { id, text, source, kind, decide: /\(decide\)/i.test(text), branch: branchOf(text), raw, index };
 }
 
 export function grow(brand: string, craft: string, pending: { id: string; text: string }[]): Map<string, Lesson[]> {
   const all = [
-    ...bullets(brand).map((t, i) => lesson(t, "brand", `b${i + 1}`)),
-    ...bullets(craft).map((t, i) => lesson(t, "craft", `c${i + 1}`)),
-    ...pending.map((s) => lesson(s.text, "pending", `s-${s.id}`)),
+    ...bullets(brand).map((t, i) => lesson(t, "brand", `b${i + 1}`, i)),
+    ...bullets(craft).map((t, i) => lesson(t, "craft", `c${i + 1}`, i)),
+    ...pending.map((s, i) => lesson(s.text, "pending", `s-${s.id}`, i)),
   ];
   const tree = new Map(BRANCHES.map((b) => [b.key, [] as Lesson[]]));
   for (const l of all) tree.get(l.branch)!.push(l);

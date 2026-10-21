@@ -1,4 +1,5 @@
 import { checkSlug } from "./brands";
+import { bullets } from "./skilltree";
 import { listKeys, readText, writeText } from "./storage";
 
 /**
@@ -25,8 +26,25 @@ export async function readLessons(slug: string): Promise<{ brand: string; craft:
   return { brand: (brand ?? "").trim(), craft: (craft ?? "").trim() };
 }
 
-export async function saveLessons(slug: string, which: "brand" | "craft", text: string): Promise<void> {
-  await writeText(which === "brand" ? brandKey(slug) : CRAFT_KEY, text.trim() + "\n", "text/markdown");
+/**
+ * Change one skill (one bullet) in the brand's or the shared craft lessons: replace it with `next`,
+ * or remove it when `next` is null. `expected` must still match, so a stale page can't clobber a
+ * rule that changed underneath it. Returns false when it didn't.
+ */
+export async function changeSkill(
+  slug: string,
+  which: "brand" | "craft",
+  index: number,
+  expected: string,
+  next: string | null,
+): Promise<boolean> {
+  const key = which === "brand" ? brandKey(slug) : CRAFT_KEY;
+  const list = bullets((await readText(key)) ?? "");
+  if (list[index] !== expected) return false;
+  if (next === null) list.splice(index, 1);
+  else list[index] = next.replace(/\s*\n\s*/g, " ").trim();
+  await writeText(key, list.map((b) => `- ${b}`).join("\n") + (list.length ? "\n" : ""), "text/markdown");
+  return true;
 }
 
 export async function listFeedback(slug: string): Promise<Feedback[]> {
@@ -51,6 +69,16 @@ export type CraftSuggestion = { id: string; text: string; feedback: string; stat
 export async function craftSuggestions(slug: string): Promise<CraftSuggestion[]> {
   const raw = await readText(`brands/${checkSlug(slug)}/craft-suggestions.json`);
   return raw ? (JSON.parse(raw).suggestions as CraftSuggestion[]) : [];
+}
+
+/** Reword a suggested craft lesson before deciding on it. */
+export async function editSuggestion(slug: string, id: string, text: string): Promise<void> {
+  const key = `brands/${checkSlug(slug)}/craft-suggestions.json`;
+  const items = await craftSuggestions(slug);
+  const s = items.find((x) => x.id === id && x.status === "pending");
+  if (!s) return;
+  s.text = text.replace(/\s*\n\s*/g, " ").trim();
+  await writeText(key, JSON.stringify({ suggestions: items }, null, 2) + "\n");
 }
 
 /** Approved suggestions join the shared craft lessons (same as cse/lessons.py decide_craft). */

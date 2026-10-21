@@ -1815,3 +1815,25 @@ select {
 @media (prefers-reduced-motion: reduce) { .st-dialog[open] { animation: none; } }
 .st-legend .st-edit a { font-size: inherit; color: var(--text-2); }
 .st-legend .st-edit a:hover { color: var(--text); }
+.st-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-left: 19px; margin-top: 4px; }
+.st-actions form { display: contents; }
+.st-btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease);
+}
+.st-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.08); }
+.st-btn:active { transform: scale(0.97); }
+.st-btn.go { color: var(--emerald); border-color: rgba(25, 209, 139, 0.4); background: rgba(25, 209, 139, 0.08); }
+.st-btn.go:hover { background: rgba(25, 209, 139, 0.16); }
+.st-btn.danger:hover { color: #ff8eaa; border-color: rgba(255, 46, 99, 0.45); background: rgba(255, 46, 99, 0.1); }
+.st-edit-form { display: grid; gap: 8px; }
+.st-edit-form textarea { width: 100%; font: inherit; line-height: 1.5; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line-2); background: rgba(0, 0, 0, 0.35); color: var(--text); }
+.st-edit-form .st-actions { padding-left: 0; }
+.st-dialog li .st-actions { opacity: 0.85; }
+.st-dialog li:hover .st-actions, .st-dialog li.on .st-actions { opacity: 1; }

@@ -18,7 +18,7 @@ import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competi
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { addBrainItem, fileText, MAX_FILE_BYTES, removeBrainItem } from "@/lib/brain";
 import { cancelJob, createJob } from "@/lib/jobs";
-import { addFeedback, decideCraft, saveLessons } from "@/lib/lessons";
+import { addFeedback, changeSkill, decideCraft, editSuggestion } from "@/lib/lessons";
 import { createSession, readSession, saveMe, studioBrand, updateSession } from "@/lib/studio";
 import { requireBrand, requireOwner } from "@/lib/session";
 
@@ -339,30 +339,41 @@ export async function giveFeedback(form: FormData) {
   redirect(`${safeBack}?feedback=sent`);
 }
 
-export async function editLessons(form: FormData) {
+/**
+ * Skill Tree popup: change one skill. op = save | delete | confirm (drop the "(decide)" mark) for a
+ * learned skill, or approve | dismiss | save for one Ore suggested. Craft skills are shared by every
+ * brand, so changing them (or approving one) needs the owner.
+ */
+export async function changeSkillAction(form: FormData) {
   const brand = String(form.get("brand") ?? "");
   await requireBrand(brand);
-  const which = form.get("which") === "craft" ? "craft" : "brand";
-  if (which === "craft") await requireOwner();
-  await saveLessons(brand, which, String(form.get("text") ?? ""));
-  revalidatePath(`/b/${brand}/skills`);
-  redirect(`/b/${brand}/skills?saved=${which}`);
-}
-
-/** Skill Tree page: approve or dismiss the craft lessons Ore suggested from this brand's feedback. */
-export async function reviewCraft(form: FormData) {
-  const brand = String(form.get("brand") ?? "");
-  await requireBrand(brand);
-  await requireOwner();
-  const approve: string[] = [];
-  const dismiss: string[] = [];
-  for (const [k, v] of form.entries()) {
-    const m = /^s_([a-f0-9]{8})$/.exec(k);
-    if (!m) continue;
-    if (v === "approve") approve.push(m[1]);
-    if (v === "dismiss") dismiss.push(m[1]);
+  const kind = String(form.get("kind") ?? "");
+  const op = String(form.get("op") ?? "");
+  const text = String(form.get("text") ?? "").trim().slice(0, 4000);
+  const back = `/b/${brand}/skills`;
+  if (kind === "pending") {
+    await requireOwner();
+    const id = String(form.get("id") ?? "");
+    if (!/^[a-f0-9]{8}$/.test(id)) redirect(back);
+    if (op === "approve") await decideCraft(brand, [id], []);
+    else if (op === "dismiss") await decideCraft(brand, [], [id]);
+    else if (op === "save" && text) await editSuggestion(brand, id, text);
+  } else if (kind === "brand" || kind === "craft") {
+    if (kind === "craft") await requireOwner();
+    const index = Number(form.get("index"));
+    const raw = String(form.get("raw") ?? "");
+    const source = String(form.get("source") ?? "");
+    const decide = form.get("decide") === "1" && op !== "confirm";
+    const body = op === "confirm" ? String(form.get("rule") ?? "") : text;
+    const next =
+      op === "delete" ? null : `${body}${decide ? " (decide)" : ""}${source ? ` [${source}]` : ""}`;
+    if (!Number.isInteger(index) || index < 0 || (next !== null && !body)) redirect(back);
+    const ok = await changeSkill(brand, kind, index, raw, next);
+    if (!ok) {
+      revalidatePath(back);
+      redirect(`${back}?skill=stale`);
+    }
   }
-  const n = await decideCraft(brand, approve, dismiss);
-  revalidatePath(`/b/${brand}/skills`);
-  redirect(`/b/${brand}/skills?approved=${n}&dismissed=${dismiss.length}`);
+  revalidatePath(back);
+  redirect(`${back}?skill=${op}`);
 }
