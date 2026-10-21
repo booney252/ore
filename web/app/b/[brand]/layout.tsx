@@ -46,6 +46,9 @@ export default async function BrandLayout({
         <Nav brand={brand} counts={counts} />
         <div className="rail-foot">
           {who?.owner && <Link href="/">All brands</Link>}
+          <Link href={`/b/${brand}/creators`} className="rail-creators">
+            Creators{counts.creators ? <span className="count">{counts.creators}</span> : null}
+          </Link>
           <LogOut />
         </div>
       </aside>
