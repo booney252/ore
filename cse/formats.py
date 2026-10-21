@@ -9,13 +9,23 @@ from __future__ import annotations
 
 DEFAULT = "ugc"
 
+# How every video script is written, whatever the format. Added 2026-10-21 after a batch of
+# vague, feature-tour scripts ("your weekly one", six features in 50 seconds).
+SCRIPT_CRAFT = """\
+- **Write it like this (every script):**
+  - **One moment.** Open inside one specific scene with a day, a time, a place and an object (e.g. "Sunday, 9pm, I swipe the alarm because I'm mid-dinner"). Never open on a category ("it's hard to keep track").
+  - **One stake, felt.** Show what goes wrong in that moment; don't explain it like a lecture.
+  - **At most 2 features,** the ones that fix that exact moment. No feature tours.
+  - **Real nouns.** Say exactly what it is (the weekly shot, the pen, the second peptide, the spreadsheet). Never placeholders like "your weekly one", "the new one", "this thing".
+  - **Every line earns the next.** Cut any line the viewer wouldn't miss. Say it the way the creator would tell a friend."""
+
 FORMATS = {
     "ugc": {
         "label": "UGC video",
-        "spec": "UGC video: a real creator talking to camera, shot on a phone, 20-60s, "
+        "spec": "UGC video: a real creator talking to camera, shot on a phone, 25-40s, "
                 "with a full word-for-word script",
         "fields": """\
-- **Setup:** who's on camera (age, look, role), where, how it's shot, target length (20-60s)
+- **Setup:** who's on camera (age, look, role), where, how it's shot, target length (25-40s unless the winner it's built from needs longer)
 - **Alternate hooks (2):** each a different first line the creator says AND its first frame
 - **Script:** a table `| Time | They say | On screen |`, 0s to the end. "They say" is every spoken word, written the way a real person talks to their phone (contractions, short sentences). "On screen" is the shot, any cut, and any text overlay word for word. The first row is the main hook.""",
     },
@@ -52,6 +62,10 @@ FORMATS = {
 - **Headline and button:** the headline under the image and the CTA button""",
     },
 }
+
+
+for _fmt in ("ugc", "broll", "talking"):
+    FORMATS[_fmt]["fields"] = SCRIPT_CRAFT + "\n" + FORMATS[_fmt]["fields"]
 
 
 def check(fmt: str | None) -> str:

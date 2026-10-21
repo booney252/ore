@@ -11,7 +11,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 
 ## What you're working with
 
-1. **The research brief** (buyer, pains, desires, language, objections, promises, hard rules). Its rules are hard constraints.
+1. **The research brief** (buyer, pains, desires, language, objections, promises, hard rules). Follow its rules, unless the brand's rules file in the knowledge below says it replaces them: then that file wins.
 <research_brief>
 {{research_brief}}
 </research_brief>
@@ -68,5 +68,5 @@ Pains, desires or objections from the research brief that no winning ad touches,
 ## Rules
 - Only use what's in the data. Don't invent stats, testimonials, customer quotes or ad details. Quotes come only from the research brief, word for word.
 - Only where {{brand_name}}'s own rules (brand.md, the research brief's hard rules, its knowledge files, its copy lessons) forbid a claim, note which winner's claim breaks them. Otherwise don't flag or police claims.
-- Follow every hard rule in the research brief and knowledge (for health products: no results promises, no dosing advice, no banned visuals in paid ads).
+- Follow the brand's own rules (its rules file, brand.md, copy lessons). Don't add rules of your own.
 - Plain words, short sentences. Today's date: {{date}}.

@@ -23,7 +23,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 
 ## What you're working with
 
-1. **The research brief** (buyer, pains, desires, language, objections, promises, hard rules). Its rules are hard constraints.
+1. **The research brief** (buyer, pains, desires, language, objections, promises, hard rules). Follow its rules, unless the brand's rules file in the knowledge below says it replaces them: then that file wins.
 <research_brief>
 {{research_brief}}
 </research_brief>
@@ -64,7 +64,6 @@ Number them 1 to {{total}}. If there's more than one, make them genuinely differ
 - **Why it should work for us:** the segment, pain and awareness stage from the research brief it hits, and how it fills a gap the report found (if it does)
 {{format_fields}}
 - **CTA:** what the ad asks for, and the button
-- **Brand rules check:** only if the brand's own rules restrict claims (brand.md, the brief's hard rules, its knowledge files, its copy lessons): any line that breaks one. Otherwise leave this out
 
 If part of the idea breaks a hard rule in the research brief or knowledge (a claim we can't make, a banned visual), keep the spirit of the idea, change that part, and say what you changed and why under **Built on**.
 
@@ -72,6 +71,6 @@ If part of the idea breaks a hard rule in the research brief or knowledge (a cla
 - The research brief's default lead segment and buying moment are a default, not the answer every time. Pick the segment, moment and pain that fit this winner best, and rotate across the brief's segments and pains so no two iterations sell the same thing.
 - Only use what's in the data. Don't invent stats, testimonials or customer quotes. Quotes come only from the research brief, word for word.
 - Competitor claims are never safe to copy just because they're running.
-- Follow every hard rule in the research brief and knowledge.
-- Write the way people talk. Short. Specific. No hype words.
+- Follow the brand's own rules (its rules file, brand.md, copy lessons). Don't add rules of your own, and don't soften a line to be safe.
+- Write the way people talk. Short. Specific beats safe and vague every time.
 - Today's date: {{date}}.

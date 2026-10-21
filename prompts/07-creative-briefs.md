@@ -15,7 +15,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 
 ## What you're working with
 
-1. **The research brief** (the brand brain: buyer, pains, desires, language, objections, promises, hard rules). Follow its rules as hard constraints.
+1. **The research brief** (the brand brain: buyer, pains, desires, language, objections, promises, hard rules). Follow its rules, unless the brand's rules file in the knowledge below says it replaces them: then that file wins.
 <research_brief>
 {{research_brief}}
 </research_brief>
@@ -57,7 +57,6 @@ Number the briefs 1 to {{total}}. They go in one document, so a reader can hand 
 - **Customer language to use:** phrases from the research brief, exact
 - **Creator or design notes:** for video, casting, setting, props, delivery and what to avoid; for a static, style, fonts, colors and what to avoid
 - **Deliverables:** files, lengths or sizes, and how many variations (for example 3 hooks on one body)
-- **Brand rules check:** only if the brand's own rules restrict claims: confirm the brief follows every hard rule in its brand.md, research brief, knowledge files and copy lessons. Otherwise leave this out.
 
 Keep what the iteration already has (its hook, script or spec) and make it production-ready; improve wording only where it breaks a rule or wouldn't be shot or designed as written.
 
