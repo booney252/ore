@@ -16,7 +16,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{research_brief}}
 </research_brief>
 
-2. **Copywriting knowledge.** Rules here are hard constraints too.
+2. **Copywriting knowledge: how to write, not what to say.** The skills here are craft: use the ones that fit this piece. What to say (the buyer, their words, the angles, the claims) comes from the research brief and the product facts, and they win wherever the two disagree. The house style and any brand rules in here are hard constraints.
 <knowledge>
 {{knowledge}}
 </knowledge>

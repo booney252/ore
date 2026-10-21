@@ -27,7 +27,7 @@ from . import creators as creatorlib
 from . import formats, llm
 from . import lessons as lessonlib
 from .score import strength
-from .stages import format_full, load_ads, product_facts
+from .stages import format_full, load_ads, load_knowledge, product_facts
 
 log = logging.getLogger("cse")
 
@@ -178,6 +178,7 @@ def run_scripts(storage, session_id: str, today: date | None = None, client=None
         or "(No winning ads pulled yet.)",
         "creator": creatorlib.describe(me(storage)) + brandlib.segment_block(fields, session.get("segment")),
         "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
+        "knowledge": load_knowledge(session["brand"]),
         "angles": "\n\n".join(f"### Angle {a['n']}: {a['title']}\n{a['body']}" for a in picked),
         "count": max(1, min(3, int(session.get("per_angle") or 1))),
         "format_label": formats.FORMATS[fmt]["label"],
@@ -233,6 +234,7 @@ def run_tweak(storage, session_id: str, number: str, action: str, today: date | 
         "instruction": TWEAKS[action],
         "creator": creatorlib.describe(me(storage)) + brandlib.segment_block(fields, session.get("segment")),
         "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
+        "knowledge": load_knowledge(session["brand"]),
         "product_facts": facts,
         "heading": heading,
     })

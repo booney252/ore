@@ -45,6 +45,14 @@ For each one:
 - **Caption:** the post caption, {{caption_rule}}.
 - **Why it should work:** one or two lines tying it to the winner and the market.
 
+## How to write it
+
+Copywriting knowledge: how to write, not what to say. Use the skills that fit this script. What to say comes from the product facts, the research brief and the creator; they win wherever this disagrees. The house style and any brand rules in here are hard constraints.
+
+<knowledge>
+{{knowledge}}
+</knowledge>
+
 {{copy_lessons}}
 
 ## Rules
