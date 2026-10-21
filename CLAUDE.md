@@ -140,7 +140,7 @@ For each ad, store: brand, ad ID, start date, days running, still active or not,
 - Time live sets the grade: A 90+ days, B 30+, C 14+, D under 2 weeks
 - Stopped (or removed from the Ad Library): down one grade (a stopped D is an F)
 - 5+ versions of the same creative or copy (they're scaling it): up one grade
-- **Rising** (added 2026-10-21, recency matters in fast markets): a still-running ad under 30 days is judged against its advertiser's usual ad life (median days of its stopped ads, 5+ needed). Outliving it 2x (and a week+) or 5+ versions = B, both = A. The report's top 10 keeps 3 spots for rising ads (`stages.balance_rising`); the Winning ads page has a Rising filter (with UGC, B-roll, LFS = 400+ words of ad copy, Static).
+- **Rising** (added 2026-10-21, recency matters in fast markets): a still-running ad under 30 days is judged against its advertiser's usual ad life (median days of its stopped ads, 5+ needed). Outliving it 2x (and a week+) or 5+ versions = B, both = A. The report has a Rising now section (5 spots); the Winning ads page has a Rising filter (with UGC, B-roll, LFS = 400+ words of ad copy, Static).
 
 Every grade must show *why*: "Grade A: running 47 days (B), still active, 6 versions (up one)." The site says it in plain words too (Proven winner, Strong signal, Early signal, Too early to tell, Didn't make it).
 
