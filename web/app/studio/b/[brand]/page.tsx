@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { startSession } from "@/app/actions";
+import SegmentPicker from "@/app/SegmentPicker";
 import Grade from "@/app/Grade";
 import { hook, posterUrl } from "@/lib/ads";
 import { checkSlug } from "@/lib/brands";
@@ -99,6 +100,7 @@ export default async function StudioBrandPage({ params }: { params: Promise<{ br
               <Link href="/studio/me?first=1">Add your profile first →</Link>
             )}
           </p>
+          <SegmentPicker brand={b.slug} />
           <button type="submit" className="btn-primary emerald studio-go" disabled={!me}>
             Find my angles
           </button>

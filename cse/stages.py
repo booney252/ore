@@ -98,6 +98,13 @@ def brand_context(storage, slug: str) -> dict:
     }
 
 
+def audience(storage, slug: str, segment: str | None) -> str:
+    """The "Who it's for" block for one of brand.md's audience segments ("" for everyone)."""
+    if not segment:
+        return ""
+    return brandlib.segment_block(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0], segment)
+
+
 def load_ads(storage, slug: str) -> list[dict]:
     return list(json.loads(storage.read_text(brandlib.brand_key(slug, "ads.json")))["ads"].values())
 
@@ -266,7 +273,8 @@ def already_made(storage, slug: str, skip: str | None = None) -> str:
 
 def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
                    fmt: str = formats.DEFAULT, per_ad: int = 1, today: date | None = None,
-                   client=None, idea: str | None = None, creator: str | None = None) -> str | None:
+                   client=None, idea: str | None = None, creator: str | None = None,
+                   segment: str | None = None) -> str | None:
     """Turn the report's winners #<ranks> into iterations for the brand, in the chosen format.
 
     With `idea`, the reader's own idea leads instead: `per_ad` iterations of it, built from the
@@ -290,7 +298,8 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
     ctx = with_format(brand_context(storage, slug), fmt)
     ctx["already_made"] = already_made(storage, slug)
     who = creatorlib.get(storage, slug, creator)
-    ctx["creator"] = creatorlib.describe(who)
+    seg = audience(storage, slug, segment)
+    ctx["creator"] = creatorlib.describe(who) + seg
     source_ads = "\n\n".join(format_full(ads[by_rank[r]], r) for r in ranks
                               if by_rank[r] in ads)
     picks = f"-ads-{'-'.join(map(str, ranks))}" if ranks else ""
@@ -317,7 +326,7 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
             "date": today.isoformat(),
         })
         stem = f"{Path(report_key).stem}{picks}{f'-x{per_ad}' if per_ad > 1 else ''}"
-    stem += (f"-for-{who['id']}" if who else "") + formats.suffix(fmt)
+    stem += (f"-for-{who['id']}" if who else "") + (f"-to-{segment}" if seg else "") + formats.suffix(fmt)
     try:
         answer = llm.ask(storage, slug, f"iterations-{stem}", prompt, client=client,
                          max_tokens=64000, effort="high")
@@ -345,7 +354,7 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
 
 def format_of(file_stem: str) -> str:
     """The format an iterations file was written in, from its name (no suffix = UGC)."""
-    m = re.search(r"-(broll|static)$", file_stem)
+    m = re.search(rf"-({'|'.join(f for f in formats.FORMATS if f != formats.DEFAULT)})$", file_stem)
     return m.group(1) if m else formats.DEFAULT
 
 
@@ -357,7 +366,8 @@ def run_briefs(storage, slug: str, iterations_key: str, numbers: list[int],
 
 
 def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
-                    today: date | None = None, client=None, creator: str | None = None) -> str | None:
+                    today: date | None = None, client=None, creator: str | None = None,
+                    segment: str | None = None) -> str | None:
     """One creative brief doc for iterations picked from any iterations files, in any mix of
     formats: each brief is written in its own iteration's format."""
     today = today or datetime.now(timezone.utc).date()
@@ -390,7 +400,8 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
             + "\n".join("  " + line for line in formats.FORMATS[f]["fields"].splitlines())
             for f in used)
     who = creatorlib.get(storage, slug, creator)
-    ctx["creator"] = creatorlib.describe(who)
+    seg = audience(storage, slug, segment)
+    ctx["creator"] = creatorlib.describe(who) + seg
     blocks = [f'<iteration from="{stem}" number="{n}" format="{formats.FORMATS[f]["label"]}">\n'
               f"{text}\n</iteration>" for stem, n, f, text in chosen]
     prompt = llm.render(PROMPTS["briefs"].read_text(), {
@@ -408,6 +419,8 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
         out_stem = f"{today.isoformat()}-picks-{tag}"
     if who:
         out_stem += f"-for-{who['id']}"
+    if seg:
+        out_stem += f"-to-{segment}"
     try:
         answer = llm.ask(storage, slug, f"briefs-{out_stem}", prompt, client=client,
                          max_tokens=64000, effort="high")

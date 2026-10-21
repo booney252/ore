@@ -112,3 +112,17 @@ def segments(fields: dict) -> list[dict]:
         out.append({"key": parts[0], "label": parts[1], "who": parts[2] if len(parts) > 2 else "",
                     "handles": [h.lstrip("@") for h in (parts[3].split() if len(parts) > 3 else [])]})
     return out
+
+
+def segment_block(fields: dict, key: str | None) -> str:
+    """The "Who it's for" prompt block for one audience segment, or "" for everyone."""
+    seg = next((s for s in segments(fields) if s["key"] == key), None) if key else None
+    if not seg:
+        return ""
+    others = ", ".join(s["label"] for s in segments(fields) if s is not seg)
+    return (f"\n\n## Who it's for: {seg['label']}\n\n"
+            f"Write this for the **{seg['label']}** segment only ({seg['who'] or seg['label']}). The research "
+            f"brief has a section for this segment: use its wants, pains, words to use and avoid, objections, "
+            f"awareness stage and the content that wins with them, on top of what all segments share. "
+            + (f"Don't borrow the other segment's ({others}) words, slang or examples. " if others else "")
+            + "Never lean on stereotypes about this audience that the research doesn't show.")

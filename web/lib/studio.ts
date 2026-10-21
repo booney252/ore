@@ -89,6 +89,7 @@ export type Angle = { n: number; title: string; body: string };
 export type Session = {
   id: string;
   brand: string;
+  segment?: string; // the audience segment it's written for (brand.md segments)
   ad_id?: string | null;
   status: "new" | "angles" | "writing" | "scripts";
   angles?: Angle[];
@@ -103,10 +104,17 @@ export type Session = {
 
 const SESSION = /^[0-9]{14}-[a-z0-9]{1,12}$/;
 
-export async function createSession(brand: string, adId: string | null): Promise<string> {
+export async function createSession(brand: string, adId: string | null, segment?: string): Promise<string> {
   const now = new Date();
   const id = `${now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14)}-${Math.random().toString(36).slice(2, 8)}`;
-  const s: Session = { id, brand: checkSlug(brand), ad_id: adId, status: "new", created_at: now.toISOString() };
+  const s: Session = {
+    id,
+    brand: checkSlug(brand),
+    ad_id: adId,
+    ...(segment && { segment }),
+    status: "new",
+    created_at: now.toISOString(),
+  };
   await writeText(`studio/sessions/${id}.json`, JSON.stringify(s, null, 2) + "\n");
   return id;
 }

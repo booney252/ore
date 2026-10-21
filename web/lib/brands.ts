@@ -26,6 +26,18 @@ export async function listBrands(): Promise<{ slug: string; name: string }[]> {
   return Promise.all(slugs.map(async (slug) => ({ slug, name: await brandName(slug) })));
 }
 
+export type Segment = { key: string; label: string };
+
+/** brand.md `segments`: the audiences a brand writes for separately ("key | Label | who | handles"). */
+export async function brandSegments(slug: string): Promise<Segment[]> {
+  const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";
+  const block = md.match(/^segments:\s*\n((?:[ \t]+-.*\n?)+)/m)?.[1] ?? "";
+  return [...block.matchAll(/^[ \t]+-\s*["']?([a-z0-9-]{1,20})\s*\|\s*([^|"'\n]+)/gm)].map((m) => ({
+    key: m[1],
+    label: m[2].trim(),
+  }));
+}
+
 /** brand.md `campaign_type`: "organic" (affiliates or creators posting on their own pages) or "paid" (Meta ads). */
 export async function campaignType(slug: string): Promise<"organic" | "paid"> {
   const md = (await readText(`brands/${checkSlug(slug)}/brand.md`)) ?? "";

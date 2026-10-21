@@ -141,7 +141,7 @@ def run_angles(storage, session_id: str, today: date | None = None, client=None)
         "winner_note": note,
         "winning_ads": "\n\n".join(format_full(a, i) for i, a in enumerate(winners, start=1))
         or "(No winning ads pulled yet.)",
-        "creator": creatorlib.describe(me(storage)),
+        "creator": creatorlib.describe(me(storage)) + brandlib.segment_block(fields, session.get("segment")),
         "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
         "already_made": already_made(storage, session["brand"]),
         "count": ANGLES,
@@ -176,7 +176,7 @@ def run_scripts(storage, session_id: str, today: date | None = None, client=None
         "research_brief": brief,
         "winning_ads": "\n\n".join(format_full(a, i) for i, a in enumerate(winners, start=1))
         or "(No winning ads pulled yet.)",
-        "creator": creatorlib.describe(me(storage)),
+        "creator": creatorlib.describe(me(storage)) + brandlib.segment_block(fields, session.get("segment")),
         "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
         "angles": "\n\n".join(f"### Angle {a['n']}: {a['title']}\n{a['body']}" for a in picked),
         "count": max(1, min(3, int(session.get("per_angle") or 1))),
@@ -231,7 +231,7 @@ def run_tweak(storage, session_id: str, number: str, action: str, today: date | 
         "brand_name": fields.get("name") or session["brand"],
         "script": original,
         "instruction": TWEAKS[action],
-        "creator": creatorlib.describe(me(storage)),
+        "creator": creatorlib.describe(me(storage)) + brandlib.segment_block(fields, session.get("segment")),
         "copy_lessons": lessonlib.for_prompt(storage, session["brand"]),
         "product_facts": facts,
         "heading": heading,

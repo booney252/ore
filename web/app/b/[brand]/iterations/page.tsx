@@ -3,11 +3,12 @@ import { newIterations } from "@/app/actions";
 import { docLabel } from "@/app/dates";
 import DocRows from "@/app/DocRows";
 import CreatorPicker from "@/app/CreatorPicker";
+import SegmentPicker from "@/app/SegmentPicker";
 import FormatPicker from "@/app/FormatPicker";
 import PickCard from "@/app/PickCard";
 import Requests from "@/app/Requests";
 import { loadAds } from "@/lib/ads";
-import { brandName, defaultFormat, docTitles, listDocs, reportTop } from "@/lib/brands";
+import { brandName, brandSegments, defaultFormat, docTitles, listDocs, reportTop } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -141,6 +142,7 @@ export default async function Iterations({
               </select>
             </label>
             <CreatorPicker brand={brand} />
+            <SegmentPicker brand={brand} />
             <button type="submit" className="btn-primary emerald" disabled={!top}>
               Write iterations
             </button>
@@ -159,6 +161,7 @@ export default async function Iterations({
           empty="No iterations yet."
           titles={await docTitles(brand, "iterations", files)}
           remove={{ brand, kind: "iterations" }}
+          audiences={Object.fromEntries((await brandSegments(brand)).map((s) => [s.key, s.label]))}
         />
       </section>
     </main>

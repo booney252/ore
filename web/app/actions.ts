@@ -13,6 +13,7 @@ import {
   setBrandFields,
   slugify,
   splitIngredients,
+  brandSegments,
 } from "@/lib/brands";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
@@ -40,6 +41,12 @@ async function creatorOf(brand: string, form: FormData): Promise<{ creator?: str
   return id && (await creatorExists(brand, id)) ? { creator: id } : {};
 }
 
+/** The audience segment picked on an iterations or briefs form, if any (and only if the brand has it). */
+async function segmentOf(brand: string, form: FormData): Promise<{ segment?: string }> {
+  const key = String(form.get("segment") ?? "");
+  return key && (await brandSegments(brand)).some((s) => s.key === key) ? { segment: key } : {};
+}
+
 function numbers(form: FormData, field: string): number[] {
   return form
     .getAll(field)
@@ -64,6 +71,7 @@ export async function newIterations(form: FormData) {
     per_ad: perAd,
     ...(idea && { idea }),
     ...(await creatorOf(brand, form)),
+    ...(await segmentOf(brand, form)),
   });
   redirect(`/b/${brand}/iterations?queued=1`);
 }
@@ -85,7 +93,7 @@ export async function newBriefs(form: FormData) {
   if (picks.length === 0) {
     redirect(single ? `/b/${brand}/iterations/${String(single)}?pick=1` : `/b/${brand}/briefs?pick=1`);
   }
-  await createJob({ type: "briefs", brand, picks, ...(await creatorOf(brand, form)) });
+  await createJob({ type: "briefs", brand, picks, ...(await creatorOf(brand, form)), ...(await segmentOf(brand, form)) });
   redirect(`/b/${brand}/briefs?queued=1`);
 }
 
@@ -238,7 +246,7 @@ export async function startSession(form: FormData) {
   if (!b) redirect("/studio");
   const ad = String(form.get("ad") ?? "");
   const adId = b.winners.some((w) => w.ad_id === ad) ? ad : null;
-  const id = await createSession(brand, adId);
+  const id = await createSession(brand, adId, (await segmentOf(brand, form)).segment);
   await createJob({ type: "angles", brand, session: id });
   redirect(`/studio/s/${id}`);
 }

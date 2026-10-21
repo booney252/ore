@@ -11,6 +11,7 @@ export type Job = {
   per_ad?: number;
   idea?: string;
   creator?: string;
+  segment?: string;
   session?: string;
   feedback?: string;
   script?: string;

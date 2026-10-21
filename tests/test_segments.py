@@ -46,3 +46,10 @@ def test_comments_land_in_voc_and_split_by_segment(tmp_path):
     assert "/reel/b/" not in v["ads_json"] and v["audience"] == "Women"
     v2 = research.segment_values(s, "x", {**seg, "handles": ["tom"]}, {})
     assert "scam" not in v2["voc_json"]
+
+
+def test_segment_block():
+    fields = {"segments": ["her | Women | women who want AI income | jen", "him | Men"]}
+    block = brand.segment_block(fields, "her")
+    assert "Who it's for: Women" in block and "Men" in block
+    assert brand.segment_block(fields, None) == "" and brand.segment_block(fields, "nope") == ""

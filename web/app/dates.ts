@@ -1,4 +1,4 @@
-const FORMAT_NAMES: Record<string, string> = { "": "UGC", broll: "B-roll", static: "Static" };
+const FORMAT_NAMES: Record<string, string> = { "": "UGC", broll: "B-roll", static: "Static", talking: "Talking head" };
 
 /**
  * File name -> label parts. A report is "<date>[-format]"; scripts and briefs are
@@ -16,7 +16,7 @@ export function docLabel(file: string): { date: string; ideas?: string; format?:
     year: "numeric",
   });
   const [before, after] = raw.split("-ideas-");
-  const own = (after ?? before).match(/-?(broll|static)$/)?.[1] ?? "";
-  const ideas = after?.replace(/-?(broll|static)$/, "").split("-").join(", ");
+  const own = (after ?? before).match(/-?(broll|static|talking)$/)?.[1] ?? "";
+  const ideas = after?.replace(/-?(broll|static|talking)$/, "").split("-").join(", ");
   return { date, ideas, format: FORMAT_NAMES[own] };
 }

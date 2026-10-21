@@ -2,9 +2,10 @@ import Link from "next/link";
 import { newBriefs } from "@/app/actions";
 import { docLabel } from "@/app/dates";
 import CreatorPicker from "@/app/CreatorPicker";
+import SegmentPicker from "@/app/SegmentPicker";
 import DocRows from "@/app/DocRows";
 import Requests from "@/app/Requests";
-import { brandName, docTitles, listDocs, parseIterations, readDoc } from "@/lib/brands";
+import { brandName, brandSegments, docTitles, listDocs, parseIterations, readDoc } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
@@ -99,6 +100,7 @@ export default async function Briefs({
           <div className="brief-foot">
             <p className="muted">Each brief is written in its own iteration's format, all in one doc.</p>
             <CreatorPicker brand={brand} />
+            <SegmentPicker brand={brand} />
             <button type="submit" className="btn-primary ruby">
               Write creative brief
             </button>
@@ -117,6 +119,7 @@ export default async function Briefs({
           empty="No briefs yet."
           titles={await docTitles(brand, "briefs", files)}
           remove={{ brand, kind: "briefs" }}
+          audiences={Object.fromEntries((await brandSegments(brand)).map((s) => [s.key, s.label]))}
         />
       </section>
     </main>
