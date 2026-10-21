@@ -86,6 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--brief-only", action="store_true",
                    help="keep the latest steps 1-3; rebuild only the unified brief (prompt 4)")
+    p.add_argument("--redo", help="comma-separated segment keys: reuse today's saved steps except these segments' runs")
     sub.add_parser("mechanisms", help="unique mechanism ideas (UMP + UMS) -> unique-mechanisms.md").add_argument("brand")
     sub.add_parser("rank-mechanisms", help="rank the chosen unique mechanisms -> unique-mechanisms-ranked.md").add_argument("brand")
     p = sub.add_parser("studio", help="Creator Studio: run a session's next step (angles, scripts)")
@@ -106,6 +107,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--handles", required=True, help="comma-separated handles")
     p.add_argument("--top", type=int, default=15, help="most-watched posts per account")
     p.add_argument("--pages", type=int, default=2, help="comment pages per post")
+    p.add_argument("--overall", action="store_true", help="--top counts across all the handles, not per account")
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -176,7 +178,8 @@ def main(argv: list[str] | None = None) -> int:
             voc.run(storage, args.brand)
             return 0
         if args.command == "research":
-            research.run(storage, args.brand, brief_only=args.brief_only)
+            research.run(storage, args.brand, brief_only=args.brief_only,
+                         redo=[k.strip() for k in args.redo.split(",")] if args.redo else None)
             return 0
         if args.command == "mechanisms":
             mechanisms.run(storage, args.brand)
@@ -192,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "comments":
             handles = [h.strip().lstrip("@") for h in args.handles.split(",") if h.strip()]
-            print(organic.pull_comments(storage, args.brand, handles, top=args.top, pages=args.pages))
+            print(organic.pull_comments(storage, args.brand, handles, top=args.top, pages=args.pages, overall=args.overall))
             return 0
         if args.command == "organic":
             if args.pull:

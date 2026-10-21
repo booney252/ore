@@ -166,9 +166,11 @@ def latest_steps(storage, slug: str) -> dict:
 
 
 def run(storage, slug: str, today: date | None = None, client=None,
-        brief_only: bool = False) -> str | None:
+        brief_only: bool = False, redo: list[str] | None = None) -> str | None:
     """The 4 research prompts. With brief_only, steps 1-3 aren't redone: prompt 4 rebuilds the
-    brief from the latest saved steps (e.g. imported ones) plus quotes and the brand's own notes."""
+    brief from the latest saved steps (e.g. imported ones) plus quotes and the brand's own notes.
+    With redo (segment keys), steps already saved today are reused except those segments' runs,
+    e.g. after pulling new comments for one audience."""
     today = today or datetime.now(timezone.utc).date()
     vals = values(storage, slug)
     segs = brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0])
@@ -188,6 +190,12 @@ def run(storage, slug: str, today: date | None = None, client=None,
         parts = []
         for seg, v, note in runs:
             suffix = f"-{seg['key']}" if seg else ""
+            saved = brandlib.brand_key(slug, f"{folder}/{name}{suffix}.md")
+            if redo is not None and (seg is None or seg["key"] not in redo) and storage.exists(saved):
+                part = storage.read_text(saved)
+                parts.append(f"# {seg['label']}\n\n{part.strip()}" if seg else part)
+                log.info("research: reusing %s", saved)
+                continue
             try:
                 part = llm.ask(storage, slug, f"research-{today.isoformat()}-{name}{suffix}",
                                llm.render(path.read_text(), v) + note + added, client=client,

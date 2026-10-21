@@ -289,12 +289,13 @@ COMMENT_MIN_WORDS = 4  # "🔥🔥", "need this" and "@friend" tell us nothing a
 
 
 def pull_comments(storage, slug: str, handles: list[str], top: int = 15, pages: int = 2,
-                  source=None) -> dict:
+                  source=None, overall: bool = False) -> dict:
     """Comments on each account's most-watched posts, saved to voc.json as `source: "comment"`.
 
     The viewers' own words: what they want, fear and doubt. Each quote keeps the post's link, the
     commenter and which account it came from (`about: "@handle"`), so research can compare
-    audiences. Re-running skips posts we already have comments for.
+    audiences. Re-running skips posts we already have comments for. With `overall`, `top` is the
+    most-watched posts across all the handles together instead of per account.
     """
     from . import voc as voclib
     from .organic_source import ScrapeCreatorsOrganic
@@ -307,8 +308,10 @@ def pull_comments(storage, slug: str, handles: list[str], top: int = 15, pages: 
     doc = json.loads(storage.read_text(voc_key)) if storage.exists(voc_key) else {"brand": slug, "quotes": []}
     done = {q.get("url") for q in doc["quotes"] if q.get("source") == "comment"}
     counts: dict[str, int] = {}
+    by_views = sorted(posts, key=lambda p: -(p.get("views") or 0))
+    best = by_views[:top] if overall else None
     for h in handles:
-        mine = sorted((p for p in posts if p["handle"] == h), key=lambda p: -(p.get("views") or 0))[:top]
+        mine = [p for p in best if p["handle"] == h] if overall else [p for p in by_views if p["handle"] == h][:top]
         got = 0
         for p in mine:
             if p["url"] in done or not p.get("comments"):
