@@ -164,6 +164,12 @@ def run(storage, slug: str, session=None) -> dict:
         counts[t["name"]] = len(got)
         log.info("  %-22s %d App Store reviews", t["name"], len(got))
 
+    kept = [q for q in previous if q.get("source") not in ("app_store", "pasted")]
+    for q in kept:  # testimonials, post comments: added by other steps, not re-pulled here
+        quotes[_id(q)] = q
+    if kept:
+        counts["other"] = len(kept)
+
     pasted = 0
     for key in storage.list(brandlib.brand_key(slug, "voc-paste/")):
         if key.endswith((".md", ".txt")):
@@ -189,11 +195,13 @@ def for_prompt(quotes: list[dict], limit: int = PROMPT_QUOTES) -> str:
     picked, seen = list(pasted[:limit // 3]), {}
     for q in reviews:  # round-robin by (app, low/mid/high rating) so no single app dominates
         bucket = (q["about"], 0 if q.get("rating", 3) <= 2 else 2 if q.get("rating", 3) >= 4 else 1)
-        if seen.get(bucket, 0) < 4:
+        cap = 4 if "rating" in q else max(4, limit // 4)  # comments and testimonials have no rating
+        if seen.get(bucket, 0) < cap:
             picked.append(q)
             seen[bucket] = seen.get(bucket, 0) + 1
         if len(picked) >= limit:
             break
-    lines = [json.dumps({k: q.get(k) for k in ("text", "about", "rating", "url") if q.get(k) is not None},
+    lines = [json.dumps({k: q.get(k) for k in ("text", "source", "about", "who", "rating", "url")
+                         if q.get(k) is not None},
                         ensure_ascii=False) for q in picked]
     return "\n".join(lines) or "(no customer quotes collected yet)"

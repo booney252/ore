@@ -7,6 +7,11 @@
 
 Steps 1-3 read the same data (brand.md fields, competitors.json, ads.json, voc.json), so they
 run side by side; step 4 reads their outputs. Each step is saved under research/<date>/.
+
+A brand with audience `segments` in brand.md (e.g. AICL: women and men watch different creators
+for different reasons) runs steps 2 and 3 once per segment, on that segment's posts and comments
+(saved as 02-psychographics-<key>.md, plus the combined 02-psychographics.md), and the brief gets
+a section per segment.
 The model analyzes our data; quotes in the brief that aren't in what we collected get listed
 at the end for review.
 """
@@ -48,14 +53,18 @@ def _load(storage, slug: str, name: str, field: str) -> list:
 
 def format_ads(ads: list[dict], limit: int = ADS_IN_PROMPT) -> str:
     """Top ads by winner grade, one JSON line each: who, why it scores, and what it says."""
+    from .score import strength
+
     top = sorted((a for a in ads if not a.get("removed_from_library")),
-                 key=lambda a: a.get("score", 0), reverse=True)[:limit]
+                 key=lambda a: (a.get("score", 0), strength(a)), reverse=True)[:limit]
     lines = []
     for a in top:
         b = a.get("breakdown") or {}
         lines.append(json.dumps({
             "advertiser": a.get("brand"), "own_ad": bool(a.get("is_own")),
-            "score": a.get("score"), "why": a.get("score_why"), "link": a.get("ad_library_url"),
+            "score": a.get("score"), "why": a.get("score_why"), "link": a.get("ad_library_url") or a.get("url"),
+            **({"views": a.get("views"), "usual_views": a.get("usual_views"), "comments": a.get("comments")}
+               if a.get("source") == "organic" else {}),
             "format": b.get("format") or a.get("media_type"), "hook": b.get("hook_line", ""),
             "angle": b.get("angle", ""), "headline": a.get("headline", ""),
             "copy": (a.get("body") or "")[:400],
@@ -78,6 +87,43 @@ def values(storage, slug: str) -> dict:
     if fields.get("health_product"):
         out["product"] += " (a health product: flag every promise for compliance review)"
     return out
+
+
+def segment_values(storage, slug: str, seg: dict, vals: dict) -> dict:
+    """Prompt values narrowed to one audience segment: its accounts' posts and the comments on
+    them, plus quotes that aren't tied to any account (testimonials, pasted notes)."""
+    handles = set(seg["handles"])
+    ads = _load(storage, slug, "ads.json", "ads")
+    quotes = _load(storage, slug, "voc.json", "quotes")
+    if handles:
+        ads = [a for a in ads if a.get("handle") in handles]
+        quotes = [q for q in quotes if not str(q.get("about", "")).startswith("@")
+                  or q["about"].lstrip("@") in handles]
+    who = f"{seg['label']}: {seg['who']}" if seg["who"] else seg["label"]
+    return {**vals, "audience": who, "ads_json": format_ads(ads), "voc_json": voc.for_prompt(quotes)}
+
+
+def segment_note(seg: dict, all_segs: list[dict]) -> str:
+    others = ", ".join(s["label"] for s in all_segs if s is not seg)
+    watched = f" The posts and comments below come from the accounts this audience watches " \
+        f"({', '.join('@' + h for h in seg['handles'])})." if seg["handles"] else ""
+    return (f"\n\n## This run: one audience segment\n\nThis market has more than one audience, and they "
+            f"think differently. This run is only about **{seg['label']}** ({seg['who'] or 'see brand.md'})."
+            f"{watched} The other segment{'s are' if ',' in others else ' is'} {others}, researched "
+            f"separately. Describe this segment from the data, not from stereotypes about it. Where the "
+            f"data doesn't separate them from everyone else, say so instead of guessing.")
+
+
+def brief_note(segs: list[dict]) -> str:
+    if not segs:
+        return ""
+    names = "; ".join(f"**{s['label']}** ({s['who']})" if s["who"] else f"**{s['label']}**" for s in segs)
+    return (f"\n\n## Audience segments\n\nThis market has {len(segs)} audiences, researched separately in "
+            f"steps 2 and 3: {names}. Write the brief so a writer can aim at either one. Keep what they "
+            f"share short and up front. Then give each segment its own section: who they are, what they "
+            f"want, their pains, the words they use and the words to avoid, objections and how to answer "
+            f"them, their awareness stage, and what content wins with them (from their creators' posts). "
+            f"End with what never to mix between them.")
 
 
 _QUOTE = re.compile(r"[\"“]([^\"”\n]{25,400})[\"”]")
@@ -111,7 +157,7 @@ def latest_steps(storage, slug: str) -> dict:
     keys = set(storage.list(brandlib.brand_key(slug, "research/")))
     dates = sorted({k.split("/research/")[1].split("/")[0] for k in keys}, reverse=True)
     out = {}
-    for i, (name, _, _) in enumerate(STEPS, start=1):
+    for i, (name, _, _) in enumerate(STEPS, start=1):  # a segmented step's combined file counts too
         found = next((brandlib.brand_key(slug, f"research/{d}/{name}.md") for d in dates
                       if brandlib.brand_key(slug, f"research/{d}/{name}.md") in keys), None)
         if found:
@@ -125,6 +171,7 @@ def run(storage, slug: str, today: date | None = None, client=None,
     brief from the latest saved steps (e.g. imported ones) plus quotes and the brand's own notes."""
     today = today or datetime.now(timezone.utc).date()
     vals = values(storage, slug)
+    segs = brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0])
     added = brainlib.section(storage, slug)  # the brand's own notes and documents, after each prompt
     added = f"\n\n{added}" if added else ""
     folder = f"research/{today.isoformat()}"
@@ -136,13 +183,26 @@ def run(storage, slug: str, today: date | None = None, client=None,
         if missing:
             raise ValueError(f"research: no saved {', '.join(missing)} to rebuild the brief from")
     for i, (name, path, web) in enumerate([] if brief_only else STEPS, start=1):
-        try:
-            answer = llm.ask(storage, slug, f"research-{today.isoformat()}-{name}",
-                             llm.render(path.read_text(), vals) + added, client=client,
-                             max_tokens=32000, effort="high", web=web)
-        except llm.HandoffPending as p:
-            pending.append(p.prompt_key)
+        runs = [(seg, segment_values(storage, slug, seg, vals), segment_note(seg, segs))
+                for seg in segs] if segs and i > 1 else [(None, vals, "")]
+        parts = []
+        for seg, v, note in runs:
+            suffix = f"-{seg['key']}" if seg else ""
+            try:
+                part = llm.ask(storage, slug, f"research-{today.isoformat()}-{name}{suffix}",
+                               llm.render(path.read_text(), v) + note + added, client=client,
+                               max_tokens=32000, effort="high", web=web)
+            except llm.HandoffPending as p:
+                pending.append(p.prompt_key)
+                continue
+            if seg:
+                storage.write_text(brandlib.brand_key(slug, f"{folder}/{name}{suffix}.md"), part.strip() + "\n")
+                parts.append(f"# {seg['label']}\n\n{part.strip()}")
+            else:
+                parts.append(part)
+        if len(parts) < len(runs):
             continue
+        answer = "\n\n".join(parts)
         outputs[f"step{i}_output"] = answer
         storage.write_text(brandlib.brand_key(slug, f"{folder}/{name}.md"), answer.strip() + "\n")
         log.info("research: step %d (%s) done", i, name)
@@ -152,7 +212,8 @@ def run(storage, slug: str, today: date | None = None, client=None,
 
     try:
         brief = llm.ask(storage, slug, f"research-{today.isoformat()}-04-research-brief",
-                        llm.render(BRIEF.read_text(), {**vals, **outputs}) + added, client=client,
+                        llm.render(BRIEF.read_text(), {**vals, **outputs}) + brief_note(segs) + added,
+                        client=client,
                         max_tokens=32000, effort="high")
     except llm.HandoffPending as p:
         log.info("research: answer %s, then re-run.", p.prompt_key)

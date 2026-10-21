@@ -204,9 +204,11 @@ def accounts(fields: dict) -> list[dict]:
     return out
 
 
-def winners_to_fetch(ads: list[dict], per_account: int = WINNERS_PER_ACCOUNT) -> list[dict]:
+def winners_to_fetch(ads: list[dict], per_account: int = WINNERS_PER_ACCOUNT, top_views: int = 0,
+                     handles: set[str] | None = None) -> list[dict]:
     """Each account's A and B posts (best first), plus its top 2 if it's one of ours (so our own
-    creators' videos get looked at even when nothing broke out), not yet analyzed."""
+    creators' videos get looked at even when nothing broke out), not yet analyzed. With top_views,
+    also the `handles` accounts' N most-watched posts (to study an audience, not just outliers)."""
     by_handle: dict[str, list[dict]] = {}
     for a in ads:
         if a.get("source") == "organic":
@@ -217,11 +219,13 @@ def winners_to_fetch(ads: list[dict], per_account: int = WINNERS_PER_ACCOUNT) ->
                    reverse=True)
         out += [a for i, a in enumerate(posts[:per_account])
                 if a.get("score", 0) >= 75 or (a.get("is_own") and i < 2)]
+        if top_views and (handles is None or posts[0]["handle"] in handles):
+            out += [a for a in sorted(posts, key=lambda a: -(a.get("views") or 0))[:top_views] if a not in out]
     return [a for a in out if "transcript" not in (a.get("analysis") or {}) and not a.get("media_key")]
 
 
 def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None = None,
-         only: list[str] | None = None) -> dict:
+         only: list[str] | None = None, top_views: int = 0) -> dict:
     """Fetch every account in brand.md `organic_accounts`, grade, and get the winners' media."""
     from . import ads as adslib
     from .organic_source import ScrapeCreatorsOrganic
@@ -251,7 +255,10 @@ def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None
 
     session = requests.Session()
     downloaded = transcribed = 0
-    for ad in winners_to_fetch(list(doc["ads"].values())):
+    pulled = {h.split(":")[-1] for h in only} if only else None
+    for ad in winners_to_fetch(list(doc["ads"].values()), top_views=top_views, handles=pulled):
+        if pulled is not None and ad["handle"] not in pulled:
+            continue  # only the accounts this run fetched (their media links are fresh)
         stale = ad.get("analysis") or {}
         if ad["platform"] == "youtube":
             try:
@@ -276,3 +283,59 @@ def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None
                "credits_used": getattr(source, "credits_used", None)}
     log.info("organic: %s", summary)
     return summary
+
+
+COMMENT_MIN_WORDS = 4  # "🔥🔥", "need this" and "@friend" tell us nothing about the viewer
+
+
+def pull_comments(storage, slug: str, handles: list[str], top: int = 15, pages: int = 2,
+                  source=None) -> dict:
+    """Comments on each account's most-watched posts, saved to voc.json as `source: "comment"`.
+
+    The viewers' own words: what they want, fear and doubt. Each quote keeps the post's link, the
+    commenter and which account it came from (`about: "@handle"`), so research can compare
+    audiences. Re-running skips posts we already have comments for.
+    """
+    from . import voc as voclib
+    from .organic_source import ScrapeCreatorsOrganic
+
+    source = source or ScrapeCreatorsOrganic()
+    ads_key = brandlib.brand_key(slug, "ads.json")
+    posts = [a for a in json.loads(storage.read_text(ads_key))["ads"].values()
+             if a.get("source") == "organic" and a.get("handle") in handles and a.get("platform") == "instagram"]
+    voc_key = brandlib.brand_key(slug, "voc.json")
+    doc = json.loads(storage.read_text(voc_key)) if storage.exists(voc_key) else {"brand": slug, "quotes": []}
+    done = {q.get("url") for q in doc["quotes"] if q.get("source") == "comment"}
+    counts: dict[str, int] = {}
+    for h in handles:
+        mine = sorted((p for p in posts if p["handle"] == h), key=lambda p: -(p.get("views") or 0))[:top]
+        got = 0
+        for p in mine:
+            if p["url"] in done or not p.get("comments"):
+                continue
+            try:
+                comments = source.post_comments(p["platform"], p["url"], pages)
+            except Exception as e:  # noqa: BLE001 - one bad post shouldn't stop the run
+                log.warning("comments: %s failed: %s", p["url"], e)
+                continue
+            for c in comments:
+                if len(c["text"].split()) < COMMENT_MIN_WORDS:
+                    continue
+                doc["quotes"].append({"text": c["text"], "source": "comment", "about": f"@{h}",
+                                      "who": c["who"], "likes": c["likes"], "date": c["date"],
+                                      "url": p["url"], "post_views": p.get("views")})
+                got += 1
+        counts[h] = got
+        log.info("comments: @%s %d comments from its top %d posts", h, got, len(mine))
+    seen, quotes = set(), []
+    for q in doc["quotes"]:
+        k = voclib._id(q) + (q.get("url") or "")
+        if k not in seen:
+            seen.add(k)
+            quotes.append(q)
+    doc["quotes"] = quotes
+    doc.setdefault("counts", {})["comments"] = sum(1 for q in quotes if q.get("source") == "comment")
+    doc["updated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    storage.write_text(voc_key, json.dumps(doc, indent=1) + "\n")
+    counts["credits"] = getattr(source, "credits_used", 0)
+    return counts

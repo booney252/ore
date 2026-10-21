@@ -95,3 +95,20 @@ def parse(text: str) -> tuple[dict, str]:
 
 def missing_fields(fields: dict) -> list[str]:
     return [f for f in PROMPT_FIELDS if not fields.get(f)]
+
+
+def segments(fields: dict) -> list[dict]:
+    """brand.md `segments`: audiences that think differently, researched one at a time.
+
+    Each entry is "key | Label | who they are | handle handle ..." (the handles are the accounts
+    this audience watches; leave them out for a paid brand). E.g.
+    "her | Women | women who want income from AI content | jiannacapri alexismakesai".
+    """
+    out = []
+    for raw in fields.get("segments") or []:
+        parts = [p.strip() for p in str(raw).split("|")]
+        if len(parts) < 2 or not re.fullmatch(r"[a-z0-9-]{1,20}", parts[0]):
+            continue
+        out.append({"key": parts[0], "label": parts[1], "who": parts[2] if len(parts) > 2 else "",
+                    "handles": [h.lstrip("@") for h in (parts[3].split() if len(parts) > 3 else [])]})
+    return out

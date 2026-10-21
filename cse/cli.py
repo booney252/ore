@@ -100,6 +100,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pull", action="store_true", help="fetch brand.md organic_accounts from ScrapeCreators (1 credit a page)")
     p.add_argument("--pages", type=int, default=8, help="pages per account with --pull (12 reels a page on Instagram)")
     p.add_argument("--only", help="with --pull: comma-separated handles (or platform:handle) to fetch")
+    p.add_argument("--top-views", type=int, default=0, help="with --pull: also get each pulled account's N most-watched videos")
+    p = sub.add_parser("comments", help="pull comments on accounts' top posts into voc.json (ScrapeCreators, 1 credit a page)")
+    p.add_argument("brand")
+    p.add_argument("--handles", required=True, help="comma-separated handles")
+    p.add_argument("--top", type=int, default=15, help="most-watched posts per account")
+    p.add_argument("--pages", type=int, default=2, help="comment pages per post")
     sub.add_parser("ingredients", help="study-backed claims for each ingredient in brand.md").add_argument("brand")
 
     p = sub.add_parser("ads", help="pull competitor + own Meta ads, score them, download media")
@@ -184,10 +190,14 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "lessons":
             print(lessons.learn(storage, args.brand, args.feedback))
             return 0
+        if args.command == "comments":
+            handles = [h.strip().lstrip("@") for h in args.handles.split(",") if h.strip()]
+            print(organic.pull_comments(storage, args.brand, handles, top=args.top, pages=args.pages))
+            return 0
         if args.command == "organic":
             if args.pull:
                 only = [h.strip() for h in args.only.split(",")] if args.only else None
-                print(organic.pull(storage, args.brand, max_pages=args.pages, only=only))
+                print(organic.pull(storage, args.brand, max_pages=args.pages, only=only, top_views=args.top_views))
             elif args.file:
                 print(organic.import_posts(storage, args.brand, organic.read_table(Path(args.file).read_text())))
             else:

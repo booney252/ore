@@ -136,6 +136,23 @@ class ScrapeCreatorsOrganic:
                 out.append(p)
         return out
 
+    def post_comments(self, platform: str, url: str, max_pages: int = 2) -> list[dict]:
+        """Top-level comments on one post: [{text, who, likes, date}]. Instagram only for now."""
+        if platform != "instagram":
+            raise AdSourceError(f"comments for {platform} aren't supported yet")
+        out, cursor = [], None
+        for _ in range(max_pages):
+            data = self._get("v2/instagram/post/comments", {"url": url, **({"cursor": cursor} if cursor else {})})
+            for c in data.get("comments") or []:
+                text = (c.get("text") or "").strip()
+                if text:
+                    out.append({"text": text, "who": (c.get("user") or {}).get("username", ""),
+                                "likes": int(c.get("comment_like_count") or 0), "date": _day(c.get("created_at"))})
+            cursor = data.get("cursor")
+            if not cursor or not data.get("comments"):
+                break
+        return out
+
     def youtube_transcript(self, url: str) -> list[dict]:
         """Timestamped lines [{start, end, text}] for a YouTube Short, [] if there are none."""
         data = self._get("v1/youtube/video/transcript", {"url": url})
