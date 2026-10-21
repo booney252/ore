@@ -82,7 +82,8 @@ def build_prompt(storage, slug: str, today: date) -> str | None:
         "compliance": ("This is a health product: flag any UMP or UMS that implies a medical "
                        "result, cure or a specific number, and suggest a safer version."
                        if fields.get("health_product") else
-                       "Flag any idea that would need a claim we can't prove."),
+                       "Follow only the brand's own rules on claims (brand.md, the research brief's hard "
+                       "rules); otherwise go bold."),
         "date": today.isoformat(),
     })
 

@@ -49,7 +49,7 @@ def build_prompt(storage, slug: str, today: date) -> str | None:
         "market_overview": brainlib.with_brief(market, storage, slug),
         "unique_mechanism": str(fields.get("unique_mechanism") or "").strip() or "(none given)",
         "compliance": ("This is a health product: flag every claim for compliance review."
-                       if health else "Flag anything that would need compliance review."),
+                       if health else "Only claim what the studies show."),
         "date": today.isoformat(),
     })
 

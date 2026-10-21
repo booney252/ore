@@ -57,7 +57,7 @@ Number the briefs 1 to {{total}}. They go in one document, so a reader can hand 
 - **Customer language to use:** phrases from the research brief, exact
 - **Creator or design notes:** for video, casting, setting, props, delivery and what to avoid; for a static, style, fonts, colors and what to avoid
 - **Deliverables:** files, lengths or sizes, and how many variations (for example 3 hooks on one body)
-- **Compliance check:** every line that makes or implies a claim, and whether it needs review. Confirm it follows every hard rule in the research brief and knowledge.
+- **Brand rules check:** only if the brand's own rules restrict claims: confirm the brief follows every hard rule in its brand.md, research brief, knowledge files and copy lessons. Otherwise leave this out.
 
 Keep what the iteration already has (its hook, script or spec) and make it production-ready; improve wording only where it breaks a rule or wouldn't be shot or designed as written.
 

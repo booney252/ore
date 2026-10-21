@@ -185,9 +185,9 @@ def run_scripts(storage, session_id: str, today: date | None = None, client=None
         "format_fields": formats.FORMATS[fmt]["fields"],
         "length": session.get("length") or "30s",
         "notes": f"\nThe creator's own note: {session['notes']}" if session.get("notes") else "",
-        # brand.md `caption_disclosure: false` turns off the default #ad line in captions
-        "caption_rule": ("short" if str(fields.get("caption_disclosure", "")).lower() == "false"
-                         else "short, with the disclosure the platform needs (e.g. #ad)"),
+        # brand.md `caption_disclosure: true` adds an #ad line to captions (off unless the brand asks)
+        "caption_rule": ("short, with the disclosure the platform needs (e.g. #ad)"
+                         if str(fields.get("caption_disclosure", "")).lower() == "true" else "short"),
         "date": today.isoformat(),
     })
     try:

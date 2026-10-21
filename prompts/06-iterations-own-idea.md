@@ -64,7 +64,7 @@ Number them 1 to {{total}}. If there's more than one, make them genuinely differ
 - **Why it should work for us:** the segment, pain and awareness stage from the research brief it hits, and how it fills a gap the report found (if it does)
 {{format_fields}}
 - **CTA:** what the ad asks for, and the button
-- **Compliance:** every line that makes or implies a claim and whether it needs review, or "clear"
+- **Brand rules check:** only if the brand's own rules restrict claims (brand.md, the brief's hard rules, its knowledge files, its copy lessons): any line that breaks one. Otherwise leave this out
 
 If part of the idea breaks a hard rule in the research brief or knowledge (a claim we can't make, a banned visual), keep the spirit of the idea, change that part, and say what you changed and why under **Built on**.
 

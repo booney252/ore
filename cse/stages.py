@@ -44,15 +44,19 @@ DEFAULT_AD_FORMAT = ("UGC: a real creator talking to camera, shot on a phone, "
 
 # --- shared context ------------------------------------------------------------------
 
-def load_knowledge(folder: Path = KNOWLEDGE_DIR) -> str:
+def load_knowledge(slug: str | None = None, folder: Path = KNOWLEDGE_DIR) -> str:
+    """Craft notes for every brand (knowledge/*.md) plus this brand's own (knowledge/<slug>/*.md)."""
     parts = []
-    for path in sorted(folder.glob("*.md")):
+    paths = sorted(folder.glob("*.md")) + (sorted((folder / slug).glob("*.md")) if slug else [])
+    for path in paths:
+        if path.name == "README.md":
+            continue
         text = path.read_text().strip()
         # Skip files that are still just a template heading + comment.
         body = "\n".join(l for l in text.splitlines()
                          if l.strip() and not l.startswith("#") and not l.strip().startswith("<!--"))
         if body.strip():
-            parts.append(f"<file name=\"{path.name}\">\n{text}\n</file>")
+            parts.append(f"<file name=\"{path.relative_to(folder)}\">\n{text}\n</file>")
     return "\n\n".join(parts) or "(none yet)"
 
 
@@ -98,7 +102,7 @@ def brand_context(storage, slug: str) -> dict:
         "format_notes": fields.get("ad_format") or "",
         "research_brief": brainlib.with_brief(
             storage.read_text(brandlib.brand_key(slug, "research-brief.md")), storage, slug),
-        "knowledge": "\n\n".join(x for x in (load_knowledge(), lessonlib.for_prompt(storage, slug)) if x),
+        "knowledge": "\n\n".join(x for x in (load_knowledge(slug), lessonlib.for_prompt(storage, slug)) if x),
         "creator": creatorlib.describe(None),
     }
 

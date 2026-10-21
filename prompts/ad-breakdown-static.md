@@ -44,7 +44,7 @@ You are a senior creative strategist diagnosing one static (single image) paid s
   "proof": "what makes it believable (reviews, numbers, press, demo screenshot), or none",
   "load_bearing": [{"element": "the element", "what": "exactly what they do", "why": "why it works on this audience", "evidence": "why we think it's load-bearing: grade, time live, versions, reused across this advertiser's other ads"}],
   "transferable": ["elements that would work for {{brand_name}} as-is or adapted"],
-  "risky_claims": ["any health/results/before-after claims that would be risky to copy; [] if none"],
+  "risky_claims": ["only for a health product: health or before-after claims an ad platform would reject; [] otherwise"],
   "not_transferable": ["elements we can't use (claims, banned visuals, wrong audience) and why"]
 }
 ```

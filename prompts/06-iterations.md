@@ -60,7 +60,7 @@ Number them 1 to {{total}} across all the chosen ads, in the order the ads are g
 - **Why it should work for us:** the segment, pain and awareness stage from the research brief it hits
 {{format_fields}}
 - **CTA:** what the ad asks for, and the button
-- **Compliance:** every line that makes or implies a claim and whether it needs review, or "clear"
+- **Brand rules check:** only if the brand's own rules restrict claims (brand.md, the brief's hard rules, its knowledge files, its copy lessons): any line that breaks one. Otherwise leave this out
 
 ## Rules
 - The research brief's default lead segment and buying moment are a default, not the answer every time. Pick the segment, moment and pain that fit this winner best, and rotate across the brief's segments and pains so no two iterations sell the same thing.

@@ -4,6 +4,7 @@ import { hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
 import { explain } from "@/lib/score";
 import Grade from "@/app/Grade";
 import { signedUrl } from "@/lib/storage";
+import { isHealthProduct } from "@/lib/brands";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,8 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
     Promise.all((a.frames ?? []).map(async (f) => ({ t: f.t, url: await signedUrl(f.key) }))),
   ]);
   const facts = Object.keys(b).filter((k) => !LONG.includes(k) && b[k] != null && b[k] !== "");
-  const risky = asList(b.risky_claims);
+  // only health brands flag risky claims; everyone else writes aggressive copy unless they set rules
+  const risky = (await isHealthProduct(brand)) ? asList(b.risky_claims) : [];
 
   return (
     <main className="page">

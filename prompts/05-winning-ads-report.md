@@ -55,6 +55,6 @@ Group the ads that share something: hook type, format, structure, creator type, 
 
 ## Rules
 - Only use what's in the data. Don't invent stats, testimonials, customer quotes or ad details. Quotes come only from the research brief, word for word.
-- Competitor claims are never safe to copy just because they're running. Flag any claim a winner leans on that would be risky for {{brand_name}} to make.
+- Only where {{brand_name}}'s own rules (brand.md, the research brief's hard rules, its knowledge files, its copy lessons) forbid a claim, note which winner's claim breaks them. Otherwise don't flag or police claims.
 - Follow every hard rule in the research brief and knowledge (for health products: no results promises, no dosing advice, no banned visuals in paid ads).
 - Plain words, short sentences. Today's date: {{date}}.
