@@ -69,7 +69,8 @@ export function winners(ads: Ad[], perBrand = 3): Ad[] {
 
 /** Tie-breaker inside a grade: views vs the account's usual for organic posts, days live for ads. */
 export function strength(ad: Ad): number {
-  return ad.source === "organic" ? (ad.views ?? 0) / Math.max(1, ad.usual_views ?? 1) : ad.days_running ?? 0;
+  // within a grade: an organic post's views (the grade already says it beat its usual), a paid ad's days live
+  return ad.source === "organic" ? (ad.views ?? 0) : ad.days_running ?? 0;
 }
 
 export function stats(ads: Ad[]) {

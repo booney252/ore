@@ -57,8 +57,8 @@ def winner_score(ad: dict, today: date) -> tuple[float, str]:
 
 
 def strength(ad: dict) -> float:
-    """Tie-breaker inside a grade: how far an organic post beat its account's usual views,
-    or how long a paid ad has run."""
+    """Tie-breaker inside a grade: an organic post's views (the grade already says it beat its
+    account's usual; within a grade, more people reached wins), or how long a paid ad has run."""
     if ad.get("source") == "organic":
-        return (ad.get("views") or 0) / max(1, ad.get("usual_views") or 1)
+        return float(ad.get("views") or 0)
     return float(ad.get("days_running") or 0)
