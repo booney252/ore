@@ -280,10 +280,30 @@ def in_lane(ad: dict, key: str, unknown_video_ok: bool = False) -> bool:
     return kind == key
 
 
-def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | None = None) -> list[dict]:
-    """The report's winners, lane by lane: [{"lane", "title", "about", "ad", "full"}]."""
+def report_formats(fields: dict) -> set[str] | None:
+    """brand.md `report_formats` (e.g. "ugc", or "ugc, static"): the only formats the brand's
+    report covers. None = all of them."""
+    raw = str(fields.get("report_formats") or "").lower()
+    keys = {k.strip().replace("-", "") for k in re.split(r"[,\s]+", raw) if k.strip()}
+    keys = {"ugc" if k in ("talking", "talkinghead") else k for k in keys}
+    return keys or None
+
+
+def _format_ok(ad: dict, formats: set[str] | None, unknown_ok: bool = False) -> bool:
+    if not formats:
+        return True
+    kind = ad_kind(ad)
+    return kind in formats or (kind is None and unknown_ok and bool(formats & {"ugc", "broll"}))
+
+
+def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | None = None,
+               formats: set[str] | None = None) -> list[dict]:
+    """The report's winners, lane by lane: [{"lane", "title", "about", "ad", "full"}].
+    With `formats`, only those formats count, and the other format lanes are dropped."""
     lanes = ORGANIC_LANES if is_organic(ads) else PAID_LANES
-    pool = ranked(ads, per_brand=None)
+    if formats:
+        lanes = [l for l in lanes if l[0] not in ("ugc", "static", "lfs", "broll") or l[0] in formats]
+    pool = [a for a in ranked(ads, per_brand=None) if _format_ok(a, formats)]
     advertisers = max(1, len({a.get("brand") for a in pool}))
     taken: set[str] = set()
     picks: list[dict] = []
@@ -310,13 +330,16 @@ def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | No
     return picks
 
 
-def lane_candidates(ads: list[dict], per_lane: int = 8) -> list[str]:
+def lane_candidates(ads: list[dict], per_lane: int = 8, formats: set[str] | None = None) -> list[str]:
     """Ads worth transcribing and breaking down before a report, so every lane has winners to
     pick from: the best of each lane by grade, broken down or not (a video's UGC/B-roll lane is
     only known after its breakdown)."""
     lanes = ORGANIC_LANES if is_organic(ads) else PAID_LANES
+    if formats:
+        lanes = [l for l in lanes if l[0] not in ("ugc", "static", "lfs", "broll") or l[0] in formats]
     pool = sorted((a for a in ads if not a.get("removed_from_library")
-                   and (a.get("media_key") or a.get("analysis"))),
+                   and (a.get("media_key") or a.get("analysis"))
+                   and _format_ok(a, formats, unknown_ok=True)),
                   key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
     out: dict[str, None] = {}
     for key, *_ in lanes:
@@ -355,8 +378,8 @@ def run_report(storage, slug: str, top_n: int = REPORT_TOTAL, today: date | None
     today = today or datetime.now(timezone.utc).date()
     ctx = brand_context(storage, slug)
     ads = load_ads(storage, slug)
-    segs = brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0])
-    picks = pick_lanes(ads, total=top_n, segs=segs)
+    fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    picks = pick_lanes(ads, total=top_n, segs=brandlib.segments(fields), formats=report_formats(fields))
     if not picks:
         raise llm.LLMError("no broken-down ads yet: run `ads`, `creative` and `breakdown` first")
     top_ids = {p["ad"]["ad_id"] for p in picks}

@@ -35,3 +35,16 @@ def test_slow_advertisers_and_stopped_ads_dont_rise():
     ads.append(ad("BBCO", "2026-09-01", False, "2026-09-25", versions=8))
     regrade_paid(ads, TODAY)
     assert not ads[-3]["rising"] and not ads[-2]["rising"] and not ads[-1]["rising"]
+
+
+def test_report_formats_keeps_only_those_lanes():
+    from cse.stages import pick_lanes, report_formats
+    assert report_formats({"report_formats": "UGC"}) == {"ugc"}
+    assert report_formats({}) is None
+    ugc = {"breakdown": {"format": "UGC selfie"}, "media_type": "video"}
+    broll = {"breakdown": {"format": "b-roll + voiceover"}, "media_type": "video"}
+    ads = [{"ad_id": str(i), "brand": f"b{i}", "score": 75, "days_running": 40, **(ugc if i % 2 else broll)}
+           for i in range(10)]
+    picks = pick_lanes(ads, formats={"ugc"})
+    assert picks and all(p["ad"]["breakdown"]["format"] == "UGC selfie" for p in picks)
+    assert "broll" not in {p["lane"] for p in picks}

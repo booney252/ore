@@ -53,10 +53,10 @@ def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | 
         check()
     # Each advertiser's top 5, plus the best of every report lane (proven, rising, UGC, statics,
     # LFS, B-roll), so each section of the report has broken-down winners to pick from.
-    lanes = stages.lane_candidates(stages.load_ads(storage, slug))
+    lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
     creative.run(storage, slug, per_brand=5, ids=lanes)
     check()
-    lanes = stages.lane_candidates(stages.load_ads(storage, slug))
+    lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
     if breakdown.run(storage, slug, name, per_brand=5, ids=lanes)["waiting"]:
         raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
     check()
