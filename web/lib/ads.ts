@@ -69,6 +69,31 @@ export function winners(ads: Ad[], perBrand = 3): Ad[] {
   });
 }
 
+export const KINDS = [
+  { key: "ugc", label: "UGC" },
+  { key: "broll", label: "B-roll" },
+  { key: "lfs", label: "LFS" },
+  { key: "static", label: "Static" },
+] as const;
+export type Kind = (typeof KINDS)[number]["key"];
+
+/** Videos this long or longer are long-form sales (LFS) videos, whatever they look like. */
+export const LFS_SECONDS = 120;
+
+/**
+ * Which pile an ad sorts into: static (an image), LFS (a 2 min+ video), UGC (a person on camera)
+ * or B-roll (footage, voiceover, screen recordings, slideshows). Null for a video that hasn't
+ * been taken apart yet, since we can't tell UGC from B-roll without the breakdown.
+ */
+export function kind(ad: Ad): Kind | null {
+  const format = String(ad.breakdown?.format ?? "").toLowerCase();
+  if (ad.media_type === "image" || format.startsWith("static")) return "static";
+  if ((ad.analysis?.length_s ?? 0) >= LFS_SECONDS) return "lfs";
+  if (!format) return null;
+  if (/ugc|talking head|selfie|skit|creator|testimonial|interview|podcast/.test(format)) return "ugc";
+  return "broll";
+}
+
 /** Tie-breaker inside a grade: views vs the account's usual for organic posts, days live for ads. */
 export function strength(ad: Ad): number {
   // within a grade: an organic post's views (the grade already says it beat its usual), a paid ad's days live

@@ -1,16 +1,31 @@
 import AdCard from "@/app/AdCard";
 import ScoreKey from "@/app/ScoreKey";
 import Grade from "@/app/Grade";
-import { link, loadAds, posted, winners } from "@/lib/ads";
+import Link from "next/link";
+import { KINDS, kind, link, loadAds, posted, winners, type Kind } from "@/lib/ads";
 import { campaignType } from "@/lib/brands";
 import { explain } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
 
-export default async function Winners({ params }: { params: Promise<{ brand: string }> }) {
+export default async function Winners({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ brand: string }>;
+  searchParams: Promise<{ type?: string }>;
+}) {
   const { brand } = await params;
-  const [ads, type] = await Promise.all([loadAds(brand), campaignType(brand)]);
+  const { type: picked } = await searchParams;
+  const [allAds, type] = await Promise.all([loadAds(brand), campaignType(brand)]);
   const organic = type === "organic";
+  const only = KINDS.find((k) => k.key === picked)?.key as Kind | undefined;
+  const counts = new Map<Kind, number>();
+  for (const a of allAds) {
+    const k = kind(a);
+    if (k && !a.removed_from_library) counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  const ads = only ? allAds.filter((a) => kind(a) === only) : allAds;
   const top = winners(ads, 10);
   const shown = new Set(top.map((a) => a.ad_id));
   const rest = ads
@@ -31,6 +46,29 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
       </header>
 
       <ScoreKey organic={organic} />
+
+      <nav className="tabs" aria-label="Sort by type">
+        <Link href={`/b/${brand}/ads`} className={only ? "" : "on"} scroll={false}>
+          All
+        </Link>
+        {KINDS.map((k) => (
+          <Link
+            key={k.key}
+            href={`/b/${brand}/ads?type=${k.key}`}
+            className={only === k.key ? "on" : ""}
+            scroll={false}
+          >
+            {k.label} <span className="mono">{counts.get(k.key) ?? 0}</span>
+          </Link>
+        ))}
+      </nav>
+
+      {only && top.length === 0 ? (
+        <p className="muted">
+          No {KINDS.find((k) => k.key === only)!.label} ads yet. Videos sort into UGC or B-roll once
+          they&apos;ve been taken apart.
+        </p>
+      ) : null}
 
       <div className="ad-grid">
         {top.map((ad, i) => (
@@ -62,7 +100,9 @@ export default async function Winners({ params }: { params: Promise<{ brand: str
                   <td>
                     {explain(a).verdict}. <span className="muted">{explain(a).reason}</span>
                   </td>
-                  <td className="mono muted">{organic ? posted(a) : a.media_type}</td>
+                  <td className="mono muted">
+                    {organic ? posted(a) : (KINDS.find((k) => k.key === kind(a))?.label ?? a.media_type)}
+                  </td>
                   <td>
                     {a.removed_from_library ? (
                       <span className="tag ruby">Removed</span>

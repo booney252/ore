@@ -122,6 +122,23 @@ def image_type(data: bytes) -> str:
     return "image/jpeg"
 
 
+MAX_IMAGE_BYTES = 4_000_000  # the API refuses images over 10 MB (and very large sizes)
+
+
+def shrink_image(data: bytes) -> bytes:
+    """Scale a big image down to 1568px on the long side as a JPEG (ffmpeg), so the API takes it."""
+    if len(data) <= MAX_IMAGE_BYTES:
+        return data
+    import subprocess
+
+    out = subprocess.run(
+        ["ffmpeg", "-loglevel", "error", "-i", "pipe:0", "-vf",
+         "scale='min(1568,iw)':'min(1568,ih)':force_original_aspect_ratio=decrease",
+         "-frames:v", "1", "-q:v", "3", "-f", "image2", "-c:v", "mjpeg", "pipe:1"],
+        input=data, capture_output=True, check=True)
+    return out.stdout
+
+
 def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None = None,
         client=None, max_tokens: int = 32000, effort: str = "high", web: bool = False) -> str:
     """Run one prompt step and return the model's text answer. `web` lets the API model
@@ -149,7 +166,7 @@ def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None
 
     content = []
     for key in image_keys or []:
-        data = storage.read_bytes(key)
+        data = shrink_image(storage.read_bytes(key))
         content.append({"type": "image", "source": {
             "type": "base64", "media_type": image_type(data),
             "data": base64.standard_b64encode(data).decode()}})
