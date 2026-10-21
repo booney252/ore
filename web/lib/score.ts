@@ -57,7 +57,8 @@ export function short(n: number): string {
 /** Organic posts: views vs the account's usual, then comments per view. Same rules as cse/organic.py. */
 export const ORGANIC_SCALES = [
   { label: "Outlier", effect: "sets the grade", scale: "views vs the account's usual: A 5x+ · B 2x+ · C about normal · D below" },
-  { label: "Comments per view", effect: "up or down one", scale: "2x the account's usual: up one · half or less: down one (10+ comments)" },
+  { label: "Reach", effect: "can raise it", scale: "beating the usual by 1.5x+: B at 50K+ views · A at 250K+" },
+  { label: "Comments per view", effect: "up one", scale: "2x the account's usual: up one (10+ comments). Never down" },
   { label: "Views", effect: "under 10,000", scale: "not a breakout yet: stops at C" },
 ];
 
@@ -73,10 +74,12 @@ function explainOrganic(ad: Ad): Explained {
   const views = ad.views ?? 0;
   const usual = ad.usual_views ?? 0;
   const ratio = usual ? views / usual : 1;
-  const base: Grade = ratio >= 5 ? "A" : ratio >= 2 ? "B" : ratio >= 1 ? "C" : "D";
+  const outlier: Grade = ratio >= 5 ? "A" : ratio >= 2 ? "B" : ratio >= 1 ? "C" : "D";
+  const reach: Grade | null = ratio < 1.5 ? null : views >= 250_000 ? "A" : views >= 50_000 ? "B" : null;
+  const base: Grade = reach && GRADES.indexOf(reach) < GRADES.indexOf(outlier) ? reach : outlier;
   const rate = commentRate(ad);
   const usualRate = ad.usual_comment_rate ?? 0;
-  const move = (ad.comments ?? 0) < 10 || !usualRate ? 0 : rate >= 2 * usualRate ? -1 : rate <= usualRate / 2 ? 1 : 0;
+  const move = (ad.comments ?? 0) < 10 || !usualRate ? 0 : rate >= 2 * usualRate ? -1 : 0;
   let grade = GRADES[Math.max(0, Math.min(4, GRADES.indexOf(base) + move))];
   const floor = ad.min_views ?? 10_000;
   const capped = views < floor && (grade === "A" || grade === "B");
@@ -86,17 +89,26 @@ function explainOrganic(ad: Ad): Explained {
     {
       label: "Outlier",
       value: `${ratio.toFixed(1)}x`,
-      grade: base,
+      grade: outlier,
       effect: capped ? `capped at C: under ${floor.toLocaleString("en-US")} views` : "sets the grade",
       note: `${views.toLocaleString("en-US")} views vs @${ad.handle}'s usual ${usual.toLocaleString("en-US")}.`,
     },
     {
       label: "Comments",
       value: pct(rate),
-      effect: move < 0 ? "up one grade" : move > 0 ? "down one grade" : "no change",
+      effect: move < 0 ? "up one grade" : "no change",
       note: `${(ad.comments ?? 0).toLocaleString("en-US")} comments, ${pct(rate)} of views; @${ad.handle}'s usual is ${pct(usualRate)}.`,
     },
   ];
+  if (reach && reach === base && base !== outlier) {
+    parts.splice(1, 0, {
+      label: "Reach",
+      value: short(views),
+      grade: reach,
+      effect: "raised the grade",
+      note: `${views.toLocaleString("en-US")} views and beating the usual by ${ratio.toFixed(1)}x: big reach counts on its own.`,
+    });
+  }
   const bits = [`${short(views)} views, ${ratio.toFixed(1)}x usual`];
   if (usualRate) bits.push(`comments ${pct(rate)} vs usual ${pct(usualRate)}`);
   const reason = `${bits.join(", ")}${capped ? " (too few views to call)" : ""}.`;

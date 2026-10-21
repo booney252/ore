@@ -4,10 +4,11 @@ Paid ads prove themselves by running for months; an organic post proves itself b
 account's normal views. So an organic post's grade starts from its views divided by the median
 views of that account's posts (the outlier):
   A 5x+ the usual, B 2x+, C 1x+ (about normal), D below the usual.
-Then engagement moves it, comments per view against the account's usual comment rate (comments
-are what a comment-keyword CTA runs on, and like counts are often hidden):
-  2x+ the usual comment rate: up one grade; half or less: down one (a D drops to F).
-  Only with 10+ comments, so a handful of comments can't swing it.
+Raw reach counts too, so a big account's hit isn't held back by its high usual: a post that beats
+its account's usual by 1.5x+ is at least a B with 50,000+ views and an A with 250,000+.
+Then engagement can lift it, comments per view against the account's usual comment rate:
+  2x+ the usual comment rate: up one grade. Only with 10+ comments. Comments never pull a grade
+  down: a post without a "comment a word" call to action would look weak next to one that has it.
 Under 10,000 views isn't a breakout worth copying, however far it beats a small account's usual:
 the grade stops at C (brand.md `breakout_min_views` changes the bar).
 brand.md `organic_since` (e.g. 2026-04-01) drops older posts, so an account's old content from
@@ -39,6 +40,16 @@ MIN_VIEWS = 10_000  # a post needs this many views to count as a winner (A or B)
 PLATFORMS = {"instagram": "INSTAGRAM", "tiktok": "TIKTOK", "youtube": "YOUTUBE"}
 
 
+REACH = [(250_000, "A"), (50_000, "B")]  # views that make a post a winner on reach alone...
+REACH_MIN_RATIO = 1.5  # ...as long as it also beat its account's usual
+
+
+def grade_reach(views: int, ratio: float) -> str | None:
+    if ratio < REACH_MIN_RATIO:
+        return None
+    return next((g for floor, g in REACH if views >= floor), None)
+
+
 def grade_ratio(ratio: float) -> str:
     return "A" if ratio >= 5 else "B" if ratio >= 2 else "C" if ratio >= 1 else "D"
 
@@ -52,30 +63,31 @@ def comment_rate(post: dict) -> float:
 
 
 def engagement_move(post: dict) -> int:
-    """-1 (up one grade), +1 (down one) or 0, from comments per view vs the account's usual."""
+    """-1 (up one grade) or 0, from comments per view vs the account's usual. Never down."""
     usual = float(post.get("usual_comment_rate") or 0)
     if int(post.get("comments") or 0) < MIN_COMMENTS or not usual:
         return 0
-    rate = comment_rate(post)
-    return -1 if rate >= 2 * usual else 1 if rate <= usual / 2 else 0
+    return -1 if comment_rate(post) >= 2 * usual else 0
 
 
 def organic_score(post: dict) -> tuple[float, str]:
     views, usual = int(post.get("views") or 0), int(post.get("usual_views") or 0)
     ratio = views / usual if usual else 1.0
-    base = grade_ratio(ratio)
+    outlier = grade_ratio(ratio)
+    reach = grade_reach(views, ratio)
+    base = min(outlier, reach or outlier)  # the better of the two ("A" < "B")
     move = engagement_move(post)
     grade = GRADES[max(0, min(4, GRADES.index(base) + move))]
     floor = int(post.get("min_views") or MIN_VIEWS)
     capped = views < floor and grade in "AB"
     if capped:
         grade = "C"
-    why = (f"Grade {grade}: {views:,} views, {ratio:.1f}x @{post.get('handle')}'s usual "
-           f"{usual:,} ({base})")
+    why = (f"Grade {grade}: {views:,} views"
+           + (f" ({reach} on reach)" if reach and reach < outlier else "")
+           + f", {ratio:.1f}x @{post.get('handle')}'s usual {usual:,} ({outlier})")
     if post.get("usual_comment_rate"):
         why += (f", comments {comment_rate(post):.2%} of views vs usual "
-                f"{float(post['usual_comment_rate']):.2%}"
-                + (" (up one)" if move < 0 else " (down one)" if move > 0 else ""))
+                f"{float(post['usual_comment_rate']):.2%}" + (" (up one)" if move < 0 else ""))
     why += f", under {floor:,} views so not a breakout yet (capped at C)." if capped else "."
     return (4 - GRADES.index(grade)) * 25, why
 

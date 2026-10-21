@@ -92,12 +92,18 @@ def test_pull_grades_accounts_and_fetches_only_the_winners(tmp_path, monkeypatch
     assert yt["analysis"]["hook_line"] == "nobody tells you this" and yt["url"].endswith("/shorts/tommycetty0")
 
 
-def test_comments_per_view_move_the_grade_one_step():
+def test_comments_only_lift_and_reach_counts():
     base = {"handle": "x", "views": 30000, "usual_views": 10000, "usual_comment_rate": 0.002}
     assert organic.organic_score({**base, "comments": 60})[0] == 75   # 3x usual (B), normal comments
     assert organic.organic_score({**base, "comments": 200})[0] == 100  # comments 3.3x usual: up to A
-    score, why = organic.organic_score({**base, "comments": 20})      # 0.07%, a third of usual
-    assert score == 50 and "(down one)" in why
+    score, why = organic.organic_score({**base, "comments": 20})      # a third of usual: never down
+    assert score == 75 and "down" not in why
+    # a big account's hit: 330K views at 4x its usual is an A on reach, low comments or not
+    big = {"handle": "j", "views": 330202, "usual_views": 82831, "comments": 1353, "usual_comment_rate": 0.02}
+    score, why = organic.organic_score(big)
+    assert score == 100 and "(A on reach)" in why
+    # reach alone isn't enough: a normal post from a big account stays C
+    assert organic.organic_score({"handle": "j", "views": 91662, "usual_views": 82831})[0] == 50
     assert organic.organic_score({**base, "comments": 5})[0] == 75    # under 10 comments: no move
 
 
