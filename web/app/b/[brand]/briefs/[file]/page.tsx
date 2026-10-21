@@ -16,22 +16,26 @@ export default async function BriefDoc({ params }: { params: Promise<{ brand: st
   }
   if (!md) notFound();
   return (
-    <main className="page read">
-      <div className="doc-bar">
-        <p className="crumbs mono">
-          <Link href={`/b/${brand}/briefs`}>Creative briefs</Link> / {file}
-        </p>
-        <span className="doc-links">
-          <a href={`/api/gdoc?brand=${brand}&kind=briefs&file=${file}`} className="link-gdoc">
-            Open in Google Docs ↗
-          </a>
-          <a href={`/api/doc?brand=${brand}&kind=briefs&file=${file}`} className="link-quiet">
-            Download as Markdown
-          </a>
-        </span>
+    <main className="page with-side doc-side">
+      <div className="read">
+        <div className="doc-bar">
+          <p className="crumbs mono">
+            <Link href={`/b/${brand}/briefs`}>Creative briefs</Link> / {file}
+          </p>
+          <span className="doc-links">
+            <a href={`/api/gdoc?brand=${brand}&kind=briefs&file=${file}`} className="link-gdoc">
+              Open in Google Docs ↗
+            </a>
+            <a href={`/api/doc?brand=${brand}&kind=briefs&file=${file}`} className="link-quiet">
+              Download as Markdown
+            </a>
+          </span>
+        </div>
+        <Markdown text={md} />
       </div>
-      <Markdown text={md} />
-      <FeedbackBox brand={brand} doc={`briefs/${file}`} about={`creative brief ${file}`} />
+      <aside className="side">
+        <FeedbackBox brand={brand} doc={`briefs/${file}`} about={`creative brief ${file}`} />
+      </aside>
     </main>
   );
 }

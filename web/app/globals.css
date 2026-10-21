@@ -127,7 +127,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .dot.emerald { background: var(--emerald); box-shadow: 0 0 10px var(--emerald-glow); }
 .dot.ruby { background: var(--ruby); box-shadow: 0 0 10px var(--ruby-glow); }
 
-.stage { position: relative; min-width: 0; overflow: hidden; }
+.stage { position: relative; min-width: 0; overflow: hidden; overflow: clip; /* clip, not hidden: keeps the glow in without breaking sticky side columns */ }
 .stage::before {
   /* the light the page sits in: three stones just above the fold */
   content: "";
@@ -1745,3 +1745,15 @@ select {
 .feedback-thread li { display: grid; gap: 6px; }
 .feedback-thread .you { margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.035); border: 1px solid var(--line-2); white-space: pre-wrap; line-height: 1.5; max-height: 220px; overflow: auto; }
 .feedback-thread .you .mono { color: var(--muted); }
+
+/* The feedback box rides along in a doc page's sticky side column */
+.side { max-height: calc(100vh - 48px); overflow-y: auto; scrollbar-width: thin; }
+.doc-side { grid-template-columns: minmax(0, 1fr) 340px; }
+.side .feedback-box { margin: 18px 0 0; padding: 16px; }
+.doc-side .side .feedback-box { margin-top: 0; }
+.side .feedback-box h2 { font-size: 1.1rem; margin: 0; }
+.side .feedback-row { flex-direction: column; align-items: stretch; }
+.side .feedback-thread .you { max-height: 140px; font-size: 0.88rem; }
+.side .ore-reply { font-size: 0.88rem; }
+@media (max-width: 1100px) { .side { max-height: none; overflow: visible; } .doc-side { grid-template-columns: 1fr; } }
+.side .feedback-row > * { width: 100%; }
