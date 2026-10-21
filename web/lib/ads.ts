@@ -77,18 +77,21 @@ export const KINDS = [
 ] as const;
 export type Kind = (typeof KINDS)[number]["key"];
 
-/** Videos this long or longer are long-form sales (LFS) videos, whatever they look like. */
-export const LFS_SECONDS = 120;
+/** Ad copy this long or longer (in words) makes it LFS: long-form copy that reads like a letter in the feed. */
+export const LFS_WORDS = 400;
+
+const words = (text?: string) => (text ?? "").split(/\s+/).filter(Boolean).length;
 
 /**
- * Which pile an ad sorts into: static (an image), LFS (a 2 min+ video), UGC (a person on camera)
- * or B-roll (footage, voiceover, screen recordings, slideshows). Null for a video that hasn't
- * been taken apart yet, since we can't tell UGC from B-roll without the breakdown.
+ * Which pile an ad sorts into. LFS (long-form copy: 400+ words of ad text, with any image or video)
+ * comes first; then static (an image), UGC (a person on camera) or B-roll (footage, voiceover,
+ * screen recordings, slideshows). Null for a short-copy video that hasn't been taken apart yet,
+ * since we can't tell UGC from B-roll without the breakdown.
  */
 export function kind(ad: Ad): Kind | null {
+  if (words(ad.body) >= LFS_WORDS) return "lfs";
   const format = String(ad.breakdown?.format ?? "").toLowerCase();
   if (ad.media_type === "image" || format.startsWith("static")) return "static";
-  if ((ad.analysis?.length_s ?? 0) >= LFS_SECONDS) return "lfs";
   if (!format) return null;
   if (/ugc|talking head|selfie|skit|creator|testimonial|interview|podcast/.test(format)) return "ugc";
   return "broll";
