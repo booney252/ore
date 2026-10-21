@@ -56,14 +56,17 @@ def web_research(client, prompt: str, max_searches: int = 20) -> tuple[str, int]
     """Run a research prompt with web search. Returns (notes, number of searches used)."""
     messages = [{"role": "user", "content": prompt}]
     tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": max_searches}]
+    content: list = []
     for _ in range(MAX_PAUSE_RESUMES + 1):
         response = _create(client, max_tokens=32000, tools=tools, messages=messages)
+        content += response.content
         if response.stop_reason != "pause_turn":
             break
-        # Server-side search loop hit its iteration cap; resend to let it continue.
-        messages = [messages[0], {"role": "assistant", "content": response.content}]
-    searches = sum(1 for b in response.content if b.type == "server_tool_use")
-    return _text(response), searches
+        # Server-side search loop hit its iteration cap; resend everything so far to let it continue.
+        messages = [messages[0], {"role": "assistant", "content": content}]
+    searches = sum(1 for b in content if b.type == "server_tool_use")
+    # with search, text comes in many blocks split around citations: join them back without breaks
+    return "".join(b.text for b in content if b.type == "text").strip(), searches
 
 
 def extract_json(client, instructions: str, source: str, schema: dict) -> dict:

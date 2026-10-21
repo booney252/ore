@@ -1,6 +1,8 @@
 """Foundation: the 4 research prompts -> brands/<brand>/research-brief.md, the brand brain.
 
-1. prompts/01-competitors.md    competitor teardown   (may search the web for pricing/size)
+Every step can search the web (the prompts ask for sourced facts: pricing, market size, trends).
+
+1. prompts/01-competitors.md    competitor teardown
 2. prompts/02-psychographics.md inside the buyer's head
 3. prompts/03-awareness.md      market awareness
 4. prompts/04-research-brief.md unified brief from 1-3 + customer quotes
@@ -32,8 +34,8 @@ log = logging.getLogger("cse")
 
 STEPS = [
     ("01-competitors", Path("prompts/01-competitors.md"), True),
-    ("02-psychographics", Path("prompts/02-psychographics.md"), False),
-    ("03-awareness", Path("prompts/03-awareness.md"), False),
+    ("02-psychographics", Path("prompts/02-psychographics.md"), True),
+    ("03-awareness", Path("prompts/03-awareness.md"), True),
 ]
 BRIEF = Path("prompts/04-research-brief.md")
 ADS_IN_PROMPT = 30
