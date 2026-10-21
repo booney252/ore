@@ -45,9 +45,11 @@ DEFAULT_AD_FORMAT = ("UGC: a real creator talking to camera, shot on a phone, "
 # --- shared context ------------------------------------------------------------------
 
 def load_knowledge(slug: str | None = None, folder: Path = KNOWLEDGE_DIR) -> str:
-    """Craft notes for every brand (knowledge/*.md) plus this brand's own (knowledge/<slug>/*.md)."""
+    """Craft notes for every brand (knowledge/*.md and the book notes in knowledge/books/) plus this
+    brand's own (knowledge/<slug>/*.md)."""
     parts = []
-    paths = sorted(folder.glob("*.md")) + (sorted((folder / slug).glob("*.md")) if slug else [])
+    paths = (sorted(folder.glob("*.md")) + sorted((folder / "books").glob("*.md"))
+             + (sorted((folder / slug).glob("*.md")) if slug and slug != "books" else []))
     for path in paths:
         if path.name == "README.md":
             continue
