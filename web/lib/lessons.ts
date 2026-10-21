@@ -45,3 +45,28 @@ export async function addFeedback(
   await writeText(`brands/${checkSlug(slug)}/feedback/${id}.json`, JSON.stringify({ ...item, copy: "" }, null, 2));
   return id;
 }
+
+export type CraftSuggestion = { id: string; text: string; feedback: string; status: "pending" | "approved" | "dismissed" };
+
+export async function craftSuggestions(slug: string): Promise<CraftSuggestion[]> {
+  const raw = await readText(`brands/${checkSlug(slug)}/craft-suggestions.json`);
+  return raw ? (JSON.parse(raw).suggestions as CraftSuggestion[]) : [];
+}
+
+/** Approved suggestions join the shared craft lessons (same as cse/lessons.py decide_craft). */
+export async function decideCraft(slug: string, approve: string[], dismiss: string[]): Promise<number> {
+  const key = `brands/${checkSlug(slug)}/craft-suggestions.json`;
+  const items = await craftSuggestions(slug);
+  const added = items.filter((s) => s.status === "pending" && approve.includes(s.id)).map((s) => s.text);
+  for (const s of items) {
+    if (s.status !== "pending") continue;
+    if (approve.includes(s.id)) s.status = "approved";
+    else if (dismiss.includes(s.id)) s.status = "dismissed";
+  }
+  await writeText(key, JSON.stringify({ suggestions: items }, null, 2) + "\n");
+  if (added.length) {
+    const craft = ((await readText(CRAFT_KEY)) ?? "").trim();
+    await writeText(CRAFT_KEY, [craft, ...added.map((t) => `- ${t}`)].filter(Boolean).join("\n") + "\n", "text/markdown");
+  }
+  return added.length;
+}

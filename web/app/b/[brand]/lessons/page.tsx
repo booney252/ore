@@ -1,8 +1,8 @@
-import { editLessons, giveFeedback } from "@/app/actions";
+import { editLessons, giveFeedback, reviewCraft } from "@/app/actions";
 import Markdown from "@/app/Markdown";
 import { brandName } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
-import { listFeedback, readLessons } from "@/lib/lessons";
+import { craftSuggestions, listFeedback, readLessons } from "@/lib/lessons";
 
 export const dynamic = "force-dynamic";
 
@@ -11,16 +11,18 @@ export default async function Lessons({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ feedback?: string; saved?: string; edit?: string }>;
+  searchParams: Promise<{ feedback?: string; saved?: string; edit?: string; approved?: string; dismissed?: string }>;
 }) {
   const { brand } = await params;
-  const { feedback, saved, edit } = await searchParams;
-  const [name, lessons, items, jobs] = await Promise.all([
+  const { feedback, saved, edit, approved, dismissed } = await searchParams;
+  const [name, lessons, items, jobs, suggested] = await Promise.all([
     brandName(brand),
     readLessons(brand),
     listFeedback(brand),
     listJobs(brand, 10, ["lessons"]),
+    craftSuggestions(brand),
   ]);
+  const pending = suggested.filter((s) => s.status === "pending");
   const learning = jobs.some((j) => ["pending", "running"].includes(j.status ?? ""));
   const notice =
     feedback === "sent"
@@ -29,7 +31,9 @@ export default async function Lessons({
         ? "Write some feedback first."
         : saved
           ? "Saved."
-          : null;
+          : approved !== undefined
+            ? `${approved} craft lesson${approved === "1" ? "" : "s"} approved for every brand${Number(dismissed) ? `, ${dismissed} dismissed` : ""}.`
+            : null;
 
   return (
     <main className="page lessons-page">
@@ -73,7 +77,7 @@ export default async function Lessons({
               <p className="muted small">
                 {which === "brand"
                   ? "This brand only: the owner's taste, the product's real why, words to use or avoid."
-                  : "Good copy for any brand. Shared by every brand you run in Ore."}
+                  : "Good copy for any brand, shared by every brand you run in Ore. Only lessons you approve end up here."}
               </p>
               {editing ? (
                 <form action={editLessons} className="tab-form">
@@ -87,12 +91,51 @@ export default async function Lessons({
               ) : text ? (
                 <Markdown text={text} />
               ) : (
-                <p className="empty">Nothing yet. It fills up as you give feedback.</p>
+                <p className="empty">
+                  {which === "brand" ? "Nothing yet. It fills up as you give feedback." : "None approved yet."}
+                </p>
               )}
             </section>
           );
         })}
       </div>
+
+      {pending.length ? (
+        <section className="block">
+          <h2>Suggested craft lessons</h2>
+          <p className="muted">
+            From {name}'s feedback, Ore thinks these hold for any brand. Approve the ones that do and they apply to
+            every brand. Dismiss the ones that are really just {name}'s taste (those still live in {name}'s lessons).
+          </p>
+          <form action={reviewCraft} className="craft-review">
+            <input type="hidden" name="brand" value={brand} />
+            <ul className="suggestion-list">
+              {pending.map((s) => (
+                <li key={s.id} className="panel">
+                  <p>{s.text}</p>
+                  <div className="choice-row" role="radiogroup" aria-label="Approve or dismiss">
+                    <label className="choice">
+                      <input type="radio" name={`s_${s.id}`} value="approve" />
+                      <span>Approve</span>
+                    </label>
+                    <label className="choice">
+                      <input type="radio" name={`s_${s.id}`} value="dismiss" />
+                      <span>Dismiss</span>
+                    </label>
+                    <label className="choice">
+                      <input type="radio" name={`s_${s.id}`} value="later" defaultChecked />
+                      <span>Later</span>
+                    </label>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <button type="submit" className="btn-primary">
+              Save decisions
+            </button>
+          </form>
+        </section>
+      ) : null}
 
       <section className="block">
         <h2>Add feedback</h2>

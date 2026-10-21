@@ -18,7 +18,7 @@ import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competi
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { addBrainItem, fileText, MAX_FILE_BYTES, removeBrainItem } from "@/lib/brain";
 import { cancelJob, createJob } from "@/lib/jobs";
-import { addFeedback, saveLessons } from "@/lib/lessons";
+import { addFeedback, decideCraft, saveLessons } from "@/lib/lessons";
 import { createSession, readSession, saveMe, studioBrand, updateSession } from "@/lib/studio";
 import { requireBrand, requireOwner } from "@/lib/session";
 
@@ -347,4 +347,22 @@ export async function editLessons(form: FormData) {
   await saveLessons(brand, which, String(form.get("text") ?? ""));
   revalidatePath(`/b/${brand}/lessons`);
   redirect(`/b/${brand}/lessons?saved=${which}`);
+}
+
+/** Copy lessons page: approve or dismiss the craft lessons Ore suggested from this brand's feedback. */
+export async function reviewCraft(form: FormData) {
+  const brand = String(form.get("brand") ?? "");
+  await requireBrand(brand);
+  await requireOwner();
+  const approve: string[] = [];
+  const dismiss: string[] = [];
+  for (const [k, v] of form.entries()) {
+    const m = /^s_([a-f0-9]{8})$/.exec(k);
+    if (!m) continue;
+    if (v === "approve") approve.push(m[1]);
+    if (v === "dismiss") dismiss.push(m[1]);
+  }
+  const n = await decideCraft(brand, approve, dismiss);
+  revalidatePath(`/b/${brand}/lessons`);
+  redirect(`/b/${brand}/lessons?approved=${n}&dismissed=${dismiss.length}`);
 }

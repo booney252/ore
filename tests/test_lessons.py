@@ -7,7 +7,7 @@ ANSWER = """## Brand lessons
 
 - Every reason to track ties back to half-life: exact day and amount matter. [Michael, 2026-10-20]
 
-## Craft lessons
+## Suggested craft lessons
 
 - Every list item gets its own "why it matters" line. [Michael, 2026-10-20]
 """
@@ -34,6 +34,11 @@ def test_feedback_becomes_brand_and_craft_lessons(tmp_path, monkeypatch):
     assert lessons.learn(s, "pp", item["id"]) == "brands/pp/copy-lessons.md"
     assert "Brief 1: These Three" in fake.prompts[0] and "Say WHY" in fake.prompts[0]
     assert s.read_text("brands/pp/copy-lessons.md").startswith("- Every reason to track")
+    assert not s.exists("workspace/copy-lessons.md")  # craft waits for approval
+    [sug] = lessons.suggestions(s, "pp")
+    assert sug["status"] == "pending" and "why it matters" in sug["text"]
+    assert "### Craft" not in lessons.for_prompt(s, "pp")
+    assert lessons.decide_craft(s, "pp", approve=[sug["id"]], dismiss=[]) == 1
     assert "why it matters" in s.read_text("workspace/copy-lessons.md")
     block = lessons.for_prompt(s, "pp")
     assert "### For this brand" in block and "### Craft (any brand)" in block

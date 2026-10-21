@@ -1698,3 +1698,11 @@ select {
 .feedback-box { margin: 28px 0 8px; padding: 14px 18px; }
 .feedback-box summary { cursor: pointer; }
 .feedback-box form { margin-top: 12px; display: grid; gap: 10px; }
+.craft-review { display: grid; gap: 14px; }
+.suggestion-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.suggestion-list li { padding: 14px 16px; }
+.suggestion-list p { margin: 0 0 10px; }
+.choice-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-2); cursor: pointer; font-size: 0.85rem; }
+.choice:has(input:checked) { border-color: var(--emerald, #35e3a0); }
+.choice input { accent-color: #35e3a0; }

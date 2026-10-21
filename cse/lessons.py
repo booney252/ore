@@ -5,8 +5,11 @@ is saved as brands/<brand>/feedback/<id>.json. `learn` runs prompts/14-copy-less
 folds it into two lists:
   - brand lessons, brands/<brand>/copy-lessons.md: this brand only (the owner's taste, the
     product's real "why", words to use or avoid);
-  - craft lessons, workspace/copy-lessons.md: good copy for any brand.
-`for_prompt` puts both in front of the writer in every report, iteration, brief and Studio prompt.
+  - craft lessons, workspace/copy-lessons.md: good copy for any brand. The model only
+    suggests these (brands/<brand>/craft-suggestions.json); a person approves each one before it
+    joins the shared list, so one brand's taste doesn't leak into every brand.
+`for_prompt` puts the brand's lessons and the approved craft lessons in front of the writer in
+every report, iteration, brief and Studio prompt.
 """
 
 from __future__ import annotations
@@ -30,6 +33,57 @@ COPY_LIMIT = 30000
 
 def brand_key(slug: str) -> str:
     return brandlib.brand_key(slug, "copy-lessons.md")
+
+
+def suggestions_key(slug: str) -> str:
+    return brandlib.brand_key(slug, "craft-suggestions.json")
+
+
+def suggestions(storage, slug: str) -> list[dict]:
+    key = suggestions_key(slug)
+    return json.loads(storage.read_text(key))["suggestions"] if storage.exists(key) else []
+
+
+def _save_suggestions(storage, slug: str, items: list[dict]) -> None:
+    storage.write_text(suggestions_key(slug), json.dumps({"suggestions": items}, indent=2) + "\n")
+
+
+def bullets(md: str) -> list[str]:
+    """A markdown bullet list -> one string per bullet (continuation lines kept)."""
+    out: list[str] = []
+    for line in md.splitlines():
+        if re.match(r"^\s*[-*]\s+", line):
+            out.append(re.sub(r"^\s*[-*]\s+", "", line).strip())
+        elif line.strip() and out:
+            out[-1] += " " + line.strip()
+    return [b for b in out if b and b != "..."]
+
+
+def suggest_craft(storage, slug: str, items: list[str], feedback: str = "") -> list[dict]:
+    """Add craft lessons waiting for approval (skips ones already suggested)."""
+    current = suggestions(storage, slug)
+    seen = {s["text"] for s in current}
+    import secrets
+    new = [{"id": secrets.token_hex(4), "text": t, "feedback": feedback, "status": "pending"}
+           for t in items if t not in seen]
+    _save_suggestions(storage, slug, current + new)
+    return new
+
+
+def decide_craft(storage, slug: str, approve: list[str], dismiss: list[str]) -> int:
+    """Approved suggestions join the shared craft lessons; dismissed ones are kept as dismissed."""
+    items = suggestions(storage, slug)
+    added = [s["text"] for s in items if s["id"] in approve and s["status"] == "pending"]
+    for s in items:
+        if s["status"] == "pending" and s["id"] in approve:
+            s["status"] = "approved"
+        elif s["status"] == "pending" and s["id"] in dismiss:
+            s["status"] = "dismissed"
+    _save_suggestions(storage, slug, items)
+    if added:
+        craft = _read(storage, CRAFT_KEY)
+        storage.write_text(CRAFT_KEY, "\n".join(x for x in [craft, *(f"- {t}" for t in added)] if x) + "\n")
+    return len(added)
 
 
 def feedback_key(slug: str, fid: str) -> str:
@@ -70,8 +124,8 @@ def add_feedback(storage, slug: str, text: str, about: str = "", who: str = "", 
 
 def split_lists(answer: str) -> tuple[str, str]:
     """The model's answer -> (brand lessons, craft lessons), each a bullet list."""
-    m = re.search(r"##\s*Brand lessons\s*\n(.*?)(?=\n##\s*Craft lessons|\Z)", answer, re.S | re.I)
-    c = re.search(r"##\s*Craft lessons\s*\n(.*)", answer, re.S | re.I)
+    m = re.search(r"##\s*Brand lessons\s*\n(.*?)(?=\n##\s*(?:Suggested )?craft lessons|\Z)", answer, re.S | re.I)
+    c = re.search(r"##\s*(?:Suggested )?craft lessons\s*\n(.*)", answer, re.S | re.I)
     return (m.group(1).strip() if m else ""), (c.group(1).strip() if c else "")
 
 
@@ -107,6 +161,8 @@ def learn(storage, slug: str, fid: str, client=None) -> str | None:
         "product_facts": product_facts(fields, notes),
         "brand_lessons": _read(storage, brand_key(slug)) or "(none yet)",
         "craft_lessons": _read(storage, CRAFT_KEY) or "(none yet)",
+        "pending_craft": "\n".join(f"- {s['text']}" for s in suggestions(storage, slug)
+                                   if s["status"] == "pending") or "(none)",
         "source_tag": tag,
     })
     try:
@@ -120,9 +176,9 @@ def learn(storage, slug: str, fid: str, client=None) -> str | None:
         raise llm.LLMError("lessons: the answer had no Brand lessons / Craft lessons sections")
     if brand:
         storage.write_text(brand_key(slug), brand + "\n")
-    if craft:
-        storage.write_text(CRAFT_KEY, craft + "\n")
+    if craft:  # waits for a person to approve before it applies to every brand
+        suggest_craft(storage, slug, bullets(craft), fid)
     item["learned"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     storage.write_text(feedback_key(slug, fid), json.dumps(item, indent=2) + "\n")
-    log.info("lessons: %s folded into %s lessons and craft lessons", fid, slug)
+    log.info("lessons: %s folded into %s lessons (+ craft suggestions to approve)", fid, slug)
     return brand_key(slug)
