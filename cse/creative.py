@@ -120,7 +120,7 @@ def pick(ads: list[dict], limit: int | None = None, per_brand: int | None = None
                 kept.append(a)
         ranked = kept
     todo = [a for a in ranked if not a.get("analysis")]
-    return todo[:limit] if limit else todo
+    return todo[:limit] if limit is not None else todo
 
 
 def run(storage, slug: str, limit: int | None = None, per_brand: int | None = None,

@@ -58,7 +58,7 @@ def pick(ads: list[dict], limit: int | None, per_brand: int | None) -> list[dict
                 kept.append(a)
                 seen[a.get("brand", "")] = n + 1
         todo = kept
-    return todo[:limit] if limit else todo
+    return todo[:limit] if limit is not None else todo
 
 
 def run(storage, slug: str, brand_name: str | None = None, limit: int | None = None,
