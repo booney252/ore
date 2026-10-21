@@ -69,7 +69,12 @@ def product_facts(fields: dict, notes: str) -> str:
     lines = [f"- {k}: {fields[k]}" for k in ("name", "website", "product", "offer", "app_store_url")
              if fields.get(k)]
     body = notes.strip()
-    return "\n".join(lines) + (f"\n\n{body}" if body else "") or "(not filled in yet)"
+    target = str(fields.get("target_awareness") or "").strip()
+    if target:  # the brand picked who the copy aims at: open where that viewer is
+        body += (f"\n\n## Who the copy aims at: {target}\n\nThe brand targets viewers at the **{target}** "
+                 f"stage of awareness. Open where they are (their words for their situation), not with what "
+                 f"only a later stage would recognize; bring in the solution and the proof after the hook.")
+    return "\n".join(lines) + (f"\n\n{body.strip()}" if body.strip() else "") or "(not filled in yet)"
 
 
 def brand_context(storage, slug: str) -> dict:
