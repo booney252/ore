@@ -16,6 +16,8 @@ import json
 import logging
 import subprocess
 import tempfile
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import brand as brandlib
@@ -25,15 +27,19 @@ log = logging.getLogger("cse")
 
 MAX_FRAMES = 12
 WHISPER_MODEL = "base"
+WORKERS = 2  # videos analyzed at once (scene detection is single-threaded; Whisper shares the CPUs)
 _whisper = None
+_whisper_lock = threading.Lock()
 
 
 def _model():
     global _whisper
-    if _whisper is None:
-        from faster_whisper import WhisperModel
+    with _whisper_lock:
+        if _whisper is None:
+            from faster_whisper import WhisperModel
 
-        _whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
+            _whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8",
+                                    num_workers=WORKERS)
     return _whisper
 
 
@@ -134,8 +140,7 @@ def run(storage, slug: str, limit: int | None = None, per_brand: int | None = No
         todo += [doc["ads"][i] for i in ids if i in doc["ads"] and i not in have
                  and doc["ads"][i].get("media_key") and not doc["ads"][i].get("analysis")]
 
-    done = failed = 0
-    for ad in todo:
+    def one(ad: dict) -> bool:
         try:
             with tempfile.TemporaryDirectory() as tmp:
                 tmp = Path(tmp)
@@ -157,14 +162,18 @@ def run(storage, slug: str, limit: int | None = None, per_brand: int | None = No
             ad["analysis"] = analysis
             ad.pop("analysis_error", None)
             save_fields(storage, slug, ad["ad_id"], {"analysis": analysis}, drop=("analysis_error",))
-            done += 1
             log.info("  %s %-20s %5.1fs  %2d cuts  hook: %s", ad["ad_id"], ad["brand"][:20],
                      analysis["length_s"], analysis["cut_count"], analysis["hook_line"][:60])
+            return True
         except Exception as e:  # noqa: BLE001 - log every failure, keep going
             ad["analysis_error"] = str(e)[:200]
-            failed += 1
             log.warning("  analysis failed for %s: %s", ad["ad_id"], ad["analysis_error"])
             save_fields(storage, slug, ad["ad_id"], {"analysis_error": ad["analysis_error"]})
+            return False
+
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        results = list(pool.map(one, todo))
+    done, failed = results.count(True), results.count(False)
 
     log.info("creative: %d analyzed, %d failed, %d still to do",
              done, failed, len([a for a in doc["ads"].values()

@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import threading
 from datetime import date, datetime, timezone
 
 from . import brand as brandlib
@@ -197,18 +198,23 @@ def _save_pages(storage, comp_key: str, pulled: list[dict]) -> None:
     storage.write_text(comp_key, json.dumps(doc, indent=2) + "\n")
 
 
+_save_lock = threading.Lock()
+
+
 def save_fields(storage, slug: str, ad_id: str, fields: dict, drop: tuple = ()) -> None:
     """Re-read ads.json and change only this ad. Long runs (creative, breakdown) save this way,
-    so they never write back an old copy over ads that another run added in the meantime."""
+    so they never write back an old copy over ads that another run added in the meantime.
+    The lock keeps parallel workers in the same run from overwriting each other."""
     key = brandlib.brand_key(slug, "ads.json")
-    doc = json.loads(storage.read_text(key))
-    ad = doc["ads"].get(ad_id)
-    if ad is None:
-        return
-    ad.update(fields)
-    for f in drop:
-        ad.pop(f, None)
-    storage.write_text(key, json.dumps(doc, indent=2) + "\n")
+    with _save_lock:
+        doc = json.loads(storage.read_text(key))
+        ad = doc["ads"].get(ad_id)
+        if ad is None:
+            return
+        ad.update(fields)
+        for f in drop:
+            ad.pop(f, None)
+        storage.write_text(key, json.dumps(doc, indent=2) + "\n")
 
 
 def verify(storage, slug: str, ad_ids: list[str], source=None, today: date | None = None) -> dict:

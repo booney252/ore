@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import brand as brandlib
@@ -17,6 +18,9 @@ log = logging.getLogger("cse")
 
 PROMPT_FILE = Path("prompts/ad-breakdown.md")
 STATIC_PROMPT_FILE = Path("prompts/ad-breakdown-static.md")  # images: graphic + copy, no transcript
+
+
+WORKERS = 8  # breakdowns running at once
 
 
 def _transcript(analysis: dict) -> str:
@@ -74,8 +78,7 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
         todo += [doc["ads"][i] for i in ids if i in doc["ads"] and i not in have
                  and doc["ads"][i].get("analysis") and not doc["ads"][i].get("breakdown")]
 
-    done, waiting, failed = 0, [], 0
-    for ad in todo:
+    def one(ad: dict) -> str:
         frames = [f["key"] for f in ad["analysis"].get("frames", [])]
         try:
             answer = llm.ask(storage, slug, f"breakdown-{ad['ad_id']}",
@@ -86,14 +89,21 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
             ad["breakdown"] = llm.parse_json(answer)
             save_fields(storage, slug, ad["ad_id"], {"breakdown": ad["breakdown"]},
                         drop=("breakdown_error",))
-            done += 1
+            log.info("  broke down %s %s", ad["ad_id"], ad.get("brand"))
+            return "done"
         except llm.HandoffPending as p:
-            waiting.append(p.prompt_key)
+            return p.prompt_key
         except llm.LLMError as e:
             ad["breakdown_error"] = str(e)[:200]
-            failed += 1
             log.warning("  breakdown failed for %s: %s", ad["ad_id"], e)
             save_fields(storage, slug, ad["ad_id"], {"breakdown_error": ad["breakdown_error"]})
+            return "failed"
+
+    # Several at once: each one is a slow model call, so in parallel a batch takes minutes, not an hour.
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        results = list(pool.map(one, todo))
+    done, failed = results.count("done"), results.count("failed")
+    waiting = [r for r in results if r not in ("done", "failed")]
 
     log.info("breakdown: %d done, %d failed, %d waiting on handoff", done, failed, len(waiting))
     if waiting:
