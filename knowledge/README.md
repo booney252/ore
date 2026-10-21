@@ -10,7 +10,8 @@ Put your **own notes and summaries** here. Don't paste course material word for 
 | `hooks.md` | Hook patterns that work, with examples (spoken line + first frame) |
 | `short-form-video.md` | What you know about UGC / Reels / TikTok structure, pacing, retention |
 | `swipe-file.md` | Ads you love (yours or anyone's), with a link and one line on why they work |
-| `books/` | Skill trees from copywriting books, in our own words (e.g. `books/brain-audit.md`); loaded for every brand |
+| `copywriting-skills.md` | Ore's 38 copywriting skills, merged from the book notes; loaded for every brand |
+| `books/` | Full notes on each copywriting book, in our own words (e.g. `books/brain-audit.md`). A library: not loaded into prompts. Add a book here, then fold its new skills into `copywriting-skills.md` |
 | `house-style.md` | How Ore writes by default: aggressive direct response, held back only by a brand's own rules |
 | `peptidepal/rules.md` | Things to always / never do for PeptidePal (voice, claims, compliance); PeptidePal only |
 
