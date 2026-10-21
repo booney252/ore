@@ -213,53 +213,162 @@ def balance_segments(top: list[dict], pool: list[dict], segs: list[dict],
     return sorted(top, key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
 
 
-RISING_MIN = 3  # spots in the report's top list kept for rising ads (new, already winning), if any
+# The report is split into lanes, so one kind of winner can't crowd out the rest:
+# (key, title, what it is, how many ads). Each ad appears once; the first FULL_PER_LANE of a
+# lane get the full line-by-line breakdown, the rest a short card.
+PAID_LANES = [
+    ("proven", "Proven winners", "the best long-runners: months of paid spend and still winning", 5),
+    ("rising", "Rising now", "new ads (under 30 days) already outlasting how long their brand usually "
+               "keeps an ad, or being scaled with 5+ versions: what's working right now", 5),
+    ("ugc", "UGC", "creator videos: a person talking to camera", 5),
+    ("static", "Statics", "image ads", 5),
+    ("lfs", "LFS", "long-form copy: 400+ words of ad text, with any image or video", 4),
+    ("broll", "B-roll", "footage, voiceover, screen recordings, slideshows, animation", 3),
+]
+ORGANIC_LANES = [
+    ("breakout", "Breakouts", "the posts that beat their account's usual views the most", 8),
+    ("recent", "Recent winners", "A or B posts from the last 30 days: what's working right now", 6),
+    ("ugc", "Talking to camera", "a creator talking to camera", 5),
+    ("broll", "B-roll and other formats", "footage, voiceover, screen recordings, slideshows", 4),
+]
+MORE_LANE = ("more", "More winners", "the next best ads, any format")
+REPORT_TOTAL = 25
+FULL_PER_LANE = 2
+LANE_PER_BRAND = 2  # at most this many of one advertiser in one lane
+LFS_WORDS = 400
 
 
-def balance_rising(top: list[dict], pool: list[dict], each: int = RISING_MIN) -> list[dict]:
-    """Keep room for what's working now: long-runners would otherwise fill the whole top list, so
-    the best rising ads (under 30 days, already beating their advertiser's usual) replace the
-    lowest-ranked of the rest."""
-    top = list(top)
-    extra = [a for a in pool if a.get("rising") and a not in top]
-    for add in extra[:max(0, each - sum(1 for a in top if a.get("rising")))]:
-        out = next((a for a in reversed(top) if not a.get("rising")), None)
-        if out is None:
-            break
-        top.remove(out)
-        top.append(add)
-    return sorted(top, key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
+def ad_kind(ad: dict) -> str | None:
+    """The ad's pile, same rules as web/lib/ads.ts kind(): LFS (400+ words of ad text), static,
+    UGC (a person talking to camera) or B-roll. None for a video not broken down yet."""
+    if len((ad.get("body") or "").split()) >= LFS_WORDS:
+        return "lfs"
+    b = ad.get("breakdown") or {}
+    fmt = str(b.get("format") or "").lower()
+    if ad.get("media_type") == "image" or fmt.startswith("static"):
+        return "static"
+    if not fmt:
+        return None
+    if re.search(r"ugc|talking.head|selfie|skit|creator|testimonial|interview|podcast", fmt):
+        return "ugc"
+    if re.search(r"b-roll|broll|voiceover|slideshow|screen recording|animation|montage", fmt):
+        return "broll"
+    camera = str(b.get("camera") or "").lower()
+    creator = str(b.get("creator") or "").lower().strip()
+    on_camera = re.search(r"talking.head|selfie|front.facing|to.camera|green.screen|webcam|propped phone", camera)
+    return "ugc" if on_camera and not re.match(r"(none|no |n/a|faceless)", creator) else "broll"
+
+
+def is_organic(ads: list[dict]) -> bool:
+    return sum(a.get("source") == "organic" for a in ads) > len(ads) / 2
+
+
+def in_lane(ad: dict, key: str, unknown_video_ok: bool = False) -> bool:
+    if key == "proven":
+        return not ad.get("rising")
+    if key == "rising":
+        return bool(ad.get("rising"))
+    if key == "breakout":
+        return True
+    if key == "recent":
+        return (ad.get("days_running") or 0) <= 30 and ad.get("score", 0) >= 75
+    if key == "more":
+        return True
+    kind = ad_kind(ad)
+    if kind is None and unknown_video_ok and key in ("ugc", "broll"):
+        return True
+    return kind == key
+
+
+def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | None = None) -> list[dict]:
+    """The report's winners, lane by lane: [{"lane", "title", "about", "ad", "full"}]."""
+    lanes = ORGANIC_LANES if is_organic(ads) else PAID_LANES
+    pool = ranked(ads, per_brand=None)
+    advertisers = max(1, len({a.get("brand") for a in pool}))
+    taken: set[str] = set()
+    picks: list[dict] = []
+    for key, title, about, n in [*lanes, (*MORE_LANE, total)]:
+        want = n if key != "more" else total - len(picks)
+        if want <= 0:
+            continue
+        eligible = [a for a in pool if a["ad_id"] not in taken and in_lane(a, key)]
+        # Few advertisers (a new category): let each fill more of a lane. The filler lane has no cap.
+        cap = len(eligible) if key == "more" else max(LANE_PER_BRAND, -(-want // advertisers))
+        chosen, per = [], {}
+        for a in eligible:
+            if len(chosen) >= want:
+                break
+            if per.get(a.get("brand"), 0) < cap:
+                chosen.append(a)
+                per[a.get("brand")] = per.get(a.get("brand"), 0) + 1
+        if key == "breakout" and segs:
+            chosen = balance_segments(chosen, eligible, segs)
+        for i, a in enumerate(chosen):
+            taken.add(a["ad_id"])
+            picks.append({"lane": key, "title": title, "about": about, "ad": a,
+                          "full": i < FULL_PER_LANE and key != "more"})
+    return picks
+
+
+def lane_candidates(ads: list[dict], per_lane: int = 8) -> list[str]:
+    """Ads worth transcribing and breaking down before a report, so every lane has winners to
+    pick from: the best of each lane by grade, broken down or not (a video's UGC/B-roll lane is
+    only known after its breakdown)."""
+    lanes = ORGANIC_LANES if is_organic(ads) else PAID_LANES
+    pool = sorted((a for a in ads if not a.get("removed_from_library")
+                   and (a.get("media_key") or a.get("analysis"))),
+                  key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
+    out: dict[str, None] = {}
+    for key, *_ in lanes:
+        per: dict[str, int] = {}
+        n = 0
+        for a in pool:
+            if n >= per_lane:
+                break
+            if in_lane(a, key, unknown_video_ok=True) and per.get(a.get("brand"), 0) < LANE_PER_BRAND:
+                out[a["ad_id"]] = None
+                per[a.get("brand")] = per.get(a.get("brand"), 0) + 1
+                n += 1
+    return list(out)
 
 
 def report_candidates(ads: list[dict]) -> list[str]:
-    """Ad IDs to re-check in the Ad Library before the report picks its top list."""
-    pool = ranked(ads)
-    rising = [a for a in pool if a.get("rising")][:RISING_MIN * 2]
-    return list(dict.fromkeys(a["ad_id"] for a in pool[:CANDIDATES] + rising))
+    """Ad IDs to re-check in the Ad Library before the report picks its winners."""
+    picks = [p["ad"] for p in pick_lanes(ads, total=REPORT_TOTAL + 10)]
+    return list(dict.fromkeys(a["ad_id"] for a in ranked(ads)[:CANDIDATES] + picks))
 
 
-def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None,
+def format_lanes(picks: list[dict]) -> str:
+    """The report's winners for the prompt, lane by lane, numbered straight through."""
+    out, lane = [], None
+    for rank, p in enumerate(picks, start=1):
+        if p["lane"] != lane:
+            lane = p["lane"]
+            out.append(f"## Lane: {p['title']} ({p['about']})")
+        depth = "FULL breakdown" if p["full"] else "SHORT card"
+        out.append(f"Depth: {depth}\n" + format_full(p["ad"], rank))
+    return "\n\n".join(out)
+
+
+def run_report(storage, slug: str, top_n: int = REPORT_TOTAL, today: date | None = None,
                client=None) -> str | None:
     today = today or datetime.now(timezone.utc).date()
     ctx = brand_context(storage, slug)
     ads = load_ads(storage, slug)
-    # Few advertisers (a new category, or a brand with few competitors running ads): let each
-    # one fill more of the top list, so the report still has top_n winners to learn from.
-    advertisers = len({a.get("brand") for a in ranked(ads, per_brand=None)})
-    cap = max(PER_BRAND, -(-top_n // max(1, advertisers)))
-    top = balance_segments(ranked(ads, per_brand=cap)[:top_n], ranked(ads, per_brand=cap),
-                           brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]))
-    top = balance_rising(top, ranked(ads, per_brand=cap))
-    if not top:
+    segs = brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0])
+    picks = pick_lanes(ads, total=top_n, segs=segs)
+    if not picks:
         raise llm.LLMError("no broken-down ads yet: run `ads`, `creative` and `breakdown` first")
-    top_ids = {a["ad_id"] for a in top}
+    top_ids = {p["ad"]["ad_id"] for p in picks}
     others = [a for a in ranked(ads, per_brand=None, include_removed=True)
               if a["ad_id"] not in top_ids]
+    lanes = list(dict.fromkeys(p["title"] for p in picks))
 
     prompt = llm.render(PROMPTS["report"].read_text(), {
         **ctx,
-        "top_count": len(top),
-        "top_ads": "\n\n".join(format_full(a, i + 1) for i, a in enumerate(top)),
+        "top_count": len(picks),
+        "lane_list": ", ".join(lanes),
+        "top_ads": format_lanes(picks),
         "other_ads": "\n".join(format_line(a) for a in others) or "(none)",
         "date": today.isoformat(),
     })
@@ -273,12 +382,14 @@ def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None
 
     out_key = brandlib.brand_key(slug, f"reports/{today.isoformat()}.md")
     header = (f"# {ctx['brand_name']} Winning Ads Report, {today.isoformat()}\n\n"
-              f"_Top {len(top)} of {len(ads)} ads pulled._\n\n")
+              f"_{len(picks)} winners in {len(lanes)} sections ({', '.join(lanes)}), "
+              f"from {len(ads)} ads pulled._\n\n")
     storage.write_text(out_key, header + answer.strip() + "\n")
-    # The ranks the report uses, so iterations can map "#3" back to an ad.
+    # The ranks the report uses, so iterations can map "#3" back to an ad, grouped by lane.
     storage.write_text(out_key[:-3] + ".json", json.dumps({
-        "top": [{"rank": i + 1, "ad_id": a["ad_id"], "brand": a.get("brand")}
-                for i, a in enumerate(top)]}, indent=2) + "\n")
+        "top": [{"rank": i + 1, "ad_id": p["ad"]["ad_id"], "brand": p["ad"].get("brand"),
+                 "lane": p["lane"], "lane_title": p["title"], "full": p["full"]}
+                for i, p in enumerate(picks)]}, indent=2) + "\n")
     log.info("report: saved %s", out_key)
     return out_key
 

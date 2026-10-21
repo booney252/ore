@@ -1,7 +1,6 @@
 from datetime import date, timedelta
 
 from cse.score import regrade_paid
-from cse.stages import balance_rising
 
 TODAY = date(2026, 10, 21)
 
@@ -36,11 +35,3 @@ def test_slow_advertisers_and_stopped_ads_dont_rise():
     ads.append(ad("BBCO", "2026-09-01", False, "2026-09-25", versions=8))
     regrade_paid(ads, TODAY)
     assert not ads[-3]["rising"] and not ads[-2]["rising"] and not ads[-1]["rising"]
-
-
-def test_report_keeps_room_for_rising_ads():
-    old = [{"ad_id": str(i), "score": 75, "days_running": 100 - i} for i in range(10)]
-    pool = old + [{"ad_id": f"r{i}", "score": 75, "days_running": 20, "rising": True} for i in range(5)]
-    top = balance_rising(old, pool)
-    assert len(top) == 10 and sum(a.get("rising", False) for a in top) == 3
-    assert {"7", "8", "9"}.isdisjoint(a["ad_id"] for a in top)  # the lowest-ranked made room

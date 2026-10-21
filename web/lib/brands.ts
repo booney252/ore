@@ -96,9 +96,9 @@ export async function docTitles(slug: string, kind: Kind, files: string[]): Prom
 export async function reportTop(
   slug: string,
   file: string,
-): Promise<{ rank: number; ad_id: string }[] | null> {
+): Promise<{ rank: number; ad_id: string; lane_title?: string }[] | null> {
   const raw = await readText(`brands/${checkSlug(slug)}/reports/${checkFile(file)}.json`);
-  return raw ? (JSON.parse(raw).top as { rank: number; ad_id: string }[]) : null;
+  return raw ? (JSON.parse(raw).top as { rank: number; ad_id: string; lane_title?: string }[]) : null;
 }
 
 /** "Peptide Pal!" -> "peptide-pal" */

@@ -55,7 +55,7 @@ export default async function Reports({
           <p className="muted">
             {setup.organic
               ? "Pulls the newest posts from every account you track, grades them against each account's usual, transcribes and breaks down the winners, then writes the report."
-              : "Pulls new ads from every competitor (and you), scores them, transcribes and breaks down the top ones, re-checks they're still live, then writes the report."}
+              : "Pulls new ads from every competitor (and you), scores them, transcribes and breaks down the top ones, re-checks they're still live, then writes the report: the big picture first, then sections for proven winners, rising ads, UGC, statics, LFS and B-roll."}
           </p>
         </div>
         <form action={newReport}>

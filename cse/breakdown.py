@@ -62,12 +62,17 @@ def pick(ads: list[dict], limit: int | None, per_brand: int | None) -> list[dict
 
 
 def run(storage, slug: str, brand_name: str | None = None, limit: int | None = None,
-        per_brand: int | None = None, client=None) -> dict:
+        per_brand: int | None = None, client=None, ids: list[str] | None = None) -> dict:
+    """With `ids`, also break down those ads (e.g. the report's lane candidates) on top of the pick."""
     ads_key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(ads_key))
     templates = {"video": PROMPT_FILE.read_text(), "image": STATIC_PROMPT_FILE.read_text()}
     brand_name = brand_name or slug
     todo = pick(list(doc["ads"].values()), limit, per_brand)
+    if ids:
+        have = {a["ad_id"] for a in todo}
+        todo += [doc["ads"][i] for i in ids if i in doc["ads"] and i not in have
+                 and doc["ads"][i].get("analysis") and not doc["ads"][i].get("breakdown")]
 
     done, waiting, failed = 0, [], 0
     for ad in todo:

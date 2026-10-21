@@ -51,9 +51,13 @@ def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | 
         organic.pull(storage, slug, max_pages=WEEKLY_ORGANIC_PAGES)
         organic.check_topics(storage, slug)  # winners that aren't about the niche drop out
         check()
-    creative.run(storage, slug, per_brand=5)
+    # Each advertiser's top 5, plus the best of every report lane (proven, rising, UGC, statics,
+    # LFS, B-roll), so each section of the report has broken-down winners to pick from.
+    lanes = stages.lane_candidates(stages.load_ads(storage, slug))
+    creative.run(storage, slug, per_brand=5, ids=lanes)
     check()
-    if breakdown.run(storage, slug, name, per_brand=5)["waiting"]:
+    lanes = stages.lane_candidates(stages.load_ads(storage, slug))
+    if breakdown.run(storage, slug, name, per_brand=5, ids=lanes)["waiting"]:
         raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
     check()
     ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))

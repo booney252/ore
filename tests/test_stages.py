@@ -86,7 +86,8 @@ def test_full_pipeline_in_handoff(brand):
     key = stages.run_report(storage, "pp", today=TODAY)
     assert key == "brands/pp/reports/2026-10-17.md"
     assert json.loads(storage.read_text("brands/pp/reports/2026-10-17.json"))["top"][0] == \
-        {"rank": 1, "ad_id": "2922821464729858", "brand": "X"}
+        {"rank": 1, "ad_id": "2922821464729858", "brand": "X", "lane": "proven",
+         "lane_title": "Proven winners", "full": True}
 
     # Iterations from winner #1 as a static: the report's diagnosis, the ad, static fields
     assert stages.run_iterations(storage, "pp", None, [1], fmt="static", today=TODAY) is None
@@ -164,7 +165,11 @@ def test_report_cap_grows_with_few_advertisers(brand):
     storage.write_text("brands/pp/ads.json", json.dumps({"ads": ads}))
     stages.run_report(storage, "pp", today=TODAY)
     prompt = storage.read_text("brands/pp/handoff/report-2026-10-17.prompt.md")
-    assert prompt.count("\n### #") == 10  # 2 advertisers fill all 10 slots
+    assert prompt.count("\n### #") == 12  # 2 advertisers: every ad makes it into a lane
+    assert "## Lane: Proven winners" in prompt and "Depth: FULL breakdown" in prompt
+    top = json.loads(storage.read_text("brands/pp/reports/2026-10-17.json"))["top"] if storage.exists(
+        "brands/pp/reports/2026-10-17.json") else None
+    assert top is None  # handoff: nothing saved until the answer comes back
 
 
 def test_iterations_from_your_own_idea(brand):

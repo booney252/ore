@@ -95,13 +95,19 @@ export default async function Iterations({
           <p className="mono muted pick-label">1 · Pick winners to iterate on</p>
           {pick && <p className="error">Pick a winner or write your own idea.</p>}
           {top ? (
-            <div className="pick-grid">
-              {top
-                .filter((t) => byId.has(t.ad_id))
-                .map((t) => (
-                  <PickCard key={t.ad_id} ad={byId.get(t.ad_id)!} rank={t.rank} name="ad" />
-                ))}
-            </div>
+            // Reports since 2026-10-21 are split into sections (proven, rising, UGC...): one grid each.
+            [...new Set(top.map((t) => t.lane_title ?? ""))].map((lane) => (
+              <div key={lane}>
+                {lane && <p className="mono muted pick-lane">{lane}</p>}
+                <div className="pick-grid">
+                  {top
+                    .filter((t) => (t.lane_title ?? "") === lane && byId.has(t.ad_id))
+                    .map((t) => (
+                      <PickCard key={t.ad_id} ad={byId.get(t.ad_id)!} rank={t.rank} name="ad" />
+                    ))}
+                </div>
+              </div>
+            ))
           ) : (
             <p className="empty">This report has no ranked winners list. Re-run the report to pick from it.</p>
           )}

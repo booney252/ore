@@ -123,10 +123,16 @@ def pick(ads: list[dict], limit: int | None = None, per_brand: int | None = None
     return todo[:limit] if limit else todo
 
 
-def run(storage, slug: str, limit: int | None = None, per_brand: int | None = None) -> dict:
+def run(storage, slug: str, limit: int | None = None, per_brand: int | None = None,
+        ids: list[str] | None = None) -> dict:
+    """With `ids`, also analyze those ads (e.g. the report's lane candidates) on top of the pick."""
     ads_key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(ads_key))
     todo = pick(list(doc["ads"].values()), limit, per_brand)
+    if ids:
+        have = {a["ad_id"] for a in todo}
+        todo += [doc["ads"][i] for i in ids if i in doc["ads"] and i not in have
+                 and doc["ads"][i].get("media_key") and not doc["ads"][i].get("analysis")]
 
     done = failed = 0
     for ad in todo:
