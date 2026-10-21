@@ -33,7 +33,7 @@ export default async function IterationDoc({
           <Link href={`/b/${brand}/iterations`}>Iterations</Link> / {file}
         </p>
         <Markdown text={md} />
-      <FeedbackBox brand={brand} doc={`iterations/${file}`} about={`iteration ${file}`} back={`/b/${brand}/iterations/${file}`} />
+      <FeedbackBox brand={brand} doc={`iterations/${file}`} about={`iteration ${file}`} back={`/b/${brand}/skills`} />
       </div>
       <aside className="side">
         <p className="mono muted">Step 3</p>

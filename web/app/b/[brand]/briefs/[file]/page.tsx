@@ -31,7 +31,7 @@ export default async function BriefDoc({ params }: { params: Promise<{ brand: st
         </span>
       </div>
       <Markdown text={md} />
-      <FeedbackBox brand={brand} doc={`briefs/${file}`} about={`creative brief ${file}`} back={`/b/${brand}/briefs/${file}`} />
+      <FeedbackBox brand={brand} doc={`briefs/${file}`} about={`creative brief ${file}`} back={`/b/${brand}/skills`} />
     </main>
   );
 }

@@ -6,8 +6,18 @@ import { usePathname } from "next/navigation";
 
 const STEPS = [
   { href: "/reports", label: "Reports", note: "Find winners", tone: "diamond" },
-  { href: "/iterations", label: "Iterations", note: "Make it yours", tone: "emerald" },
-  { href: "/briefs", label: "Creative briefs", note: "Hand them off", tone: "ruby" },
+  {
+    href: "/iterations",
+    label: "Iterations",
+    note: "Make it yours",
+    tone: "emerald",
+  },
+  {
+    href: "/briefs",
+    label: "Creative briefs",
+    note: "Hand them off",
+    tone: "ruby",
+  },
 ];
 
 function OverviewIcon() {
@@ -37,11 +47,15 @@ function BrainIcon() {
   );
 }
 
-function LessonsIcon() {
+/** A small skill tree: a root and three lit branches. */
+function TreeIcon() {
   return (
-    <svg viewBox="0 0 20 20" aria-hidden="true">
-      <path d="M4 3.5h9.5l2.5 2.5v10.5H4z" />
-      <path d="M7 8h6M7 11h6M7 14h3.5" />
+    <svg viewBox="0 0 40 32" aria-hidden="true" className="tree-icon">
+      <path d="M20 29V18M20 18C20 13 9 14 9 8M20 18V6M20 18c0-5 11-4 11-10" className="ti-link" />
+      <circle cx="20" cy="29" r="2.6" className="ti-root" />
+      <circle cx="9" cy="7" r="3.4" className="ti-node emerald" />
+      <circle cx="20" cy="5" r="3.4" className="ti-node diamond" />
+      <circle cx="31" cy="7" r="3.4" className="ti-node ruby" />
     </svg>
   );
 }
@@ -60,7 +74,8 @@ function CreatorsIcon() {
 export default function Nav({ brand, counts }: { brand: string; counts: Record<string, number> }) {
   const path = usePathname();
   const base = `/b/${brand}`;
-  const on = (href: string) => (href === "" ? path === base || path.startsWith(`${base}/ads`) : path.startsWith(base + href));
+  const on = (href: string) =>
+    href === "" ? path === base || path.startsWith(`${base}/ads`) : path.startsWith(base + href);
 
   return (
     <nav className="nav" aria-label="Brand">
@@ -73,34 +88,6 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
           <small>What's winning</small>
         </span>
       </Link>
-      <Link
-        href={`${base}/creators`}
-        className={`nav-item${on("/creators") ? " on" : ""}`}
-        aria-current={on("/creators") ? "page" : undefined}
-      >
-        <span className="nav-icon">
-          <CreatorsIcon />
-        </span>
-        <span className="flow-text">
-          <strong>Creators</strong>
-          <small>Who films</small>
-        </span>
-        {counts.creators ? <span className="count">{counts.creators}</span> : null}
-      </Link>
-      <Link
-        href={`${base}/lessons`}
-        className={`nav-item${on("/lessons") ? " on" : ""}`}
-        aria-current={on("/lessons") ? "page" : undefined}
-      >
-        <span className="nav-icon">
-          <LessonsIcon />
-        </span>
-        <span className="flow-text">
-          <strong>Copy lessons</strong>
-          <small>What Ore learned</small>
-        </span>
-      </Link>
-
       <p className="nav-label mono">Workflow</p>
       <ol className="flow">
         {STEPS.map((step, i) => {
@@ -127,17 +114,44 @@ export default function Nav({ brand, counts }: { brand: string; counts: Record<s
         })}
       </ol>
 
-      <Link
-        href={`${base}/research`}
-        className={`brain-link${on("/research") ? " on" : ""}`}
-        aria-current={on("/research") ? "page" : undefined}
-      >
-        <BrainIcon />
-        <span className="brain-link-text">
-          <strong>BRAND BRAIN</strong>
-          <small>RESEARCH</small>
-        </span>
-      </Link>
+      <div className="nav-foot">
+        <Link
+          href={`${base}/creators`}
+          className={`nav-item${on("/creators") ? " on" : ""}`}
+          aria-current={on("/creators") ? "page" : undefined}
+        >
+          <span className="nav-icon">
+            <CreatorsIcon />
+          </span>
+          <span className="flow-text">
+            <strong>Creators</strong>
+            <small>Who films</small>
+          </span>
+          {counts.creators ? <span className="count">{counts.creators}</span> : null}
+        </Link>
+        <Link
+          href={`${base}/skills`}
+          className={`brain-link tree-link${on("/skills") ? " on" : ""}`}
+          aria-current={on("/skills") ? "page" : undefined}
+        >
+          <TreeIcon />
+          <span className="brain-link-text">
+            <strong>SKILL TREE</strong>
+            <small>HOW ORE WRITES</small>
+          </span>
+        </Link>
+        <Link
+          href={`${base}/research`}
+          className={`brain-link${on("/research") ? " on" : ""}`}
+          aria-current={on("/research") ? "page" : undefined}
+        >
+          <BrainIcon />
+          <span className="brain-link-text">
+            <strong>BRAND BRAIN</strong>
+            <small>RESEARCH</small>
+          </span>
+        </Link>
+      </div>
     </nav>
   );
 }

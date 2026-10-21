@@ -910,10 +910,13 @@ table.data td { vertical-align: middle; }
 .flow-step.emerald.on .node { background: var(--g-emerald); color: #04130c; border-color: transparent; box-shadow: 0 0 18px -2px var(--emerald-glow); }
 .flow-step.ruby.on .node { background: var(--g-ruby); color: #fff; border-color: transparent; box-shadow: 0 0 18px -2px var(--ruby-glow); }
 
+/* Sidebar: the bottom group (creators, skill tree, brand brain) */
+.nav-foot { margin-top: auto; display: grid; gap: 8px; }
+.nav-foot > .nav-item { margin-bottom: 2px; }
+
 /* Sidebar: the brand brain card */
 .brain-link {
   position: relative;
-  margin-top: auto;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -947,6 +950,26 @@ table.data td { vertical-align: middle; }
 .bi-hemi.emerald { stroke: var(--emerald); filter: drop-shadow(0 0 10px var(--emerald-glow)); }
 .bi-fold { fill: none; stroke: rgba(242, 241, 237, 0.55); stroke-width: 9; stroke-linecap: round; }
 .brain-link-text { position: relative; display: grid; gap: 3px; }
+
+/* Sidebar: the skill tree card (same card, cooler border) */
+.tree-link {
+  background:
+    linear-gradient(#0b0d11, #0b0d11) padding-box,
+    linear-gradient(110deg, rgba(25, 209, 139, 0.5), rgba(207, 234, 255, 0.45) 55%, rgba(255, 46, 99, 0.35)) border-box;
+}
+.tree-link::before {
+  background: radial-gradient(120px 60px at 24% 50%, rgba(25, 209, 139, 0.14), transparent 70%),
+    radial-gradient(120px 60px at 42% 40%, rgba(207, 234, 255, 0.1), transparent 70%);
+}
+.tree-link:hover { box-shadow: 0 0 28px -10px var(--emerald-glow), 0 0 28px -10px var(--diamond-glow); }
+.tree-link.on { box-shadow: 0 0 34px -8px var(--emerald-glow), 0 0 34px -8px var(--diamond-glow); }
+.tree-icon { position: relative; width: 40px; height: 32px; flex: none; overflow: visible; }
+.ti-link { fill: none; stroke: rgba(242, 241, 237, 0.45); stroke-width: 1.6; stroke-linecap: round; }
+.ti-root { fill: var(--diamond); }
+.ti-node { fill: #0b0d11; stroke-width: 2; }
+.ti-node.emerald { stroke: var(--emerald); filter: drop-shadow(0 0 4px var(--emerald-glow)); }
+.ti-node.diamond { stroke: var(--diamond); filter: drop-shadow(0 0 4px var(--diamond-glow)); }
+.ti-node.ruby { stroke: var(--ruby); filter: drop-shadow(0 0 4px var(--ruby-glow)); }
 .brain-link-text strong { font-family: var(--font-display); font-weight: 400; font-size: 1.02rem; letter-spacing: 0.06em; }
 .brain-link-text small { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.22em; color: var(--muted); }
 
@@ -960,8 +983,9 @@ table.data td { vertical-align: middle; }
   .flow { display: flex; gap: 2px; }
   .nav-item, .flow-step { margin: 0; padding: 6px 10px; white-space: nowrap; font-size: 0.86rem; gap: 7px; }
   .node { width: 20px; height: 20px; font-size: 0.62rem; }
+  .nav-foot { display: contents; }
   .brain-link { margin-top: 0; padding: 6px 10px; gap: 8px; border-radius: 999px; }
-  .brain-icon { width: 22px; height: 18px; }
+  .brain-icon, .tree-icon { width: 22px; height: 18px; }
   .brain-link-text small { display: none; }
   .brain-link-text strong { font-size: 0.8rem; }
 }
@@ -1706,3 +1730,48 @@ select {
 .choice { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-2); cursor: pointer; font-size: 0.85rem; }
 .choice:has(input:checked) { border-color: var(--emerald, #35e3a0); }
 .choice input { accent-color: #35e3a0; }
+
+/* Skill Tree: Ore's copy lessons as a tree that grows with feedback */
+.skilltree-panel { padding: 18px 18px 14px; overflow: hidden;
+  background: radial-gradient(60% 70% at 50% 100%, rgba(25, 209, 139, 0.07), transparent 70%), var(--panel); }
+.skilltree-wrap { overflow-x: auto; scrollbar-width: thin; }
+.skilltree { display: block; width: 100%; min-width: 600px; height: auto; }
+.st-link { fill: none; stroke: rgba(242, 241, 237, 0.1); stroke-width: 2; stroke-dasharray: 3 6; stroke-linecap: round; }
+.st-branch.lit > .st-link { stroke: rgba(207, 234, 255, 0.32); stroke-dasharray: none; }
+.st-link.glow { stroke: var(--emerald) !important; stroke-width: 2.5; filter: drop-shadow(0 0 6px var(--emerald-glow)); }
+.st-node { stroke-width: 2; transition: transform 200ms var(--ease), filter 200ms var(--ease); transform-box: fill-box; transform-origin: center; }
+.st-node.locked { fill: #0b0d11; stroke: rgba(242, 241, 237, 0.1); }
+.st-node.brand { fill: rgba(25, 209, 139, 0.18); stroke: var(--emerald); filter: drop-shadow(0 0 8px var(--emerald-glow)); }
+.st-node.craft { fill: rgba(207, 234, 255, 0.16); stroke: var(--diamond); filter: drop-shadow(0 0 8px var(--diamond-glow)); }
+.st-node.pending { fill: #0b0d11; stroke: var(--diamond); stroke-dasharray: 4 4; opacity: 0.75; }
+.st-node.decide { stroke: var(--ruby); filter: drop-shadow(0 0 8px var(--ruby-glow)); }
+.st-core { fill: var(--text); pointer-events: none; }
+.st-hit { cursor: pointer; }
+.st-hit:hover .st-node, .st-hit:focus-visible .st-node { transform: scale(1.14); }
+.st-hit:focus-visible { outline: none; }
+.st-label { fill: var(--text); font-family: var(--font-display); font-size: 17px; text-anchor: middle; letter-spacing: 0.02em; }
+.st-branch:not(.lit) .st-label { fill: var(--muted); }
+.st-level { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-anchor: middle; }
+.st-branch.lit .st-level { fill: var(--emerald); }
+.st-more { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; text-anchor: middle; }
+.st-root-halo { fill: none; stroke: rgba(207, 234, 255, 0.25); stroke-width: 1.5; filter: drop-shadow(0 0 10px var(--diamond-glow)); }
+.st-root-text { fill: #07080b; font-family: var(--font-mono); font-size: 13px; font-weight: 700; text-anchor: middle; }
+.st-legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 10px 0 0; padding: 0; list-style: none; font-size: 0.7rem; color: var(--muted); }
+.st-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.st-key { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid; vertical-align: middle; }
+.st-key.brand { border-color: var(--emerald); background: rgba(25, 209, 139, 0.3); }
+.st-key.craft { border-color: var(--diamond); background: rgba(207, 234, 255, 0.25); }
+.st-key.pending { border-color: var(--diamond); border-style: dashed; }
+.st-key.decide { border-color: var(--ruby); background: rgba(255, 46, 99, 0.25); }
+.st-branches { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; align-items: start; }
+.st-list h3 { margin: 0 0 12px; font-size: 1.05rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 10px; }
+.st-list h3 .small { white-space: nowrap; font-size: 0.66rem; letter-spacing: 0.14em; }
+.st-list ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.st-list li { display: grid; gap: 4px; padding: 8px 10px; margin: 0 -10px; border-radius: 10px; scroll-margin-top: 90px; transition: background 300ms var(--ease); }
+.st-list li p { margin: 0; line-height: 1.5; }
+.st-list li .st-key { margin: -2px 9px 0 0; }
+.st-list li .tag { margin-left: 8px; vertical-align: middle; }
+.st-list li small { padding-left: 19px; font-size: 0.75rem; }
+.st-list li:target, .suggestion-list li:target { background: rgba(207, 234, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(207, 234, 255, 0.25); }
+.suggestion-list li { scroll-margin-top: 90px; }
+@media (prefers-reduced-motion: reduce) { .st-node { transition: none; } }

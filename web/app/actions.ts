@@ -319,13 +319,13 @@ export async function removeFromBrain(form: FormData) {
 }
 
 
-/** Feedback on Ore's copy (from a doc page or the Copy lessons page): saved, then Ore learns from it. */
+/** Feedback on Ore's copy (from a doc page or the Skill Tree page): saved, then Ore learns from it. */
 export async function giveFeedback(form: FormData) {
   const brand = String(form.get("brand") ?? "");
   await requireBrand(brand);
   const text = String(form.get("text") ?? "").trim().slice(0, 20000);
-  const back = String(form.get("back") ?? `/b/${brand}/lessons`);
-  const safeBack = back.startsWith(`/b/${brand}/`) ? back : `/b/${brand}/lessons`;
+  const back = String(form.get("back") ?? `/b/${brand}/skills`);
+  const safeBack = back.startsWith(`/b/${brand}/`) ? back : `/b/${brand}/skills`;
   if (!text) redirect(`${safeBack}?feedback=empty`);
   const doc = String(form.get("doc") ?? "");
   const id = await addFeedback(brand, {
@@ -335,7 +335,7 @@ export async function giveFeedback(form: FormData) {
     doc: /^(briefs|iterations|reports|studio)\/[A-Za-z0-9._-]+$/.test(doc) ? doc : "",
   });
   await createJob({ type: "lessons", brand, feedback: id });
-  revalidatePath(`/b/${brand}/lessons`);
+  revalidatePath(`/b/${brand}/skills`);
   redirect(`${safeBack}?feedback=sent`);
 }
 
@@ -345,11 +345,11 @@ export async function editLessons(form: FormData) {
   const which = form.get("which") === "craft" ? "craft" : "brand";
   if (which === "craft") await requireOwner();
   await saveLessons(brand, which, String(form.get("text") ?? ""));
-  revalidatePath(`/b/${brand}/lessons`);
-  redirect(`/b/${brand}/lessons?saved=${which}`);
+  revalidatePath(`/b/${brand}/skills`);
+  redirect(`/b/${brand}/skills?saved=${which}`);
 }
 
-/** Copy lessons page: approve or dismiss the craft lessons Ore suggested from this brand's feedback. */
+/** Skill Tree page: approve or dismiss the craft lessons Ore suggested from this brand's feedback. */
 export async function reviewCraft(form: FormData) {
   const brand = String(form.get("brand") ?? "");
   await requireBrand(brand);
@@ -363,6 +363,6 @@ export async function reviewCraft(form: FormData) {
     if (v === "dismiss") dismiss.push(m[1]);
   }
   const n = await decideCraft(brand, approve, dismiss);
-  revalidatePath(`/b/${brand}/lessons`);
-  redirect(`/b/${brand}/lessons?approved=${n}&dismissed=${dismiss.length}`);
+  revalidatePath(`/b/${brand}/skills`);
+  redirect(`/b/${brand}/skills?approved=${n}&dismissed=${dismiss.length}`);
 }
