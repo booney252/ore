@@ -183,6 +183,33 @@ def format_line(ad: dict) -> str:
 
 # --- stage 1: the Winning Ads Report --------------------------------------------------
 
+SEGMENT_MIN = 3  # winners each audience segment gets in the report's top list, if it has them
+
+
+def balance_segments(top: list[dict], pool: list[dict], segs: list[dict],
+                     each: int = SEGMENT_MIN) -> list[dict]:
+    """Make room in the top list for every audience segment's best winners (A or B), so a smaller
+    segment isn't crowded out by a bigger one; they replace the lowest-ranked posts of segments
+    that have more than their share."""
+    segs = [s for s in segs if s["handles"]]
+    if len(segs) < 2:
+        return top
+    seg_of = lambda a: next((s["key"] for s in segs if a.get("handle") in s["handles"]), None)
+    top = list(top)
+    for seg in segs:
+        have = [a for a in top if seg_of(a) == seg["key"]]
+        extra = [a for a in pool if seg_of(a) == seg["key"] and a not in top and a.get("score", 0) >= 75]
+        for add in extra[:max(0, each - len(have))]:
+            counts = {s["key"]: sum(1 for a in top if seg_of(a) == s["key"]) for s in segs}
+            out = next((a for a in reversed(top) if seg_of(a) != seg["key"]
+                        and counts.get(seg_of(a), 0) > each), None)
+            if out is None:
+                break
+            top.remove(out)
+            top.append(add)
+    return sorted(top, key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
+
+
 def report_candidates(ads: list[dict]) -> list[str]:
     """Ad IDs to re-check in the Ad Library before the report picks its top list."""
     return [a["ad_id"] for a in ranked(ads)[:CANDIDATES]]
@@ -197,7 +224,8 @@ def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None
     # one fill more of the top list, so the report still has top_n winners to learn from.
     advertisers = len({a.get("brand") for a in ranked(ads, per_brand=None)})
     cap = max(PER_BRAND, -(-top_n // max(1, advertisers)))
-    top = ranked(ads, per_brand=cap)[:top_n]
+    top = balance_segments(ranked(ads, per_brand=cap)[:top_n], ranked(ads, per_brand=cap),
+                           brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]))
     if not top:
         raise llm.LLMError("no broken-down ads yet: run `ads`, `creative` and `breakdown` first")
     top_ids = {a["ad_id"] for a in top}

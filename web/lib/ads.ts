@@ -32,6 +32,7 @@ export type Ad = {
   comments?: number;
   usual_views?: number;
   usual_comment_rate?: number;
+  min_views?: number; // views a post needs to count as a winner (A or B)
   analysis?: {
     length_s?: number;
     cut_count?: number;

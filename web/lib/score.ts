@@ -58,7 +58,7 @@ export function short(n: number): string {
 export const ORGANIC_SCALES = [
   { label: "Outlier", effect: "sets the grade", scale: "views vs the account's usual: A 5x+ · B 2x+ · C about normal · D below" },
   { label: "Comments per view", effect: "up or down one", scale: "2x the account's usual: up one · half or less: down one (10+ comments)" },
-  { label: "Views", effect: "under 1,000", scale: "too few to call: stops at C" },
+  { label: "Views", effect: "under 10,000", scale: "not a breakout yet: stops at C" },
 ];
 
 export function commentRate(ad: Ad): number {
@@ -78,7 +78,8 @@ function explainOrganic(ad: Ad): Explained {
   const usualRate = ad.usual_comment_rate ?? 0;
   const move = (ad.comments ?? 0) < 10 || !usualRate ? 0 : rate >= 2 * usualRate ? -1 : rate <= usualRate / 2 ? 1 : 0;
   let grade = GRADES[Math.max(0, Math.min(4, GRADES.indexOf(base) + move))];
-  const capped = views < 1000 && (grade === "A" || grade === "B");
+  const floor = ad.min_views ?? 10_000;
+  const capped = views < floor && (grade === "A" || grade === "B");
   if (capped) grade = "C";
   const { verdict, meaning } = ORGANIC_VERDICTS.find((v) => v.grade === grade)!;
   const parts: Part[] = [
@@ -86,7 +87,7 @@ function explainOrganic(ad: Ad): Explained {
       label: "Outlier",
       value: `${ratio.toFixed(1)}x`,
       grade: base,
-      effect: capped ? "capped at C: under 1,000 views" : "sets the grade",
+      effect: capped ? `capped at C: under ${floor.toLocaleString("en-US")} views` : "sets the grade",
       note: `${views.toLocaleString("en-US")} views vs @${ad.handle}'s usual ${usual.toLocaleString("en-US")}.`,
     },
     {

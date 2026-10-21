@@ -18,9 +18,11 @@ def test_organic_grade_is_views_vs_the_accounts_usual():
     assert organic.grade_ratio(0.9) == "D"
     score, why = organic.organic_score({"handle": "x", "views": 62165, "usual_views": 1500})
     assert score == 100 and why.startswith("Grade A: 62,165 views, 41.4x @x's usual 1,500")
-    # too few views to call: stops at C
-    score, why = organic.organic_score({"handle": "x", "views": 378, "usual_views": 160})
-    assert score == 50 and "capped at C" in why
+    # under 10,000 views isn't a breakout, however far it beats a small account: stops at C
+    score, why = organic.organic_score({"handle": "x", "views": 3878, "usual_views": 263})
+    assert score == 50 and "under 10,000 views" in why
+    # the brand can move the bar
+    assert organic.organic_score({"handle": "x", "views": 3878, "usual_views": 263, "min_views": 2000})[0] == 100
     # winner_score hands organic posts to the organic grade
     assert winner_score({"source": "organic", "handle": "x", "views": 900, "usual_views": 1000},
                         date(2026, 10, 20))[0] == 25
@@ -62,7 +64,7 @@ class FakeSource:
 
     def fetch_posts(self, platform, handle, max_pages=8):
         self.credits_used += 1
-        views = {"instagram": [50000, 1000, 1200, 900, 1100], "youtube": [9000, 1000, 1000]}[platform]
+        views = {"instagram": [50000, 1000, 1200, 900, 1100], "youtube": [90000, 10000, 10000]}[platform]
         return [{"platform": platform, "handle": handle, "code": f"{handle}{i}", "views": v,
                  "date": "2026-10-01", "caption": "c", "secs": 20,
                  "media_url": "" if platform == "youtube" else f"https://x/{i}.mp4"}

@@ -53,3 +53,17 @@ def test_segment_block():
     block = brand.segment_block(fields, "her")
     assert "Who it's for: Women" in block and "Men" in block
     assert brand.segment_block(fields, None) == "" and brand.segment_block(fields, "nope") == ""
+
+
+def test_balance_segments_gives_each_audience_its_share():
+    from cse import stages
+    mk = lambda h, n, score=100: {"ad_id": f"{h}{n}", "handle": h, "score": score, "views": 50000,
+                                  "usual_views": 50000 // (20 - n)}
+    men = [mk("tom", n) for n in range(10)]
+    women = [mk("jen", n) for n in range(4)]
+    segs = [{"key": "her", "label": "Women", "who": "", "handles": ["jen"]},
+            {"key": "him", "label": "Men", "who": "", "handles": ["tom"]}]
+    top = stages.balance_segments(men[:10], men + women, segs)
+    assert len(top) == 10 and sum(a["handle"] == "jen" for a in top) == 3
+    weak = [mk("jen", 0, score=50)]  # a C isn't a winner: no slot forced for it
+    assert sum(a["handle"] == "jen" for a in stages.balance_segments(men[:10], men + weak, segs)) == 0

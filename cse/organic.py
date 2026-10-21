@@ -8,7 +8,8 @@ Then engagement moves it, comments per view against the account's usual comment 
 are what a comment-keyword CTA runs on, and like counts are often hidden):
   2x+ the usual comment rate: up one grade; half or less: down one (a D drops to F).
   Only with 10+ comments, so a handful of comments can't swing it.
-Under 1,000 views is too few to call: the grade stops at C.
+Under 10,000 views isn't a breakout worth copying, however far it beats a small account's usual:
+the grade stops at C (brand.md `breakout_min_views` changes the bar).
 brand.md `organic_since` (e.g. 2026-04-01) drops older posts, so an account's old content from
 before it changed direction doesn't set its "usual".
 
@@ -34,7 +35,7 @@ from . import brand as brandlib
 log = logging.getLogger("cse")
 
 GRADES = "ABCDF"
-MIN_VIEWS = 1000
+MIN_VIEWS = 10_000  # a post needs this many views to count as a winner (A or B)
 PLATFORMS = {"instagram": "INSTAGRAM", "tiktok": "TIKTOK", "youtube": "YOUTUBE"}
 
 
@@ -65,7 +66,8 @@ def organic_score(post: dict) -> tuple[float, str]:
     base = grade_ratio(ratio)
     move = engagement_move(post)
     grade = GRADES[max(0, min(4, GRADES.index(base) + move))]
-    capped = views < MIN_VIEWS and grade in "AB"
+    floor = int(post.get("min_views") or MIN_VIEWS)
+    capped = views < floor and grade in "AB"
     if capped:
         grade = "C"
     why = (f"Grade {grade}: {views:,} views, {ratio:.1f}x @{post.get('handle')}'s usual "
@@ -74,7 +76,7 @@ def organic_score(post: dict) -> tuple[float, str]:
         why += (f", comments {comment_rate(post):.2%} of views vs usual "
                 f"{float(post['usual_comment_rate']):.2%}"
                 + (" (up one)" if move < 0 else " (down one)" if move > 0 else ""))
-    why += ", under 1,000 views so too few to call (capped at C)." if capped else "."
+    why += f", under {floor:,} views so not a breakout yet (capped at C)." if capped else "."
     return (4 - GRADES.index(grade)) * 25, why
 
 
@@ -157,13 +159,13 @@ def import_posts(storage, slug: str, posts: list[dict], today: date | None = Non
         for ad_id in [k for k, a in doc["ads"].items()
                       if a.get("source") == "organic" and str(a.get("start_date") or "") < since]:
             del doc["ads"][ad_id]
-    regrade(doc["ads"].values())
+    regrade(doc["ads"].values(), int(fields.get("breakout_min_views") or MIN_VIEWS))
     storage.write_text(key, json.dumps(doc, indent=2) + "\n")
     log.info("organic: %s: %d new, %d updated posts", slug, added, updated)
     return {"added": added, "updated": updated}
 
 
-def regrade(ads) -> None:
+def regrade(ads, min_views: int = MIN_VIEWS) -> None:
     """Set each organic post's usual views and comment rate (its account's medians) and grade."""
     ads = [a for a in ads if a.get("source") == "organic"]
     views: dict[str, list[int]] = {}
@@ -177,6 +179,7 @@ def regrade(ads) -> None:
         account = f"{a.get('platform')}:{a['handle']}"
         a["usual_views"] = int(statistics.median(views[account]))
         a["usual_comment_rate"] = round(statistics.median(rates[account]), 6) if rates.get(account) else 0
+        a["min_views"] = min_views
         a["score"], a["score_why"] = organic_score(a)
 
 
