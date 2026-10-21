@@ -213,9 +213,29 @@ def balance_segments(top: list[dict], pool: list[dict], segs: list[dict],
     return sorted(top, key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
 
 
+RISING_MIN = 3  # spots in the report's top list kept for rising ads (new, already winning), if any
+
+
+def balance_rising(top: list[dict], pool: list[dict], each: int = RISING_MIN) -> list[dict]:
+    """Keep room for what's working now: long-runners would otherwise fill the whole top list, so
+    the best rising ads (under 30 days, already beating their advertiser's usual) replace the
+    lowest-ranked of the rest."""
+    top = list(top)
+    extra = [a for a in pool if a.get("rising") and a not in top]
+    for add in extra[:max(0, each - sum(1 for a in top if a.get("rising")))]:
+        out = next((a for a in reversed(top) if not a.get("rising")), None)
+        if out is None:
+            break
+        top.remove(out)
+        top.append(add)
+    return sorted(top, key=lambda a: (a.get("score", 0), strength(a)), reverse=True)
+
+
 def report_candidates(ads: list[dict]) -> list[str]:
     """Ad IDs to re-check in the Ad Library before the report picks its top list."""
-    return [a["ad_id"] for a in ranked(ads)[:CANDIDATES]]
+    pool = ranked(ads)
+    rising = [a for a in pool if a.get("rising")][:RISING_MIN * 2]
+    return list(dict.fromkeys(a["ad_id"] for a in pool[:CANDIDATES] + rising))
 
 
 def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None,
@@ -229,6 +249,7 @@ def run_report(storage, slug: str, top_n: int = TOP_N, today: date | None = None
     cap = max(PER_BRAND, -(-top_n // max(1, advertisers)))
     top = balance_segments(ranked(ads, per_brand=cap)[:top_n], ranked(ads, per_brand=cap),
                            brandlib.segments(brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]))
+    top = balance_rising(top, ranked(ads, per_brand=cap))
     if not top:
         raise llm.LLMError("no broken-down ads yet: run `ads`, `creative` and `breakdown` first")
     top_ids = {a["ad_id"] for a in top}

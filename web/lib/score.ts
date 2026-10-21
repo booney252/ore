@@ -12,6 +12,9 @@ export type Explained = { grade: Grade; verdict: string; meaning: string; reason
 
 const GRADES: Grade[] = ["A", "B", "C", "D", "F"];
 const SCALE_VERSIONS = 5;
+const RISING_DAYS = 30;
+const RISING_RATIO = 2;
+const RISING_MIN_DAYS = 7;
 
 export const VERDICTS: { grade: Grade; verdict: string; meaning: string }[] = [
   { grade: "A", verdict: "Proven winner", meaning: "Months of paid spend and still running. Almost certainly making them money." },
@@ -25,6 +28,11 @@ export const PART_SCALES = [
   { label: "Time live", effect: "sets the grade", scale: "A 90+ days · B 30+ · C 14+ · D under 2 weeks" },
   { label: "Still running", effect: "if stopped, down one grade", scale: "a stopped D becomes an F" },
   { label: "Versions", effect: "5+ versions, up one grade", scale: "lots of copies means they're scaling it" },
+  {
+    label: "Rising",
+    effect: "new ads can jump to B or A",
+    scale: "under 30 days and still running: outliving 2x the brand's usual ad life (a week+) or 5+ versions = B, both = A",
+  },
 ];
 
 function gradeTime(days: number): Grade {
@@ -165,8 +173,32 @@ export function explain(ad: Ad): Explained {
   };
 
   const i = GRADES.indexOf(time.grade!) - (versions >= SCALE_VERSIONS ? 1 : 0) + (live ? 0 : 1);
-  const grade = GRADES[Math.max(0, Math.min(4, i))];
-  const { verdict, meaning } = VERDICTS.find((v) => v.grade === grade)!;
+  let grade = GRADES[Math.max(0, Math.min(4, i))];
+  let { verdict, meaning } = VERDICTS.find((v) => v.grade === grade)!;
+  const parts = [time, status, copies];
+
+  // Rising: a new ad judged against how long this advertiser usually keeps its ads.
+  const usual = ad.usual_days ?? null;
+  const outlived = usual !== null && days >= Math.max(RISING_RATIO * usual, RISING_MIN_DAYS);
+  const scaling = versions >= SCALE_VERSIONS;
+  const risingGrade: Grade | null =
+    live && days < RISING_DAYS && (outlived || scaling) ? (outlived && scaling ? "A" : "B") : null;
+  if (risingGrade && GRADES.indexOf(risingGrade) < GRADES.indexOf(grade)) {
+    grade = risingGrade;
+    verdict = grade === "A" ? "Rising fast" : "Rising";
+    meaning = "New, still running, and already outlasting how long this brand usually keeps ads. What's working right now.";
+    const bits = [];
+    if (outlived) bits.push(`most ${ad.brand} ads stop by day ${usual}`);
+    if (scaling) bits.push(`${versions} versions already`);
+    parts.push({
+      label: "Rising",
+      value: usual !== null ? `${(days / Math.max(1, usual)).toFixed(1)}x usual` : `${versions} versions`,
+      grade: risingGrade,
+      effect: "raised the grade",
+      note: `Running ${days} days; ${bits.join(", ")}.`,
+    });
+    return { grade, verdict, meaning, reason: `New and rising: running ${days} days, ${bits.join(", ")}.`, parts };
+  }
 
   const bits = [`Live ${span(days)}`, live ? "still running" : "now stopped"];
   if (versions > 1) bits.push(`${versions} versions`);
@@ -181,5 +213,5 @@ export function explain(ad: Ad): Explained {
             ? "it ran for a long time, so it likely worked"
             : "it may not have won";
 
-  return { grade, verdict, meaning, reason: `${bits.join(", ")}: ${so}.`, parts: [time, status, copies] };
+  return { grade, verdict, meaning, reason: `${bits.join(", ")}: ${so}.`, parts };
 }

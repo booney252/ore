@@ -21,7 +21,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{knowledge}}
 </knowledge>
 
-3. **The top {{top_count}} winning ads**, ranked by winner grade (A-F from time live, still running, and number of versions). Videos and statics compete on the same grade: a static that's crushing belongs in the top list as much as a video. Each video has its transcript with timestamps, on-screen text, and a breakdown made from the actual frames; each static has a breakdown of its graphic and its copy made from the actual image.
+3. **The top {{top_count}} winning ads**, ranked by winner grade (A-F from time live, still running, and number of versions). Some are marked **rising**: new ads (under 30 days) already outliving their advertiser's usual ad life or being scaled. They show what's working right now, which matters as much as the long-runners in a market that changes fast; say so where it applies. Videos and statics compete on the same grade: a static that's crushing belongs in the top list as much as a video. Each video has its transcript with timestamps, on-screen text, and a breakdown made from the actual frames; each static has a breakdown of its graphic and its copy made from the actual image.
 <top_ads>
 {{top_ads}}
 </top_ads>

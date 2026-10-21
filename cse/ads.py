@@ -14,7 +14,7 @@ import re
 from datetime import date, datetime, timezone
 
 from . import brand as brandlib
-from .score import days_running, winner_score
+from .score import days_running, regrade_paid, winner_score
 
 log = logging.getLogger("cse")
 
@@ -165,6 +165,7 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
         download_media(storage, slug, existing[ad_id], session)
 
     _save_pages(storage, comp_key, targets)
+    regrade_paid(existing.values(), today)
     storage.write_text(ads_key, json.dumps({
         "brand": slug,
         "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -238,8 +239,7 @@ def verify(storage, slug: str, ad_ids: list[str], source=None, today: date | Non
             changed += 1
             log.info("  %s %s: now %s", ad_id, ad.get("brand"),
                      "active" if live["is_active"] else "inactive")
-        ad["days_running"] = days_running(ad, today)
-        ad["score"], ad["score_why"] = winner_score(ad, today)
+    regrade_paid(doc["ads"].values(), today)
     storage.write_text(ads_key, json.dumps(doc, indent=2) + "\n")
     log.info("verify: %d checked, %d removed, %d changed status, %s credits used",
              len(ad_ids), removed, changed, getattr(source, "credits_used", None))

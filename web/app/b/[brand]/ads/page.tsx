@@ -19,13 +19,19 @@ export default async function Winners({
   const { type: picked } = await searchParams;
   const [allAds, type] = await Promise.all([loadAds(brand), campaignType(brand)]);
   const organic = type === "organic";
+  const rising = picked === "rising";
   const only = KINDS.find((k) => k.key === picked)?.key as Kind | undefined;
   const counts = new Map<Kind, number>();
   for (const a of allAds) {
     const k = kind(a);
     if (k && !a.removed_from_library) counts.set(k, (counts.get(k) ?? 0) + 1);
   }
-  const ads = only ? allAds.filter((a) => kind(a) === only) : allAds;
+  const risingCount = allAds.filter((a) => a.rising && !a.removed_from_library).length;
+  const ads = rising
+    ? allAds.filter((a) => a.rising)
+    : only
+      ? allAds.filter((a) => kind(a) === only)
+      : allAds;
   const top = winners(ads, 10);
   const shown = new Set(top.map((a) => a.ad_id));
   const rest = ads
@@ -48,9 +54,14 @@ export default async function Winners({
       <ScoreKey organic={organic} />
 
       <nav className="tabs" aria-label="Sort by type">
-        <Link href={`/b/${brand}/ads`} className={only ? "" : "on"} scroll={false}>
+        <Link href={`/b/${brand}/ads`} className={only || rising ? "" : "on"} scroll={false}>
           All
         </Link>
+        {!organic && (
+          <Link href={`/b/${brand}/ads?type=rising`} className={rising ? "on" : ""} scroll={false}>
+            Rising <span className="mono">{risingCount}</span>
+          </Link>
+        )}
         {KINDS.map((k) => (
           <Link
             key={k.key}
@@ -62,6 +73,13 @@ export default async function Winners({
           </Link>
         ))}
       </nav>
+
+      {rising ? (
+        <p className="muted">
+          New ads (under 30 days) that are still running and already beating how long their brand
+          usually keeps an ad, or being scaled with 5+ versions. What&apos;s working right now.
+        </p>
+      ) : null}
 
       {only && top.length === 0 ? (
         <p className="muted">
