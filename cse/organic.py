@@ -368,7 +368,7 @@ TOPIC_PROMPT = Path("prompts/15-on-topic.md")
 TOPIC_BATCH = 60
 
 
-def check_topics(storage, slug: str, client=None) -> dict:
+def check_topics(storage, slug: str, client=None, recheck: bool = False) -> dict:
     """Mark winners (A/B) that aren't about the brand's niche (a creator's lifestyle, general money
     memes, sports...) as `on_topic: false`, so they drop out of winners and the report. Each post
     is checked once (it keeps its `on_topic`)."""
@@ -378,12 +378,14 @@ def check_topics(storage, slug: str, client=None) -> dict:
     doc = json.loads(storage.read_text(key))
     fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
     todo = [a for a in doc["ads"].values() if a.get("source") == "organic"
-            and a.get("score", 0) >= 75 and "on_topic" not in a]
+            and (recheck or "on_topic" not in a)
+            and (a.get("score", 0) >= 75 or (recheck and a.get("on_topic") is False))]
     checked = off = 0
     for i in range(0, len(todo), TOPIC_BATCH):
         batch = todo[i:i + TOPIC_BATCH]
         lines = [json.dumps({"id": a["ad_id"], "account": f"@{a.get('handle')}",
                              "caption": (a.get("body") or "")[:300],
+                             "on_screen": str((a.get("breakdown") or {}).get("on_screen_text") or "")[:300],
                              "spoken": ((a.get("analysis") or {}).get("transcript_text") or "")[:400]},
                             ensure_ascii=False) for a in batch]
         prompt = llm.render(TOPIC_PROMPT.read_text(), {

@@ -7,7 +7,7 @@ We study winning posts from creators in one niche so we can write content for {{
 
 ## The posts
 
-One JSON line each: id, account, caption, and the first spoken lines.
+One JSON line each: id, account, caption, the on-screen text and the first spoken lines.
 
 {{posts}}
 
@@ -15,7 +15,7 @@ One JSON line each: id, account, caption, and the first spoken lines.
 
 For each post: is it about the niche (the topic the product lives in, e.g. making money with it, the method, the tools, results from it, the industry around it, the creator's journey in it)? Or is it just the creator's general content that happens to be on the same account (lifestyle, general money or budgeting talk, sports, relationships, unrelated humor)?
 
-If a post uses a general hook but is clearly about the niche once it gets going, it's on topic. If you can't tell from what's here, say on topic.
+If a post uses a general hook but is clearly about the niche once it gets going, it's on topic. General money, income or budgeting talk is off topic unless something in the post ties it to the niche, even on an account that sells the niche. If nothing in the post ties it to the niche, it's off topic.
 
 Answer with a JSON array only, one object per post, in the same order:
 

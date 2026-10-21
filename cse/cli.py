@@ -102,7 +102,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pages", type=int, default=8, help="pages per account with --pull (12 reels a page on Instagram)")
     p.add_argument("--only", help="with --pull: comma-separated handles (or platform:handle) to fetch")
     p.add_argument("--top-views", type=int, default=0, help="with --pull: also get each pulled account's N most-watched videos")
-    sub.add_parser("topics", help="drop winning posts that aren't about the brand's niche").add_argument("brand")
+    p = sub.add_parser("topics", help="drop winning posts that aren't about the brand's niche")
+    p.add_argument("brand")
+    p.add_argument("--recheck", action="store_true", help="check every winner again, not just new ones")
     p = sub.add_parser("comments", help="pull comments on accounts' top posts into voc.json (ScrapeCreators, 1 credit a page)")
     p.add_argument("brand")
     p.add_argument("--handles", required=True, help="comma-separated handles")
@@ -197,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
             print(lessons.learn(storage, args.brand, args.feedback))
             return 0
         if args.command == "topics":
-            print(organic.check_topics(storage, args.brand))
+            print(organic.check_topics(storage, args.brand, recheck=args.recheck))
             return 0
         if args.command == "comments":
             handles = [h.strip().lstrip("@") for h in args.handles.split(",") if h.strip()]
