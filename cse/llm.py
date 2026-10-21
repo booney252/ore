@@ -111,6 +111,17 @@ def render(template: str, values: dict) -> str:
     return re.sub(r"\{\{(\w+)\}\}", lambda m: str(values[m.group(1)]), template)
 
 
+def image_type(data: bytes) -> str:
+    """The real image type from the file's first bytes (ad images saved as .jpg are sometimes PNG or WebP)."""
+    if data.startswith(b"\x89PNG"):
+        return "image/png"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    if data[:3] == b"GIF":
+        return "image/gif"
+    return "image/jpeg"
+
+
 def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None = None,
         client=None, max_tokens: int = 32000, effort: str = "high", web: bool = False) -> str:
     """Run one prompt step and return the model's text answer. `web` lets the API model
@@ -138,9 +149,10 @@ def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None
 
     content = []
     for key in image_keys or []:
+        data = storage.read_bytes(key)
         content.append({"type": "image", "source": {
-            "type": "base64", "media_type": "image/jpeg",
-            "data": base64.standard_b64encode(storage.read_bytes(key)).decode()}})
+            "type": "base64", "media_type": image_type(data),
+            "data": base64.standard_b64encode(data).decode()}})
     content.append({"type": "text", "text": prompt})
     client = client or make_client()
     with client.beta.messages.stream(
