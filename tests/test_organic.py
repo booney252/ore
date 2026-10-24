@@ -134,3 +134,16 @@ def test_off_topic_winners_drop_out(tmp_path, monkeypatch):
     assert "Off topic" in ads["in-MEME"]["score_why"] and "budget meme" in ads["in-MEME"]["score_why"]
     assert "making money with AI content" in seen[0]
     assert organic.check_topics(s, "aicl") == {"checked": 0, "off_topic": 0}  # each post checked once
+
+
+def test_tiktok_slideshow_becomes_a_slideshow_entry():
+    from datetime import date
+    from cse.organic import to_entry
+    from cse.organic_source import normalize_tiktok
+    item = {"aweme_id": "1", "statistics": {"play_count": 20071}, "create_time": 1760659200,
+            "image_post_info": {"images": [{"display_image": {"url_list": ["a.heic", "a.jpeg"]}},
+                                           {"display_image": {"url_list": ["b.jpeg"]}}]}}
+    post = normalize_tiktok(item, "brockstaaa")
+    assert post["slides"] == [["a.heic", "a.jpeg"], ["b.jpeg"]]
+    entry = to_entry(post, "x", date(2026, 10, 24))
+    assert entry["media_type"] == "slideshow" and len(entry["slides"]) == 2

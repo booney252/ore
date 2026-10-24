@@ -11,7 +11,7 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
       <div className="ad-frame">
         {poster ? <img src={poster} alt="" loading="lazy" /> : <div className="ad-frame-empty" />}
         {rank ? <span className="ad-rank mono">#{rank}</span> : null}
-        {ad.media_type === "image" ? <span className="tag ad-kind">Static</span> : null}
+        {ad.media_type === "image" ? <span className="tag ad-kind">Static</span> : ad.media_type === "slideshow" ? <span className="tag ad-kind">Slideshow</span> : null}
         {ad.is_own ? <span className="tag emerald">{ad.source === "organic" ? "Ours" : "Yours"}</span> : null}
         <div className="ad-over">
           <Grade g={why.grade} />

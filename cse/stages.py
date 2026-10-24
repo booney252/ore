@@ -245,7 +245,7 @@ def ad_kind(ad: dict) -> str | None:
         return "lfs"
     b = ad.get("breakdown") or {}
     fmt = str(b.get("format") or "").lower()
-    if ad.get("media_type") == "image" or fmt.startswith("static"):
+    if ad.get("media_type") in ("image", "slideshow") or fmt.startswith("static"):
         return "static"
     if not fmt:
         return None

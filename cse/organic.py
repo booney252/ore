@@ -140,6 +140,9 @@ def to_entry(post: dict, brand_name: str, today: date) -> dict:
         "last_seen": today.isoformat(),
         "days_running": (today - date.fromisoformat(posted)).days if posted else 0,
     }
+    if post.get("slides"):
+        entry["media_type"] = "slideshow"
+        entry["slides"] = post["slides"]
     if post.get("secs"):
         entry["secs"] = float(post["secs"])
     if post.get("media_url"):
@@ -244,6 +247,31 @@ def winners_to_fetch(ads: list[dict], per_account: int = WINNERS_PER_ACCOUNT, to
     return [a for a in out if "transcript" not in (a.get("analysis") or {}) and not a.get("media_key")]
 
 
+def download_slides(storage, slug: str, ad: dict, session) -> bool:
+    """Save a slideshow's slides (JPEG or WebP; TikTok also serves HEIF, which we skip) and set
+    its analysis to the slides as frames, so `breakdown` can read them."""
+    frames = []
+    for i, urls in enumerate(ad.get("slides") or []):
+        for url in urls:
+            try:
+                resp = session.get(url, timeout=30)
+            except Exception:  # noqa: BLE001 - try the next link
+                continue
+            data = resp.content
+            if resp.ok and (data[:3] == b"\xff\xd8\xff" or data[8:12] == b"WEBP"):
+                ext = "jpg" if data[:3] == b"\xff\xd8\xff" else "webp"
+                key = brandlib.brand_key(slug, f"media/{ad['ad_id']}/slide_{i:02d}.{ext}")
+                storage.write_bytes(key, data, content_type=f"image/{'jpeg' if ext == 'jpg' else 'webp'}")
+                frames.append({"t": i, "key": key})
+                break
+    if not frames:
+        return False
+    ad["media_key"] = frames[0]["key"]
+    ad["analysis"] = {"length_s": 0, "cut_count": len(frames), "cuts_per_second": 0, "frames": frames,
+                      "transcript": [], "transcript_text": "", "hook_line": ""}
+    return True
+
+
 def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None = None,
          only: list[str] | None = None, top_views: int = 0) -> dict:
     """Fetch every account in brand.md `organic_accounts`, grade, and get the winners' media."""
@@ -290,6 +318,9 @@ def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None
             ad["analysis"] = {**stale, "transcript": lines, "transcript_text": text,
                               "hook_line": lines[0]["text"] if lines else "", "length_s": ad.get("secs") or 0}
             transcribed += 1
+        elif ad.get("slides"):
+            if download_slides(storage, slug, ad, session):
+                downloaded += 1
         elif ad.get("media_url"):
             adslib.download_media(storage, slug, ad, session)
             if ad.get("media_key"):

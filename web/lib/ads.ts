@@ -93,7 +93,7 @@ const words = (text?: string) => (text ?? "").split(/\s+/).filter(Boolean).lengt
 export function kind(ad: Ad): Kind | null {
   if (words(ad.body) >= LFS_WORDS) return "lfs";
   const format = String(ad.breakdown?.format ?? "").toLowerCase();
-  if (ad.media_type === "image" || format.startsWith("static")) return "static";
+  if (ad.media_type === "image" || ad.media_type === "slideshow" || format.startsWith("static")) return "static";
   if (!format) return null;
   if (/ugc|talking.head|selfie|skit|creator|testimonial|interview|podcast/.test(format)) return "ugc";
   // "mixed" and other loose labels: UGC when someone talks to the camera (selfie, green screen...).

@@ -182,7 +182,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
             </section>
           )}
 
-          {ad.media_type !== "image" && (
+          {ad.media_type !== "image" && ad.media_type !== "slideshow" && (
             <section className="ad-section">
               <h2>Transcript</h2>
               {a.transcript?.length ? (
@@ -203,7 +203,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
 
           {asList(b.on_screen_text).length > 0 && (
             <section className="ad-section">
-              <h2>{ad.media_type === "image" ? "Text on the image" : "On-screen text"}</h2>
+              <h2>{ad.media_type === "image" ? "Text on the image" : ad.media_type === "slideshow" ? "Text on the slides" : "On-screen text"}</h2>
               <ul className="beats">{asList(b.on_screen_text).map((x, i) => <li key={i}>{x}</li>)}</ul>
             </section>
           )}

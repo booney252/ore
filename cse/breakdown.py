@@ -18,6 +18,7 @@ log = logging.getLogger("cse")
 
 PROMPT_FILE = Path("prompts/ad-breakdown.md")
 STATIC_PROMPT_FILE = Path("prompts/ad-breakdown-static.md")  # images: graphic + copy, no transcript
+SLIDESHOW_PROMPT_FILE = Path("prompts/ad-breakdown-slideshow.md")  # TikTok photo slideshows, slide by slide
 
 
 WORKERS = 8  # breakdowns running at once
@@ -70,7 +71,8 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
     """With `ids`, also break down those ads (e.g. the report's lane candidates) on top of the pick."""
     ads_key = brandlib.brand_key(slug, "ads.json")
     doc = json.loads(storage.read_text(ads_key))
-    templates = {"video": PROMPT_FILE.read_text(), "image": STATIC_PROMPT_FILE.read_text()}
+    templates = {"video": PROMPT_FILE.read_text(), "image": STATIC_PROMPT_FILE.read_text(),
+                 "slideshow": SLIDESHOW_PROMPT_FILE.read_text()}
     brand_name = brand_name or slug
     todo = pick(list(doc["ads"].values()), limit, per_brand)
     if ids:
@@ -80,8 +82,8 @@ def run(storage, slug: str, brand_name: str | None = None, limit: int | None = N
 
     def one(ad: dict) -> str:
         frames = [f["key"] for f in ad["analysis"].get("frames", [])]
-        prompt = build_prompt(templates["image" if ad.get("media_type") == "image" else "video"],
-                              ad, brand_name)
+        kind = ad.get("media_type") if ad.get("media_type") in ("image", "slideshow") else "video"
+        prompt = build_prompt(templates[kind], ad, brand_name)
         try:
             for attempt in (1, 2):  # a long answer now and then has a JSON slip: ask once more
                 answer = llm.ask(storage, slug, f"breakdown-{ad['ad_id']}", prompt,
