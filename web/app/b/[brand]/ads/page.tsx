@@ -13,10 +13,10 @@ export default async function Winners({
   searchParams,
 }: {
   params: Promise<{ brand: string }>;
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; shop?: string }>;
 }) {
   const { brand } = await params;
-  const { type: picked } = await searchParams;
+  const { type: picked, shop: shopPick } = await searchParams;
   const [allAds, type] = await Promise.all([loadAds(brand), campaignType(brand)]);
   const organic = type === "organic";
   const rising = picked === "rising";
@@ -27,11 +27,23 @@ export default async function Winners({
     if (k && !a.removed_from_library) counts.set(k, (counts.get(k) ?? 0) + 1);
   }
   const risingCount = allAds.filter((a) => a.rising && !a.removed_from_library).length;
-  const ads = rising
+  // TikTok Shop posts (a product tagged) vs everything else, on top of the type filter
+  const shop = shopPick === "yes" || shopPick === "no" ? shopPick : undefined;
+  const hasShop = allAds.some((a) => a.shoppable);
+  const shopCount = allAds.filter((a) => a.shoppable).length;
+  const byType = rising
     ? allAds.filter((a) => a.rising)
     : only
       ? allAds.filter((a) => kind(a) === only)
       : allAds;
+  const ads = shop ? byType.filter((a) => Boolean(a.shoppable) === (shop === "yes")) : byType;
+  const href = (t?: string, s?: string) => {
+    const q = new URLSearchParams();
+    if (t) q.set("type", t);
+    if (s) q.set("shop", s);
+    const qs = q.toString();
+    return `/b/${brand}/ads${qs ? `?${qs}` : ""}`;
+  };
   const top = winners(ads, 10);
   const shown = new Set(top.map((a) => a.ad_id));
   const rest = ads
@@ -54,18 +66,18 @@ export default async function Winners({
       <ScoreKey organic={organic} />
 
       <nav className="tabs" aria-label="Sort by type">
-        <Link href={`/b/${brand}/ads`} className={only || rising ? "" : "on"} scroll={false}>
+        <Link href={href(undefined, shop)} className={only || rising ? "" : "on"} scroll={false}>
           All
         </Link>
         {!organic && (
-          <Link href={`/b/${brand}/ads?type=rising`} className={rising ? "on" : ""} scroll={false}>
+          <Link href={href("rising", shop)} className={rising ? "on" : ""} scroll={false}>
             Rising <span className="mono">{risingCount}</span>
           </Link>
         )}
         {KINDS.map((k) => (
           <Link
             key={k.key}
-            href={`/b/${brand}/ads?type=${k.key}`}
+            href={href(k.key, shop)}
             className={only === k.key ? "on" : ""}
             scroll={false}
           >
@@ -73,6 +85,20 @@ export default async function Winners({
           </Link>
         ))}
       </nav>
+
+      {hasShop && (
+        <nav className="tabs" aria-label="TikTok Shop or not">
+          <Link href={href(picked)} className={shop ? "" : "on"} scroll={false}>
+            Shop and non-shop
+          </Link>
+          <Link href={href(picked, "yes")} className={shop === "yes" ? "on" : ""} scroll={false}>
+            TikTok Shop <span className="mono">{shopCount}</span>
+          </Link>
+          <Link href={href(picked, "no")} className={shop === "no" ? "on" : ""} scroll={false}>
+            Not shop <span className="mono">{allAds.length - shopCount}</span>
+          </Link>
+        </nav>
+      )}
 
       {rising ? (
         <p className="muted">
