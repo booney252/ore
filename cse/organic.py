@@ -140,6 +140,8 @@ def to_entry(post: dict, brand_name: str, today: date) -> dict:
         "last_seen": today.isoformat(),
         "days_running": (today - date.fromisoformat(posted)).days if posted else 0,
     }
+    if post.get("shoppable"):
+        entry["shoppable"] = True
     if post.get("slides"):
         entry["media_type"] = "slideshow"
         entry["slides"] = post["slides"]

@@ -32,6 +32,7 @@ export type Ad = {
   comments?: number;
   usual_views?: number;
   usual_comment_rate?: number;
+  shoppable?: boolean; // a TikTok Shop post: a product is tagged (cse/organic_source.py)
   rising?: boolean; // new (under 30 days), still running, already beating its advertiser's usual (cse/score.py)
   usual_days?: number | null; // the advertiser's usual ad life: median days its stopped ads ran
   min_views?: number; // views a post needs to count as a winner (A or B)

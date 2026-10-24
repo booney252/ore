@@ -66,6 +66,8 @@ def normalize_tiktok(item: dict, handle: str) -> dict:
         "cover_url": _first_url(v.get("origin_cover") or v.get("cover")),
         "media_url": _first_url(v.get("download_no_watermark_addr") or v.get("play_addr")
                                 or v.get("download_addr")),
+        # A TikTok Shop post: a product is tagged and the creator earns commission
+        "shoppable": '"is_ec_video":1' in (item.get("anchors_extras") or ""),
         # Photo-mode slideshows: every slide's image links (several formats each; some are HEIF)
         "slides": [((img.get("display_image") or {}).get("url_list") or [])
                    + ((img.get("owner_watermark_image") or {}).get("url_list") or [])

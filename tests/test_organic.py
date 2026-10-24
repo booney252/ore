@@ -141,9 +141,10 @@ def test_tiktok_slideshow_becomes_a_slideshow_entry():
     from cse.organic import to_entry
     from cse.organic_source import normalize_tiktok
     item = {"aweme_id": "1", "statistics": {"play_count": 20071}, "create_time": 1760659200,
+            "anchors_extras": '{"is_ec_video":1}',
             "image_post_info": {"images": [{"display_image": {"url_list": ["a.heic", "a.jpeg"]}},
                                            {"display_image": {"url_list": ["b.jpeg"]}}]}}
     post = normalize_tiktok(item, "brockstaaa")
     assert post["slides"] == [["a.heic", "a.jpeg"], ["b.jpeg"]]
     entry = to_entry(post, "x", date(2026, 10, 24))
-    assert entry["media_type"] == "slideshow" and len(entry["slides"]) == 2
+    assert entry["media_type"] == "slideshow" and len(entry["slides"]) == 2 and entry["shoppable"]
