@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SlideViewer from "@/app/SlideViewer";
 import { notFound } from "next/navigation";
 import { hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
 import { explain } from "@/lib/score";
@@ -61,14 +62,16 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
 
       <div className="ad-detail">
         <div className="ad-media">
-          {video ? (
+          {ad.media_type === "slideshow" && frames.length > 0 ? (
+            <SlideViewer slides={frames.map((f) => f.url)} alt={`${ad.brand} slideshow`} />
+          ) : video ? (
             <video src={video} poster={poster ?? undefined} controls playsInline preload="metadata" />
           ) : poster ? (
             <img src={poster} alt={`${ad.brand} ad`} />
           ) : (
             <div className="ad-frame-empty" />
           )}
-          {frames.length > 1 && (
+          {frames.length > 1 && ad.media_type !== "slideshow" && (
             <ol className="film">
               {frames.map((f) => (
                 <li key={f.url}>
