@@ -571,7 +571,7 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
     chosen: list[tuple[str, int, str, str]] = []  # (file stem, number, format, text)
     for key in dict.fromkeys(k for k, _ in picks):
         numbers = [n for k, n in picks if k == key]
-        found = sections(storage.read_text(key), r"Iteration\s+(\d+)\b", numbers)
+        found = sections(storage.read_text(key), r"Iteration\s+(\d+)\b", numbers, hashes="{1,4}")
         missing = [n for n in numbers if n not in found]
         if missing:
             raise llm.LLMError(f"{key} has no iteration number(s) {missing}")
