@@ -17,7 +17,8 @@ SCRIPT_CRAFT = """\
   - **One stake, felt.** Show what goes wrong in that moment; don't explain it like a lecture.
   - **At most 2 features,** the ones that fix that exact moment. No feature tours.
   - **Real nouns.** Say exactly what it is (the weekly shot, the pen, the second peptide, the spreadsheet). Never placeholders like "your weekly one", "the new one", "this thing".
-  - **Every line earns the next.** Cut any line the viewer wouldn't miss. Say it the way the creator would tell a friend."""
+  - **Every line earns the next.** Cut any line the viewer wouldn't miss. Say it the way the creator would tell a friend.
+  - **No AI rhythm** (see the house style): no stacked short fragments, no lists of three, no question answered right away, no "not X, it's Y", no slogan lines. Run thoughts together with "and", "so", "honestly", like real speech."""
 
 FORMATS = {
     "ugc": {
