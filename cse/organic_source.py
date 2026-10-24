@@ -110,7 +110,8 @@ class ScrapeCreatorsOrganic:
         self.credits_used += int(data.get("credits_charged") or 1)
         return data
 
-    def fetch_posts(self, platform: str, handle: str, max_pages: int = 8) -> list[dict]:
+    def fetch_posts(self, platform: str, handle: str, max_pages: int = 8, sort: str = "latest") -> list[dict]:
+        """An account's posts, newest first, or (TikTok, sort="popular") its most-viewed first."""
         handle = handle.lstrip("@")
         posts, cursor = [], None
         for _ in range(max_pages):
@@ -122,7 +123,8 @@ class ScrapeCreatorsOrganic:
                 cursor = paging.get("max_id") if paging.get("more_available") else None
             elif platform == "tiktok":
                 data = self._get("v3/tiktok/profile/videos",
-                                 {"handle": handle, **({"max_cursor": cursor} if cursor else {})})
+                                 {"handle": handle, **({"sort_by": sort} if sort != "latest" else {}),
+                                  **({"max_cursor": cursor} if cursor else {})})
                 posts += [normalize_tiktok(i, handle) for i in data.get("aweme_list") or []]
                 cursor = data.get("max_cursor") if data.get("has_more") else None
             elif platform == "youtube":

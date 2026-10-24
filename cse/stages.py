@@ -173,7 +173,8 @@ def format_full(ad: dict, rank: int | None = None) -> str:
         f"- {'Caption' if ad.get('source') == 'organic' else 'Primary text'}: {(ad.get('body') or '').strip()[:700]}",
         "- Transcript:",
         *(f"  {l}" for l in lines or ["(no speech)"]),
-        f"- Breakdown (from the video frames): {json.dumps(b, ensure_ascii=False)}",
+        f"- Breakdown (from the {'slides' if ad.get('media_type') == 'slideshow' else 'video frames'}): "
+        f"{json.dumps(b, ensure_ascii=False)}",
     ])
 
 
@@ -238,6 +239,32 @@ LANE_PER_BRAND = 2  # at most this many of one advertiser in one lane
 LFS_WORDS = 400
 
 
+def custom_lanes(fields: dict) -> list[dict]:
+    """brand.md `report_lanes`: sections you define instead of the defaults. Each entry is
+    "key | Title | from-to days old | shop|nonshop|any | how many", e.g.
+    "month-shop | Last month, TikTok Shop | 0-30 | shop | 7". brand.md `report_media` (e.g.
+    "slideshow") keeps only that media type in the report."""
+    out = []
+    for raw in fields.get("report_lanes") or []:
+        parts = [x.strip() for x in str(raw).split("|")]
+        if len(parts) < 5 or not re.fullmatch(r"\d+-\d+", parts[2]):
+            continue
+        lo, hi = (int(x) for x in parts[2].split("-"))
+        out.append({"key": parts[0], "title": parts[1], "min_days": lo, "max_days": hi,
+                    "shop": parts[3].lower(), "n": int(parts[4]),
+                    "about": f"posted {lo}-{hi} days ago, "
+                             + {"shop": "TikTok Shop posts (a product tagged)",
+                                "nonshop": "not TikTok Shop (no product tagged)"}.get(parts[3].lower(), "any")})
+    return out
+
+
+def _in_custom(ad: dict, lane: dict) -> bool:
+    days = ad.get("days_running") or 0
+    if not (lane["min_days"] <= days <= lane["max_days"]):
+        return False
+    return {"shop": bool(ad.get("shoppable")), "nonshop": not ad.get("shoppable")}.get(lane["shop"], True)
+
+
 def ad_kind(ad: dict) -> str | None:
     """The ad's pile, same rules as web/lib/ads.ts kind(): LFS (400+ words of ad text), static,
     UGC (a person talking to camera) or B-roll. None for a video not broken down yet."""
@@ -297,9 +324,33 @@ def _format_ok(ad: dict, formats: set[str] | None, unknown_ok: bool = False) -> 
 
 
 def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | None = None,
-               formats: set[str] | None = None) -> list[dict]:
+               formats: set[str] | None = None, custom: list[dict] | None = None,
+               media: str = "") -> list[dict]:
     """The report's winners, lane by lane: [{"lane", "title", "about", "ad", "full"}].
-    With `formats`, only those formats count, and the other format lanes are dropped."""
+    With `formats`, only those formats count, and the other format lanes are dropped. With
+    `custom` (brand.md report_lanes), those sections replace the defaults; our own posts are left
+    out of them (they're compared in the gaps section)."""
+    if custom:
+        pool = [a for a in ranked(ads, per_brand=None)
+                if not a.get("is_own") and (not media or a.get("media_type") == media)]
+        advertisers = max(1, len({a.get("brand") for a in pool}))
+        taken, picks = set(), []
+        for lane in custom:
+            eligible = [a for a in pool if a["ad_id"] not in taken and _in_custom(a, lane)]
+            cap = max(LANE_PER_BRAND, -(-lane["n"] // advertisers))
+            per: dict = {}
+            chosen = []
+            for a in eligible:
+                if len(chosen) >= lane["n"]:
+                    break
+                if per.get(a.get("brand"), 0) < cap:
+                    chosen.append(a)
+                    per[a.get("brand")] = per.get(a.get("brand"), 0) + 1
+            for i, a in enumerate(chosen):
+                taken.add(a["ad_id"])
+                picks.append({"lane": lane["key"], "title": lane["title"], "about": lane["about"],
+                              "ad": a, "full": i < FULL_PER_LANE})
+        return picks
     lanes = ORGANIC_LANES if is_organic(ads) else PAID_LANES
     if formats:
         lanes = [l for l in lanes if l[0] not in ("ugc", "static", "lfs", "broll") or l[0] in formats]
@@ -379,7 +430,8 @@ def run_report(storage, slug: str, top_n: int = REPORT_TOTAL, today: date | None
     ctx = brand_context(storage, slug)
     ads = load_ads(storage, slug)
     fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
-    picks = pick_lanes(ads, total=top_n, segs=brandlib.segments(fields), formats=report_formats(fields))
+    picks = pick_lanes(ads, total=top_n, segs=brandlib.segments(fields), formats=report_formats(fields),
+                       custom=custom_lanes(fields), media=str(fields.get("report_media") or ""))
     if not picks:
         raise llm.LLMError("no broken-down ads yet: run `ads`, `creative` and `breakdown` first")
     top_ids = {p["ad"]["ad_id"] for p in picks}

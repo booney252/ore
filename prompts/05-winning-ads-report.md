@@ -48,6 +48,10 @@ For a **FULL breakdown video**:
 - **Line by line:** a table `| Time | Said | On screen | What this line is doing |`. Every spoken line from the transcript, word for word, with what's on screen at that moment (shot, creator, text overlay word for word, product on screen or not). For a silent ad, go beat by beat. The last column names the job of the line: hook, agitation, reframe, proof, demo, payoff, CTA, and so on.
 - **Visuals:** creator (age, look, energy), setting, camera, caption style, edit and pacing (cuts per second), time to product.
 
+For a **FULL breakdown slideshow** (a photo carousel the viewer swipes):
+- **Slide by slide:** a table `| Slide | What's on it | Text (word for word) | What it's doing |`, every slide in order, then the caption and whether a product is tagged (TikTok Shop) and on which slide it appears.
+- **Why the images work** and **why the text works:** quote the lines that do the work, and say why the viewer swipes to the end.
+
 For a **FULL breakdown static or LFS**, the same depth, applied to the image and the copy:
 - **Piece by piece:** a table `| Part | What's there (word for word) | What it's doing |` covering, in the order the eye takes them: the focal point, every piece of text on the image, the visual, then the primary text (for LFS, section by section: the opening, each turn of the argument, the proof, the offer, the close), the headline and the CTA button.
 - **Why the graphic works** and **why the copy works:** quote the lines that do the work.
