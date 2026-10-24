@@ -122,7 +122,7 @@ class ScrapeCreatorsOrganic:
                 cursor = paging.get("max_id") if paging.get("more_available") else None
             elif platform == "tiktok":
                 data = self._get("v3/tiktok/profile/videos",
-                                 {"handle": handle, "trim": "true", **({"max_cursor": cursor} if cursor else {})})
+                                 {"handle": handle, **({"max_cursor": cursor} if cursor else {})})
                 posts += [normalize_tiktok(i, handle) for i in data.get("aweme_list") or []]
                 cursor = data.get("max_cursor") if data.get("has_more") else None
             elif platform == "youtube":
