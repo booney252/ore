@@ -113,10 +113,13 @@ class ScrapeCreatorsSource:
                  "likes": r.get("likes") or 0, "ig_username": r.get("ig_username") or ""}
                 for r in data.get("searchResults") or []]
 
-    def fetch_ads(self, page_id: str, country: str = "US", max_pages: int = 2) -> list[dict]:
+    def fetch_ads(self, page_id: str, country: str = "US", max_pages: int = 2,
+                  status: str = "ALL") -> list[dict]:
+        """A page's ads in Meta's Ad Library order: most impressions first."""
         ads, cursor = [], None
         for _ in range(max_pages):
-            params = {"pageId": page_id, "country": country, "status": "ALL", "media_type": "ALL"}
+            params = {"pageId": page_id, "country": country, "status": status, "media_type": "ALL",
+                      "sort_by": "total_impressions"}
             if cursor:
                 params["cursor"] = cursor
             data = self._get("company/ads", params)

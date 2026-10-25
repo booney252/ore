@@ -21,7 +21,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 {{knowledge}}
 </knowledge>
 
-3. **The {{top_count}} winners, in sections** ({{lane_list}}). Each section is one lane of what's working: proven long-runners, rising new ads, and the best of each format. Every ad appears once and is numbered straight through. Grades are A-F from time live, still running, and number of versions; **rising** ads are new (under 30 days) and already outlasting how long their advertiser usually keeps an ad, or being scaled: they show what's working right now. Each ad is marked **Depth: FULL breakdown** or **Depth: SHORT card**. Each video has its transcript with timestamps, on-screen text, and a breakdown made from the actual frames; each static has a breakdown of its graphic and its copy made from the actual image.
+3. **The {{top_count}} winners, in sections** ({{lane_list}}). Each section is one lane of what's working: new ads breaking into their brand's top 10, proven long-runners, rising new ads, and the best of each format. Every ad appears once and is numbered straight through. Grades are A-F from time live, still running, and number of versions; **rising** ads are new (under 30 days) and already outlasting how long their advertiser usually keeps an ad, or being scaled: they show what's working right now. **Top 10** (paid ads, from daily tracking): Meta lists each brand's ads by impressions, and brands leave old ads running, so a brand-new ad that breaks into its brand's top 10 most-shown ads is the strongest sign that brand is putting real money behind it. Each ad is marked **Depth: FULL breakdown** or **Depth: SHORT card**. Each video has its transcript with timestamps, on-screen text, and a breakdown made from the actual frames; each static has a breakdown of its graphic and its copy made from the actual image.
 <top_ads>
 {{top_ads}}
 </top_ads>
@@ -36,7 +36,7 @@ This is the truth about what {{brand_name}} is and how it works. Where the resea
 ### 1. The big picture
 What's working across every winner, whatever the format. Advertising is one skill: a static's headline can be a UGC hook, an LFS opening can be a 15-second script. Cover:
 - **What runs through everything:** the angles, hooks, mechanisms, offers and emotions that show up across formats. For each, name it, list the ad numbers, and say why it works on this buyer.
-- **Emerging vs fading:** ideas that show up in the rising ads but not the proven ones are emerging; ideas in the proven ads that nobody is launching new ads with are fading. Say which is which and what that means for {{brand_name}}.
+- **Emerging vs fading:** ideas that show up in the top-10 breakouts and rising ads but not the proven ones are emerging; ideas in the proven ads that nobody is launching new ads with are fading. Say which is which and what that means for {{brand_name}}.
 - **What carries across formats:** 3-5 specific elements from one format that would work in another, and how.
 
 ### 2. One section per lane, in the order given

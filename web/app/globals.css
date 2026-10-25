@@ -835,6 +835,7 @@ table.data td { vertical-align: middle; }
 
 .pending-note { color: #d9a85c; font-weight: 400; font-size: 0.78rem; }
 .ad-frame .tag.ad-kind { left: auto; right: 10px; top: 10px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.ad-frame .tag.ad-top { left: 10px; right: auto; top: 42px; color: #06120d; background: var(--emerald); box-shadow: 0 0 18px var(--emerald-glow); }
 
 /* ---------- Sidebar navigation ---------- */
 

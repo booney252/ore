@@ -155,6 +155,19 @@ def _link(ad: dict) -> str:
     return ad.get("ad_library_url") or ""
 
 
+def top10_note(ad: dict) -> str:
+    """Where the ad sits in its advertiser's top 10 most-shown ads (daily tracking), or ""."""
+    bits = []
+    if ad.get("breakout"):
+        bits.append(f"broke into {ad.get('brand')}'s top 10 most-shown ads on {ad['breakout']}, "
+                    f"{ad.get('days_running', 0)} days after launch")
+    elif ad.get("top10_back"):
+        bits.append(f"back in {ad.get('brand')}'s top 10 on {ad['top10_back']}")
+    if ad.get("top10_rank"):
+        bits.append(f"#{ad['top10_rank']} of their top 10 now, {ad.get('top10_days', 1)} days in it")
+    return "; ".join(bits)
+
+
 def format_full(ad: dict, rank: int | None = None) -> str:
     """Everything we know about one ad: transcript line by line, text, breakdown."""
     a, b = ad.get("analysis") or {}, ad.get("breakdown") or {}
@@ -163,6 +176,7 @@ def format_full(ad: dict, rank: int | None = None) -> str:
     return "\n".join([
         title,
         f"- Winner grade: {ad.get('score_why')}",
+        *([f"- Top 10: {top10_note(ad)}"] if top10_note(ad) else []),
         f"- Link: {_link(ad)}",
         f"- {ad.get('media_type')}, {a.get('length_s', 0)}s, {a.get('cut_count', 0)} cuts "
         f"({a.get('cuts_per_second', 0)}/sec)",
@@ -180,7 +194,8 @@ def format_full(ad: dict, rank: int | None = None) -> str:
 
 def format_line(ad: dict) -> str:
     b = ad.get("breakdown") or {}
-    return (f"- Ad {ad['ad_id']} | {_who(ad)} | {ad.get('score_why')} | "
+    top = f" | {top10_note(ad)}" if top10_note(ad) else ""
+    return (f"- Ad {ad['ad_id']} | {_who(ad)} | {ad.get('score_why')}{top} | "
             f"{b.get('format', ad.get('media_type'))} | hook: {b.get('hook_line', '')[:120]} | "
             f"angle: {b.get('angle', '')[:120]}")
 
@@ -218,6 +233,8 @@ def balance_segments(top: list[dict], pool: list[dict], segs: list[dict],
 # (key, title, what it is, how many ads). Each ad appears once; the first FULL_PER_LANE of a
 # lane get the full line-by-line breakdown, the rest a short card.
 PAID_LANES = [
+    ("cracked", "Breaking into the top 10", "new ads that broke into their brand's 10 most-shown ads "
+                "in the last 14 days (daily tracking): where brands are moving money right now", 5),
     ("proven", "Proven winners", "the best long-runners: months of paid spend and still winning", 5),
     ("rising", "Rising now", "new ads (under 30 days) already outlasting how long their brand usually "
                "keeps an ad, or being scaled with 5+ versions: what's working right now", 5),
@@ -290,7 +307,13 @@ def is_organic(ads: list[dict]) -> bool:
     return sum(a.get("source") == "organic" for a in ads) > len(ads) / 2
 
 
+BREAKOUT_DAYS = 14  # how long a top-10 breakout stays in the report's first section
+
+
 def in_lane(ad: dict, key: str, unknown_video_ok: bool = False) -> bool:
+    if key == "cracked":
+        return bool(ad.get("breakout")) and (
+            date.today() - date.fromisoformat(ad["breakout"])).days <= BREAKOUT_DAYS
     if key == "proven":
         return not ad.get("rising")
     if key == "rising":
@@ -363,6 +386,8 @@ def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | No
         if want <= 0:
             continue
         eligible = [a for a in pool if a["ad_id"] not in taken and in_lane(a, key)]
+        if key == "cracked":  # newest breakouts first, then the highest spot in the top 10
+            eligible.sort(key=lambda a: (a["breakout"], -(a.get("top10_rank") or 99)), reverse=True)
         # Few advertisers (a new category): let each fill more of a lane. The filler lane has no cap.
         cap = len(eligible) if key == "more" else max(LANE_PER_BRAND, -(-want // advertisers))
         chosen, per = [], {}

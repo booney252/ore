@@ -13,6 +13,15 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
         {rank ? <span className="ad-rank mono">#{rank}</span> : null}
         {ad.media_type === "image" ? <span className="tag ad-kind">Static</span> : ad.media_type === "slideshow" ? <span className="tag ad-kind">Slideshow</span> : null}
         {ad.shoppable ? <span className="tag ad-kind">TikTok Shop</span> : null}
+        {ad.breakout ? (
+          <span className="tag ad-top" title={`Broke into ${ad.brand}'s top 10 most-shown ads on ${ad.breakout}`}>
+            Broke into top 10
+          </span>
+        ) : ad.top10_rank ? (
+          <span className="tag ad-top" title={`${ad.brand}'s #${ad.top10_rank} most-shown ad today`}>
+            Top 10 · #{ad.top10_rank}
+          </span>
+        ) : null}
         {ad.is_own ? <span className="tag emerald">{ad.source === "organic" ? "Ours" : "Yours"}</span> : null}
         <div className="ad-over">
           <Grade g={why.grade} />

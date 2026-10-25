@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from . import brand as brandlib
-from . import ads, breakdown, lessons, organic, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, studio, voc
+from . import ads, breakdown, lessons, organic, competitors, creative, formats, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
 from .adsource import AdSourceError
 from .storage import Storage, StorageError, from_env
 
@@ -118,6 +118,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pages", type=int, default=1, help="result pages per brand (1 credit each)")
     p.add_argument("--only", help="comma-separated competitor names to pull (default: all)")
 
+    sub.add_parser("track", help="daily: each advertiser's top 10 ads, flag new ones breaking in (1 credit each)"
+                   ).add_argument("brand")
+
     p = sub.add_parser("creative", help="transcripts, cuts and key frames for new ads")
     p.add_argument("brand")
     p.add_argument("--limit", type=int, help="only the top N new ads by score")
@@ -224,6 +227,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "ads":
             ads.run(storage, args.brand, max_pages=args.pages,
                     only=[n.strip() for n in args.only.split(",")] if args.only else None)
+            return 0
+        if args.command == "track":
+            tracking.run(storage, args.brand)
             return 0
         if args.command == "creative":
             creative.run(storage, args.brand, limit=args.limit, per_brand=args.per_brand)

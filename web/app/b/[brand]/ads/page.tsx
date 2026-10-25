@@ -20,6 +20,7 @@ export default async function Winners({
   const [allAds, type] = await Promise.all([loadAds(brand), campaignType(brand)]);
   const organic = type === "organic";
   const rising = picked === "rising";
+  const top10 = picked === "top10";
   const only = KINDS.find((k) => k.key === picked)?.key as Kind | undefined;
   const counts = new Map<Kind, number>();
   for (const a of allAds) {
@@ -27,11 +28,19 @@ export default async function Winners({
     if (k && !a.removed_from_library) counts.set(k, (counts.get(k) ?? 0) + 1);
   }
   const risingCount = allAds.filter((a) => a.rising && !a.removed_from_library).length;
+  // In an advertiser's top 10 most-shown ads today, or broke into one in the last 2 weeks
+  const recentBreak = (a: (typeof allAds)[number]) =>
+    Boolean(a.breakout) && Date.now() - Date.parse(a.breakout!) <= 14 * 864e5;
+  const inTop10 = (a: (typeof allAds)[number]) => Boolean(a.top10_rank) || recentBreak(a);
+  const tracking = allAds.some((a) => a.top10_days);
+  const top10Count = allAds.filter(inTop10).length;
   // TikTok Shop posts (a product tagged) vs everything else, on top of the type filter
   const shop = shopPick === "yes" || shopPick === "no" ? shopPick : undefined;
   const hasShop = allAds.some((a) => a.shoppable);
   const shopCount = allAds.filter((a) => a.shoppable).length;
-  const byType = rising
+  const byType = top10
+    ? allAds.filter(inTop10)
+    : rising
     ? allAds.filter((a) => a.rising)
     : only
       ? allAds.filter((a) => kind(a) === only)
@@ -44,9 +53,17 @@ export default async function Winners({
     const qs = q.toString();
     return `/b/${brand}/ads${qs ? `?${qs}` : ""}`;
   };
-  const top = winners(ads, 10);
+  // Top 10 view: the newest breakouts first, then the rest by their spot in their brand's top 10.
+  const top = top10
+    ? [...ads].sort(
+        (a, b) =>
+          Number(recentBreak(b)) - Number(recentBreak(a)) ||
+          (b.breakout ?? "").localeCompare(a.breakout ?? "") ||
+          (a.top10_rank ?? 99) - (b.top10_rank ?? 99),
+      )
+    : winners(ads, 10);
   const shown = new Set(top.map((a) => a.ad_id));
-  const rest = ads
+  const rest = (top10 ? [] : ads)
     .filter((a) => !shown.has(a.ad_id))
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
     .slice(0, 40);
@@ -66,9 +83,14 @@ export default async function Winners({
       <ScoreKey organic={organic} />
 
       <nav className="tabs" aria-label="Sort by type">
-        <Link href={href(undefined, shop)} className={only || rising ? "" : "on"} scroll={false}>
+        <Link href={href(undefined, shop)} className={only || rising || top10 ? "" : "on"} scroll={false}>
           All
         </Link>
+        {!organic && tracking && (
+          <Link href={href("top10", shop)} className={top10 ? "on" : ""} scroll={false}>
+            Top 10 <span className="mono">{top10Count}</span>
+          </Link>
+        )}
         {!organic && (
           <Link href={href("rising", shop)} className={rising ? "on" : ""} scroll={false}>
             Rising <span className="mono">{risingCount}</span>
@@ -100,6 +122,14 @@ export default async function Winners({
         </nav>
       )}
 
+      {top10 ? (
+        <p className="muted">
+          Each brand&apos;s 10 most-shown ads, checked every day. Brands leave old ads running for
+          months, so the signal is a new one breaking in: a brand putting real money behind it.
+          Breakouts from the last 2 weeks come first.
+        </p>
+      ) : null}
+
       {rising ? (
         <p className="muted">
           New ads (under 30 days) that are still running and already beating how long their brand
@@ -120,6 +150,7 @@ export default async function Winners({
         ))}
       </div>
 
+      {!top10 && (
       <section className="block">
         <h2>Also tracked</h2>
         <p className="muted">The next {rest.length} by grade, without frames pulled yet.</p>
@@ -162,6 +193,7 @@ export default async function Winners({
           </table>
         </div>
       </section>
+      )}
     </main>
   );
 }

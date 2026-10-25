@@ -16,6 +16,7 @@ Job types:
                                                (format: ugc, broll, static)
   briefs      {brand, picks: [{iterations, number}]}  iterations from any files -> one
                                                creative brief doc (or {iterations, numbers})
+  track   {brand}                     daily: each advertiser's top 10; break down the new ones breaking in
   setup   {brand}                     new brand: profile, competitors, VOC, ads, research brief
   research {brand}                    refresh: re-pull customer quotes, re-run the 4 research prompts
 """
@@ -28,7 +29,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, lessons, organic, ingredients, llm, mechanisms, research, setup, stages, studio, voc
+from . import ads, breakdown, creative, lessons, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -62,6 +63,20 @@ def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | 
     check()
     ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
     return stages.run_report(storage, slug)
+
+
+def run_track(storage, slug: str, check=lambda: None) -> str:
+    """Daily top-10 tracking, then transcribe and break down whatever broke into a top 10, so a
+    breakout is ready to read (and to iterate on) the day it shows up."""
+    out = tracking.run(storage, slug)
+    if out["new_ids"]:
+        check()
+        creative.run(storage, slug, limit=0, ids=out["new_ids"])
+        check()
+        name = stages.brand_context(storage, slug)["brand_name"]
+        if breakdown.run(storage, slug, name, limit=0, ids=out["new_ids"])["waiting"]:
+            raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
+    return out["key"]
 
 
 def _move(storage, job: dict, src: str, dst: str, **extra) -> dict:
@@ -99,6 +114,8 @@ def run_job(storage, job: dict) -> str | None:
         return stages.run_brief_picks(storage, slug, [
             (brandlib.brand_key(slug, f"iterations/{p['iterations']}.md"), int(p["number"]))
             for p in picks], creator=job.get("creator"), segment=job.get("segment"))
+    if job["type"] == "track":
+        return run_track(storage, slug, check=check)
     if job["type"] == "setup":
         if not llm.api_key():  # web research has no handoff mode
             raise llm.HandoffPending("", "")

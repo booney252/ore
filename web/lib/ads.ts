@@ -34,7 +34,12 @@ export type Ad = {
   usual_comment_rate?: number;
   shoppable?: boolean; // a TikTok Shop post: a product is tagged (cse/organic_source.py)
   rising?: boolean; // new (under 30 days), still running, already beating its advertiser's usual (cse/score.py)
-  usual_days?: number | null; // the advertiser's usual ad life: median days its stopped ads ran
+  usual_days?: number | null;
+  // Daily top-10 tracking (cse/tracking.py): Meta lists a brand's ads most impressions first.
+  top10_rank?: number | null; // spot in its advertiser's top 10 today, or null if it's out
+  top10_days?: number; // days it's been seen in the top 10
+  breakout?: string; // date a new ad (30 days or less) broke into the top 10 for the first time
+  top10_back?: string; // date an older ad entered the top 10 for the first time // the advertiser's usual ad life: median days its stopped ads ran
   min_views?: number; // views a post needs to count as a winner (A or B)
   on_topic?: boolean; // false: blew up, but not about the niche (cse/organic.py check_topics)
   topic_why?: string;
