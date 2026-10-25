@@ -19,11 +19,15 @@ export async function token(): Promise<string> {
 }
 
 function guests(): { brand: string; password: string }[] {
+  // Forgiving about how it's pasted into Vercel: quotes, new lines or spaces between entries,
+  // and the brand in capitals ("AICL:pw") all still work.
   return (process.env.GUEST_PASSWORDS ?? "")
-    .split(",")
+    .replace(/^\s*["']|["']\s*$/g, "")
+    .split(/[,\n]/)
     .map((entry) => {
       const i = entry.indexOf(":");
-      return { brand: entry.slice(0, i).trim(), password: entry.slice(i + 1).trim() };
+      if (i < 0) return { brand: "", password: "" };
+      return { brand: entry.slice(0, i).trim().toLowerCase(), password: entry.slice(i + 1).trim() };
     })
     .filter((g) => g.brand && g.password);
 }
