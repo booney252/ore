@@ -1,145 +1,148 @@
-# AICL company page: 7 videos built for reach
+# AICL company page: 7 talking-head reels built for reach
 
 **What this page is for.** An affiliate's page or Finn's own account sells one person's story. The company page has a different job.
 
 **The 7 videos below only have to get eyes:** stop strangers who've never heard of AICL and send them to the page. The page then converts and nurtures them with the bottom-of-funnel content that's already there.
 
-So the rules for these 7:
-- **Entertain or prove before you claim.** The report found every winner puts the payoff in frame 0, because this buyer has watched "7 billion of these make money online videos" and believes almost none of them.
-- **Built to be sent and rewatched**, which is how reach happens. That means short, silent-friendly, a "wait, is that real?" moment, or a fight the viewer takes a side on.
+**Every video is a talking head or UGC reel:** a real person on camera (the team, Finn, or a member), with the proof shown on their phone or a green-screen panel behind them.
+
+The rules for these 7:
+- **Show the payoff before the claim.** The report found every winner puts the result in frame 0, because this buyer has watched "7 billion of these make money online videos" and believes almost none of them. In a talking head, that means holding up the phone or putting the screenshot on the green screen in the first second.
+- **A person, not a pitch.** AICL's own best posts are people moments: the $140K bonus reveal (5.7x) and the street run-in with a student (3.3x). Founder speeches and niche rankings sat at 1.1x to 1.4x.
+- **Captions on everything, and a text hook in frame 0.** These need to work with the sound off.
 - **The CTA points to the page, not straight to a call.** Use "follow," "the full breakdown is pinned," or a keyword only right after the viewer got something real. (Spoken keywords after a payoff got 3.47% comments vs a 0.39% usual. Caption-only keywords did nothing.)
-- **People and payouts are AICL's proof.** Higgsfield can win with no face because its product is the output. AICL's product is money and a crew, and its own best posts (the $140K bonus reveal at 5.7x, the street run-in with a student at 3.3x) are people moments.
 
 ## Set up the page first
 
-Everything below sends people here, so it has to convert when they land.
-
 | Spot | What goes there |
 |---|---|
-| **Pinned 1** | "How AI influencer pages actually get paid": the full explainer (the long version of video 2) |
-| **Pinned 2** | The best student payout moment (the $140K bonus reveal) |
+| **Pinned 1** | "How AI influencer pages actually get paid": the long version of video 2 |
+| **Pinned 2** | The $140K bonus reveal |
 | **Pinned 3** | "What happens on the call / who this is for": the bottom-of-funnel offer post |
 | **Highlights** | Wins (payout screenshots), How it works, Students, FAQ (scam? time? cost?) |
 | **Bio** | One line with the promise, plus the booking link |
 
 ---
 
-## 1. "She isn't real" (silent loop)
+## 1. "This girl has 2.3 million views and she doesn't exist"
 
-**Job:** pure reach through rewatches and sends. Uses the report's silent under-15-second loops (#4, #15, #25) and the AI-character trend.
+- **Who:** a team member, selfie-style, green screen.
+- **Text hook:** "she isn't real. the money is."
+- **First frame:** a viral AI influencer post (a member's page, with real view counts) on the green screen behind them. They point at it.
+- **Length:** 25-30s.
 
-**Length:** 8-10s, no voice, music only.
+> This girl has 2.3 million views and she doesn't exist. One of our members made her on a laptop. *(Green screen: the raw render next to the finished post.)* And everyone in the comments thinks she's real. *(Green screen: the comments.)* But here's the part people don't get. *(Green screen: a brand payout screenshot, name blurred.)* The money she makes is very real, and it doesn't come from views. Follow, 'cause we're about to show you exactly where it comes from.
 
-| Time | On screen | Text |
-|---|---|---|
-| 0-3s | A gorgeous, viral-looking AI influencer post (a member's page), with its real view count visible | "2.3M views." |
-| 3-6s | Hard cut to the raw AI render / the prompt / the editing timeline | "she isn't real." |
-| 6-9s | Hard cut to the page's real brand payout screenshot (blur the name) | "but the money is." |
-
-**Caption:** "The pages you're watching every day. Follow to see how they get paid 👀"
-
-**Why it should work:** the "wait, is that real?" rewatch, plus the reveal Tommy's 1.8M post is built on ("Jean Phil isn't real but his money is"), told as a company.
+**Why it should work:** the "wait, is she real?" moment from the AI-character trend, and Tommy's "Jean Phil isn't real but his money is" reveal (1.8M), told as a company. It ends on an open loop that video 2 answers.
 
 ---
 
-## 2. "Who actually pays the AI influencer?"
+## 2. "Nobody tells you who actually pays the AI influencer"
 
-**Job:** own the one question nobody answers. The report's biggest gap: "How did you find your affiliates? That is the question," and no winner explains who pays. This is the top-of-funnel version. The pinned post is the deep one.
+- **Who:** a team member or Finn, talking head, green screen with one card per point. This is @raycfu's numbered-list format, but with a face.
+- **Text hook:** "WHO pays the AI influencer? (nobody explains this)"
+- **Length:** 40-50s.
 
-**Format:** @raycfu's: serif headline with yellow keywords in the top third, a numbered list, a screen or card for every claim. Voiceover or a team member talking head.
+> Most people think AI influencers get paid for views. They don't, and that's why nobody can explain how this actually works. So here's the real version.
+>
+> One. The page grows on free content, no face, no followers to start. *(Card: a follower graph.)*
+>
+> Two. A brand that already sells millions on Amazon wants its product in front of that audience. *(Card: a product listing, brand hidden.)*
+>
+> Three. The brand pays the page owner a monthly retainer just to post, plus commission on every sale, and the commission is often 100 to 200 percent. *(Card: a real retainer payout.)*
+>
+> Four. The person running it never shows their face.
+>
+> The full breakdown of how our members get matched with those brands is pinned on our page.
 
-- **Text hook:** "Nobody tells you WHO pays the AI influencer"
-- **Spoken hook:** "Most people think AI influencers make money from views. They don't."
-- **Beats** (one card each):
-  1. The page grows on free content. (Card: the page's follower graph.)
-  2. A brand that already sells millions on Amazon wants its product in front of that audience. (Card: the product listing, no brand name.)
-  3. The brand pays the page owner a monthly retainer just to post, plus commission on every sale, often 100-200%. (Card: a retainer payout screenshot.)
-  4. The person behind it never shows their face. (Card: the owner's real hands on a laptop.)
-- **CTA:** "The full breakdown of how members get matched with brands is pinned on our page."
-
-**Why it should work:** the "most people don't realize" + numbered list + UI cards formula, and it answers the buyer's exact question.
-
----
-
-## 3. "AI pages are a scam" (stitch and answer)
-
-**Job:** borrow a villain's reach. The report's stitch-and-answer winners (#10, #22): outrage, then vindication.
-
-**Format:** stitch a real viral take saying AI influencer money is fake or a scam, then one of the team answers with receipts.
-
-- **0-4s:** the stitched clip: "AI influencer pages are a scam, nobody's making money."
-- **Answer, beat 1:** "Fair. Most of what you see online is fake, so here's ours." Agreeing first sides with the skeptic, which is this buyer's biggest belief ("I agree I think many are lying too").
-- **Answer, beat 2:** a fixed header ("SCAM?") with a changing subline over each real payout, like #22's ("Member, month 2… / Member, month 4… / Bonus…"). Use screenshots from the wins log.
-- **Close:** "Still a scam? Comment what you'd need to see." A real question, so no keyword loop.
-
-**Why it should work:** the viewer joins the fight on one side or the other, and both sides share it.
+**Why it should work:** it answers the buyer's top question that nobody in the niche answers ("How did you find your affiliates? That is the question"), with the "most people don't realize" plus numbered list format.
 
 ---
 
-## 4. "Day 1 vs day 60 of an AI page" (silent timeline)
+## 3. "AI influencer pages are a scam" (stitch and answer)
 
-**Job:** reach through the transformation loop.
+- **Who:** a team member, selfie, replying to a stitched clip.
+- **Text hook:** "you think this is a scam? fair."
+- **First frame:** the stitched clip of someone saying AI influencer money is fake.
+- **Length:** 30-40s.
 
-**Format:** the report's "6am… / 1pm…" timeline, turned into a page's growth. Silent, under 12s.
+> Honestly, fair. Most of what you see online about this is fake, so let me show you ours. *(Holds phone up to the camera.)* This is a member, month two. *(Swipes.)* This is month four. *(Swipes.)* And this is a bonus a brand paid out last month. *(Lowers phone.)* I'm not going to tell you everyone makes this, 'cause they don't. But the scam is the guy selling you a course with no brands behind it. Comment what you'd need to see to believe it.
 
-| Time | On screen | Text |
-|---|---|---|
-| 0-3s | A member's page on day 1: 0 followers, first post | "day 1." |
-| 3-6s | The same page on day 30 | "day 30." |
-| 6-9s | Day 60, with the follower count and a brand DM | "day 60." |
-| 9-11s | The first payout from that brand | "same person. no face. 🤫" |
-
-**Caption:** "Follow, we post a new member's timeline every week."
-
-That caption makes it a series, a reason to follow.
-
-**Why it should work:** before/after loops get rewatched and sent. It also shows the result, so it gets past "it's fake."
+**Why it should work:** borrows the skeptic's reach and sides with this buyer's biggest belief ("I agree I think many are lying too"). Both sides of the argument share it. The comment ask is a real question, not a keyword loop.
 
 ---
 
-## 5. A viral AI character, made by a member
+## 4. "Day 1 vs day 60 of my AI page" (member UGC)
 
-**Job:** entertainment reach outside the niche. The recent-winners trend: four of six recent breakouts are AI characters or pop-culture crossovers. Higgsfield's company page wins on exactly this.
+- **Who:** a member, selfie, showing their own page on their phone. This is the weekly series, a new member each week.
+- **Text hook:** "day 1 vs day 60 of my faceless AI page"
+- **Length:** 25-30s.
 
-**Format:** a 15-30s AI scene with a known vibe: a gangster-movie cold open, a reality-TV confession, a "POV: you're at the party" clip.
+> Day one, my page had zero followers, and this was my first post. *(Holds phone to the lens.)* Day thirty, this. *(Swipes.)* Day sixty, this brand slid into my DMs. *(Shows the DM.)* And this is the first payment. *(Shows it.)* Nobody I know even knows this page is mine.
 
-- **Use original AI characters styled after a genre,** not real actors' faces. Real faces bring takedown and likeness risk, and the page is a business account.
-- **The end card is the only pitch:** "Made by an AICL member in 20 minutes. Pages like this get paid by brands. Follow to see how."
+**End text:** "AICL member, [age], [city]. new member every week, follow."
 
-**Why it should work:** recognition stops people who don't care about AI, and "wait, is this real?" drives rewatches. AICL becomes the company behind the trend, like Higgsfield's "every viral AI influencer was made on Higgsfield."
-
----
-
-## 6. "Asking a 20-year-old how he makes $200 a day" (street run-in)
-
-**Job:** people-led proof, AICL's own best format (3.3x).
-
-**Format:** a street or event interview with a real member, handheld, energetic, one question at a time.
-
-- **Text hook:** "I asked him how he makes $200 a day at 20"
-- **Beats:**
-  1. "What do you do?" "AI pages."
-  2. "Show me." He pulls up his phone: the page, then the payout.
-  3. "Do you show your face?" "Never."
-  4. "How long did it take?" His real answer.
-- **CTA, spoken by the member:** "Honestly just follow their page, it's all on there."
-
-**Why it should work:** someone asks the viewer's question out loud (the report's pattern 5), and the proof is a real person standing right there.
+**Why it should work:** the report's before/after timeline, told by the person who lived it. It shows the result before any claim. The weekly series gives people a reason to follow.
 
 ---
 
-## 7. Telling a member about their payout, live
+## 5. "I made this in 20 minutes" (member UGC with an AI character)
 
-**Job:** pure emotion, the most shareable kind of proof. It remakes AICL's best-performing own post (the $140K bonus reveal, 5.7x).
+- **Who:** a member, selfie, with their viral AI character clip on the green screen.
+- **Text hook:** "I made this in 20 minutes on my laptop"
+- **First frame:** the AI character's most eye-catching moment, full screen for 1-2 seconds, then cut to the member.
+- **Length:** 25-35s.
 
-**Format:** a call or in-person moment. A team member tells a member about a bonus or a payout. Film the face.
+> I made this in twenty minutes on my laptop, and it has more views than anything I've ever posted as myself. *(Green screen: the view count.)* People think AI pages are just for fun. This character has a brand paying her every month. *(Green screen: the payout.)* I'm not a tech guy, I'm not an editor, I just learned the system.
 
-- **0-2s:** the member's face, with the text "he doesn't know yet."
-- **Then:** "So the brand looked at your numbers this month…" and the reveal and reaction, uncut.
-- **End text:** "[Member], [age], started [X] months ago." Keep it real. Use only real numbers from the wins log.
-- **Caption:** "We post every one of these. Follow."
+- **End card:** "made by an AICL member. follow to see how pages like this get paid."
+- **Note:** use original characters styled after a genre (gangster film, reality TV), never real actors' faces. That avoids takedowns on a business account.
 
-**Why it should work:** the reaction is the hook, the number is the proof, and "he doesn't know yet" holds the viewer to the end.
+**Why it should work:** the AI-character entertainment trend (four of six recent breakouts) gets people outside the niche to stop. Then a real person puts a face and a payout on it.
+
+---
+
+## 6. "I asked a 20-year-old how he makes $200 a day" (street UGC)
+
+- **Who:** a team member and a real member, handheld, on the street or at a meetup.
+- **Text hook:** "he's 20 and makes $200 a day from his phone"
+- **Length:** 30-45s.
+
+> **Q:** What do you do?
+> **A:** AI pages.
+>
+> **Q:** Show me. *(He pulls up his phone: the page, then the payout. The camera pushes in.)*
+>
+> **Q:** Do you ever show your face?
+> **A:** Never.
+>
+> **Q:** How long did it take you?
+> **A:** *[his real answer]*
+>
+> **Q:** What would you tell someone who thinks it's fake?
+> **A:** *[his real answer]*
+>
+> **Member, to camera:** Just follow their page, it's all on there.
+
+**Why it should work:** AICL's own street post is its third best (3.3x). Someone asks the viewer's question out loud (the report's pattern 5), and the proof is a real person standing right there.
+
+---
+
+## 7. "He doesn't know yet" (live payout reveal)
+
+- **Who:** a team member and a member on a call or in person. Film the member's face, selfie or webcam style.
+- **Text hook:** "he doesn't know yet 🤫"
+- **Length:** 30-45s.
+
+> **Team member:** So the brand looked at your numbers this month…
+> *(The reveal of the real bonus or payout. Keep the reaction uncut.)*
+> **Member, after:** *[real reaction]*
+
+**End text:** "[name], [age], started [X] months ago." Use only real numbers from the wins log.
+
+**Caption:** "we post every one of these. follow."
+
+**Why it should work:** it remakes AICL's best post (the $140K bonus reveal, 5.7x). The reaction is the hook, the number is the proof, and "he doesn't know yet" holds people to the end.
 
 ---
 
@@ -147,7 +150,7 @@ That caption makes it a series, a reason to follow.
 
 | Week | Post | Why |
 |---|---|---|
-| 1 | 1, 2, 3 | One silent loop, the explainer that owns the gap, and one fight |
-| 2 | 4, 5, 6, 7 | The two series starters (4 and 7 repeat weekly), entertainment, people |
+| 1 | 1, 2, 3 | The reveal opens the question, the explainer answers it (and becomes pinned 1), then one fight |
+| 2 | 4, 5, 6, 7 | Two weekly series starters (4 and 7), the entertainment hook, the people proof |
 
-**What to judge:** views against the page's usual (about 3,300) and **follows per post**. Reach posts win on follows, not comments. Whatever beats 3x usual becomes a weekly series.
+**What to judge:** views against the page's usual (about 3,300) and **follows per post**. Whatever beats 3x usual becomes a weekly series.
