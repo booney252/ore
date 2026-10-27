@@ -73,62 +73,62 @@ Kyle's beats stay the same. Here's what changes:
 ## Story-Maxxing, part 1: Good and bad don't exist
 **Title box:** "Story-Maxxing: Part 1 (not for victims)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to story-maxxing. This is part one, and today we're deleting the words good and bad." | **1.** The series and the payoff in one breath. |
-| 4-10s | "'Cause when your launch flops or she leaves you on read, the thing that wrecks you isn't what happened. It's the story you tell about it." | **2.** The stakes, with two moments he's lived. |
-| 10-15s | "'This always happens to me.' 'I'm just not built for this.' Shut up, bro, that's falling-off talk." | **3.** His exact self-talk, then the club line. |
-| 15-21s | "Ever notice two guys can lose the same job, and one calls it the worst day of his life and the other calls it the push he needed?" | **4.** He agrees before he's taught. |
-| 21-30s | "Same event. Your brain has this thing called negativity bias. It's wired to tag anything new as a threat first, so 'bad' is your default label, not the truth." | **5.** A named concept that explains it without blaming him. |
-| 30-35s | "That's why one rough day turns into a rough week. You're reacting to the label, not the day." | **6.** "That's why it keeps happening to me." |
-| 35-42s | "[Real: something that went 'wrong' with Solis, and what it turned into.]" | **7.** Your proof, a concrete moment. |
-| 42-52s | "So here's the rule. When something hits, you don't get to call it good or bad for 24 hours. You only get to ask, what can I do with this? Write the answer down." | **8.** One rule, a time limit, one question. Copyable today. |
-| 52-58s | "Comment the worst thing that happened to you this month. Ambitious and alive." | **8 + 9.** The comment ask, then the sign-off. |
+| 0-4s | "Welcome to story-maxxing. This is part one, and today we're deleting the words good and bad." | **1. Series + topic.** "Part one" tells him there's a series. "Deleting the words good and bad" is a strange promise, so he stays to see how. |
+| 4-10s | "'Cause when your launch flops or she leaves you on read, the thing that wrecks you isn't what happened. It's the story you tell about it." | **2. Stakes.** Two moments every guy has felt (business and girls), then the claim. It tells him what this video will fix. |
+| 10-15s | "'This always happens to me.' 'I'm just not built for this.' Shut up, bro, that's falling-off talk." | **3. His self-talk, called out.** He's said both lines to himself. "Falling-off talk" makes him want to be on the other side, like Kyle's "little boy talk". |
+| 15-21s | "Ever notice two guys can lose the same job, and one calls it the worst day of his life and the other calls it the push he needed?" | **4. Something he's already noticed.** Proves the idea with a scene he can picture, so he agrees before you've taught anything. |
+| 21-30s | "Same event. Your brain has this thing called negativity bias. It's wired to tag anything new as a threat first, so 'bad' is your default label, not the truth." | **5. The mechanism.** A named concept makes it sound researched (Kyle's "default mode network"), and "your brain is wired" takes the blame off him. |
+| 30-35s | "That's why one rough day turns into a rough week. You're reacting to the label, not the day." | **6. "That's why".** Explains a problem he's lived (the bad week). It's the relief line, the one that gets saved. |
+| 35-42s | "[Real: something that went 'wrong' with Solis, and what it turned into.]" | **7. Proof.** Shows you've done it yourself, so it's a lesson from someone in it, not a quote. Kyle uses his clients here; you use your own week. |
+| 42-52s | "So here's the rule. When something hits, you don't get to call it good or bad for 24 hours. You only get to ask, what can I do with this? Write the answer down." | **8. The action.** One rule, a time limit (24 hours), one question. He can use it the next time something goes wrong. |
+| 52-58s | "Comment the worst thing that happened to you this month. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** The question is easy and personal, so people answer it. The sign-off is your brand stamp, the same on every video. |
 
 ## Story-Maxxing, part 2: Keep the lesson, drop the weight
 **Title box:** "Story-Maxxing: Part 2 (not for overthinkers)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to story-maxxing, part two, and today you're dropping the weight from your last L." | **1.** |
-| 4-10s | "Every mistake hands you two things, a lesson and a weight. Most guys throw away the lesson and carry the weight for years." | **2.** The picture that frames the whole video. |
-| 10-14s | "'I wasted a whole year.' 'I should've started sooner.' That's falling-off talk." | **3.** |
-| 14-19s | "Ever notice you remember exactly how embarrassing something felt, but not one thing it taught you?" | **4.** |
-| 19-28s | "That's 'cause your brain stores the feeling way stronger than the fact. Replaying it is called rumination, and it doesn't make you smarter, it makes you slower." | **5.** |
-| 28-33s | "That's why one failed business makes you scared to start the next one." | **6.** |
-| 33-40s | "[Real: a mistake you made, and the one-line lesson you kept.]" | **7.** |
-| 40-52s | "So tonight, write the mistake down. Under it, write one sentence, what it taught you. Keep the sentence. Rip up the rest, literally." | **8.** A physical action they'll remember. |
-| 52-57s | "Comment your one-sentence lesson. Ambitious and alive." | **8 + 9.** |
+| 0-4s | "Welcome to story-maxxing, part two, and today you're dropping the weight from your last L." | **1. Series + topic.** "Part two" rewards anyone who saw part one. "Your last L" points at something he's still carrying. |
+| 4-10s | "Every mistake hands you two things, a lesson and a weight. Most guys throw away the lesson and carry the weight for years." | **2. Stakes.** One picture (lesson vs weight) frames the whole video, and "for years" shows the cost of getting it wrong. |
+| 10-14s | "'I wasted a whole year.' 'I should've started sooner.' That's falling-off talk." | **3. His self-talk, called out.** The two regrets this audience says most, from the research ("feels behind", "wasted my 20s"). |
+| 14-19s | "Ever notice you remember exactly how embarrassing something felt, but not one thing it taught you?" | **4. Something he's already noticed.** Everyone has replayed an embarrassing moment. Agreeing here sets up the reason in the next line. |
+| 19-28s | "That's 'cause your brain stores the feeling way stronger than the fact. Replaying it is called rumination, and it doesn't make you smarter, it makes you slower." | **5. The mechanism.** It names what he's been doing (rumination) and kills the excuse that replaying it is "learning from it". |
+| 28-33s | "That's why one failed business makes you scared to start the next one." | **6. "That's why".** It connects the habit to the real cost for a builder: the next thing never starts. |
+| 33-40s | "[Real: a mistake you made, and the one-line lesson you kept.]" | **7. Proof.** Shows the method on you before you ask him to do it. |
+| 40-52s | "So tonight, write the mistake down. Under it, write one sentence, what it taught you. Keep the sentence. Rip up the rest, literally." | **8. The action.** A physical ritual (rip it up) sticks better than "let it go", and "tonight" gives a deadline. |
+| 52-57s | "Comment your one-sentence lesson. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** He just wrote the sentence, so it's an easy comment, and the comments become proof for other viewers. |
 
 ## Story-Maxxing, part 3: Expect nothing, gain everything
 **Title box:** "Story-Maxxing: Part 3 (not for people-pleasers)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to story-maxxing, part three, and today you're going to stop crashing after every launch." | **1.** The payoff named as his problem. |
-| 4-10s | "'Cause every time you go in expecting something, the post to hit, the client to sign, you've already decided how you're going to feel." | **2.** |
-| 10-13s | "'I deserve for this to work.' That's falling-off talk." | **3.** |
-| 13-18s | "Ever notice the posts you don't care about are the ones that blow up?" | **4.** |
-| 18-27s | "Disappointment is just the gap between what you expected and what happened. Shrink the expectation and the same result feels like a win." | **5.** A one-line formula is easy to repeat. |
-| 27-32s | "That's why you feel like trash after a launch that actually went fine." | **6.** |
-| 32-39s | "[Real: a Solis launch or post you expected too much from, and how it felt.]" | **7.** |
-| 39-51s | "So before anything you ship this week, say it out loud: I'm doing this for the rep, not the result. You still go all out. You just stop betting your mood on it." | **8.** Keeps the ambition in, so it doesn't sound like "stop caring." |
-| 51-56s | "Comment what you're shipping this week. Ambitious and alive." | **8 + 9.** |
+| 0-4s | "Welcome to story-maxxing, part three, and today you're going to stop crashing after every launch." | **1. Series + topic.** The topic is said as his problem ("crashing after every launch"), so it's clear who it's for. |
+| 4-10s | "'Cause every time you go in expecting something, the post to hit, the client to sign, you've already decided how you're going to feel." | **2. Stakes.** Two builder moments, then the trap: his mood is decided before the result comes in. |
+| 10-13s | "'I deserve for this to work.' That's falling-off talk." | **3. His self-talk, called out.** The quiet entitlement every grinder has, named out loud. Calling it falling-off talk stings just enough. |
+| 13-18s | "Ever notice the posts you don't care about are the ones that blow up?" | **4. Something he's already noticed.** Every creator has seen this, so it's instant agreement. |
+| 18-27s | "Disappointment is just the gap between what you expected and what happened. Shrink the expectation and the same result feels like a win." | **5. The mechanism.** A one-line formula is easy to remember and repeat, which makes it shareable. |
+| 27-32s | "That's why you feel like trash after a launch that actually went fine." | **6. "That's why".** Explains the strangest feeling he has: being sad about a result that was fine. |
+| 32-39s | "[Real: a Solis launch or post you expected too much from, and how it felt.]" | **7. Proof.** Your real launch makes it believable, and it's built-in Solis exposure. |
+| 39-51s | "So before anything you ship this week, say it out loud: I'm doing this for the rep, not the result. You still go all out. You just stop betting your mood on it." | **8. The action.** A line to say before shipping. "You still go all out" keeps the ambition, so it never sounds like "stop caring" (the research says that loses him). |
+| 51-56s | "Comment what you're shipping this week. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** Saying it publicly is a small commitment, and it tells you what your audience is building. |
 
 ## Story-Maxxing, part 4: Actions and reactions
 **Title box:** "Story-Maxxing: Part 4 (not for excuse-makers)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to story-maxxing, part four, and today you're taking back the only two things you control." | **1.** |
-| 4-9s | "Your whole life is two things, what you do and how you react to what happens to you. You control both." | **2.** The whole lesson in one line, up front. |
-| 9-13s | "'He made me mad.' 'The algorithm killed my post.' That's falling-off talk." | **3.** |
-| 13-18s | "Ever notice the guy who always has an excuse is the guy with the same problems a year later?" | **4.** |
-| 18-28s | "There's this thing called locus of control. Guys who believe outcomes are on them try harder and bounce back faster. Guys who blame outside stuff stop trying, 'cause why would you?" | **5.** |
-| 28-33s | "That's why blaming the algorithm feels good for a minute and keeps you stuck for a year." | **6.** |
-| 33-40s | "[Real: the last time you blamed something outside you, and what changed when you didn't.]" | **7.** |
-| 40-50s | "So next time something hits, ask two questions. What did I do? And what's my next move? Those are the only two parts you control." | **8.** Two questions, easy to remember. |
-| 50-55s | "Comment the last thing you blamed on something else. Ambitious and alive." | **8 + 9.** |
+| 0-4s | "Welcome to story-maxxing, part four, and today you're taking back the only two things you control." | **1. Series + topic.** "The only two things" is a number, and he'll wait to hear what they are. |
+| 4-9s | "Your whole life is two things, what you do and how you react to what happens to you. You control both." | **2. Stakes.** The whole lesson up front. The rest of the video proves it, so he never wonders where it's going. |
+| 9-13s | "'He made me mad.' 'The algorithm killed my post.' That's falling-off talk." | **3. His self-talk, called out.** Two excuses, one about people and one about the algorithm, both things this audience says. |
+| 13-18s | "Ever notice the guy who always has an excuse is the guy with the same problems a year later?" | **4. Something he's already noticed.** He knows that guy. It makes him not want to be him. |
+| 18-28s | "There's this thing called locus of control. Guys who believe outcomes are on them try harder and bounce back faster. Guys who blame outside stuff stop trying, 'cause why would you?" | **5. The mechanism.** A named concept plus the real-world effect (try harder, bounce back faster) makes owning it feel like an edge, not a burden. |
+| 28-33s | "That's why blaming the algorithm feels good for a minute and keeps you stuck for a year." | **6. "That's why".** Admits the excuse feels good, which is honest, then shows the cost. |
+| 33-40s | "[Real: the last time you blamed something outside you, and what changed when you didn't.]" | **7. Proof.** You owning one of your own excuses makes it OK for him to own his. |
+| 40-50s | "So next time something hits, ask two questions. What did I do? And what's my next move? Those are the only two parts you control." | **8. The action.** It pays off the "two things" from the opening with two questions he can actually remember. |
+| 50-55s | "Comment the last thing you blamed on something else. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** An honest question, so the comments read like confessions, which other viewers stop to read. |
 
 ---
 
@@ -138,47 +138,47 @@ Kyle's beats stay the same. Here's what changes:
 ## Fight-Maxxing, part 1: Pick your problems
 **Title box:** "Fight-Maxxing: Part 1 (not for 'once I make it' guys)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to fight-maxxing. Part one, and today you're picking your problems on purpose." | **1.** |
-| 4-11s | "'Cause every goal comes with problems attached. Start a business, now you've got money stress. Get in shape, now you're hungry all the time." | **2.** Two concrete trade-offs. |
-| 11-15s | "'Once I make it, I'll finally be stress-free.' That's falling-off talk." | **3.** |
-| 15-20s | "Ever notice the guy making 50K a month is just as stressed as you, just about different stuff?" | **4.** |
-| 20-28s | "Your brain resets to normal no matter what you get. It's called hedonic adaptation. The problems don't go away, they just upgrade." | **5.** |
-| 28-33s | "That's why you quit the second it gets hard. You thought hard meant you picked wrong." | **6.** |
-| 33-40s | "[Real: the problems building Solis brought, and that you chose them.]" | **7.** |
-| 40-52s | "So write your goal down. Under it, write the three problems it's going to bring. Then decide right now you're signing up for them. When they show up, you already said yes." | **8.** |
-| 52-57s | "Comment your goal and the problem you're signing up for. Ambitious and alive." | **8 + 9.** |
+| 0-4s | "Welcome to fight-maxxing. Part one, and today you're picking your problems on purpose." | **1. Series + topic.** "Picking your problems" flips how he thinks about problems in five words, and that's the curiosity. |
+| 4-11s | "'Cause every goal comes with problems attached. Start a business, now you've got money stress. Get in shape, now you're hungry all the time." | **2. Stakes.** Two goals he has (business, body), each with the problem he'd get with it. It makes the idea concrete right away. |
+| 11-15s | "'Once I make it, I'll finally be stress-free.' That's falling-off talk." | **3. His self-talk, called out.** The exact fantasy that makes him quit when it gets hard. |
+| 15-20s | "Ever notice the guy making 50K a month is just as stressed as you, just about different stuff?" | **4. Something he's already noticed.** Uses the people he envies, which shuts down the "once I make it" fantasy. |
+| 20-28s | "Your brain resets to normal no matter what you get. It's called hedonic adaptation. The problems don't go away, they just upgrade." | **5. The mechanism.** "They just upgrade" is the quotable line. The named concept backs it up. |
+| 28-33s | "That's why you quit the second it gets hard. You thought hard meant you picked wrong." | **6. "That's why".** Reframes his quitting: it wasn't weakness, he read the signal wrong. That's relief. |
+| 33-40s | "[Real: the problems building Solis brought, and that you chose them.]" | **7. Proof.** You choosing your Solis problems shows the idea in action, from someone in the middle of it. |
+| 40-52s | "So write your goal down. Under it, write the three problems it's going to bring. Then decide right now you're signing up for them. When they show up, you already said yes." | **8. The action.** A 3-line exercise, plus "you already said yes", which he'll remember the next time a problem shows up. |
+| 52-57s | "Comment your goal and the problem you're signing up for. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** A public commitment, and it's easy because he just wrote it down. |
 
 ## Fight-Maxxing, part 2: Turn your shoulds into wants
 **Title box:** "Fight-Maxxing: Part 2 (not for Monday-only lock-ins)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to fight-maxxing, part two, and today we're deleting the word should from your to-do list." | **1.** |
-| 4-9s | "Every 'should' on your list is a chore somebody else assigned you, and nobody does chores for months." | **2.** |
-| 9-13s | "'I should film. I should hit the gym. I should work on the business.' That's falling-off talk." | **3.** He hears his own list read back to him. |
-| 13-17s | "Ever notice you never have to force yourself to do stuff you actually want?" | **4.** |
-| 17-25s | "'Should' tells your brain this is a debt you owe. 'Get to' tells it this is something you win, and your brain runs on wins." | **5.** |
-| 25-30s | "That's why you lock in Monday and fall off by Thursday. You built your whole week out of debts." | **6.** Uses the lock-in/fall-off cycle from the research. |
-| 30-37s | "[Real: the task you kept dodging on Solis, and what it became when you flipped it.]" | **7.** |
-| 37-50s | "So tonight, rewrite tomorrow's list. Every 'I should' becomes 'I get to.' I get to film something that could change my life. I get to build the body I wanted at fifteen." | **8.** The flip shown on two of his own tasks. |
-| 50-55s | "Comment the one you flipped. Ambitious and alive." | **8 + 9.** |
+| 0-4s | "Welcome to fight-maxxing, part two, and today we're deleting the word should from your to-do list." | **1. Series + topic.** A small, specific promise: one word, deleted. It sounds easy, so he stays. |
+| 4-9s | "Every 'should' on your list is a chore somebody else assigned you, and nobody does chores for months." | **2. Stakes.** Turns his to-do list into chores, which explains why he never sticks with it. |
+| 9-13s | "'I should film. I should hit the gym. I should work on the business.' That's falling-off talk." | **3. His self-talk, called out.** His actual to-do list read back to him: content, gym, business. |
+| 13-17s | "Ever notice you never have to force yourself to do stuff you actually want?" | **4. Something he's already noticed.** Obvious once said, so he agrees and it sets up the fix. |
+| 17-25s | "'Should' tells your brain this is a debt you owe. 'Get to' tells it this is something you win, and your brain runs on wins." | **5. The mechanism.** Debt vs win is a simple picture of why the words matter, and "your brain runs on wins" keeps it on-brand for dopamine-maxxing. |
+| 25-30s | "That's why you lock in Monday and fall off by Thursday. You built your whole week out of debts." | **6. "That's why".** Names the lock-in/fall-off cycle (the research's #1 pain) and gives it a cause he hadn't seen. |
+| 30-37s | "[Real: the task you kept dodging on Solis, and what it became when you flipped it.]" | **7. Proof.** Your own flipped task shows it works on a real, hard task, not just in theory. |
+| 37-50s | "So tonight, rewrite tomorrow's list. Every 'I should' becomes 'I get to.' I get to film something that could change my life. I get to build the body I wanted at fifteen." | **8. The action.** The rule plus two examples rewritten in front of him, so he can copy them word for word. |
+| 50-55s | "Comment the one you flipped. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** Easy because he just did it, and the comments become a list of examples for everyone else. |
 
 ## Fight-Maxxing, part 3: The one fight you always win
 **Title box:** "Fight-Maxxing: Part 3 (not for 'I'll train next week')"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-4s | "Welcome to fight-maxxing, part three, and today you're getting the one fight you win every single day." | **1.** |
-| 4-9s | "When you're building something, almost everything is out of your control. Users, money, the algorithm." | **2.** |
-| 9-13s | "'Work's too crazy, I'll train next week.' That's falling-off talk." | **3.** |
-| 13-18s | "Ever notice the first thing you drop when work gets busy is the gym, the only thing that was actually up to you?" | **4.** |
-| 18-26s | "A hard session drops your stress and hands you a win you fully earned. Every rep moves the weight. No algorithm decides that." | **5.** |
-| 26-31s | "That's why your worst weeks feel even worse. You cut the one thing that was still going right." | **6.** |
-| 31-38s | "[Real: the week Solis was chaos and the gym was the only thing that went right.]" | **7.** |
-| 38-48s | "So the gym is the last thing you drop, never the first. Worst week of your life? Thirty minutes. But you go." | **8.** A rule with a floor (30 minutes), so there's no excuse. |
-| 48-53s | "Comment how many days you've trained this week. Ambitious and alive." | **8 + 9.** |
+| 0-4s | "Welcome to fight-maxxing, part three, and today you're getting the one fight you win every single day." | **1. Series + topic.** "One fight you win every day" is a promise he wants. He'll stay to hear what it is. |
+| 4-9s | "When you're building something, almost everything is out of your control. Users, money, the algorithm." | **2. Stakes.** Names the stress every builder has, so he feels understood before the fix. |
+| 9-13s | "'Work's too crazy, I'll train next week.' That's falling-off talk." | **3. His self-talk, called out.** The exact excuse, word for word, that the research says he uses ("the gym gets dropped every time work gets intense"). |
+| 13-18s | "Ever notice the first thing you drop when work gets busy is the gym, the only thing that was actually up to you?" | **4. Something he's already noticed.** He has done exactly this. The twist ("the only thing up to you") is the lesson. |
+| 18-26s | "A hard session drops your stress and hands you a win you fully earned. Every rep moves the weight. No algorithm decides that." | **5. The mechanism.** Why the gym is the fight he always wins: effort in, result out, every time. "No algorithm" ties it back to his stress. |
+| 26-31s | "That's why your worst weeks feel even worse. You cut the one thing that was still going right." | **6. "That's why".** Explains why the bad weeks spiral, which he's felt and never understood. |
+| 31-38s | "[Real: the week Solis was chaos and the gym was the only thing that went right.]" | **7. Proof.** Your hardest week makes the rule believable from someone actually building. |
+| 38-48s | "So the gym is the last thing you drop, never the first. Worst week of your life? Thirty minutes. But you go." | **8. The action.** A rule with a minimum (30 minutes), so "too busy" stops being an excuse. |
+| 48-53s | "Comment how many days you've trained this week. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** A number is the easiest comment to leave, and it makes him count, which is accountability. |
 
 ---
 
@@ -188,32 +188,32 @@ Kyle's beats stay the same. Here's what changes:
 ## Clock-Maxxing, part 1: The no-regrets test
 **Title box:** "Clock-Maxxing: Part 1 (not for 'when I'm ready' guys)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-5s | "Welcome to clock-maxxing. Part one, and today you're going to picture your own funeral, and it's going to fix your week." | **1.** The payoff plus a shock that makes him stay. |
-| 5-10s | "The stuff you'll regret at 80 isn't the stuff you're scared of right now." | **2.** |
-| 10-13s | "'I'll do it when I'm ready.' That's falling-off talk." | **3.** |
-| 13-17s | "Ever notice old people never say 'I wish I'd played it safer'?" | **4.** |
-| 17-26s | "When researchers ask people about regret, they regret what they didn't do way more than what they did, and that gap gets bigger every year." | **5.** Real research, no author named. |
-| 26-31s | "That's why the stuff you keep putting off weighs more every year." | **6.** |
-| 31-38s | "[Real: a decision you made this year, like going all in on Solis, and what almost stopped you.]" | **7.** |
-| 38-52s | "So run every big decision through three questions. Will 80-year-old me regret not doing this? If tomorrow wasn't promised, would I still do it? Is there something better I'd be giving up? Two yeses, you do it." | **8.** A checklist with a clear rule (two yeses), the kind people save. |
-| 52-57s | "Comment the thing you'd regret not doing. Ambitious and alive." | **8 + 9.** |
+| 0-5s | "Welcome to clock-maxxing. Part one, and today you're going to picture your own funeral, and it's going to fix your week." | **1. Series + topic.** "Picture your own funeral" is a shock that stops the scroll, and "fix your week" makes it useful, not dark. |
+| 5-10s | "The stuff you'll regret at 80 isn't the stuff you're scared of right now." | **2. Stakes.** Says his fears are aimed at the wrong things. He'll want to know what the right ones are. |
+| 10-13s | "'I'll do it when I'm ready.' That's falling-off talk." | **3. His self-talk, called out.** The most common delay line there is. He's said it this week. |
+| 13-17s | "Ever notice old people never say 'I wish I'd played it safer'?" | **4. Something he's already noticed.** Everyone has heard an old person's regrets, and none are about playing it safe. |
+| 17-26s | "When researchers ask people about regret, they regret what they didn't do way more than what they did, and that gap gets bigger every year." | **5. The mechanism.** Real research (no author named) turns a quote-page idea into a fact he can trust. |
+| 26-31s | "That's why the stuff you keep putting off weighs more every year." | **6. "That's why".** Explains the background guilt he carries about the thing he hasn't started. |
+| 31-38s | "[Real: a decision you made this year, like going all in on Solis, and what almost stopped you.]" | **7. Proof.** Your own leap, while you're still in it, beats any quote. It shows you used the test. |
+| 38-52s | "So run every big decision through three questions. Will 80-year-old me regret not doing this? If tomorrow wasn't promised, would I still do it? Is there something better I'd be giving up? Two yeses, you do it." | **8. The action.** A checklist with a clear rule (two yeses). It's the most saveable part, since he'll come back to it for his next decision. |
+| 52-57s | "Comment the thing you'd regret not doing. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** A deep but easy question, and people love answering it publicly. |
 
 ## Clock-Maxxing, part 2: Life has no meaning, so you make it
 **Title box:** "Clock-Maxxing: Part 2 (not for passion-searchers)"
 
-| Time | Line | Why (Kyle beat) |
+| Time | Line | Why it's there |
 |---|---|---|
-| 0-5s | "Welcome to clock-maxxing, part two, and today you're finding out life has no built-in meaning, which is the best news you'll hear all week." | **1.** The flip in the first breath, so it never reads as dark. |
-| 5-9s | "'Cause if nothing's handed to you, nobody gets to tell you what yours is." | **2.** |
-| 9-13s | "'I don't know my purpose.' 'I'm waiting to find my passion.' That's falling-off talk." | **3.** |
-| 13-19s | "Ever notice the guys who seem to have it figured out didn't find it? They picked something and went all in." | **4.** |
-| 19-27s | "Passion mostly shows up after you get good at something, not before. Getting good is what makes it feel like it means something." | **5.** |
-| 27-32s | "That's why you've been 'searching' for years. You're waiting for a feeling that only comes once you start." | **6.** |
-| 32-39s | "[Real: Solis wasn't a calling. You picked it, and the meaning came from building it.]" | **7.** |
-| 39-51s | "So stop searching. Pick one thing you're half interested in, give it 90 days like it's the only thing that matters, and see what it turns into." | **8.** A clear, time-boxed action. |
-| 51-56s | "Comment the thing you'd pick. Ambitious and alive." | **8 + 9.** |
+| 0-5s | "Welcome to clock-maxxing, part two, and today you're finding out life has no built-in meaning, which is the best news you'll hear all week." | **1. Series + topic.** A dark-sounding claim flipped to "best news" in the same breath, so it never lands as nihilism (the risk we flagged). |
+| 5-9s | "'Cause if nothing's handed to you, nobody gets to tell you what yours is." | **2. Stakes.** Turns "no meaning" into freedom right away: the frame for the whole video. |
+| 9-13s | "'I don't know my purpose.' 'I'm waiting to find my passion.' That's falling-off talk." | **3. His self-talk, called out.** Two lines the research found ("I no longer know what I want"). Calling the wait falling-off talk is the push. |
+| 13-19s | "Ever notice the guys who seem to have it figured out didn't find it? They picked something and went all in." | **4. Something he's already noticed.** He can think of someone like that, which makes "you don't find it, you pick it" feel true. |
+| 19-27s | "Passion mostly shows up after you get good at something, not before. Getting good is what makes it feel like it means something." | **5. The mechanism.** The surprising order (good first, passion second) is what he didn't know. |
+| 27-32s | "That's why you've been 'searching' for years. You're waiting for a feeling that only comes once you start." | **6. "That's why".** Explains years of feeling lost, and makes it fixable. |
+| 32-39s | "[Real: Solis wasn't a calling. You picked it, and the meaning came from building it.]" | **7. Proof.** Your own app as the example, which shows Solis to the audience without selling it. |
+| 39-51s | "So stop searching. Pick one thing you're half interested in, give it 90 days like it's the only thing that matters, and see what it turns into." | **8. The action.** A low bar to start (half interested) with a high commitment (90 days, all in). Doable, and it still keeps the ambition. |
+| 51-56s | "Comment the thing you'd pick. Ambitious and alive." | **8 + 9. Comment ask + sign-off.** He names his thing publicly, a first step, and the comments show everyone else what's possible. |
 
 ---
 
