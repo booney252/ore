@@ -33,12 +33,12 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 - **Green screen:** a member's AI influencer post with its real view count, then the brand payout screenshot, then the Amazon dashboard.
 - **Text hook:** "she isn't real. the money is."
 
-> This girl has 2.3 million views and she doesn't exist. One of our creators made her on a laptop, and everyone in her comments thinks she's real. *(Swap to the payout screenshot.)* But this is the part nobody believes. This is what a brand paid the page last month. Real money, from a girl who isn't real. And the guy running it has never shown his face once. I'll show you exactly how that works in my next video, so follow.
+> This girl has 2.3 million views and she doesn't exist. One of our creators made her on a laptop, and everyone in her comments thinks she's real. *(Swap to the payout screenshot.)* But this is the part nobody believes. This is what a brand paid the page last month. Real money, from a girl who isn't real. And the guy running it has never shown his face once. If you think I'm making this up, go look at our page, it's nothing but creators getting paid like this.
 
 **Why:**
 - It's the page's own winning format.
 - It adds the hook the report found on the biggest AI winners: Tommy's "Jean Phil isn't real but his money is" (1.8M).
-- It ends on a loop that video 2 answers.
+- It ends by sending them to the page, where every post is another payout.
 
 ---
 
@@ -57,7 +57,7 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 >
 > And four, nobody ever knows it's you.
 >
-> The full breakdown of how we match creators with those brands is pinned on our page.
+> Comment BRANDS and I'll send you the kind of brands that pay like this, or just look at our page, it's all creators getting paid.
 
 **Why:**
 - It answers the buyer's top unanswered question ("How did you find your affiliates? That is the question"). The report found no winner in the niche explains who pays.
@@ -70,12 +70,12 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 - **Format:** the founder stitches a viral clip of someone calling AI influencer money fake, then replies to camera with the receipts on the green screen.
 - **Text hook:** "you think it's a scam? fair."
 
-> Honestly, fair. Most of what you see online about this is fake, so let me show you ours. *(Green screen.)* This is a creator in his second month. This is his fourth. And this is a bonus a brand sent last month. I'm not going to tell you everyone makes this, 'cause they don't. The actual scam is the guy selling you a course with no brands behind it. Comment what you'd need to see to believe it.
+> Honestly, fair. Most of what you see online about this is fake, so let me show you ours. *(Green screen.)* This is a creator in his second month. This is his fourth. And this is a bonus a brand sent last month. I'm not going to tell you everyone makes this, 'cause they don't. The actual scam is the guy selling you a course with no brands behind it. Still think it's fake? Our whole page is receipts, go check it.
 
 **Why:**
 - It borrows the skeptic's reach and sides with this buyer's biggest belief ("many are lying").
 - Both sides share it.
-- The comment ask is a real question, not a keyword loop.
+- The CTA sends the skeptic to the page, which is the proof.
 
 ---
 
@@ -84,11 +84,11 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 - **Format:** the founder green-screened over other creators' AI-money claims (screenshots or short clips), rating each one. This is the report's fastest-growing format right now: @swarali.ai's tests and exposés hit 10 A posts.
 - **Text hook:** "real or fake? (I run 1,000 AI creators)"
 
-> I run a network of about a thousand AI creators, so I'm going to rate the AI money claims all over your feed. *(Claim 1 on the green screen.)* "Make 10K a month posting AI videos with no followers." Fake, and here's why: no brand pays a page with no audience. *(Claim 2.)* "AI influencers get paid by brands without showing their face." That one's real, and I'll show you a payout. *(Claim 3.)* … Follow, I'm doing one of these every week.
+> I run a network of about a thousand AI creators, so I'm going to rate the AI money claims all over your feed. *(Claim 1 on the green screen.)* "Make 10K a month posting AI videos with no followers." Fake, and here's why: no brand pays a page with no audience. *(Claim 2.)* "AI influencers get paid by brands without showing their face." That one's real, here's a payout from one of ours. *(Claim 3.)* … If you want to see the real version, our page is full of creators doing it.
 
 **Why:**
 - It puts the founder on the viewer's side against the liars, which is the trust this buyer needs before booking a call.
-- A weekly series gives people a reason to follow.
+- It runs as a recurring format, so viewers learn to recognize it.
 
 ---
 
@@ -97,11 +97,11 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 - **Format:** founder talking head with green-screen screenshots of each launch or news item. A weekly series. This is @raycfu's news format: his "Everything OpenAI just launched in less than 2 minutes" got 60M, though that one was likely a paid partnership.
 - **Text hook:** "what changed in AI content this week (60 sec)"
 
-> Here's everything that changed for AI creators this week, in sixty seconds. One, *[new video model or feature]*: here's what it means for your page. Two, *[platform change]*: here's who it hurts. Three, *[a trend you're seeing across your network]*. If you're building an AI page, follow, I do this every week.
+> Here's everything that changed for AI creators this week, in sixty seconds. One, *[new video model or feature]*: here's what it means for your page. Two, *[platform change]*: here's who it hurts. Three, *[a trend you're seeing across your network]*. Comment UPDATE and I'll send you the full list, plus what our creators are already doing with it.
 
 **Why:**
 - The report found tool news is shifting to whole projects made with Claude and video models, and AICL sees it first across 1,000 creators.
-- It's fast reach that's repeatable every week, and it makes the page the place to keep up.
+- It's fast reach that's repeatable every week, and the keyword comes right after real value, which is when the report found keywords work.
 
 ---
 
@@ -110,7 +110,7 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 - **Format:** founder talking head, straight to camera, no green screen. The founder's origin story, already in the page's captions but never told on camera.
 - **Text hook:** "3 years ago I was a college dropout making faceless content"
 
-> Three years ago I was a college dropout making faceless content for random ecom brands, before AI even existed. Everyone told me faceless content was a waste of time. I stuck with it 'cause I saw where it was going before anyone else did. Then AI showed up, and the thing I'd been doing by hand for years suddenly took twenty minutes. Now I run the biggest AI creator network in the world, about a thousand people, and most of them have never shown their face online either. If you've ever been told what you're building is a waste of time, follow along.
+> Three years ago I was a college dropout making faceless content for random ecom brands, before AI even existed. Everyone told me faceless content was a waste of time. I stuck with it 'cause I saw where it was going before anyone else did. Then AI showed up, and the thing I'd been doing by hand for years suddenly took twenty minutes. Now I run the biggest AI creator network in the world, about a thousand people, and most of them have never shown their face online either. Go look at our page if you want to see what those people are making.
 
 **Why:**
 - Reach follows a person, not a company. The page has no face story yet.
@@ -127,7 +127,7 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 >
 > *(The reveal plays uncut. The founder's reaction is the shot.)*
 >
-> **Founder, after:** That's a guy who started *[X]* months ago with zero followers. We do this every month. Follow if you want to see the next one.
+> **Founder, after:** That's a guy who started *[X]* months ago with zero followers. Our page is full of calls like this one.
 
 **Use only real numbers from the wins log.**
 
@@ -140,5 +140,5 @@ I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
 - **Proof in the first second:** a screenshot on the green screen or the phone held up. Claims come after.
 - **Drop the caption-only "comment AI" posts as reach content.** They're the page's worst performers (0.3x to 0.7x). Ask for a keyword only when you say it out loud, right after giving something real.
 - **Keep it lo-fi:** room, lav mic, green-screen cutout, captions. That's what the page's 7.8x and 5.7x posts look like.
-- **CTA to the page:** "follow," "it's pinned," "I do this every week."
-- **Judge on views vs 3,274 and on follows per post.** Whatever beats 3x becomes a weekly series (4, 5 and 7 are built for it).
+- **The CTA sends them to the page, not to follow:** "go look at our page, it's all creators getting paid," or a spoken keyword right after real value (BRANDS, UPDATE). Followers are a nice extra. The goal is eyes on the page, where the wins and the bottom-of-funnel carousels turn them into booked calls.
+- **Judge on views vs 3,274 and profile visits per post** (Instagram insights), then calls booked that week. Whatever beats 3x becomes a recurring format (4, 5 and 7 are built for it).
