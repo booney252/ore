@@ -1,156 +1,144 @@
-# AICL company page: 7 talking-head reels built for reach
+# AICL company page: 7 founder talking-head reels for reach
 
-**What this page is for.** An affiliate's page or Finn's own account sells one person's story. The company page has a different job.
+## What the page actually is
 
-**The 7 videos below only have to get eyes:** stop strangers who've never heard of AICL and send them to the page. The page then converts and nurtures them with the bottom-of-funnel content that's already there.
+I read all 25 of @aicreatorlab_io's reels. It's the founders on camera:
+- **Formats:** talking heads in their rooms with a lav mic, green-screen cutouts over screenshots, calls with students, interviews at events (Aspen), and Discord call clips.
+- **CTAs:** almost always a comment keyword: "comment AI", "CALL", "YT", "framework".
+- **Usual:** 3,274 views.
 
-**Every video is a talking head or UGC reel:** a real person on camera (the team, Finn, or a member), with the proof shown on their phone or a green-screen panel behind them.
+**What's working on the page**
 
-The rules for these 7:
-- **Show the payoff before the claim.** The report found every winner puts the result in frame 0, because this buyer has watched "7 billion of these make money online videos" and believes almost none of them. In a talking head, that means holding up the phone or putting the screenshot on the green screen in the first second.
-- **A person, not a pitch.** AICL's own best posts are people moments: the $140K bonus reveal (5.7x) and the street run-in with a student (3.3x). Founder speeches and niche rankings sat at 1.1x to 1.4x.
-- **Captions on everything, and a text hook in frame 0.** These need to work with the sound off.
-- **The CTA points to the page, not straight to a call.** Use "follow," "the full breakdown is pinned," or a keyword only right after the viewer got something real. (Spoken keywords after a payoff got 3.47% comments vs a 0.39% usual. Caption-only keywords did nothing.)
+| Post | Views | vs usual | What it is |
+|---|---|---|---|
+| "Coming from someone who has made millions of dollars online…" | 25,663 | 7.8x | A founder green-screened over real screenshots (Discord brags, an Amazon dashboard), walking through a student's numbers |
+| Calling Forest about his $140K bonus | 18,667 | 5.7x | A founder on camera, the student on speakerphone, a live reveal |
+| "Ran into one of my students… $200 a day, 3 months in" | 10,789 | 3.3x | A founder with a student, top 3 tips |
+| Aspen "how much have you made" walk-around | 4,054 | 1.2x | Event interview |
+| "10 out of 10 AI niches that print the most money" | 3,889 | 1.2x | A niche ranking |
 
-## Set up the page first
+**What's dragging it down**
+- **The caption-only "Comment AI to learn how [name] is making life changing profit" posts sit at 0.3x to 0.7x.** That's 8 of the 25 reels, and they're the worst performers on the page. The report found the same: a keyword that's only in the caption does nothing.
+- **"Comment CALL for the full private call" clips sit at 0.3x to 1.1x.** These are bottom-of-funnel content that new people don't care about yet.
 
-| Spot | What goes there |
-|---|---|
-| **Pinned 1** | "How AI influencer pages actually get paid": the long version of video 2 |
-| **Pinned 2** | The $140K bonus reveal |
-| **Pinned 3** | "What happens on the call / who this is for": the bottom-of-funnel offer post |
-| **Highlights** | Wins (payout screenshots), How it works, Students, FAQ (scam? time? cost?) |
-| **Bio** | One line with the promise, plus the booking link |
+**So the job of these 7:** founder talking heads, light edits (green screen over screenshots, captions, a zoom or two), built to reach people who've never heard of AICL. The bottom-of-funnel stuff (call clips, interviews, the offer) stays on the page for when they land.
+
+**Who films:** Finn or Jepo, whoever fits the energy. Every script is written to be said in their own words.
 
 ---
 
-## 1. "This girl has 2.3 million views and she doesn't exist"
+## 1. "This girl isn't real. The money is."
 
-- **Who:** a team member, selfie-style, green screen.
+- **Format:** the page's best format (7.8x): a founder green-screened over screenshots, walking through them.
+- **Green screen:** a member's AI influencer post with its real view count, then the brand payout screenshot, then the Amazon dashboard.
 - **Text hook:** "she isn't real. the money is."
-- **First frame:** a viral AI influencer post (a member's page, with real view counts) on the green screen behind them. They point at it.
-- **Length:** 25-30s.
 
-> This girl has 2.3 million views and she doesn't exist. One of our members made her on a laptop. *(Green screen: the raw render next to the finished post.)* And everyone in the comments thinks she's real. *(Green screen: the comments.)* But here's the part people don't get. *(Green screen: a brand payout screenshot, name blurred.)* The money she makes is very real, and it doesn't come from views. Follow, 'cause we're about to show you exactly where it comes from.
+> This girl has 2.3 million views and she doesn't exist. One of our creators made her on a laptop, and everyone in her comments thinks she's real. *(Swap to the payout screenshot.)* But this is the part nobody believes. This is what a brand paid the page last month. Real money, from a girl who isn't real. And the guy running it has never shown his face once. I'll show you exactly how that works in my next video, so follow.
 
-**Why it should work:** the "wait, is she real?" moment from the AI-character trend, and Tommy's "Jean Phil isn't real but his money is" reveal (1.8M), told as a company. It ends on an open loop that video 2 answers.
+**Why:**
+- It's the page's own winning format.
+- It adds the hook the report found on the biggest AI winners: Tommy's "Jean Phil isn't real but his money is" (1.8M).
+- It ends on a loop that video 2 answers.
 
 ---
 
 ## 2. "Nobody tells you who actually pays the AI influencer"
 
-- **Who:** a team member or Finn, talking head, green screen with one card per point. This is @raycfu's numbered-list format, but with a face.
+- **Format:** founder talking head with a green-screen card for each point (@raycfu's numbered format, with your face).
 - **Text hook:** "WHO pays the AI influencer? (nobody explains this)"
-- **Length:** 40-50s.
 
-> Most people think AI influencers get paid for views. They don't, and that's why nobody can explain how this actually works. So here's the real version.
+> Most people think AI influencers get paid for views. They don't, and that's why nobody online can explain how this actually works. I run a network of about a thousand of these creators, so here's the real version.
 >
-> One. The page grows on free content, no face, no followers to start. *(Card: a follower graph.)*
+> One, the page grows on free content. No face, no following to start.
 >
-> Two. A brand that already sells millions on Amazon wants its product in front of that audience. *(Card: a product listing, brand hidden.)*
+> Two, a brand that already does millions on Amazon wants its product in front of that audience.
 >
-> Three. The brand pays the page owner a monthly retainer just to post, plus commission on every sale, and the commission is often 100 to 200 percent. *(Card: a real retainer payout.)*
+> Three, the brand pays the page a monthly retainer just to post, plus commission on every sale, and the good ones pay 100 to 200 percent. *(Card: a real retainer screenshot.)*
 >
-> Four. The person running it never shows their face.
+> And four, nobody ever knows it's you.
 >
-> The full breakdown of how our members get matched with those brands is pinned on our page.
+> The full breakdown of how we match creators with those brands is pinned on our page.
 
-**Why it should work:** it answers the buyer's top question that nobody in the niche answers ("How did you find your affiliates? That is the question"), with the "most people don't realize" plus numbered list format.
+**Why:**
+- It answers the buyer's top unanswered question ("How did you find your affiliates? That is the question"). The report found no winner in the niche explains who pays.
+- "I run a network of about a thousand" is the founder's credential, said once, then the content does the work.
 
 ---
 
-## 3. "AI influencer pages are a scam" (stitch and answer)
+## 3. "AI influencers are a scam" (stitch and answer)
 
-- **Who:** a team member, selfie, replying to a stitched clip.
-- **Text hook:** "you think this is a scam? fair."
-- **First frame:** the stitched clip of someone saying AI influencer money is fake.
-- **Length:** 30-40s.
+- **Format:** the founder stitches a viral clip of someone calling AI influencer money fake, then replies to camera with the receipts on the green screen.
+- **Text hook:** "you think it's a scam? fair."
 
-> Honestly, fair. Most of what you see online about this is fake, so let me show you ours. *(Holds phone up to the camera.)* This is a member, month two. *(Swipes.)* This is month four. *(Swipes.)* And this is a bonus a brand paid out last month. *(Lowers phone.)* I'm not going to tell you everyone makes this, 'cause they don't. But the scam is the guy selling you a course with no brands behind it. Comment what you'd need to see to believe it.
+> Honestly, fair. Most of what you see online about this is fake, so let me show you ours. *(Green screen.)* This is a creator in his second month. This is his fourth. And this is a bonus a brand sent last month. I'm not going to tell you everyone makes this, 'cause they don't. The actual scam is the guy selling you a course with no brands behind it. Comment what you'd need to see to believe it.
 
-**Why it should work:** borrows the skeptic's reach and sides with this buyer's biggest belief ("I agree I think many are lying too"). Both sides of the argument share it. The comment ask is a real question, not a keyword loop.
-
----
-
-## 4. "Day 1 vs day 60 of my AI page" (member UGC)
-
-- **Who:** a member, selfie, showing their own page on their phone. This is the weekly series, a new member each week.
-- **Text hook:** "day 1 vs day 60 of my faceless AI page"
-- **Length:** 25-30s.
-
-> Day one, my page had zero followers, and this was my first post. *(Holds phone to the lens.)* Day thirty, this. *(Swipes.)* Day sixty, this brand slid into my DMs. *(Shows the DM.)* And this is the first payment. *(Shows it.)* Nobody I know even knows this page is mine.
-
-**End text:** "AICL member, [age], [city]. new member every week, follow."
-
-**Why it should work:** the report's before/after timeline, told by the person who lived it. It shows the result before any claim. The weekly series gives people a reason to follow.
+**Why:**
+- It borrows the skeptic's reach and sides with this buyer's biggest belief ("many are lying").
+- Both sides share it.
+- The comment ask is a real question, not a keyword loop.
 
 ---
 
-## 5. "I made this in 20 minutes" (member UGC with an AI character)
+## 4. "Rating the AI money claims on my feed: real or fake"
 
-- **Who:** a member, selfie, with their viral AI character clip on the green screen.
-- **Text hook:** "I made this in 20 minutes on my laptop"
-- **First frame:** the AI character's most eye-catching moment, full screen for 1-2 seconds, then cut to the member.
-- **Length:** 25-35s.
+- **Format:** the founder green-screened over other creators' AI-money claims (screenshots or short clips), rating each one. This is the report's fastest-growing format right now: @swarali.ai's tests and exposés hit 10 A posts.
+- **Text hook:** "real or fake? (I run 1,000 AI creators)"
 
-> I made this in twenty minutes on my laptop, and it has more views than anything I've ever posted as myself. *(Green screen: the view count.)* People think AI pages are just for fun. This character has a brand paying her every month. *(Green screen: the payout.)* I'm not a tech guy, I'm not an editor, I just learned the system.
+> I run a network of about a thousand AI creators, so I'm going to rate the AI money claims all over your feed. *(Claim 1 on the green screen.)* "Make 10K a month posting AI videos with no followers." Fake, and here's why: no brand pays a page with no audience. *(Claim 2.)* "AI influencers get paid by brands without showing their face." That one's real, and I'll show you a payout. *(Claim 3.)* … Follow, I'm doing one of these every week.
 
-- **End card:** "made by an AICL member. follow to see how pages like this get paid."
-- **Note:** use original characters styled after a genre (gangster film, reality TV), never real actors' faces. That avoids takedowns on a business account.
-
-**Why it should work:** the AI-character entertainment trend (four of six recent breakouts) gets people outside the niche to stop. Then a real person puts a face and a payout on it.
+**Why:**
+- It puts the founder on the viewer's side against the liars, which is the trust this buyer needs before booking a call.
+- A weekly series gives people a reason to follow.
 
 ---
 
-## 6. "I asked a 20-year-old how he makes $200 a day" (street UGC)
+## 5. "Everything that changed in AI influencers this week, in 60 seconds"
 
-- **Who:** a team member and a real member, handheld, on the street or at a meetup.
-- **Text hook:** "he's 20 and makes $200 a day from his phone"
-- **Length:** 30-45s.
+- **Format:** founder talking head with green-screen screenshots of each launch or news item. A weekly series. This is @raycfu's news format: his "Everything OpenAI just launched in less than 2 minutes" got 60M, though that one was likely a paid partnership.
+- **Text hook:** "what changed in AI content this week (60 sec)"
 
-> **Q:** What do you do?
-> **A:** AI pages.
->
-> **Q:** Show me. *(He pulls up his phone: the page, then the payout. The camera pushes in.)*
->
-> **Q:** Do you ever show your face?
-> **A:** Never.
->
-> **Q:** How long did it take you?
-> **A:** *[his real answer]*
->
-> **Q:** What would you tell someone who thinks it's fake?
-> **A:** *[his real answer]*
->
-> **Member, to camera:** Just follow their page, it's all on there.
+> Here's everything that changed for AI creators this week, in sixty seconds. One, *[new video model or feature]*: here's what it means for your page. Two, *[platform change]*: here's who it hurts. Three, *[a trend you're seeing across your network]*. If you're building an AI page, follow, I do this every week.
 
-**Why it should work:** AICL's own street post is its third best (3.3x). Someone asks the viewer's question out loud (the report's pattern 5), and the proof is a real person standing right there.
+**Why:**
+- The report found tool news is shifting to whole projects made with Claude and video models, and AICL sees it first across 1,000 creators.
+- It's fast reach that's repeatable every week, and it makes the page the place to keep up.
 
 ---
 
-## 7. "He doesn't know yet" (live payout reveal)
+## 6. "I was a college dropout making faceless content before AI existed"
 
-- **Who:** a team member and a member on a call or in person. Film the member's face, selfie or webcam style.
-- **Text hook:** "he doesn't know yet 🤫"
-- **Length:** 30-45s.
+- **Format:** founder talking head, straight to camera, no green screen. The founder's origin story, already in the page's captions but never told on camera.
+- **Text hook:** "3 years ago I was a college dropout making faceless content"
 
-> **Team member:** So the brand looked at your numbers this month…
-> *(The reveal of the real bonus or payout. Keep the reaction uncut.)*
-> **Member, after:** *[real reaction]*
+> Three years ago I was a college dropout making faceless content for random ecom brands, before AI even existed. Everyone told me faceless content was a waste of time. I stuck with it 'cause I saw where it was going before anyone else did. Then AI showed up, and the thing I'd been doing by hand for years suddenly took twenty minutes. Now I run the biggest AI creator network in the world, about a thousand people, and most of them have never shown their face online either. If you've ever been told what you're building is a waste of time, follow along.
 
-**End text:** "[name], [age], started [X] months ago." Use only real numbers from the wins log.
-
-**Caption:** "we post every one of these. follow."
-
-**Why it should work:** it remakes AICL's best post (the $140K bonus reveal, 5.7x). The reaction is the hook, the number is the proof, and "he doesn't know yet" holds people to the end.
+**Why:**
+- Reach follows a person, not a company. The page has no face story yet.
+- It works on the "people laughed at me" underdog arc the report found in this buyer ("all you guys laughed at me saying I'm going to get arrested").
 
 ---
 
-## Posting order and what to watch
+## 7. "Calling a student to tell him his bonus"
 
-| Week | Post | Why |
-|---|---|---|
-| 1 | 1, 2, 3 | The reveal opens the question, the explainer answers it (and becomes pinned 1), then one fight |
-| 2 | 4, 5, 6, 7 | Two weekly series starters (4 and 7), the entertainment hook, the people proof |
+- **Format:** the page's second-best post (5.7x), done again. The founder is on camera, the student is on speakerphone (audio only, no member on camera), and the moment is real.
+- **Text hook:** "he doesn't know his bonus yet 🤫"
 
-**What to judge:** views against the page's usual (about 3,300) and **follows per post**. Whatever beats 3x usual becomes a weekly series.
+> **Founder:** I'm about to call one of our creators, and he has no idea what his bonus is this month. *(Calls.)*
+>
+> *(The reveal plays uncut. The founder's reaction is the shot.)*
+>
+> **Founder, after:** That's a guy who started *[X]* months ago with zero followers. We do this every month. Follow if you want to see the next one.
+
+**Use only real numbers from the wins log.**
+
+**Why:** the reaction is the hook, the number is the proof, and the founder stays the face of the page.
+
+---
+
+## Rules for all 7 (from the report and the page's own numbers)
+
+- **Proof in the first second:** a screenshot on the green screen or the phone held up. Claims come after.
+- **Drop the caption-only "comment AI" posts as reach content.** They're the page's worst performers (0.3x to 0.7x). Ask for a keyword only when you say it out loud, right after giving something real.
+- **Keep it lo-fi:** room, lav mic, green-screen cutout, captions. That's what the page's 7.8x and 5.7x posts look like.
+- **CTA to the page:** "follow," "it's pinned," "I do this every week."
+- **Judge on views vs 3,274 and on follows per post.** Whatever beats 3x becomes a weekly series (4, 5 and 7 are built for it).
