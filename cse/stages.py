@@ -196,8 +196,8 @@ def format_line(ad: dict) -> str:
     b = ad.get("breakdown") or {}
     top = f" | {top10_note(ad)}" if top10_note(ad) else ""
     return (f"- Ad {ad['ad_id']} | {_who(ad)} | {ad.get('score_why')}{top} | "
-            f"{b.get('format', ad.get('media_type'))} | hook: {b.get('hook_line', '')[:120]} | "
-            f"angle: {b.get('angle', '')[:120]}")
+            f"{b.get('format') or ad.get('media_type')} | hook: {(b.get('hook_line') or '')[:120]} | "
+            f"angle: {(b.get('angle') or '')[:120]}")
 
 
 # --- stage 1: the Winning Ads Report --------------------------------------------------
