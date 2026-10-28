@@ -30,30 +30,33 @@ From the Oct 28 top-10 tracking run:
 | 42-52s | "So now PeptidePal tells me which days are gonna peak before they hit, so I get my protein in the day before, while I can still actually eat, and it's on the same screen as my schedule, so I see I'm short by lunch, not at 9pm." | Overlay video of PeptidePal: Today screen with the peak marked, then the protein screen |
 | 52-60s | "And if you're just starting, this is the part nobody tells you. What you eat this month is the hair you keep in three. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
 
-## Brief 2: Your Microdose Isn't Micro
+## Brief 2: Your Food Noise Has a Schedule
 
-**The gotcha:** small doses feel like nothing, so they creep. A little earlier this week, an extra one when the appetite comes back. And because each one lingers about a week, they stack. When she added up her week in PeptidePal, her "micro" dosing was more than her old full weekly dose.
+**The gotcha:** the food noise that comes back late in the week isn't her willpower failing. It shows up on the same day every week, because her microdose is wearing off. A smaller dose starts lower, so it runs low sooner. Once she logged it, the "random" bad nights had a date.
+
+From the research: "went to 1,5 the food noise came back hard… the food noise is awful 😔" ([source](https://www.instagram.com/reel/DdB3HQZte_A/)).
 
 **Hooks**
 
-1. "If you're microdosing your GLP-1, add up everything you took this week. I'll wait." (main)
-2. "I switched to microdosing to take less, and I ended up taking more than my full dose."
-3. "Your microdose probably isn't micro anymore, and you'd have no idea."
+1. "If you're microdosing your GLP-1 and your food noise comes back around day 5, I need you to hear this." (main)
+2. "Microdosing worked for me, until every Friday night I ended up standing in the pantry."
+3. "Nobody told me this about microdosing: your food noise has a schedule."
 
-**Text hook (frame 0):** "add up your week… I'll wait ⏳"
+**Text hook (frame 0):** "why is it always friday night 🫠"
 
 **Script**
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're microdosing your GLP-1, add up everything you took this week. I'll wait." | Frame 0: she sits back, arms crossed, with a small countdown on screen. Text hook on screen. |
-| 4-11s | "'Cause I switched to microdosing to take less and feel less sick, and I honestly thought I was being so smart about it." | |
-| 11-20s | "But a micro dose feels like nothing, so you start getting a little loose. You take it a day early. Your appetite comes back on Friday, so you do a little extra." | Text: "a day early… a little extra…" |
-| 20-29s | "And here's the part nobody tells you. Each one of those little doses is still in you for about a week, so they don't replace each other, they stack on top of each other." | Text: "they don't replace each other. they STACK." |
-| 29-37s | "So I finally added up my week in PeptidePal, and I was taking more than my old full weekly dose. My 'micro' dose wasn't micro at all." | Overlay video of PeptidePal: her dose log for the week, with the total. Text: "more than my full dose 😳" |
-| 37-42s | "Which is exactly why I was feeling sick again and couldn't figure out why." | |
-| 42-52s | "So now every dose goes in PeptidePal. It shows me the week's total and roughly what's still in me, and it does the unit math from my vial, so I'm not guessing with a syringe in my hand." | Overlay video of PeptidePal: what's still on board, then the calculator |
-| 52-58s | "Microdosing only works if it stays micro. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
+| 0-4s | "If you're microdosing your GLP-1 and your food noise comes back around day 5, I need you to hear this." | Frame 0: she's in the pantry at night, hand in a bag of chips, and looks at the camera like she got caught. Text hook on screen. |
+| 4-12s | "'Cause for months I thought it was me. Monday, Tuesday, I'm not even thinking about food. And then Friday night I'm standing in here like I never started." | Still in the pantry. |
+| 12-18s | "And I would beat myself up. Like, I'm on the shot, I'm doing everything right, why can't I just stop?" | Cut to her on the couch, talking to camera. Text: "why can't I just stop??" |
+| 18-25s | "Then I started logging my doses in this app, and writing down how loud the food noise was each day. And after like three weeks, I saw it." | Overlay video of PeptidePal: her dose log and daily notes (app not named yet). |
+| 25-30s | "It was the same day. Every single week. Four days after my shot." | Text: "same day. every. week." |
+| 30-40s | "'Cause your shot doesn't stay at the same level all week. It's strongest a day or two after you take it, and then it slowly wears off. And on a microdose, you're starting with less, so it wears off sooner." | Text: "less to start with = wears off sooner" |
+| 40-45s | "So my Friday nights weren't random. And it wasn't my willpower. My dose was just running low." | Back to her. Text: "it wasn't my willpower" |
+| 45-56s | "So now I use PeptidePal. It shows me roughly how much is still in me every day, so I see that dip coming instead of it ambushing me at 10pm. I have high-protein food ready for those days, and my food noise notes sit right next to my doses, so when I talk to my provider about my schedule, I'm not guessing. I can show them." | Overlay video of PeptidePal: the on-board estimate showing the dip, then her notes beside her dose history |
+| 56-62s | "If your food noise has a schedule, it's not you. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
 
 ## Brief 3: What Your Prescription Left Out
 
