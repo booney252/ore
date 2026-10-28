@@ -5,51 +5,55 @@ From the Oct 28 top-10 tracking run:
 - **Microdosing:** Noom's "microdose GLP-1s" ad is its #1.
 - **The missing instructions:** Dr. Gordon has 8 brand-new ads in his top 10 on "what your prescription left out".
 
-## Brief 1: The Hair in the Drain
+## Brief 1: The Hair in Your Hand
+
+**The gotcha:** the hair falling out today isn't from this week. Shedding from fast weight loss and low protein usually shows up 2 to 3 months after the cause. So the hair in her hand is from her first month on the shot, the weeks she could barely eat.
 
 **Hooks**
 
-1. "Nobody told me my hair was gonna start falling out on a GLP-1." (main)
-2. "If you're on a GLP-1 and you're finding more hair in the shower, I need you to hear this."
-3. "I lost 30 pounds and a lot of my hair, and only one of those was supposed to happen."
+1. "You started a GLP-1 a few months ago, and now your hands look like this." (main; the hand shot pops up on "this")
+2. "You just started a GLP-1 and your hands look like this." (Sam's version; best for someone 2-3 months in)
+3. "The hair you're losing right now isn't from this week, and that's the scary part."
 
-**Text hook (frame 0):** "it's not the shot. it's what you're NOT eating 😳"
+**Text hook (frame 0):** "this hair is from 3 months ago 😳"
 
 **Script**
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "Nobody told me my hair was gonna start falling out on a GLP-1." | Frame 0: she holds up a hairbrush full of hair to the camera. Text hook on screen. |
-| 4-11s | "Like, I'd get out of the shower and there'd be this clump in the drain, and I'd just stand there going, okay, what is happening to me." | She mimes looking down at the drain. |
-| 11-17s | "And I thought it was the shot, and I was honestly about to quit over it, until I figured out what was actually going on." | |
-| 17-26s | "When you lose weight fast and you're not eating much, your body starts deciding what it can live without, and hair is first on the list, 'cause it doesn't need it to keep you alive." | Text: "your body decides hair is optional" |
-| 26-35s | "And the days you're not eating much are your peak days, the day or two after your shot, when you can barely finish a yogurt. That's exactly when your protein falls off a cliff." | Text: "peak days = no appetite = no protein" |
-| 35-44s | "So now I use PeptidePal. It shows me which days my shot's gonna peak before they hit, so I get my protein in the day before, while I can still actually eat." | Overlay video of PeptidePal: Today screen with the peak days marked |
-| 44-52s | "My protein's on the same screen as my schedule, so I can see I'm short by lunch, not at 9pm when it's too late. And I log how I'm feeling, so I can see the pattern." | Overlay video of PeptidePal: protein screen, then a note |
-| 52-58s | "It took a few weeks, but the clumps in the drain got smaller, and I stopped thinking about quitting. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
+| 0-4s | "You started a GLP-1 a few months ago, and now your hands look like this." | Frame 0: she says it to camera, then on "this" a close-up pops up of her palm covered in shed hair after a shower. Text hook on screen. |
+| 4-11s | "And if you're like me, you've been blaming whatever you ate this week, or the shampoo, or the shot, and you're thinking about quitting." | Back to her, holding the hair. |
+| 11-18s | "But here's what got me. The hair you're losing right now isn't from this week. It's from like three months ago." | Text: "it's from 3 months ago" |
+| 18-27s | "When you lose weight fast and you're not eating enough protein, your body pushes a bunch of hair into a resting phase, and it doesn't actually fall out until two or three months later." | Text: "the damage shows up 2-3 months later" |
+| 27-36s | "So I went back in PeptidePal to my first month, and there it was. Every single peak day, the day or two after my shot, my protein was like 30 grams. Barely a yogurt." | Overlay video of PeptidePal: scrolling back through her history to month one, the low protein days. Text: "every peak day = 30g protein 😬" |
+| 36-42s | "Those were the weeks I was so proud I couldn't eat. And this is what they cost me." | She holds the hair up again. |
+| 42-52s | "So now PeptidePal tells me which days are gonna peak before they hit, so I get my protein in the day before, while I can still actually eat, and it's on the same screen as my schedule, so I see I'm short by lunch, not at 9pm." | Overlay video of PeptidePal: Today screen with the peak marked, then the protein screen |
+| 52-60s | "And if you're just starting, this is the part nobody tells you. What you eat this month is the hair you keep in three. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
 
-## Brief 2: Microdosing Math
+## Brief 2: Your Microdose Isn't Micro
+
+**The gotcha:** small doses feel like nothing, so they creep. A little earlier this week, an extra one when the appetite comes back. And because each one lingers about a week, they stack. When she added up her week in PeptidePal, her "micro" dosing was more than her old full weekly dose.
 
 **Hooks**
 
-1. "If you're microdosing your GLP-1, I need to tell you about the mistake I made in my first month." (main)
-2. "Everyone's microdosing their GLP-1 now, and nobody's talking about the math."
-3. "I switched to microdosing and almost doubled my dose by accident."
+1. "If you're microdosing your GLP-1, add up everything you took this week. I'll wait." (main)
+2. "I switched to microdosing to take less, and I ended up taking more than my full dose."
+3. "Your microdose probably isn't micro anymore, and you'd have no idea."
 
-**Text hook (frame 0):** "microdosing is NOT the easy version 😬"
+**Text hook (frame 0):** "add up your week… I'll wait ⏳"
 
 **Script**
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "If you're microdosing your GLP-1, I need to tell you about the mistake I made in my first month." | Frame 0: a vial and an insulin syringe on the counter. Text hook on screen. |
-| 5-12s | "I switched to microdosing 'cause I wanted fewer side effects, and everybody makes it sound like the chill, easy version." | |
-| 12-20s | "But here's what nobody tells you. Smaller doses usually means a vial instead of a pen, and that means you're doing the math yourself, units, how much water you mixed in, every single time." | Text: "pen = it does the math / vial = YOU do the math" |
-| 20-28s | "And if you're doing it more than once a week, now there's more doses to keep track of, so one week I genuinely couldn't remember if I'd taken my Tuesday one." | |
-| 28-35s | "And if you take it twice, or you take it closer together than you meant to, there's more in you than you think, and you feel it." | Text: "missed or doubled = you feel it" |
-| 35-44s | "So now everything's in PeptidePal. I put in the vial and how much water I mixed, and it tells me the exact units to draw, so I'm not doing math with a syringe in my hand." | Overlay video of PeptidePal: the reconstitution calculator |
-| 44-52s | "It reminds me on my actual schedule, I check it off, and it counts down what's left in the vial and tells me before I run out." | Overlay video of PeptidePal: reminder, check-off, vial countdown |
-| 52-58s | "Microdosing's great, but only if you're actually tracking it. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
+| 0-4s | "If you're microdosing your GLP-1, add up everything you took this week. I'll wait." | Frame 0: she sits back, arms crossed, with a small countdown on screen. Text hook on screen. |
+| 4-11s | "'Cause I switched to microdosing to take less and feel less sick, and I honestly thought I was being so smart about it." | |
+| 11-20s | "But a micro dose feels like nothing, so you start getting a little loose. You take it a day early. Your appetite comes back on Friday, so you do a little extra." | Text: "a day early… a little extra…" |
+| 20-29s | "And here's the part nobody tells you. Each one of those little doses is still in you for about a week, so they don't replace each other, they stack on top of each other." | Text: "they don't replace each other. they STACK." |
+| 29-37s | "So I finally added up my week in PeptidePal, and I was taking more than my old full weekly dose. My 'micro' dose wasn't micro at all." | Overlay video of PeptidePal: her dose log for the week, with the total. Text: "more than my full dose 😳" |
+| 37-42s | "Which is exactly why I was feeling sick again and couldn't figure out why." | |
+| 42-52s | "So now every dose goes in PeptidePal. It shows me the week's total and roughly what's still in me, and it does the unit math from my vial, so I'm not guessing with a syringe in my hand." | Overlay video of PeptidePal: what's still on board, then the calculator |
+| 52-58s | "Microdosing only works if it stays micro. PeptidePal, this icon, on the App Store." | Pop up the PeptidePal icon |
 
 ## Brief 3: What Your Prescription Left Out
 
