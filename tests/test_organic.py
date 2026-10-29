@@ -62,7 +62,7 @@ def test_talking_head_format():
 class FakeSource:
     credits_used = 0
 
-    def fetch_posts(self, platform, handle, max_pages=8):
+    def fetch_posts(self, platform, handle, max_pages=8, since=None):
         self.credits_used += 1
         views = {"instagram": [50000, 1000, 1200, 900, 1100], "youtube": [90000, 10000, 10000]}[platform]
         return [{"platform": platform, "handle": handle, "code": f"{handle}{i}", "views": v,
@@ -148,3 +148,19 @@ def test_tiktok_slideshow_becomes_a_slideshow_entry():
     assert post["slides"] == [["a.heic", "a.jpeg"], ["b.jpeg"]]
     entry = to_entry(post, "x", date(2026, 10, 24))
     assert entry["media_type"] == "slideshow" and len(entry["slides"]) == 2 and entry["shoppable"]
+
+
+def test_fetch_posts_stops_at_since():
+    from cse.organic_source import ScrapeCreatorsOrganic
+
+    pages = [
+        {"aweme_list": [{"aweme_id": "1", "create_time": 1761868800}], "has_more": True, "max_cursor": "a"},  # 2025-10-31
+        {"aweme_list": [{"aweme_id": "2", "create_time": 1759276800}], "has_more": True, "max_cursor": "b"},  # 2025-10-01
+        {"aweme_list": [{"aweme_id": "3", "create_time": 1756684800}], "has_more": False},
+    ]
+    src = ScrapeCreatorsOrganic.__new__(ScrapeCreatorsOrganic)
+    calls = []
+    src._get = lambda path, params: (calls.append(1), pages[len(calls) - 1])[1]
+    got = src.fetch_posts("tiktok", "acct", max_pages=8, since="2025-10-15")
+    assert [p["code"] for p in got] == ["1", "2"]
+    assert len(calls) == 2

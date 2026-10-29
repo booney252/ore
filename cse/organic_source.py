@@ -110,11 +110,17 @@ class ScrapeCreatorsOrganic:
         self.credits_used += int(data.get("credits_charged") or 1)
         return data
 
-    def fetch_posts(self, platform: str, handle: str, max_pages: int = 8, sort: str = "latest") -> list[dict]:
-        """An account's posts, newest first, or (TikTok, sort="popular") its most-viewed first."""
+    def fetch_posts(self, platform: str, handle: str, max_pages: int = 8, sort: str = "latest",
+                    since: str | None = None) -> list[dict]:
+        """An account's posts, newest first, or (TikTok, sort="popular") its most-viewed first.
+
+        With `since` (YYYY-MM-DD, newest-first only), paging stops once a page reaches posts older
+        than that day, so a daily check costs one or two credits per account instead of a full history.
+        """
         handle = handle.lstrip("@")
         posts, cursor = [], None
         for _ in range(max_pages):
+            before = len(posts)
             if platform == "instagram":
                 data = self._get("v1/instagram/user/reels",
                                  {"handle": handle, **({"max_id": cursor} if cursor else {})})
@@ -136,6 +142,9 @@ class ScrapeCreatorsOrganic:
             else:
                 raise AdSourceError(f"unknown platform {platform!r}")
             if not cursor:
+                break
+            page_days = [p["date"] for p in posts[before:] if p.get("date")]
+            if since and sort == "latest" and page_days and min(page_days) < since:
                 break
         seen, out = set(), []
         for p in posts:

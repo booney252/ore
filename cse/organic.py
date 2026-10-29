@@ -275,8 +275,11 @@ def download_slides(storage, slug: str, ad: dict, session) -> bool:
 
 
 def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None = None,
-         only: list[str] | None = None, top_views: int = 0) -> dict:
-    """Fetch every account in brand.md `organic_accounts`, grade, and get the winners' media."""
+         only: list[str] | None = None, top_views: int = 0, since: str | None = None) -> dict:
+    """Fetch every account in brand.md `organic_accounts`, grade, and get the winners' media.
+
+    `since` (YYYY-MM-DD) stops each account's paging once it reaches older posts.
+    """
     from . import ads as adslib
     from .organic_source import ScrapeCreatorsOrganic
 
@@ -288,7 +291,7 @@ def pull(storage, slug: str, source=None, max_pages: int = 8, today: date | None
         if only and acc["handle"] not in only and f"{acc['platform']}:{acc['handle']}" not in only:
             continue
         try:
-            got = source.fetch_posts(acc["platform"], acc["handle"], max_pages)
+            got = source.fetch_posts(acc["platform"], acc["handle"], max_pages, since=since)
         except Exception as e:  # noqa: BLE001 - one bad account shouldn't stop the run
             log.warning("organic: %s:%s failed: %s", acc["platform"], acc["handle"], e)
             got = []

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date, timedelta
 import argparse
 import logging
 import sys
@@ -102,6 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pages", type=int, default=8, help="pages per account with --pull (12 reels a page on Instagram)")
     p.add_argument("--only", help="with --pull: comma-separated handles (or platform:handle) to fetch")
     p.add_argument("--top-views", type=int, default=0, help="with --pull: also get each pulled account's N most-watched videos")
+    p.add_argument("--days", type=int, default=0, help="with --pull: stop each account once posts are older than N days (saves credits)")
     p = sub.add_parser("topics", help="drop winning posts that aren't about the brand's niche")
     p.add_argument("brand")
     p.add_argument("--recheck", action="store_true", help="check every winner again, not just new ones")
@@ -211,7 +213,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "organic":
             if args.pull:
                 only = [h.strip() for h in args.only.split(",")] if args.only else None
-                print(organic.pull(storage, args.brand, max_pages=args.pages, only=only, top_views=args.top_views))
+                since = (date.today() - timedelta(days=args.days)).isoformat() if args.days else None
+                print(organic.pull(storage, args.brand, max_pages=args.pages, only=only, top_views=args.top_views, since=since))
             elif args.file:
                 print(organic.import_posts(storage, args.brand, organic.read_table(Path(args.file).read_text())))
             else:
