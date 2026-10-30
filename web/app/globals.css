@@ -49,11 +49,7 @@
 html, body { margin: 0; }
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(60vw 80vh at -10% 20%, rgba(63, 183, 236, 0.20), transparent 60%),
-    radial-gradient(40vw 60vh at -5% 85%, rgba(240, 106, 168, 0.12), transparent 60%),
-    var(--bg);
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--text);
   font: 400 0.95rem/1.6 var(--font-ui);
   -webkit-font-smoothing: antialiased;
@@ -110,7 +106,20 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- Shell ---------- */
 
-.shell { display: grid; grid-template-columns: calc(var(--rail) + 12px) minmax(0, 1fr); min-height: 100vh; }
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  min-height: 100vh;
+  /* the glow is the room; the pages are cards that scroll over it */
+  background: var(--ribs),
+    radial-gradient(28vw 45vh at 6% 78%, rgba(255, 138, 76, 0.85), transparent 70%),
+    radial-gradient(26vw 40vh at 14% 58%, rgba(240, 106, 168, 0.8), transparent 70%),
+    radial-gradient(30vw 50vh at 10% 28%, rgba(45, 99, 216, 0.85), transparent 70%),
+    radial-gradient(40vw 40vh at 85% 0%, rgba(240, 106, 168, 0.45), transparent 70%),
+    linear-gradient(115deg, #57c7f2 0%, #3fb7ec 35%, #2d8fe0 65%, #46b9ee 100%);
+  background-blend-mode: soft-light, normal;
+  background-attachment: fixed;
+}
 
 .rail {
   position: sticky;
@@ -121,14 +130,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   gap: 36px;
   padding: 30px 18px 24px 24px;
   color: #fff;
-  background: var(--ribs), var(--glow-band);
-  background-blend-mode: soft-light, normal;
-  top: 12px;
-  height: calc(100vh - 24px);
-  margin: 12px 0 12px 12px;
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 30px 60px -30px rgba(45, 99, 216, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: none;
+  border: 0;
 }
 .rail .wordmark { background-image: none; color: #fff; }
 .rail .muted, .rail .mono { color: rgba(255, 255, 255, 0.82); }
@@ -150,7 +153,17 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .rail .dot { background: rgba(255, 255, 255, 0.55); }
 .rail .dot.diamond, .rail .dot.emerald, .rail .dot.ruby { background: #fff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
 
-.stage { position: relative; min-width: 0; overflow: hidden; overflow: clip; /* clip, not hidden: keeps the glow in without breaking sticky side columns */ }
+.stage {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  overflow: clip; /* clip, not hidden: keeps the glow in without breaking sticky side columns */
+  margin: 14px 14px 14px 0;
+  border-radius: 28px;
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 40px 80px -40px rgba(15, 28, 51, 0.45), 0 0 0 6px rgba(255, 255, 255, 0.12);
+}
 .stage::before {
   /* a soft wash of the glow at the top of every page */
   content: "";
@@ -1841,5 +1854,6 @@ select {
 .ad-rank { color: #fff; }
 
 @media (max-width: 860px) {
-  .rail { top: 0; height: auto; margin: 0; border-radius: 0; border-width: 0 0 1px; }
+  .rail { top: 0; height: auto; margin: 0; background: rgba(45, 99, 216, 0.35); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+  .stage { margin: 10px; border-radius: 22px; }
 }
