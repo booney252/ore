@@ -52,15 +52,15 @@ export default function BrainMap({ nodes, active }: { nodes: BrainNode[]; active
             <stop offset="1" stopColor="#f7c6dc" />
           </linearGradient>
           <linearGradient id="edge-emerald" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
-            <stop offset="0" stopColor="#10a06e" />
-            <stop offset="1" stopColor="#bfeedb" />
+            <stop offset="0" stopColor="#705ce6" />
+            <stop offset="1" stopColor="#ddd6fb" />
           </linearGradient>
           <linearGradient id="fill-ruby" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
             <stop offset="0" stopColor="#e5488f" stopOpacity="0.6" />
             <stop offset="1" stopColor="#2d63d8" stopOpacity="0.3" />
           </linearGradient>
           <linearGradient id="fill-emerald" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
-            <stop offset="0" stopColor="#10a06e" stopOpacity="0.6" />
+            <stop offset="0" stopColor="#705ce6" stopOpacity="0.6" />
             <stop offset="1" stopColor="#2d63d8" stopOpacity="0.3" />
           </linearGradient>
           <radialGradient id="brain-glow">
