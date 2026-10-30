@@ -1,0 +1,305 @@
+<title>Personal Brand Playbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a guide that reads top to bottom. One glow band up top, then plain sections; pillar colors repeat in every creator card. */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --ink:#111c31; --muted:#56647b; --line:#dce4ee;
+  --life:#f06aa8; --stand:#ff8a4c; --teach:#2d63d8; --proof:#7a5ce6; --ask:#0f1c33;
+  --display:"Urbanist",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1323;--surface:#131d31;--ink:#eaf0fa;--muted:#9fb0c8;--line:#24324b;--ask:#eaf0fa;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1323;--surface:#131d31;--ink:#eaf0fa;--muted:#9fb0c8;--line:#24324b;--ask:#eaf0fa;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;line-height:1.08;text-wrap:balance;margin:0}
+h1{font-weight:300;font-size:clamp(40px,6vw,72px)}
+h2{font-weight:400;font-size:clamp(28px,3.6vw,42px)}
+h3{font-weight:600;font-size:21px}
+p{margin:0}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hero{color:#fff;position:relative;overflow:hidden;padding-block:64px 56px;
+  background:radial-gradient(38% 60% at 30% 60%,rgba(255,138,76,.9),transparent 70%),radial-gradient(34% 55% at 22% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(30% 65% at 58% 46%,rgba(45,99,216,.9),transparent 70%),linear-gradient(115deg,#57c7f2,#3fb7ec 35%,#2d8fe0 65%,#46b9ee)}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 2px,transparent 2px 9px,rgba(0,40,90,.06) 9px 11px,transparent 11px 16px);mix-blend-mode:soft-light;pointer-events:none}
+.hero>*{position:relative}
+.hero .label{color:rgba(255,255,255,.85)}
+.hero p.sub{max-width:60ch;margin-top:18px;font-size:18px;color:rgba(255,255,255,.93)}
+.hero .src{margin-top:22px;font-size:14px;color:rgba(255,255,255,.85);max-width:70ch}
+section{padding-block:64px}
+.head{display:grid;gap:12px;margin-bottom:32px;max-width:720px}
+.head p{color:var(--muted);font-size:17px}
+.big{font-family:var(--display);font-size:clamp(24px,3vw,32px);line-height:1.25;font-weight:400;max-width:30ch}
+.pillars{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.pillar{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0;border-top:4px solid var(--c)}
+.pillar .job{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--c)}
+.pillar p{font-size:14px;color:var(--muted)}
+.pillar .ev{font-size:13px;color:var(--ink)}
+.life{--c:var(--life)}.stand{--c:var(--stand)}.teach{--c:var(--teach)}.proof{--c:var(--proof)}.ask{--c:var(--ask)}
+.mix{display:flex;height:44px;border-radius:12px;overflow:hidden;margin-top:8px}
+.mix div{display:grid;place-items:center;color:#fff;font-size:13px;font-weight:600;min-width:0;white-space:nowrap;overflow:hidden}
+.mix .ask{color:var(--bg)}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:8px;min-width:0}
+.rule .n{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rule p{color:var(--muted);font-size:15px}
+.rule q{display:block;color:var(--ink);font-size:15px;quotes:"\201C" "\201D"}
+.creators{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:grid;gap:14px;min-width:0}
+.card-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline}
+.card-top a{color:var(--ink);text-decoration:none;font-family:var(--display);font-size:24px;font-weight:600}
+.card-top a:hover{text-decoration:underline}
+.card .sells{color:var(--muted);font-size:15px;max-width:70ch}
+.pl{display:grid;gap:6px}
+.pl div{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:10px;align-items:baseline;font-size:15px}
+.pl i{width:10px;height:10px;border-radius:50%;background:var(--c);display:inline-block;transform:translateY(1px)}
+.pl b{font-weight:600}
+.pl span.x{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.steal{border-radius:12px;padding:12px 14px;background:linear-gradient(90deg,rgba(63,183,236,.14),rgba(240,106,168,.12));font-size:15px}
+.steal b{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-right:8px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;min-width:0;border-top:4px solid var(--c);display:grid;gap:6px;align-content:start}
+.day .d{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.day b{font-size:14px}
+.day p{font-size:13px;color:var(--muted)}
+.steps{display:grid;gap:12px;counter-reset:s}
+.step{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.step .num{font-family:var(--display);font-size:30px;font-weight:300;color:var(--teach);line-height:1}
+.step p{color:var(--muted);font-size:15px;margin-top:6px}
+.note{font-size:14px;color:var(--muted);max-width:75ch}
+footer{padding-block:24px 48px;font-size:14px;color:var(--muted)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--teach);outline-offset:2px}
+@media (max-width:900px){.pillars{grid-template-columns:1fr 1fr}.rules{grid-template-columns:1fr}.week{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.pillars{grid-template-columns:1fr}section{padding-block:48px}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="label">AI Creator Lab · for affiliates</p>
+    <h1 style="margin-top:12px">Build a brand people buy from.</h1>
+    <p class="sub">People follow a person and buy from a person. We studied 9 creators who sell a course, coaching, a service or a community, to see how they grow without posting ads all day. Here is what they do, and how to copy it.</p>
+    <p class="src">Based on about 680 Instagram reels from Jianna Capri, Shelby Sapp, Ellie Snow, Tommy Cetty, Jordan Welch, Ray, Luke Alexander, Noah Frydberg and Nico, pulled in October 2026. "2x" means twice that creator's usual views.</p>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head">
+        <p class="label">The big idea</p>
+        <h2>Most of what they post isn't selling.</h2>
+      </div>
+      <p class="big">Across all 9, direct pitches are only about 5% to 40% of posts. The rest earns attention and trust, so the few asks actually work.</p>
+      <p class="note" style="margin-top:14px">The posts that got the most reach were life moments, opinions and call-outs, usually with no call to action at all. The pitch rode on teaching and proof posts, and it almost always gave away something free.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">The five pillars</p>
+        <h2>Every account we studied runs some mix of these.</h2>
+        <p>A content pillar is a type of post you come back to again and again. Each one has a different job.</p>
+      </div>
+      <div class="pillars">
+        <div class="pillar life"><span class="job">Job: reach</span><h3>Life</h3><p>Your real life: big moments, travel, routines, wins with family.</p><p class="ev">Shelby's wedding posts 1.9x. Ellie's vlogs 1.8x. Luke's life posts 1.6x.</p></div>
+        <div class="pillar stand"><span class="job">Job: reach</span><h3>Stand</h3><p>A strong opinion or a call-out: expose a fake, bust a myth, pick a villain.</p><p class="ev">Tommy's "exposing" posts 3x. Luke's anti-"larp" posts 2.1x.</p></div>
+        <div class="pillar teach"><span class="job">Job: trust</span><h3>Teach</h3><p>Show how you do the thing: a method, a system in 3 steps, a tool walkthrough.</p><p class="ev">Noah's system breakdowns 2.9x. Shelby's "sell anything" 2.1M views.</p></div>
+        <div class="pillar proof"><span class="job">Job: trust and belief</span><h3>Proof</h3><p>The journey in public: a challenge with a number, results, student wins.</p><p class="ev">Jianna's $100K in 90 days. Ellie's "$100K a month at 21".</p></div>
+        <div class="pillar ask"><span class="job">Job: sell</span><h3>Ask</h3><p>The call to action. Usually a free thing for a comment keyword.</p><p class="ev">Jordan's "comment FREE for my $5,000 course for $0": 2.2M.</p></div>
+      </div>
+      <p class="note" style="margin-top:22px">A healthy week, based on what these accounts do:</p>
+      <div class="mix" role="img" aria-label="Suggested mix: life 25%, stand 15%, teach 30%, proof 15%, ask 15%">
+        <div class="life" style="background:var(--life);flex:25">Life</div>
+        <div class="stand" style="background:var(--stand);flex:15">Stand</div>
+        <div class="teach" style="background:var(--teach);flex:30">Teach</div>
+        <div class="proof" style="background:var(--proof);flex:15">Proof</div>
+        <div class="ask" style="background:var(--ask);flex:15">Ask</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">What they all do</p>
+        <h2>Eight habits that show up across the accounts.</h2>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="n">Habit 1</span><h3>One identity line, everywhere</h3><p>Viewers learn who you are in a single sentence, repeated until it sticks.</p><q>7 years ago I was a barista making $8/hr</q><p>Shelby, in 44 captions. Jianna opens every video with her 90-day challenge. Ellie keeps saying "at 21".</p></div>
+        <div class="rule"><span class="n">Habit 2</span><h3>Reach posts don't sell</h3><p>Life and opinion posts got the most views and almost never had a call to action. Shelby's 27 wedding posts had zero pitches and beat her usual by 1.9x.</p></div>
+        <div class="rule"><span class="n">Habit 3</span><h3>The ask rides on value</h3><p>The comment keyword sits on teaching and proof posts. Jianna's tool demos (9 of 13 have a CTA) lost no reach for it.</p></div>
+        <div class="rule"><span class="n">Habit 4</span><h3>Give something free</h3><p>The CTA offers a guide, a list, a class or a DM. The paid offer is rarely named. Jianna never names one. Shelby names her academy about 4 times in 93 posts.</p></div>
+        <div class="rule"><span class="n">Habit 5</span><h3>A number or a real name in the hook</h3><q>How I run 400 AI influencers at once</q><p>Noah's top 5 all lead with a big specific number. Tommy's top 4 all name a real account or a real price.</p></div>
+        <div class="rule"><span class="n">Habit 6</span><h3>A story with stakes, told as a series</h3><p>Jianna's "$100K in 90 days", Ellie's "$100K a month at 21", Shelby's wedding countdown. People come back to see what happens next.</p></div>
+        <div class="rule"><span class="n">Habit 7</span><h3>Pick a villain</h3><p>Fake gurus, scams, "larpers", bad advice. Calling something out beat a neutral tip for Tommy, Luke, Jianna and Nico.</p></div>
+        <div class="rule"><span class="n">Habit 8</span><h3>Post a lot, rerun winners</h3><p>Noah and Nico post about 3 a day and rerun scripts that hit. Shelby posts about 2 a day. Volume gives the winners a chance to show up.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">The 9 creators</p>
+        <h2>How each one breaks it down.</h2>
+        <p>Pillar shares are counted from their posts. The multiple is that pillar's typical views against the creator's usual.</p>
+      </div>
+      <div class="creators">
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/shelby.sapp/" target="_blank" rel="noopener">Shelby Sapp</a><span class="label">usual 441K views · about 2 posts a day</span></div>
+          <p class="sells">Sells high-ticket sales training for women (She Sells Academy), and now an AI money app through a free masterclass.</p>
+          <div class="pl">
+            <div class="life"><i></i><span><b>Life: wedding week.</b> Pool aisle, the styrofoam cake. No pitch.</span><span class="x">29% · 1.9x</span></div>
+            <div class="teach"><i></i><span><b>Teach: sales techniques.</b> "How to sell anything, even works on a frickin sausage" (2.1M).</span><span class="x">18% · 1.0x</span></div>
+            <div class="proof"><i></i><span><b>Proof: origin and mindset.</b> "Millions are made in the middle" (5.9M).</span><span class="x">20% · 0.8x</span></div>
+            <div class="life"><i></i><span><b>Life: home and routine.</b> "caffeine, gym, sales calls…" (1.1M).</span><span class="x">15% · 0.6x</span></div>
+            <div class="ask"><i></i><span><b>Ask: launch posts.</b> Every one pushes the free class.</span><span class="x">17% · 0.3x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Put your origin story at the bottom of every caption, and post your big life moments with no pitch.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/jiannacapri/" target="_blank" rel="noopener">Jianna Capri</a><span class="label">usual 83K views · about 3 a week</span></div>
+          <p class="sells">Makes money with AI influencer pages, tool partnerships and brand deals. Captures leads with free guides.</p>
+          <div class="pl">
+            <div class="stand"><i></i><span><b>Stand: myth-busting.</b> "Every single one of these accounts are scamming you" (600K).</span><span class="x">26% · 1.1x</span></div>
+            <div class="proof"><i></i><span><b>Proof: the AI grandma build.</b> "My fake hottie grandma has made me $430 in three days" (510K).</span><span class="x">16% · 1.4x</span></div>
+            <div class="teach"><i></i><span><b>Teach: tool demos.</b> "I bet you thought that this was actually me" (328K).</span><span class="x">34% · 0.8x</span></div>
+            <div class="proof"><i></i><span><b>Proof: $100K in 90 days updates.</b> "Day 35/90 status update" (330K).</span><span class="x">21% · 0.7x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Run a public challenge with a number and a deadline, and make "I tested the claim" your main series.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/ellieksnow/" target="_blank" rel="noopener">Ellie Snow</a><span class="label">usual 13K views · about 2 a week</span></div>
+          <p class="sells">Runs a content agency (Ascend) and sells coaching on organic content for young founders.</p>
+          <div class="pl">
+            <div class="life"><i></i><span><b>Life: cinematic vlogs.</b> "a weekend in malibu at 21" (1.1M).</span><span class="x">27% · 1.8x</span></div>
+            <div class="proof"><i></i><span><b>Proof: founder journey.</b> "3 things that helped me hit multiple 6 figures before 21".</span><span class="x">35% · 1.0x</span></div>
+            <div class="teach"><i></i><span><b>Teach: content and personal brand.</b> "EVERYONE will be doing this over the next few years".</span><span class="x">25% · 0.75x</span></div>
+            <div class="ask"><i></i><span><b>Ask: client wins and keywords.</b> "She closed a $12.5K retainer deal" (50K).</span><span class="x">13% · 1.0x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Short cinematic vlogs with an age or status frame for reach; teaching posts for trust.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/tommycetty/" target="_blank" rel="noopener">Tommy Cetty</a><span class="label">usual 4.9K views · about 4 a week</span></div>
+          <p class="sells">Sells a paid community on AI influencer and AI UGC affiliate marketing, for beginners who don't want to show their face.</p>
+          <div class="pl">
+            <div class="stand"><i></i><span><b>Stand: exposing AI pages that make money.</b> "Jean Phil isn't real but his money is" (1.8M).</span><span class="x">12% · 3x</span></div>
+            <div class="stand"><i></i><span><b>Stand: AI news and tool takes.</b> "Will you be paying $500/month for Meta One?" (109K).</span><span class="x">15% · 1.9x</span></div>
+            <div class="teach"><i></i><span><b>Teach: methods.</b> "Copy the AI Crypto Mafia" (80K).</span><span class="x">17% · 1.0x</span></div>
+            <div class="stand"><i></i><span><b>Opinions on AI vs human creators.</b> His weakest pillar.</span><span class="x">27% · 0.6x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>"Exposing [a real account]: here's how much it makes", with the comment keyword on that post.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/jordanwelch/" target="_blank" rel="noopener">Jordan Welch</a><span class="label">usual 63K views · about 1 a week</span></div>
+          <p class="sells">Sells an AI ecom course, given away free as a lead magnet. Story: "$30,000 in debt, done over $15M online".</p>
+          <div class="pl">
+            <div class="life"><i></i><span><b>Life and vibe posts.</b> "all that matters tbh" (1.1M), "the real goal" (1.1M).</span><span class="x">24% · 17x</span></div>
+            <div class="life"><i></i><span><b>Life: buying cars for family.</b> "bought my whole family whips" (422K).</span><span class="x">14% · 1.7x</span></div>
+            <div class="stand"><i></i><span><b>Stand: mindset slogans.</b> "money won't make you rich" (108K).</span><span class="x">29% · 1.0x</span></div>
+            <div class="proof"><i></i><span><b>Proof: money advice and his story.</b> "old millionaire explains the inheritance problem" (2.8M).</span><span class="x">14% · 0.8x</span></div>
+            <div class="ask"><i></i><span><b>Ask: separate "comment FREE" posts.</b> One hit 2.2M with 3,519 comments.</span><span class="x">19% · 0.6x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Post the life and the story for reach, and keep the offer in a few separate "free course" posts.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/raycfu/" target="_blank" rel="noopener">Ray</a><span class="label">usual 41K views · about 5 a week</span></div>
+          <p class="sells">Runs an AI automations agency and an AI education community, plus brand deals.</p>
+          <div class="pl">
+            <div class="teach"><i></i><span><b>Teach: "How to build X with AI".</b> "How to make Claude research like a PhD" (270K).</span><span class="x">48% · 1.0x</span></div>
+            <div class="proof"><i></i><span><b>Proof: AI trading results.</b> "This Grok agent turned $50 into $5,000" (294K).</span><span class="x">12% · 3.7x</span></div>
+            <div class="teach"><i></i><span><b>Teach: "Make $Xk a month with AI".</b> "$6k/month dropshipping with AI agents" (495K).</span><span class="x">18% · 1.3x</span></div>
+            <div class="teach"><i></i><span><b>14-second "10 X" lists.</b> "10 ways to make money with GPT-6 Astra" (185K).</span><span class="x">4% · 2.7x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>A daily "How to [get a result] with [tool]" tutorial, with a spoken comment keyword in every one.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/lukealexxander/" target="_blank" rel="noopener">Luke Alexander</a><span class="label">usual 8.8K views · almost daily</span></div>
+          <p class="sells">Sells his AI sales software (Kendo) and a program on building AI-first SaaS, to ambitious young founders.</p>
+          <div class="pl">
+            <div class="stand"><i></i><span><b>Stand: calling out "larpers".</b> "Say NO to larp" (24K).</span><span class="x">8% · 2.1x</span></div>
+            <div class="life"><i></i><span><b>Life: travel, habits, banana bread.</b> "2030 with bro" (80K).</span><span class="x">15% · 1.6x</span></div>
+            <div class="stand"><i></i><span><b>Manhood, faith and mindset.</b> "Good men are capable men" (39K).</span><span class="x">26% · 1.15x</span></div>
+            <div class="proof"><i></i><span><b>Proof: building SaaS.</b> "Bootstrapped to $1M ARR" (13K).</span><span class="x">38% · 0.8x</span></div>
+            <div class="ask"><i></i><span><b>Ask: direct pitches.</b> His weakest posts.</span><span class="x">6% · 0.6x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Let your values and your life grow the audience, and pitch in about 1 post out of 20.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/noahhfrydberg/" target="_blank" rel="noopener">Noah Frydberg</a><span class="label">usual 709 views · about 3 a day</span></div>
+          <p class="sells">Runs an AI plus human affiliate agency for big supplement and skincare brands, and recruits AI affiliate creators.</p>
+          <div class="pl">
+            <div class="teach"><i></i><span><b>Teach: "How I run it" systems.</b> "How I run 400 AI influencers at once" (14K).</span><span class="x">2.9x</span></div>
+            <div class="stand"><i></i><span><b>AI news and hype.</b> "Three of the top ten affiliate accounts are AI pages".</span><span class="x">1.3x</span></div>
+            <div class="proof"><i></i><span><b>Proof: the income opportunity.</b> "This AI clothing account has done over $700,000".</span><span class="x">1.0x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Open with one big specific number, teach the system in 3 steps, end on a comment keyword.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><a href="https://www.instagram.com/nicohustless/" target="_blank" rel="noopener">Nico</a><span class="label">usual 2.2K views · about 3 a day</span></div>
+          <p class="sells">Teaches an AI influencer method; points viewers to an AI image tool with a comment keyword.</p>
+          <div class="pl">
+            <div class="stand"><i></i><span><b>Stand: exposing fake AI influencers.</b> One script, many captions.</span><span class="x">58% · 1.0x</span></div>
+            <div class="stand"><i></i><span><b>"AI influencers are insane."</b> His top post: 38K.</span><span class="x">25% · 1.0x</span></div>
+            <div class="teach"><i></i><span><b>Teach: "the new AI influencer method".</b></span><span class="x">14% · 0.9x</span></div>
+          </div>
+          <p class="steal"><b>Steal</b>Expose someone else's viral post as AI, then teach the method behind it.</p>
+        </article>
+
+      </div>
+      <p class="note" style="margin-top:16px">Notes: Jordan's biggest posts have vague captions, so their pillar is a best guess. Ray's two largest posts (60M and 9.9M) look like paid boosts and are left out. Many of Noah's captions are only his bio, so his shares aren't shown.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">An example week</p>
+        <h2>Seven posts, five pillars.</h2>
+        <p>Swap in your own story. The point is the mix: most posts earn attention and trust, and one asks.</p>
+      </div>
+      <div class="week">
+        <div class="day life"><span class="d">Mon</span><b>Life</b><p>A real moment from your week. No pitch.</p></div>
+        <div class="day teach"><span class="d">Tue</span><b>Teach</b><p>"How I [result] with [tool], in 3 steps." Comment keyword for the full guide.</p></div>
+        <div class="day stand"><span class="d">Wed</span><b>Stand</b><p>Bust a myth or call out a fake in your space.</p></div>
+        <div class="day proof"><span class="d">Thu</span><b>Proof</b><p>Your challenge update with the real number.</p></div>
+        <div class="day teach"><span class="d">Fri</span><b>Teach</b><p>The one mistake beginners make, and the fix.</p></div>
+        <div class="day life"><span class="d">Sat</span><b>Life</b><p>The life the work pays for, or the grind behind it.</p></div>
+        <div class="day ask"><span class="d">Sun</span><b>Ask</b><p>"Comment [WORD] and I'll send you [free thing]."</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="label">Build yours</p>
+        <h2>Five steps to set up your pillars this week.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><div><h3>Write your identity line</h3><p>Where you started, where you are, in one sentence. "Six months ago I was [before]. Now I [after]." Use it in your bio, your captions and your intros.</p></div></div>
+        <div class="step"><span class="num">2</span><div><h3>Pick your villain</h3><p>What do you stand against? Fake gurus, a bad method, an old way of working. That's your Stand pillar.</p></div></div>
+        <div class="step"><span class="num">3</span><div><h3>Start a story with stakes</h3><p>A goal with a number and a deadline, posted as a series. "$10K by New Year's, day 1." That's your Proof pillar, and it gives people a reason to come back.</p></div></div>
+        <div class="step"><span class="num">4</span><div><h3>List 10 things you can teach</h3><p>Methods, tools, mistakes, systems. Each one is a Teach post, and each can end on a keyword for something free.</p></div></div>
+        <div class="step"><span class="num">5</span><div><h3>Make one free thing to give away</h3><p>A guide, a checklist, a short class. Every Ask post offers it. Sell the paid offer in the DMs and on calls, not in the feed.</p></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">Made for AI Creator Lab affiliates. Numbers come from public Instagram reels, October 2026.</footer>
