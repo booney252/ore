@@ -31,5 +31,5 @@ function redirect(req: NextRequest, pathname: string) {
 }
 
 export const config = {
-  matcher: ["/((?!login|api/login|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!login|api/login|ore$|ore/|_next/static|_next/image|favicon.ico).*)"],
 };
