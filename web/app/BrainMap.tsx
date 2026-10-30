@@ -48,24 +48,24 @@ export default function BrainMap({ nodes, active }: { nodes: BrainNode[]; active
           {/* Both hemispheres are drawn in left-side coordinates (the right one mirrored), so each
               gradient runs from the outer edge (x=320) to the middle (x=500). */}
           <linearGradient id="edge-ruby" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
-            <stop offset="0" stopColor="#ff5c85" />
-            <stop offset="1" stopColor="#f6e9ee" />
+            <stop offset="0" stopColor="#e5488f" />
+            <stop offset="1" stopColor="#f7c6dc" />
           </linearGradient>
           <linearGradient id="edge-emerald" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
-            <stop offset="0" stopColor="#35e3a0" />
-            <stop offset="1" stopColor="#e6f7ef" />
+            <stop offset="0" stopColor="#10a06e" />
+            <stop offset="1" stopColor="#bfeedb" />
           </linearGradient>
           <linearGradient id="fill-ruby" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
-            <stop offset="0" stopColor="#ff2e63" stopOpacity="0.6" />
-            <stop offset="1" stopColor="#cfeaff" stopOpacity="0.3" />
+            <stop offset="0" stopColor="#e5488f" stopOpacity="0.6" />
+            <stop offset="1" stopColor="#2d63d8" stopOpacity="0.3" />
           </linearGradient>
           <linearGradient id="fill-emerald" gradientUnits="userSpaceOnUse" x1="320" x2="500" y1="0" y2="0">
-            <stop offset="0" stopColor="#19d18b" stopOpacity="0.6" />
-            <stop offset="1" stopColor="#cfeaff" stopOpacity="0.3" />
+            <stop offset="0" stopColor="#10a06e" stopOpacity="0.6" />
+            <stop offset="1" stopColor="#2d63d8" stopOpacity="0.3" />
           </linearGradient>
           <radialGradient id="brain-glow">
-            <stop offset="0" stopColor="#cfeaff" stopOpacity="0.28" />
-            <stop offset="1" stopColor="#cfeaff" stopOpacity="0" />
+            <stop offset="0" stopColor="#2d63d8" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#2d63d8" stopOpacity="0" />
           </radialGradient>
           <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" />
