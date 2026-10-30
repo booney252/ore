@@ -32,9 +32,7 @@ p{margin:0}
    radial-gradient(30% 60% at 56% 46%, rgba(45,99,216,.95), transparent 70%),
    linear-gradient(115deg,#57c7f2 0%,#3fb7ec 35%,#2d8fe0 65%,#46b9ee 100%)}
 .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(90deg,rgba(255,255,255,.10) 0 2px,rgba(255,255,255,0) 2px 9px,rgba(0,40,90,.06) 9px 11px,rgba(255,255,255,0) 11px 16px);
-  mix-blend-mode:soft-light}
-.hero::after{content:"";position:absolute;inset:0;pointer-events:none;backdrop-filter:blur(2px)}
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 3px,rgba(255,255,255,0) 3px 12px,rgba(0,40,90,.035) 12px 15px,rgba(255,255,255,0) 15px 22px)}
 .hero>*{position:relative;z-index:1}
 nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:22px}
 .logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;text-decoration:none}
@@ -116,7 +114,7 @@ section{padding-block:88px}
 
 .final{border-radius:28px;color:#fff;padding:56px 40px;text-align:left;position:relative;overflow:hidden;
   background:radial-gradient(45% 70% at 25% 60%,rgba(255,138,76,.9),transparent 70%),radial-gradient(40% 60% at 45% 40%,rgba(240,106,168,.85),transparent 70%),linear-gradient(115deg,#4cc3f0,#2d63d8)}
-.final::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.1) 0 2px,transparent 2px 12px);mix-blend-mode:soft-light}
+.final::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 3px,transparent 3px 16px)}
 .final>*{position:relative}
 .final h2{font-size:clamp(34px,5vw,62px);max-width:16ch}
 .final p{max-width:56ch;margin-top:16px;font-size:18px;color:rgba(255,255,255,.92)}
@@ -141,6 +139,13 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
 /* ---------- iPhone ---------- */
 .sticky-cta{display:none}
 @media (max-width:640px){
+  .hero{background:
+    radial-gradient(90vw 90vw at 30% 42%, rgba(255,138,76,.85), transparent 70%),
+    radial-gradient(80vw 80vw at 15% 28%, rgba(240,106,168,.8), transparent 70%),
+    radial-gradient(95vw 110vw at 80% 55%, rgba(45,99,216,.9), transparent 70%),
+    radial-gradient(80vw 80vw at 70% 88%, rgba(240,106,168,.45), transparent 70%),
+    linear-gradient(170deg,#57c7f2 0%,#3fb7ec 30%,#2d8fe0 70%,#46b9ee 100%)}
+  .hero::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 3px,rgba(255,255,255,0) 3px 14px)}
   nav{padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:16px}
   nav .btn{padding:10px 14px;font-size:14px}
   .hero-grid{padding-block:28px 28px;gap:28px}
