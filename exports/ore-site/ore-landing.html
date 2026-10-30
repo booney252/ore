@@ -1,0 +1,353 @@
+<title>Ore</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one blurred-glass hero band (the reference's cyan, blue, pink, orange), then calm light sections with frosted cards. */
+:root{
+  --sky:#3fb7ec; --cobalt:#2d63d8; --rose:#f06aa8; --ember:#ff8a4c;
+  --bg:#f3f7fb; --surface:#ffffff; --ink:#0f1c33; --muted:#53627a; --line:#dbe4ef;
+  --glass:rgba(255,255,255,.16); --glass-line:rgba(255,255,255,.38);
+  --display:"Urbanist",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1322; --surface:#121d31; --ink:#eaf1fb; --muted:#9db0c9; --line:#22324c; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1322; --surface:#121d31; --ink:#eaf1fb; --muted:#9db0c9; --line:#22324c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:300;letter-spacing:-.02em;line-height:1.05;text-wrap:balance;margin:0}
+p{margin:0}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;color:#fff;
+  background:
+   radial-gradient(40% 55% at 38% 52%, rgba(255,138,76,.95), transparent 70%),
+   radial-gradient(35% 50% at 30% 40%, rgba(240,106,168,.9), transparent 70%),
+   radial-gradient(30% 60% at 56% 46%, rgba(45,99,216,.95), transparent 70%),
+   linear-gradient(115deg,#57c7f2 0%,#3fb7ec 35%,#2d8fe0 65%,#46b9ee 100%)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.10) 0 2px,rgba(255,255,255,0) 2px 9px,rgba(0,40,90,.06) 9px 11px,rgba(255,255,255,0) 11px 16px);
+  mix-blend-mode:soft-light}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;backdrop-filter:blur(2px)}
+.hero>*{position:relative;z-index:1}
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:22px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;text-decoration:none}
+.logo svg{width:26px;height:26px}
+.pills{display:flex;gap:4px;padding:5px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(14px)}
+.pills a{font-size:14px;text-decoration:none;padding:7px 14px;border-radius:10px}
+.pills a:hover,.pills a:focus-visible{background:rgba(255,255,255,.22);outline:none}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--body);text-decoration:none;padding:13px 18px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:transform .15s ease}
+.btn:active{transform:scale(.97)}
+.btn-white{background:#fff;color:#0f1c33}
+.btn-ghost{color:#fff;border-color:var(--glass-line);background:var(--glass);backdrop-filter:blur(10px)}
+.btn:focus-visible,.pills a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.hero-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:40px;align-items:end;padding-block:56px 40px}
+.hero h1{font-size:clamp(40px,6.4vw,82px)}
+.hero .sub{max-width:52ch;margin-top:22px;font-size:17px;color:rgba(255,255,255,.92)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+
+.alert{border-radius:20px;padding:16px;background:rgba(255,255,255,.18);border:1px solid var(--glass-line);backdrop-filter:blur(18px);display:grid;gap:10px;min-width:0}
+.alert-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:2px 4px 6px;color:rgba(255,255,255,.9)}
+.dot{width:8px;height:8px;border-radius:50%;background:#7dffb3;box-shadow:0 0 0 4px rgba(125,255,179,.25);display:inline-block;margin-right:8px}
+.event{border-radius:14px;padding:14px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3)}
+.event-top{display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.event-top b{font-weight:600}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.28);white-space:nowrap}
+.event q{display:block;font-family:var(--display);font-size:20px;line-height:1.2;margin:10px 0 12px;quotes:"\201C" "\201D"}
+.stats{display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.9);font-variant-numeric:tabular-nums}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;border-top:1px solid rgba(255,255,255,.35);padding-block:22px 28px;font-size:14px}
+.strip div{display:flex;gap:10px;align-items:flex-start;color:rgba(255,255,255,.92)}
+.strip svg{flex:none;width:18px;height:18px;margin-top:3px}
+
+/* sections */
+section{padding-block:88px}
+.sec-head{max-width:760px;display:grid;gap:16px;margin-bottom:44px}
+.sec-head h2{font-size:clamp(32px,4.4vw,54px)}
+.sec-head p{color:var(--muted);font-size:18px;max-width:62ch}
+.grad-text{background:linear-gradient(90deg,var(--cobalt),var(--rose) 55%,var(--ember));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.problem{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;min-width:0}
+.panel h3{font-size:24px;margin-bottom:14px}
+.rows{display:grid;gap:8px;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.rows div{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;background:var(--bg)}
+.rows .hot{background:linear-gradient(90deg,rgba(63,183,236,.18),rgba(240,106,168,.16));font-weight:500}
+.panel .note{margin-top:14px;color:var(--muted);font-size:15px}
+
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;counter-reset:s}
+.step{padding-top:20px;border-top:2px solid var(--line);min-width:0}
+.step .n{font-family:var(--mono);font-size:12px;color:var(--cobalt)}
+.step h3{font-size:26px;margin:8px 0 10px}
+.step p{color:var(--muted);font-size:15px}
+
+.breakdown{display:grid;grid-template-columns:.9fr 1.1fr;gap:20px;align-items:start}
+.phone{border-radius:28px;padding:22px;color:#fff;min-height:100%;
+  background:radial-gradient(60% 50% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 60% at 75% 70%,rgba(45,99,216,.95),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d6fdc)}
+.phone .label{color:rgba(255,255,255,.85)}
+.phone q{display:block;font-family:var(--display);font-size:30px;line-height:1.15;margin:18px 0;quotes:"\201C" "\201D"}
+.phone .stats{margin-top:8px}
+.table{width:100%;border-collapse:collapse;font-size:15px}
+.table th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:500;padding:0 0 10px}
+.table td{padding:14px 12px 14px 0;border-top:1px solid var(--line);vertical-align:top}
+.table td:first-child{font-weight:600;width:28%}
+.load{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(240,106,168,.16);color:var(--ink);white-space:nowrap}
+
+.learn{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.learn .panel{display:grid;gap:12px;align-content:start}
+.learn .panel p{font-size:17px}
+.learn .panel.after{background:linear-gradient(140deg,rgba(63,183,236,.16),rgba(240,106,168,.14) 60%,rgba(255,138,76,.14));border-color:transparent}
+
+.compare{overflow-x:auto;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+.compare table{width:100%;min-width:620px;border-collapse:collapse;font-size:15px}
+.compare th,.compare td{padding:16px 20px;text-align:left;border-top:1px solid var(--line)}
+.compare thead th{border-top:0;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+.compare td:last-child{font-weight:600}
+.compare td:nth-child(2){color:var(--muted)}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.who .panel h3{font-size:28px}
+.who ul{margin:14px 0 0;padding-left:18px;color:var(--muted);display:grid;gap:6px}
+
+.final{border-radius:28px;color:#fff;padding:56px 40px;text-align:left;position:relative;overflow:hidden;
+  background:radial-gradient(45% 70% at 25% 60%,rgba(255,138,76,.9),transparent 70%),radial-gradient(40% 60% at 45% 40%,rgba(240,106,168,.85),transparent 70%),linear-gradient(115deg,#4cc3f0,#2d63d8)}
+.final::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.1) 0 2px,transparent 2px 12px);mix-blend-mode:soft-light}
+.final>*{position:relative}
+.final h2{font-size:clamp(34px,5vw,62px);max-width:16ch}
+.final p{max-width:56ch;margin-top:16px;font-size:18px;color:rgba(255,255,255,.92)}
+.final ul{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:16px}
+.final li::before{content:"→ ";opacity:.8}
+footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:900px){
+  .hero-grid,.problem,.breakdown,.who{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .learn{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr 1fr}
+  .pills{display:none}
+}
+@media (max-width:520px){
+  .steps,.strip{grid-template-columns:1fr}
+  .final{padding:40px 22px}
+  section{padding-block:64px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <nav>
+      <a class="logo" href="#top" aria-label="Ore home">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>
+        Ore
+      </a>
+      <div class="pills">
+        <a href="#how">How it works</a>
+        <a href="#breakdown">A breakdown</a>
+        <a href="#learns">It learns</a>
+        <a href="#who">Who it's for</a>
+      </div>
+      <a class="btn btn-white" href="#teardown">Free teardown</a>
+    </nav>
+
+    <div class="hero-grid" id="top">
+      <div>
+        <p class="label" style="color:rgba(255,255,255,.85)">Creative strategy for brands running UGC ads</p>
+        <h1 style="margin-top:14px">Your competitor just found a new winning ad. Ore tells you which one, and why.</h1>
+        <p class="sub">Every day, Ore checks the top 10 ads of every brand you compete with. When a new one breaks in, you get the breakdown, the proof, and briefs your creators can film this week.</p>
+        <div class="cta-row">
+          <a class="btn btn-white" href="#teardown">Get a free breakout teardown</a>
+          <a class="btn btn-ghost" href="#breakdown">See a sample breakdown</a>
+        </div>
+      </div>
+
+      <aside class="alert" aria-label="Example breakout alerts">
+        <div class="alert-head"><span><span class="dot"></span>This morning's breakouts</span><span class="tag">example</span></div>
+        <div class="event">
+          <div class="event-top"><b>GLP-1 clinic</b><span class="tag">new in top 10 · #2</span></div>
+          <q>Nausea is the number one reason people quit their GLP-1.</q>
+          <div class="stats"><span>live 5 days</span><span>2 versions</span><span>4 sister ads this week</span></div>
+        </div>
+        <div class="event">
+          <div class="event-top"><b>Hair supplement</b><span class="tag">holding #1</span></div>
+          <q>If your hair is coming out in the shower every day…</q>
+          <div class="stats"><span>live 153 days</span><span>still scaling</span></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="strip">
+      <div><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="8" stroke="#fff" stroke-width="1.5"/><path d="M10 5v5l3 2" stroke="#fff" stroke-width="1.5"/></svg>Checks every competitor's top 10, every day</div>
+      <div><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 15h14M5 12V8m4 4V5m4 7V9" stroke="#fff" stroke-width="1.5"/></svg>Breaks each winner down, shot by shot</div>
+      <div><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 5h12v8H9l-4 3v-3H4z" stroke="#fff" stroke-width="1.5"/></svg>Backs every idea with real customer quotes</div>
+      <div><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10l4 4 8-8" stroke="#fff" stroke-width="1.5"/></svg>Remembers every note you give it</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">The problem</p>
+        <h2>Most "winning ads" are just <span class="grad-text">old ads nobody turned off.</span></h2>
+        <p>Sort any ad library by longest running and you get the ads a brand forgot about. The ones they're putting money behind right now are new, and they're climbing that brand's top 10. That's the list Ore watches.</p>
+      </div>
+      <div class="problem">
+        <div class="panel">
+          <h3>Sorted by days running</h3>
+          <div class="rows">
+            <div><span>Ad from April</span><span>182 days</span></div>
+            <div><span>Ad from May</span><span>153 days</span></div>
+            <div><span>Ad from July</span><span>97 days</span></div>
+          </div>
+          <p class="note">Proof that something once worked. No idea what's working this week.</p>
+        </div>
+        <div class="panel">
+          <h3>What Ore flags</h3>
+          <div class="rows">
+            <div class="hot"><span>New ad, entered top 10</span><span>#2 · day 5</span></div>
+            <div class="hot"><span>Same angle, 4 new versions</span><span>this week</span></div>
+            <div><span>Old ad, back in top 10</span><span>#6</span></div>
+          </div>
+          <p class="note">Where the money is going right now, flagged the day it happens.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">How it works</p>
+        <h2>From "what's working?" to briefs in your creators' hands.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="n">Step 1</span><h3>Track</h3><p>Add your competitors once. Ore reads each one's top 10 ads every day and flags any new ad that breaks in.</p></div>
+        <div class="step"><span class="n">Step 2</span><h3>Break down</h3><p>Every breakout gets transcribed and taken apart: the hook, the first 3 seconds, the structure, the proof, the offer. Ore marks which parts carry the ad.</p></div>
+        <div class="step"><span class="n">Step 3</span><h3>Prove</h3><p>Each idea comes with its receipts: days live, versions, other brands on the same angle, and quotes from real customers with links.</p></div>
+        <div class="step"><span class="n">Step 4</span><h3>Brief</h3><p>You get ready-to-film scripts for your product, written for your creators, with the "why we're making this" your team will ask for.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="breakdown" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">A breakdown</p>
+        <h2>The why is the part you can actually use.</h2>
+        <p>A rank tells you an ad is spending. A breakdown tells you what to copy. Here is the breakdown of a real ad a GLP-1 clinic has kept at #1 for 37 days, and just launched two new versions of.</p>
+      </div>
+      <div class="breakdown">
+        <div class="phone">
+          <p class="label">Spoken hook · frame 0</p>
+          <q>Nobody told me what to expect when I started this medication.</q>
+          <div class="stats"><span>#1 in its top 10</span><span>live 37 days</span><span>2 new versions</span></div>
+        </div>
+        <div class="panel" style="overflow-x:auto">
+          <table class="table">
+            <thead><tr><th>Element</th><th>What Ore found</th></tr></thead>
+            <tbody>
+              <tr><td>Hook <span class="load">carries it</span></td><td>It repeats the viewer's own complaint word for word, so new patients feel seen in the first second.</td></tr>
+              <tr><td>Structure</td><td>Complaint, then a list of what nobody explained, then the fix. Each item is a small "that's me."</td></tr>
+              <tr><td>Proof</td><td>A doctor's authority. The brand made the topic its whole week: nausea and plateau ads followed.</td></tr>
+              <tr><td>Why it's still running</td><td>The complaint doesn't go stale. Every week a new wave of people starts the shot and feels the same thing.</td></tr>
+              <tr><td>What to take</td><td>Open on the exact thing your customer says about the gap. Customers in our quotes say "nobody told me" too.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="learns" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">It learns</p>
+        <h2>Give a note once. <span class="grad-text">Ore follows it from then on.</span></h2>
+        <p>Every note you leave on a brief becomes a rule Ore follows for your brand. The scripts fit you better every week, and you stop repeating yourself.</p>
+      </div>
+      <div class="learn">
+        <div class="panel"><span class="label">Your note</span><p>"The hook feels like an ad. People scroll before they know what it's about."</p></div>
+        <div class="panel"><span class="label">Ore's new rule</span><p>Open with curiosity. Don't name the product or the verdict in the first line.</p></div>
+        <div class="panel after"><span class="label">Next week's hook</span><p>"Your doctor handed you your GLP-1, told you once a week, and that was it."</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Compared</p>
+        <h2>An ad library shows you what's running. Ore shows you what to make next.</h2>
+      </div>
+      <div class="compare">
+        <table>
+          <thead><tr><th>What you need</th><th>Ad library or swipe file</th><th>Ore</th></tr></thead>
+          <tbody>
+            <tr><td>Spot new winners</td><td>Sort by days running</td><td>Alert when a new ad breaks into a top 10</td></tr>
+            <tr><td>Know why it works</td><td>A transcript, if you're lucky</td><td>Element-by-element breakdown</td></tr>
+            <tr><td>Proof for your team</td><td>Screenshots</td><td>Days live, versions, real customer quotes</td></tr>
+            <tr><td>What to make</td><td>Up to you</td><td>Ready-to-film briefs for your product</td></tr>
+            <tr><td>Your feedback</td><td>Forgotten</td><td>Turned into rules, every time</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="who" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Who it's for</p>
+        <h2>Built for teams that need new ads every week.</h2>
+      </div>
+      <div class="who">
+        <div class="panel">
+          <h3>Brands running UGC ads</h3>
+          <ul>
+            <li>You have creators ready to film and not enough ideas worth filming.</li>
+            <li>Your best ads are fading and you're guessing at what's next.</li>
+            <li>You want ideas that come with a reason, before you spend on them.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Creative strategists and agencies</h3>
+          <ul>
+            <li>You spend your week scrolling ad libraries for every client.</li>
+            <li>Clients ask "why this idea?" and you need receipts.</li>
+            <li>You want the research done so you can spend your time on the ideas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="teardown" style="padding-top:0">
+    <div class="wrap">
+      <div class="final">
+        <p class="label" style="color:rgba(255,255,255,.85)">Free breakout teardown</p>
+        <h2 style="margin-top:12px">Name 3 competitors. See what's working for them this week.</h2>
+        <p>We'll run them through Ore and send you a short teardown. No call needed to get it.</p>
+        <ul>
+          <li>The new ads breaking into their top 10s</li>
+          <li>Why each one works, element by element</li>
+          <li>One ready-to-film brief for your product</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-white" href="#teardown">Request your teardown</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span>Ore</span>
+  <span>Built with Ore. The copy on this page was written with it too.</span>
+</footer>
