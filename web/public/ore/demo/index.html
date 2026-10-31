@@ -42,14 +42,19 @@ input,textarea{font:inherit;font-size:16px;color:var(--ink)}
 .gchip{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;padding:12px 18px;border-radius:12px;border:0;color:#fff;background:linear-gradient(110deg,var(--cobalt),var(--violet) 60%,var(--rose));white-space:nowrap;transition:transform .12s ease}
 .btn:active{transform:scale(.97)}
-.btn.white{background:#fff;color:var(--ink)}
+.btn.white{background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 12px 30px -14px rgba(15,28,51,.4)}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .btn.glass{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);color:#fff}
 .btn:disabled{opacity:.55;cursor:default}
 .grid2{display:grid;grid-template-columns:1.2fr .85fr;gap:22px;align-items:start}
-.fcard{background:rgba(255,255,255,.96);color:var(--ink);border-radius:18px;padding:16px;display:grid;gap:8px}
-.fcard .eyebrow{color:var(--muted)}
-.fcard textarea,.fcard input{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--soft);resize:vertical}
+.fcard{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.42);color:#fff;border-radius:18px;padding:16px;display:grid;gap:8px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.fcard .eyebrow{color:rgba(255,255,255,.85)}
+.fcard textarea,.fcard input{width:100%;border:1px solid rgba(255,255,255,.5);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.78);resize:vertical}
+.fcard textarea:focus,.fcard input:focus{background:rgba(255,255,255,.92);outline:2px solid rgba(255,255,255,.9);outline-offset:1px}
+.fcard .cchip{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5);color:#fff}
+.fcard .cchip b{color:#fff!important;opacity:.85}
+.fcard .cchip button{color:rgba(255,255,255,.85)}
+.fcard .btn.ghost{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:#fff}
 .glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:22px;padding:22px}
 .cchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .cchip{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:5px 6px 5px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line)}
@@ -113,10 +118,12 @@ details.why p{font-size:13px;color:var(--muted);margin:6px 0 0}
 .ring{display:grid;gap:8px;margin-top:14px}
 .loading{display:flex;gap:12px;align-items:center;padding:30px 0;color:var(--muted)}
 .loading i{width:20px;height:20px;border-radius:50%;border:2px solid var(--cobalt);border-right-color:transparent;animation:spin 1s linear infinite}
-.proto{position:fixed;z-index:40;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:999px;background:rgba(15,28,51,.85);color:#fff}
+.proto{position:fixed;z-index:40;right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));opacity:.85;font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:999px;background:rgba(15,28,51,.85);color:#fff}
 .proto button{border:0;background:none;color:#9fc3ff;font-family:var(--mono);font-size:11px;padding:0 0 0 8px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:980px){
+  body{padding-bottom:56px}
+  #go-research{width:100%}
   .grid2,.feed,.brief{grid-template-columns:1fr}
   .cards,.quotes{grid-template-columns:1fr}
   .ln{grid-template-columns:52px 1fr}
@@ -141,7 +148,7 @@ details.why p{font-size:13px;color:var(--muted);margin:6px 0 0}
         <p class="sub">Tell Ore about your product in a sentence or two. It finds your competitors, reads what your buyers say, studies the ads that are winning, and builds your brand brain.</p>
         <div style="display:grid;gap:12px;margin-top:22px">
           <label class="fcard"><span class="eyebrow">Brand name</span><input id="f-name" value="PeptidePal"></label>
-          <label class="fcard"><span class="eyebrow">Your product</span><textarea id="f-product" rows="3">An iPhone app that tracks peptide and GLP-1 doses, schedules, vials and protein in one place, with an AI assistant.</textarea></label>
+          <label class="fcard"><span class="eyebrow">Your product</span><textarea id="f-product" rows="4">An iPhone app that tracks peptide and GLP-1 doses, schedules, vials and protein in one place, with an AI assistant.</textarea></label>
           <label class="fcard"><span class="eyebrow">Website or app store link (optional)</span><input id="f-link" value="peptidepal.app"></label>
           <div class="fcard"><span class="eyebrow">Competitors you already know (optional). Ore finds the rest.</span>
             <div class="cchips" id="known"></div>
