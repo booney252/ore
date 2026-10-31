@@ -4,9 +4,9 @@ import Tabs from "./Tabs";
 export function Logo() {
   return (
     <Link href="/app" className="oa-logo" aria-label="Ore">
-      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-        <path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" strokeWidth="2" />
-        <path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" strokeWidth="1.4" opacity=".7" />
+      <svg viewBox="42 42 116 116" fill="none" aria-hidden="true">
+        <circle cx="100" cy="100" r="46" stroke="#fff" strokeWidth="17" />
+        <path d="M148 46 C150 60 152 62 166 64 C152 66 150 68 148 82 C146 68 144 66 130 64 C144 62 146 60 148 46 Z" fill="#fff" transform="translate(100 100) scale(1.05) translate(-148 -64)" />
       </svg>
       Ore
     </Link>
