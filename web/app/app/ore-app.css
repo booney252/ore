@@ -158,3 +158,19 @@
   .oa-tabs a { flex: 1; text-align: center; padding: 8px 4px; }
   .oa-sticky { position: static; }
 }
+
+/* the glow dissolves into the page instead of stopping at a hard line */
+.oa-band { padding-bottom: 150px; }
+.oa-band > .oa-wrap { position: relative; z-index: 1; }
+.oa-band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 190px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(244, 247, 251, 0) 0%, rgba(244, 247, 251, 0.55) 45%, rgba(244, 247, 251, 0.9) 75%, var(--oa-bg) 100%);
+}
+.oa-band.full::after { display: none; }
+.oa-main { margin-top: -110px; }
