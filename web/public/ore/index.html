@@ -136,6 +136,29 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
+
+.proofbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.proofbar div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:4px;min-width:0}
+.proofbar b{font-family:var(--display);font-weight:300;font-size:44px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.proofbar span{color:var(--muted);font-size:14px}
+.secret{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;padding:36px;border-radius:24px;background:var(--surface);border:1px solid var(--line)}
+.secret h2{font-size:clamp(28px,3.4vw,42px)}
+.secret-points{display:grid;gap:14px;color:var(--muted);font-size:17px}
+.notfor{margin-top:20px;color:var(--muted);font-size:16px;max-width:70ch}
+.notfor b{color:var(--ink)}
+.next{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:n}
+.next li{counter-increment:n;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:6px;min-width:0}
+.next li::before{content:counter(n);font-family:var(--display);font-weight:300;font-size:34px;line-height:1;color:var(--cobalt)}
+.next b{font-size:17px}
+.next span{color:var(--muted);font-size:15px}
+.faq{display:grid;gap:10px;max-width:820px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 20px}
+.faq summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:600;font-size:17px;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);color:var(--muted)}
+.faq details[open] summary::after{content:"\2212"}
+.faq details p{color:var(--muted);padding:0 0 18px;max-width:70ch}
+@media (max-width:900px){.proofbar,.next{grid-template-columns:1fr}.secret{grid-template-columns:1fr;padding:24px;gap:18px}}
 /* ---------- iPhone ---------- */
 .sticky-cta{display:none}
 @media (max-width:640px){
@@ -197,6 +220,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="hero-grid" id="top">
       <div>
         <p class="label" style="color:rgba(255,255,255,.85)">Creative strategy for brands running UGC ads</p>
+        <!-- Headline to A/B test: "Your competitors found their next winning ad this week. Did you?" -->
         <h1 style="margin-top:14px">Your competitor just found a new winning ad. Ore tells you which one, and why.</h1>
         <p class="sub">Most "winning ads" are old ads nobody turned off. Ore follows the Breakout Signal instead: the new ads your competitors just pushed into their own top 10. You get each one broken down, the proof, and briefs your creators can film this week.</p>
         <div class="cta-row">
@@ -236,6 +260,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
         <p class="label">The problem</p>
         <h2>The <span class="grad-text">Legacy Ad Trap.</span></h2>
         <p>Everyone finds "winners" by sorting an ad library by longest running. Those are mostly ads brands forgot to turn off, so teams copy what worked months ago. And when they do find a real winner, they copy its surface, the format and the wording, without knowing which parts carry it.</p>
+        <p><strong style="color:var(--ink)">Every week you copy an old ad, you pay to learn what your competitor already knows.</strong></p>
       </div>
       <div class="problem">
         <div class="panel">
@@ -256,6 +281,11 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
           </div>
           <p class="note">A brand only pushes a new ad into its own top 10 by putting real money behind it. Ore flags it the day it happens.</p>
         </div>
+      </div>
+      <div class="proofbar">
+        <div><b>49</b><span>GLP-1 and wellness advertisers in one market Ore watches</span></div>
+        <div><b>341</b><span>ads in their top 10s at the last check</span></div>
+        <div><b>152</b><span>of those were under 30 days old. Almost half of what's working right now is new.</span></div>
       </div>
     </div>
   </section>
@@ -340,6 +370,22 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     </div>
   </section>
 
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="secret">
+        <div>
+          <p class="label">Your edge stays yours</p>
+          <h2 style="margin-top:12px">Two brands can watch the same competitors. <span class="grad-text">They never get the same brief.</span></h2>
+        </div>
+        <div class="secret-points">
+          <p>Every brief is written from your brand's own research, your customers' words and the notes you've given Ore. That memory belongs to your brand alone.</p>
+          <p>Your research, your briefs and your rules are never shown to anyone else on Ore, including a competitor who signs up tomorrow.</p>
+          <p>The more you use it, the more your briefs sound like you and nobody else.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="who" style="padding-top:0">
     <div class="wrap">
       <div class="sec-head">
@@ -364,6 +410,38 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
           </ul>
         </div>
       </div>
+      <p class="notfor"><b>Not for you if</b> you don't run UGC or paid social ads, or you want someone to film and edit the videos for you. Ore tells you what to make. Your creators make it.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">What happens next</p>
+        <h2>Three steps, and the first one takes a minute.</h2>
+      </div>
+      <ol class="next">
+        <li><b>Send 3 competitors.</b><span>Their names or ad library links. That's all we need.</span></li>
+        <li><b>Get your teardown in a couple of days.</b><span>Their new breakouts, why each one works, and one brief for your product.</span></li>
+        <li><b>Keep it either way.</b><span>If it's useful, we'll set up Ore for your brand. If not, you got a free look at your market.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="label">Questions</p>
+        <h2>What people ask first.</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Does AI write my ads?</summary><p>Ore does the research and drafts the briefs. You choose the ideas and edit the words, and every edit teaches it your brand. The judgment stays with you.</p></details>
+        <details><summary>How is this different from an ad library or a swipe file?</summary><p>Those show you what's running. Ore watches each competitor's top 10 every day, flags the new ads they just put money behind, explains which parts make them work, and turns that into briefs for your product.</p></details>
+        <details><summary>Which platforms does it cover?</summary><p>Meta ads (Facebook and Instagram), plus organic Reels, TikToks and YouTube Shorts from the creator accounts you want to learn from.</p></details>
+        <details><summary>Do I need to connect my ad account?</summary><p>No. Ore works from public ad libraries and public posts.</p></details>
+        <details><summary>Will my competitors see my briefs?</summary><p>No. Your research, notes and briefs are private to your brand, and your briefs are written from your own brand memory.</p></details>
+        <details><summary>What does it cost?</summary><p>The teardown is free. If you want Ore for your brand after that, we'll walk you through the plans.</p></details>
+      </div>
     </div>
   </section>
 
@@ -372,7 +450,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
       <div class="final">
         <p class="label" style="color:rgba(255,255,255,.85)">Free breakout teardown</p>
         <h2 style="margin-top:12px">Name 3 competitors. See what's working for them this week.</h2>
-        <p>We'll run them through Ore and send you a short teardown. No call needed to get it.</p>
+        <p>We'll run them through Ore and send you a short teardown. No call. No card. If it isn't useful, you've lost five minutes.</p>
         <ul>
           <li>The new ads breaking into their top 10s</li>
           <li>Why each one works, element by element</li>
@@ -397,7 +475,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
 })();
 </script>
 <footer class="wrap">
-  <span>Ore</span>
+  <span>Ore. Built by a UGC creative strategist who got tired of scrolling ad libraries.</span>
   <span>Built with Ore. The copy on this page was written with it too.</span>
 </footer>
 </body></html>
