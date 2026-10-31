@@ -13,6 +13,9 @@ export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const home = `/b/${who.brand}`;
   if (path === home || path.startsWith(`${home}/`)) return NextResponse.next();
+  // the customer app: the guest's own brand only
+  const app = `/app/${who.brand}`;
+  if (path === "/app" || path === app || path.startsWith(`${app}/`)) return NextResponse.next();
   if (path === "/api/logout" || path === "/api/gdoc/callback") return NextResponse.next();
   if (path === "/api/doc" || path === "/api/gdoc") {
     return req.nextUrl.searchParams.get("brand") === who.brand
