@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ore App Mockup</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: three phone screens side by side; a toggle swaps the page ground between white-with-glow and light-blue. */
+:root{
+  --page:#eef2f7; --ink:#0f1c33; --muted:#5d6b82; --line:rgba(15,28,51,.09);
+  --cobalt:#2d63d8; --rose:#f06aa8; --ember:#ff8a4c; --sky:#3fb7ec; --violet:#7a5ce6;
+  --display:"Urbanist",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.top{max-width:1240px;margin:0 auto;padding-block:36px 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:end}
+.top h1{font-family:var(--display);font-weight:300;font-size:clamp(30px,4vw,44px);letter-spacing:-.02em;margin:0}
+.top p{color:var(--muted);margin:6px 0 0;max-width:60ch}
+.toggle{display:flex;gap:4px;padding:4px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.toggle button{font:600 14px var(--body);border:0;background:none;padding:9px 14px;border-radius:9px;cursor:pointer;color:var(--muted)}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.toggle button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.stage{max-width:1240px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;justify-items:center}
+.cap{width:100%;max-width:360px;display:grid;gap:12px}
+.cap h2{font:600 15px var(--body);margin:0}
+.cap p{color:var(--muted);font-size:14px;margin:0}
+
+/* the phone */
+.phone{width:100%;max-width:360px;aspect-ratio:9/19.2;border-radius:44px;padding:10px;background:#0c1220;box-shadow:0 40px 80px -40px rgba(15,28,51,.55)}
+.screen{position:relative;height:100%;border-radius:35px;overflow:hidden;display:flex;flex-direction:column;background:var(--ground)}
+.screen::before{content:"";position:absolute;inset:0 0 auto 0;height:var(--glow-h);pointer-events:none;background:var(--glow)}
+.screen>*{position:relative}
+body[data-look="white"] .screen{--ground:#ffffff;--glow-h:46%;--glow:
+  radial-gradient(70% 55% at 18% 18%,rgba(63,183,236,.55),transparent 70%),
+  radial-gradient(60% 50% at 75% 10%,rgba(240,106,168,.38),transparent 70%),
+  radial-gradient(55% 45% at 55% 40%,rgba(255,138,76,.22),transparent 70%)}
+body[data-look="blue"] .screen{--ground:#eaf3fb;--glow-h:100%;--glow:
+  radial-gradient(70% 40% at 15% 12%,rgba(63,183,236,.7),transparent 70%),
+  radial-gradient(60% 35% at 85% 20%,rgba(240,106,168,.45),transparent 70%),
+  radial-gradient(70% 40% at 30% 85%,rgba(255,138,76,.28),transparent 70%),
+  linear-gradient(180deg,#cfe9fa,#eaf3fb 45%,#e4eefb)}
+.status{display:flex;justify-content:space-between;padding:14px 26px 6px;font:600 13px var(--body)}
+.body{flex:1;min-height:0;overflow:hidden;padding:8px 18px 0;display:grid;gap:12px;align-content:start}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cap .h{font-family:var(--display);font-weight:400;font-size:27px;line-height:1.08;letter-spacing:-.02em;margin:2px 0 0}
+.card{background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.9);border-radius:20px;padding:14px;box-shadow:0 12px 30px -20px rgba(15,28,51,.35);display:grid;gap:8px;min-width:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.small{font-size:12.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:5px 10px;border-radius:999px;background:#f1f5fb;border:1px solid var(--line);white-space:nowrap}
+.chip.x::after{content:" ×";color:var(--muted)}
+.chip.add{border-style:dashed;color:var(--cobalt);background:none}
+.ok{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--cobalt);color:#fff;font-size:13px;flex:none}
+.btn{display:flex;justify-content:center;align-items:center;min-height:46px;border-radius:14px;font-weight:600;font-size:15px;color:#fff;background:linear-gradient(110deg,var(--cobalt),var(--violet) 60%,var(--rose))}
+.progress{display:grid;gap:7px}
+.step{display:flex;gap:9px;align-items:center;font-size:13px}
+.step i{width:16px;height:16px;border-radius:50%;flex:none;border:2px solid var(--line)}
+.step.done i{background:var(--cobalt);border-color:var(--cobalt)}
+.step.now i{border-color:var(--cobalt);border-right-color:transparent;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.step.now i{animation:none}}
+.thumb{width:62px;height:84px;border-radius:12px;flex:none;background:linear-gradient(160deg,#ffd2c2,#f7a6c8 50%,#8fb4f2)}
+.thumb.b{background:linear-gradient(160deg,#c9e8ff,#8fb4f2 55%,#c3b5f5)}
+.thumb.c{background:linear-gradient(160deg,#ffe2c4,#ffb38a 50%,#f48fb1)}
+.bo{display:flex;gap:12px;align-items:flex-start}
+.bo b{font-size:13.5px;line-height:1.3;display:block}
+.tag{font-family:var(--mono);font-size:10px;padding:3px 7px;border-radius:999px;background:rgba(45,99,216,.1);color:var(--cobalt);white-space:nowrap}
+.tag.rise{background:rgba(240,106,168,.12);color:#c4307a}
+.why{font-size:12.5px;color:var(--muted)}
+.make{font-size:12.5px;font-weight:600;color:var(--cobalt)}
+.line{padding:9px 11px;border-radius:12px;background:#f4f7fb;font-size:13.5px}
+.line.sel{background:rgba(45,99,216,.1);outline:1.5px solid rgba(45,99,216,.45)}
+.line small{display:block;font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:2px}
+.react{display:flex;flex-wrap:wrap;gap:6px}
+.react span{font-size:12px;padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.react span.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.toast{border-radius:14px;padding:10px 12px;font-size:12.5px;color:#fff;background:rgba(15,28,51,.92);display:flex;gap:8px;align-items:flex-start}
+.tabs{margin:10px 12px 12px;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;border-radius:22px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.95);box-shadow:0 12px 26px -16px rgba(15,28,51,.35)}
+.tabs span{display:grid;justify-items:center;gap:2px;font-size:10.5px;font-weight:600;color:var(--muted);padding:6px 0;border-radius:14px}
+.tabs span.on{color:var(--cobalt);background:rgba(45,99,216,.09)}
+.tabs svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6}
+.note{max-width:1240px;margin:0 auto;padding-bottom:48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));color:var(--muted);font-size:14px}
+@media (max-width:1000px){.stage{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body data-look="white">
+<div class="top">
+  <div>
+    <h1>Ore for customers</h1>
+    <p>Three screens: onboarding, the weekly breakout feed, and a brief with tap-to-react feedback. Flip the toggle to compare the two looks.</p>
+  </div>
+  <div class="toggle" role="group" aria-label="Look">
+    <button type="button" id="look-white" aria-pressed="true" data-look="white">White + glow</button>
+    <button type="button" id="look-blue" aria-pressed="false" data-look="blue">Light blue</button>
+  </div>
+</div>
+
+<div class="stage">
+  <!-- 1. onboarding -->
+  <div class="cap">
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>●●●</span></div>
+      <div class="body">
+        <div><div class="eyebrow">Step 2 of 3</div><p class="h">Here's what I found. Fix anything that's off.</p></div>
+        <div class="card"><div class="row"><span class="eyebrow">What you sell</span><span class="ok">✓</span></div><span>An iPhone app that tracks peptide and GLP-1 doses, schedules and protein in one place.</span></div>
+        <div class="card"><div class="row"><span class="eyebrow">Who buys it</span><span class="ok">✓</span></div><span>Adults 30-60 on one or more weekly shots who track it all on alarms, notes and spreadsheets.</span></div>
+        <div class="card"><div class="eyebrow">Competitors I found</div><div class="chips"><span class="chip x">Pep AI</span><span class="chip x">PeptIQ</span><span class="chip x">Regimen</span><span class="chip x">Shotsy</span><span class="chip x">Peptide Tracker</span><span class="chip add">+ Add</span></div></div>
+        <div class="card"><div class="eyebrow">Building your brand brain</div>
+          <div class="progress">
+            <div class="step done"><i></i>Read 1,344 customer reviews</div>
+            <div class="step done"><i></i>Found 43 advertisers in your market</div>
+            <div class="step now"><i></i>Breaking down their newest winners…</div>
+          </div>
+        </div>
+        <div class="btn">Looks right</div>
+      </div>
+    </div></div>
+    <h2>1. "Here's what I found"</h2>
+    <p>Paste a link and Ore drafts the brand. The customer taps to fix it instead of filling in a form, and watches the research build.</p>
+  </div>
+
+  <!-- 2. this week feed -->
+  <div class="cap">
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>●●●</span></div>
+      <div class="body">
+        <div><div class="eyebrow">This week · PeptidePal</div><p class="h">3 new ads broke into your market's top 10s.</p></div>
+        <div class="card"><div class="bo"><div class="thumb"></div><div style="display:grid;gap:5px;min-width:0"><div class="row"><span class="small">GLP-1 clinic</span><span class="tag">New · #2</span></div><b>"Nausea is the number one reason people quit their GLP-1."</b><span class="why">Says the viewer's own fear out loud, then promises it's fixable.</span><span class="make">Make this for my brand →</span></div></div></div>
+        <div class="card"><div class="bo"><div class="thumb b"></div><div style="display:grid;gap:5px;min-width:0"><div class="row"><span class="small">Tracker app</span><span class="tag rise">Rising</span></div><b>"I thought starting a GLP-1 would be hard until I found this app."</b><span class="why">Before and after in one line, product held back.</span><span class="make">Make this for my brand →</span></div></div></div>
+        <div class="card"><div class="bo"><div class="thumb c"></div><div style="display:grid;gap:5px;min-width:0"><div class="row"><span class="small">Hair supplement</span><span class="tag">Proven</span></div><b>"If your hair is coming out in the shower every day…"</b><span class="why">Live 153 days. The checklist hook still pulls.</span><span class="make">Make this for my brand →</span></div></div></div>
+      </div>
+      <div class="tabs">
+        <span class="on"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-6 4 12 2-6h4"/></svg>This week</span>
+        <span><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3Z"/></svg>Ideas</span>
+        <span><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z M14 3v4h4"/></svg>Briefs</span>
+        <span><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/></svg>My brand</span>
+      </div>
+    </div></div>
+    <h2>2. The "This week" feed</h2>
+    <p>Home is a short list of breakouts with one line of why each works and one button. Reports, lanes and grades sit behind a tap.</p>
+  </div>
+
+  <!-- 3. brief with feedback -->
+  <div class="cap">
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>●●●</span></div>
+      <div class="body">
+        <div><div class="eyebrow">Brief · from the nausea breakout</div><p class="h">Your shot has a schedule.</p></div>
+        <div class="card">
+          <div class="line"><small>0-4s · hook</small>"If you're on a GLP-1 and Wednesdays wreck you, this is why."</div>
+          <div class="line sel"><small>4-12s</small>"So I downloaded this app, and honestly it's a game changer for my whole routine."</div>
+          <div class="react"><span class="on">Too salesy</span><span>Weak hook</span><span>Love this</span><span>Write a note</span></div>
+          <div class="line"><small>12-20s</small>"Your shot peaks a day or two after you take it. That's the day you can't eat."</div>
+        </div>
+        <div class="toast"><span>✓</span><span>Got it. I'll keep the app out of the first 15 seconds from now on.</span></div>
+        <div class="btn">Share with creator</div>
+      </div>
+      <div class="tabs">
+        <span><svg viewBox="0 0 24 24"><path d="M4 12h4l2-6 4 12 2-6h4"/></svg>This week</span>
+        <span><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3Z"/></svg>Ideas</span>
+        <span class="on"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z M14 3v4h4"/></svg>Briefs</span>
+        <span><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="4"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/></svg>My brand</span>
+      </div>
+    </div></div>
+    <h2>3. A brief that learns</h2>
+    <p>Tap a line, tap a reaction. Ore answers with what it learned, and the rule shows up on the My brand page.</p>
+  </div>
+</div>
+<p class="note">Mockup only. Example content uses PeptidePal's market; nothing here is wired up.</p>
+
+<script>
+document.querySelectorAll('.toggle button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.body.setAttribute('data-look',b.dataset.look);
+    document.querySelectorAll('.toggle button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+  });
+});
+</script>
+</body>
+
+</html>
