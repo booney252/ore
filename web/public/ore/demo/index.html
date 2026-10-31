@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#3fb7ec">
+<title>Ore Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a clickable prototype. The slatted glow fills setup; inside the app it is the header band and white cards rise out of it. */
+:root{
+  --bg:#f3f6fa; --surface:#fff; --ink:#0f1c33; --muted:#5d6b82; --line:rgba(15,28,51,.09); --soft:#f2f5fa;
+  --cobalt:#2d63d8; --violet:#7a5ce6; --rose:#f06aa8; --ember:#ff8a4c; --sky:#3fb7ec;
+  --display:"Urbanist",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --glow:radial-gradient(38% 120% at 30% 70%,rgba(255,138,76,.85),transparent 70%),radial-gradient(30% 110% at 20% 30%,rgba(240,106,168,.8),transparent 70%),radial-gradient(34% 140% at 62% 50%,rgba(45,99,216,.9),transparent 70%),linear-gradient(115deg,#57c7f2 0%,#3fb7ec 35%,#2d8fe0 65%,#46b9ee 100%);
+  --ribs:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 3px,rgba(255,255,255,0) 3px 12px,rgba(0,40,90,.035) 12px 15px,rgba(255,255,255,0) 15px 22px);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer}
+input,textarea{font:inherit;font-size:16px;color:var(--ink)}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.view{display:none}.view.on{display:block}
+.pad{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.band{position:relative;color:#fff;background:var(--ribs),var(--glow)}
+.full{min-height:100vh;padding-bottom:40px}
+.nav{display:flex;align-items:center;flex-wrap:wrap;gap:14px;padding-top:max(18px,env(safe-area-inset-top,0px));padding-bottom:18px;max-width:1240px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:21px}
+.logo svg{width:24px;height:24px}
+.pills{display:flex;gap:3px;padding:4px;border-radius:13px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38)}
+.pills button{border:0;background:none;color:#fff;font-size:14px;padding:7px 14px;border-radius:9px}
+.pills button[aria-current="page"]{background:#fff;color:var(--ink);font-weight:600}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;padding:5px 6px 5px 12px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38)}
+.avatar{width:28px;height:28px;border-radius:50%;background:#fff;color:var(--cobalt);display:grid;place-items:center;font-weight:600;font-size:12px}
+.inner{max-width:1240px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.band .eyebrow{color:rgba(255,255,255,.85)}
+.h1{font-family:var(--display);font-weight:300;font-size:clamp(34px,4.6vw,52px);line-height:1.05;letter-spacing:-.02em;margin:10px 0 0;max-width:22ch;text-wrap:balance}
+.sub{margin-top:12px;max-width:62ch;color:rgba(255,255,255,.93);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.gchip{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;padding:12px 18px;border-radius:12px;border:0;color:#fff;background:linear-gradient(110deg,var(--cobalt),var(--violet) 60%,var(--rose));white-space:nowrap;transition:transform .12s ease}
+.btn:active{transform:scale(.97)}
+.btn.white{background:#fff;color:var(--ink)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.glass{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.grid2{display:grid;grid-template-columns:1.2fr .85fr;gap:22px;align-items:start}
+.fcard{background:rgba(255,255,255,.96);color:var(--ink);border-radius:18px;padding:16px;display:grid;gap:8px}
+.fcard .eyebrow{color:var(--muted)}
+.fcard textarea,.fcard input{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--soft);resize:vertical}
+.glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:22px;padding:22px}
+.cchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.cchip{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:5px 6px 5px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line)}
+.cchip button{border:0;background:none;color:var(--muted);padding:0 4px;font-size:15px;line-height:1}
+.cchip.mine{border-color:rgba(45,99,216,.4)}
+.addrow{display:flex;gap:6px;flex-wrap:wrap}
+.addrow input{flex:1;min-width:140px}
+.prog{display:grid;gap:12px}
+.pstep{display:flex;gap:12px;align-items:flex-start;opacity:.55;transition:opacity .3s}
+.pstep i{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid rgba(255,255,255,.6);margin-top:2px}
+.pstep.done{opacity:1}.pstep.done i{background:#fff;border-color:#fff}
+.pstep.now{opacity:1}.pstep.now i{border-color:#fff;border-right-color:transparent;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pstep b{display:block;font-weight:600}
+.pstep span{font-size:13px;color:rgba(255,255,255,.86)}
+.content{position:relative;margin-top:-70px;padding-bottom:60px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 22px 50px -32px rgba(15,28,51,.35);min-width:0}
+.card h3{font-family:var(--display);font-weight:400;font-size:21px;margin:0}
+.muted{color:var(--muted)}.small{font-size:13px}
+.feed{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.bo{display:grid;gap:10px;align-content:start}
+.thumb{aspect-ratio:4/3;border-radius:14px;position:relative;background:linear-gradient(160deg,#ffd2c2,#f7a6c8 50%,#8fb4f2)}
+.thumb.b{background:linear-gradient(160deg,#c9e8ff,#8fb4f2 55%,#c3b5f5)}
+.thumb.c{background:linear-gradient(160deg,#ffe2c4,#ffb38a 50%,#f48fb1)}
+.tag{position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--cobalt)}
+.bo q{font-family:var(--display);font-size:20px;line-height:1.2;quotes:"\201C" "\201D"}
+.proof{display:flex;flex-wrap:wrap;gap:6px}
+.proof span{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--soft);border-radius:999px;padding:3px 9px}
+details.why summary{cursor:pointer;font-size:13px;color:var(--cobalt);font-weight:600;list-style:none}
+details.why summary::-webkit-details-marker{display:none}
+details.why p{font-size:13px;color:var(--muted);margin:6px 0 0}
+.side{display:grid;gap:14px}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:9px 0;border-top:1px solid var(--line)}
+.kv b{font-variant-numeric:tabular-nums}
+.list{display:grid;gap:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--soft)}
+.row b{display:block}
+.brief{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+.hooks{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px}
+.hooks button{font-size:13px;padding:7px 12px;border-radius:12px;background:var(--soft);border:1px solid var(--line)}
+.hooks button[aria-pressed="true"]{background:#fff;border-color:rgba(45,99,216,.5);color:var(--cobalt);font-weight:600}
+.lines{display:grid;gap:8px}
+.ln{display:grid;grid-template-columns:62px 1fr 180px;gap:14px;padding:12px 14px;border-radius:14px;background:var(--soft);font-size:14.5px;text-align:left;border:0;width:100%}
+.ln .t{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ln .os{font-size:13px;color:var(--muted)}
+.ln[aria-pressed="true"]{background:rgba(45,99,216,.08);outline:1.5px solid rgba(45,99,216,.45)}
+.ln.changed{animation:flash 1.2s ease}
+@keyframes flash{0%{background:rgba(240,106,168,.22)}100%{background:var(--soft)}}
+.react{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 4px 76px}
+.react button{font-size:13px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.react input{flex:1;min-width:180px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:14px}
+.toast{position:fixed;z-index:30;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:all .25s ease;display:flex;gap:10px;align-items:flex-start;max-width:min(520px,calc(100vw - 32px));border-radius:14px;padding:12px 16px;font-size:14px;color:#fff;background:rgba(15,28,51,.95);box-shadow:0 20px 40px -20px rgba(15,28,51,.6)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.rule{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;font-size:14px;padding:10px 0;border-top:1px solid var(--line)}
+.rule.new span{color:var(--cobalt);font-weight:600}
+.rule button{border:0;background:none;color:var(--muted);font-size:13px}
+.quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.quote{padding:12px 14px;border-radius:14px;background:var(--soft);font-size:14px}
+.quote span{display:block;margin-top:6px;font-size:12px;color:var(--muted)}
+.ring{display:grid;gap:8px;margin-top:14px}
+.loading{display:flex;gap:12px;align-items:center;padding:30px 0;color:var(--muted)}
+.loading i{width:20px;height:20px;border-radius:50%;border:2px solid var(--cobalt);border-right-color:transparent;animation:spin 1s linear infinite}
+.proto{position:fixed;z-index:40;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:999px;background:rgba(15,28,51,.85);color:#fff}
+.proto button{border:0;background:none;color:#9fc3ff;font-family:var(--mono);font-size:11px;padding:0 0 0 8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:980px){
+  .grid2,.feed,.brief{grid-template-columns:1fr}
+  .cards,.quotes{grid-template-columns:1fr}
+  .ln{grid-template-columns:52px 1fr}
+  .ln .os{grid-column:2}
+  .react{margin-left:0}
+  .pills{order:3;width:100%;justify-content:space-between}
+  .pills button{flex:1;padding:8px 6px}
+}
+</style>
+</head>
+<body>
+<div class="proto">Prototype · sample data<button type="button" id="restart">Restart</button></div>
+
+<!-- SETUP -->
+<section class="view on" id="v-setup">
+  <div class="band full pad">
+    <div class="nav"><span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span></div>
+    <div class="inner grid2" style="margin-top:20px">
+      <div>
+        <p class="eyebrow">New brand</p>
+        <h1 class="h1">What do you sell?</h1>
+        <p class="sub">Tell Ore about your product in a sentence or two. It finds your competitors, reads what your buyers say, studies the ads that are winning, and builds your brand brain.</p>
+        <div style="display:grid;gap:12px;margin-top:22px">
+          <label class="fcard"><span class="eyebrow">Brand name</span><input id="f-name" value="PeptidePal"></label>
+          <label class="fcard"><span class="eyebrow">Your product</span><textarea id="f-product" rows="3">An iPhone app that tracks peptide and GLP-1 doses, schedules, vials and protein in one place, with an AI assistant.</textarea></label>
+          <label class="fcard"><span class="eyebrow">Website or app store link (optional)</span><input id="f-link" value="peptidepal.app"></label>
+          <div class="fcard"><span class="eyebrow">Competitors you already know (optional). Ore finds the rest.</span>
+            <div class="cchips" id="known"></div>
+            <div class="addrow"><input id="f-comp" placeholder="Add a competitor" aria-label="Add a competitor"><button type="button" class="btn ghost" id="add-known">Add</button></div>
+          </div>
+          <div><button type="button" class="btn white" id="go-research">Research my market</button></div>
+        </div>
+      </div>
+      <div class="glass">
+        <p class="eyebrow">What Ore will build</p>
+        <div class="prog" style="margin-top:14px">
+          <div class="pstep done"><i></i><div><b>Competitor map</b><span>Direct, adjacent and nearby brands, plus any you add</span></div></div>
+          <div class="pstep done"><i></i><div><b>Customer research</b><span>Real quotes from reviews and comments, with sources</span></div></div>
+          <div class="pstep done"><i></i><div><b>Winning ads</b><span>Every competitor's top ads, broken down</span></div></div>
+          <div class="pstep done"><i></i><div><b>Psychographics</b><span>What your buyers hope for, fear and believe</span></div></div>
+          <div class="pstep done"><i></i><div><b>Market awareness</b><span>How much your buyers already know</span></div></div>
+          <div class="pstep done"><i></i><div><b>Research brief and unique mechanisms</b><span>Your brand brain, which every brief reads</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="view" id="v-research">
+  <div class="band pad" style="padding-bottom:96px">
+    <div class="nav"><span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span></div>
+    <div class="inner">
+      <p class="eyebrow"><span class="bname">PeptidePal</span> · about 8 minutes (sped up for the demo)</p>
+      <h1 class="h1" id="r-title">Ore is researching your market.</h1>
+      <div class="chips"><span class="gchip" id="r-count">0 of 7 steps done</span><span class="gchip">we'll email you when it's ready</span></div>
+    </div>
+  </div>
+  <div class="content pad"><div class="inner feed">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h3>Competitor map</h3>
+        <div class="addrow"><input id="r-comp" placeholder="Add a competitor" aria-label="Add a competitor" style="border:1px solid var(--line);border-radius:12px;padding:9px 12px"><button type="button" class="btn ghost" id="add-ring">Add</button></div></div>
+      <div id="rings"><div class="loading"><i></i>Finding your competitors…</div></div>
+      <h3 style="margin-top:22px">What your buyers say</h3>
+      <div id="quotes" style="margin-top:12px"><div class="loading"><i></i>Reading reviews and comments…</div></div>
+    </div>
+    <aside class="side"><div class="card"><h3>Research steps</h3><div id="steps" style="margin-top:8px"></div>
+      <button type="button" class="btn" id="open-app" style="width:100%;margin-top:14px" disabled>Open my brand</button></div></aside>
+  </div></div>
+</section>
+
+<!-- APP -->
+<section class="view" id="v-app">
+  <div class="band pad" style="padding-bottom:96px">
+    <div class="nav">
+      <span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span>
+      <div class="pills" role="tablist" aria-label="Sections">
+        <button type="button" data-tab="week" aria-current="page">This week</button>
+        <button type="button" data-tab="ideas">Ideas</button>
+        <button type="button" data-tab="briefs">Briefs</button>
+        <button type="button" data-tab="brand">My brand</button>
+      </div>
+      <span class="who"><span class="bname">PeptidePal</span><span class="avatar">SB</span></span>
+    </div>
+    <div class="inner" id="app-head"></div>
+  </div>
+  <div class="content pad"><div class="inner" id="app-body"></div></div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span>✓</span><span id="toast-text"></span></div>
+
+<script>
+(function(){
+  var S = {
+    name:'PeptidePal', product:'', known:['Shotsy','Pep AI'], added:[],
+    rules:['Open with curiosity, never a command','Explain half-life plainly, no metaphors','End on how the viewer feels, not a number'],
+    newRules:[], briefs:[], left:50, tab:'week', current:null, sel:null, hookIdx:0
+  };
+  var RINGS = {
+    'Direct · same product, same buyer':['Pep AI','PeptIQ','Regimen','Shotsy','Peptide Tracker','LynkDose'],
+    'Adjacent · different product, same problem':['Noom','MyFitnessPal','Cal AI','Glapp'],
+    'Nearby · same buyer, nearby problem':['Hims','Eden','IM8','Zafira']
+  };
+  var QUOTES = [
+    ['"I couldn’t remember if I took it Tuesday or Wednesday."','Pain · App Store review'],
+    ['"Is 16 units a microdose? The math confuses me."','Doubt · Instagram comment'],
+    ['"Finally one place for everything."','Desire · App Store review']
+  ];
+  var BREAKOUTS = [
+    {id:'nausea',cls:'',tag:'New · #2',who:'GLP-1 clinic',hook:'Nausea is the number one reason people quit their GLP-1.',why:'Says the viewer’s own fear out loud, then promises it’s fixable.',proof:['live 5 days','2 versions','4 sister ads this week'],
+      more:'Load-bearing: the hook names a fear new patients feel but rarely say. The brand made the topic its whole week, so it’s getting real budget.'},
+    {id:'tracker',cls:'b',tag:'Rising',who:'Tracker app',hook:'I thought starting a GLP-1 would be hard until I found this app.',why:'The before and after in one line, product held back.',proof:['live 23 days','#3 in its top 10'],
+      more:'Load-bearing: "would be hard" admits the fear before the relief. The app is named only after the turn.'},
+    {id:'hair',cls:'c',tag:'Proven',who:'Hair supplement',hook:'If your hair is coming out in the shower every day…',why:'A checklist the viewer sees themselves in.',proof:['live 153 days','#1 in its top 10'],
+      more:'Load-bearing: a visual problem plus "every day". It still pulls after 5 months, so the angle isn’t tired.'}
+  ];
+  var SCRIPTS = {
+    nausea:{title:'Your shot has a schedule.',hooks:['If you’re on a GLP-1 and Wednesdays wreck you, this is why.','Nobody told me my shot had a schedule.'],
+      lines:[['4-12s','So I downloaded this app, and honestly it’s a game changer for my whole routine.','App on screen','And honestly, I thought it was just me, until I noticed it was the same day every week.'],
+             ['12-20s','Your shot peaks a day or two after you take it. That’s the day you can’t eat.','Text: "peaks 1-2 days after"','Your shot builds up and peaks a day or two after you take it, and that’s the day food sounds awful.'],
+             ['20-30s','So your “random” Wednesdays? You took it on Monday.','',"So if your shot’s on Monday, those “random” Wednesdays aren’t random."],
+             ['30-45s','Now PeptidePal shows me which days are gonna peak, so I get my protein in the day before.','App: Today screen, peak marked','Now I can see my peak days coming, so I get my protein in the day before, while I can still eat.'],
+             ['45-55s','It’s basically the instructions they never gave me. PeptidePal, this icon.','App icon','It’s the instructions they never gave me. PeptidePal, this icon, on the App Store.']]},
+    tracker:{title:'The spreadsheet phase.',hooks:['I thought tracking my shots would be easy. Then I opened my spreadsheet.','Tracking peptides in Notes is fine, until it isn’t.'],
+      lines:[['4-12s','Three tabs, two peptides, and I still didn’t know if I took it yesterday.','Screen: messy spreadsheet','Three tabs, two peptides, and I still couldn’t tell you if I took it yesterday.'],
+             ['12-25s','Then I found an app that does the math and the reminders for me.','App on screen','Then I found the thing that does the math and the reminders, and I’ll show you in a sec.'],
+             ['25-40s','PeptidePal keeps every dose, vial and peak day on one screen.','App: Today screen','Now every dose, vial and peak day lives on one screen, and it pings me before I forget.'],
+             ['40-50s','It took the anxiety out of the whole thing. PeptidePal, this icon.','App icon','It took the guessing out of the whole thing. PeptidePal, this icon.']]},
+    hair:{title:'The hair in your hand.',hooks:['You started a GLP-1 a few months ago, and now your hands look like this.','The hair you’re losing right now isn’t from this week.'],
+      lines:[['4-12s','And you’ve probably been blaming your shampoo, or the shot.','','And you’ve probably been blaming your shampoo, or what you ate this week, or the shot.'],
+             ['12-22s','But whatever’s making it fall out happened about three months ago.','Text: "it started 3 months ago"','But here’s what nobody tells you: whatever’s making it fall out happened about three months ago.'],
+             ['22-36s','The days after your shot, you’re least hungry, so you skip protein without noticing.','Text: "peak days = least protein"','The day or two after your shot, the food noise is gone, so you skip protein without even noticing.'],
+             ['36-50s','PeptidePal shows your peak days and protein on one screen. PeptidePal, this icon.','App icon','Now I see my peak days and my protein on one screen. PeptidePal, this icon.']]}
+  };
+  var REACTIONS = {
+    'Too salesy':'Got it. I’ll keep the app out of the first 15 seconds from now on.',
+    'Weak hook':'Got it. I’ll open with a specific moment the viewer recognizes, not a claim.',
+    'Love this':'Noted. I’ll write more lines like this one.'
+  };
+  var RULE_FOR = {'Too salesy':'Keep the app out of the first 15 seconds','Weak hook':'Open on a specific moment the viewer recognizes','Love this':'More lines in this voice'};
+
+  function $(id){return document.getElementById(id)}
+  function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+  function show(v){['setup','research','app'].forEach(function(x){$('v-'+x).classList.toggle('on',x===v)});window.scrollTo(0,0)}
+  var tt;function toast(t){$('toast-text').textContent=t;$('toast').classList.add('show');clearTimeout(tt);tt=setTimeout(function(){$('toast').classList.remove('show')},3200)}
+
+  function chip(name,onRemove,mine){var s=document.createElement('span');s.className='cchip'+(mine?' mine':'');s.innerHTML=esc(name)+(mine?' <b style="color:var(--cobalt);font-weight:600;font-size:12px">yours</b>':'');var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Remove '+name);b.textContent='×';b.onclick=onRemove;s.appendChild(b);return s}
+  function renderKnown(){var k=$('known');k.innerHTML='';S.known.forEach(function(n,i){k.appendChild(chip(n,function(){S.known.splice(i,1);renderKnown()},true))})}
+  renderKnown();
+  function addFrom(input,list,after){var v=$(input).value.trim();if(!v)return;if(list.indexOf(v)<0)list.push(v);$(input).value='';after()}
+  $('add-known').onclick=function(){addFrom('f-comp',S.known,renderKnown)};
+  $('f-comp').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();addFrom('f-comp',S.known,renderKnown)}};
+
+  // research
+  var STEPS=['Competitor map','Customer research','Winning ads','Psychographics','Market awareness','Research brief','Unique mechanisms'];
+  function renderRings(){
+    var r=$('rings'),html='';
+    Object.keys(RINGS).forEach(function(k,ix){html+='<div class="ring"><p class="eyebrow muted">'+esc(k)+'</p><div class="cchips" data-ring="'+ix+'"></div></div>'});
+    r.innerHTML=html;
+    Object.keys(RINGS).forEach(function(k,ix){var box=r.querySelector('[data-ring="'+ix+'"]');
+      var names=RINGS[k].slice();if(ix===0){S.known.concat(S.added).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})}
+      names.forEach(function(n){var mine=S.known.indexOf(n)>=0||S.added.indexOf(n)>=0;box.appendChild(chip(n,function(){var i=RINGS[k].indexOf(n);if(i>=0)RINGS[k].splice(i,1);[S.known,S.added].forEach(function(l){var j=l.indexOf(n);if(j>=0)l.splice(j,1)});renderRings()},mine))})});
+  }
+  function renderQuotes(){$('quotes').innerHTML='<div class="quotes">'+QUOTES.map(function(q){return '<div class="quote">'+esc(q[0])+'<span>'+esc(q[1])+'</span></div>'}).join('')+'</div>'}
+  function renderSteps(done){$('steps').innerHTML=STEPS.map(function(s,i){var st=i<done?'<b style="color:var(--cobalt)">Done</b>':i===done?'<b>Working…</b>':'<b class="muted">Next</b>';return '<div class="kv"><span>'+esc(s)+'</span>'+st+'</div>'}).join('');$('r-count').textContent=done+' of 7 steps done'}
+  $('add-ring').onclick=function(){addFrom('r-comp',S.added,renderRings);toast('Added. Ore will track their top 10 too.')};
+  $('r-comp').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();$('add-ring').click()}};
+  $('go-research').onclick=function(){
+    S.name=$('f-name').value.trim()||'Your brand';S.product=$('f-product').value.trim();
+    document.querySelectorAll('.bname').forEach(function(e){e.textContent=S.name});
+    show('research');renderSteps(0);$('open-app').disabled=true;
+    $('rings').innerHTML='<div class="loading"><i></i>Finding your competitors…</div>';
+    $('quotes').innerHTML='<div class="loading"><i></i>Reading reviews and comments…</div>';
+    var n=0;var timer=setInterval(function(){n++;renderSteps(n);if(n===1)renderRings();if(n===2)renderQuotes();
+      if(n>=7){clearInterval(timer);$('r-title').textContent='Your brand brain is ready.';$('open-app').disabled=false}},1100);
+  };
+  $('open-app').onclick=function(){show('app');setTab('week')};
+
+  // app
+  function setTab(t){S.tab=t;document.querySelectorAll('.pills button').forEach(function(b){if(b.dataset.tab===t)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});render()}
+  document.querySelectorAll('.pills button').forEach(function(b){b.onclick=function(){S.current=null;setTab(b.dataset.tab)}});
+  function head(eyebrow,title,chips){$('app-head').innerHTML='<p class="eyebrow">'+esc(eyebrow)+'</p><h1 class="h1">'+esc(title)+'</h1>'+(chips?'<div class="chips">'+chips+'</div>':'')}
+  function render(){
+    if(S.current){renderBrief();return}
+    var b=$('app-body');
+    if(S.tab==='week'){
+      head('This week · '+S.name,'3 new ads broke into your market’s top 10s.','<span class="gchip">'+(14+S.known.length+S.added.length)+' advertisers watched</span><span class="gchip">checked this morning</span><span class="gchip">2 on an angle you haven’t tried</span>');
+      b.innerHTML='<div class="feed"><div class="cards">'+BREAKOUTS.map(function(x){return '<div class="card bo"><div class="thumb '+x.cls+'"><span class="tag">'+esc(x.tag)+'</span></div><span class="small muted">'+esc(x.who)+'</span><q>'+esc(x.hook)+'</q><span class="small muted">'+esc(x.why)+'</span><div class="proof">'+x.proof.map(function(p){return '<span>'+esc(p)+'</span>'}).join('')+'</div><details class="why"><summary>Why it works</summary><p>'+esc(x.more)+'</p></details><button type="button" class="btn" data-make="'+x.id+'">Make this for my brand</button></div>'}).join('')+'</div>'+
+        '<aside class="side"><div class="card"><h3>Your month</h3><div style="margin-top:8px"><div class="kv"><span>Briefs left</span><b>'+S.left+' of 50</b></div><div class="kv"><span>Briefs made</span><b>'+S.briefs.length+'</b></div><div class="kv"><span>Rules Ore follows</span><b>'+(S.rules.length+S.newRules.length)+'</b></div></div></div>'+
+        '<div class="card"><h3>What your buyers say</h3>'+QUOTES.slice(0,2).map(function(q){return '<p class="small muted" style="margin:10px 0 0">'+esc(q[0])+'</p>'}).join('')+'</div></aside></div>';
+      b.querySelectorAll('[data-make]').forEach(function(btn){btn.onclick=function(){make(btn.dataset.make)}});
+    }
+    if(S.tab==='ideas'){
+      head('Ideas · '+S.name,'Angles worth testing next.','');
+      var ideas=[['The instructions they never gave you','From a GLP-1 clinic’s "nobody told me" ads','nausea'],['The spreadsheet phase','From a tracker app’s rising before-and-after','tracker'],['Your hair is three months behind','From a hair supplement’s 153-day winner','hair']];
+      b.innerHTML='<div class="card"><div class="list">'+ideas.map(function(i){return '<div class="row"><div><b>'+esc(i[0])+'</b><span class="small muted">'+esc(i[1])+'</span></div><button type="button" class="btn" data-make="'+i[2]+'">Write the brief</button></div>'}).join('')+'</div></div>';
+      b.querySelectorAll('[data-make]').forEach(function(btn){btn.onclick=function(){make(btn.dataset.make)}});
+    }
+    if(S.tab==='briefs'){
+      head('Briefs · '+S.name,S.briefs.length?S.briefs.length+' brief'+(S.briefs.length>1?'s':'')+' ready to film.':'No briefs yet.','');
+      b.innerHTML='<div class="card">'+(S.briefs.length?'<div class="list">'+S.briefs.map(function(id,i){return '<div class="row"><div><b>'+esc(SCRIPTS[id].title)+'</b><span class="small muted">UGC · 60 seconds</span></div><button type="button" class="btn ghost" data-open="'+id+'">Open</button></div>'}).join('')+'</div>':'<p class="muted">Pick a breakout on This week and tap "Make this for my brand".</p>')+'</div>';
+      b.querySelectorAll('[data-open]').forEach(function(btn){btn.onclick=function(){S.current=btn.dataset.open;S.sel=null;S.hookIdx=0;render()}});
+    }
+    if(S.tab==='brand'){
+      head('My brand','What Ore knows about '+S.name+'.','<span class="gchip">every brief reads this</span>');
+      var comps=RINGS['Direct · same product, same buyer'].concat(S.known,S.added).filter(function(v,i,a){return a.indexOf(v)===i});
+      b.innerHTML='<div class="brief"><div class="side">'+
+        '<div class="card"><h3>What you sell</h3><p style="margin-top:8px">'+esc(S.product||'Your product')+'</p></div>'+
+        '<div class="card"><h3>Who buys it</h3><p style="margin-top:8px">Adults 30-60 on one or more weekly shots who juggle alarms, notes and spreadsheets to keep track. Biggest fear: doing it wrong. Biggest want: one place that just handles it.</p></div>'+
+        '<div class="card"><h3>Competitors tracked</h3><div class="cchips" style="margin-top:10px">'+comps.map(function(c){return '<span class="cchip" style="padding-right:11px">'+esc(c)+'</span>'}).join('')+'</div></div></div>'+
+        '<div class="card"><h3>How Ore writes for you</h3><p class="small muted" style="margin-top:4px">Built from your notes. Remove any rule you don’t want.</p><div id="rules" style="margin-top:8px"></div></div></div>';
+      renderRules();
+    }
+  }
+  function renderRules(){var r=$('rules');if(!r)return;r.innerHTML='';S.newRules.concat(S.rules).forEach(function(t){var d=document.createElement('div');d.className='rule'+(S.newRules.indexOf(t)>=0?' new':'');d.innerHTML='<span>'+esc(t)+'</span>';var x=document.createElement('button');x.type='button';x.textContent='Remove';x.onclick=function(){[S.rules,S.newRules].forEach(function(l){var i=l.indexOf(t);if(i>=0)l.splice(i,1)});renderRules()};d.appendChild(x);r.appendChild(d)})}
+  function make(id){
+    S.tab='briefs';document.querySelectorAll('.pills button').forEach(function(b){if(b.dataset.tab==='briefs')b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+    head('Brief · writing','Writing your brief…','');$('app-body').innerHTML='<div class="card"><div class="loading"><i></i>Reading your brand brain, your rules and the breakout…</div></div>';
+    setTimeout(function(){if(S.briefs.indexOf(id)<0){S.briefs.unshift(id);S.left--}S.current=id;S.sel=null;S.hookIdx=0;render()},1600);
+  }
+  function renderBrief(){
+    var sc=SCRIPTS[S.current],bo=BREAKOUTS.filter(function(x){return x.id===S.current})[0];
+    head('Brief · UGC · 60 seconds · from the '+bo.who.toLowerCase()+' breakout',sc.title,'<button type="button" class="btn white" id="share">Share with creator</button><span class="gchip">Export to Google Docs</span><button type="button" class="gchip" id="copy" style="cursor:pointer">Copy script</button>');
+    var html='<div class="brief"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3>Script</h3><span class="small muted">Tap any line to react</span></div><div class="hooks">'+sc.hooks.map(function(h,i){return '<button type="button" data-hook="'+i+'" aria-pressed="'+(i===S.hookIdx)+'">Hook '+'AB'[i]+' · “'+esc(h)+'”</button>'}).join('')+'</div><div class="lines">';
+    html+='<div class="ln" style="cursor:default"><span class="t">0-4s</span><span>“'+esc(sc.hooks[S.hookIdx])+'”</span><span class="os">Text hook</span></div>';
+    sc.lines.forEach(function(l,i){html+='<button type="button" class="ln" data-line="'+i+'" aria-pressed="'+(S.sel===i)+'"><span class="t">'+esc(l[0])+'</span><span>“'+esc(l[1])+'”</span><span class="os">'+esc(l[2])+'</span></button>';
+      if(S.sel===i)html+='<div class="react">'+Object.keys(REACTIONS).map(function(r){return '<button type="button" data-react="'+esc(r)+'">'+esc(r)+'</button>'}).join('')+'<button type="button" data-rewrite="'+i+'">Rewrite this line</button><input id="note" placeholder="Or write a note, then press Enter" aria-label="Write a note"></div>'});
+    html+='</div></div><aside class="side"><div class="card"><h3>Why we’re making this</h3><p class="small muted" style="margin-top:8px">'+esc(bo.who)+': “'+esc(bo.hook)+'” '+esc(bo.proof.join(', '))+'. '+esc(bo.more)+'</p></div><div class="card"><h3>How Ore writes for you</h3><div id="rules" style="margin-top:6px"></div></div><button type="button" class="btn ghost" id="back">Back to briefs</button></aside></div>';
+    $('app-body').innerHTML=html;renderRules();
+    var body=$('app-body');
+    body.querySelectorAll('[data-hook]').forEach(function(b){b.onclick=function(){S.hookIdx=+b.dataset.hook;renderBrief()}});
+    body.querySelectorAll('[data-line]').forEach(function(b){b.onclick=function(){S.sel=S.sel===+b.dataset.line?null:+b.dataset.line;renderBrief()}});
+    body.querySelectorAll('[data-react]').forEach(function(b){b.onclick=function(){var r=b.dataset.react;toast(REACTIONS[r]);var rule=RULE_FOR[r];if(S.newRules.indexOf(rule)<0&&S.rules.indexOf(rule)<0)S.newRules.unshift(rule);var i=S.sel;if(r!=='Love this'){sc.lines[i][1]=sc.lines[i][3]}S.sel=null;renderBrief();var el=body.querySelector('[data-line="'+i+'"]');if(el&&r!=='Love this')el.classList.add('changed')}});
+    body.querySelectorAll('[data-rewrite]').forEach(function(b){b.onclick=function(){var i=+b.dataset.rewrite;var l=sc.lines[i];var t=l[1];l[1]=l[3];l[3]=t;S.sel=null;renderBrief();var el=body.querySelector('[data-line="'+i+'"]');if(el)el.classList.add('changed');toast('Rewrote that line.')}});
+    var note=$('note');if(note){note.focus();note.onkeydown=function(e){if(e.key==='Enter'&&note.value.trim()){var t=note.value.trim();S.newRules.unshift(t.charAt(0).toUpperCase()+t.slice(1));toast('Got it. From now on: '+t);S.sel=null;renderBrief()}}}
+    $('back').onclick=function(){S.current=null;render()};
+    $('share').onclick=function(){toast('In the real app this makes a link your creator can open.')};
+    $('copy').onclick=function(){var txt=sc.hooks[S.hookIdx]+'\n'+sc.lines.map(function(l){return l[0]+' '+l[1]}).join('\n');try{navigator.clipboard.writeText(txt).then(function(){toast('Script copied.')},function(){toast('Copy isn’t allowed here. Select the text instead.')})}catch(e){toast('Copy isn’t allowed here. Select the text instead.')}};
+  }
+  $('restart').onclick=function(){location.reload()};
+})();
+</script>
+</body>
+</html>

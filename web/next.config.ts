@@ -6,7 +6,10 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["unpdf", "mammoth"],
   // the public Ore sales page (no login)
   async rewrites() {
-    return [{ source: "/ore", destination: "/ore/index.html" }];
+    return [
+      { source: "/ore", destination: "/ore/index.html" },
+      { source: "/ore/demo", destination: "/ore/demo/index.html" },
+    ];
   },
 };
 
