@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ore Desktop Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one browser window at a time (tabs switch screens). Inside, the landing page's slatted glow band runs across the top and white cards rise out of it. */
+:root{
+  --page:#e9eef5; --ink:#0f1c33; --muted:#5d6b82; --line:rgba(15,28,51,.09); --soft:#f4f7fb;
+  --cobalt:#2d63d8; --violet:#7a5ce6; --rose:#f06aa8; --ember:#ff8a4c; --sky:#3fb7ec;
+  --display:"Urbanist",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --glow:
+    radial-gradient(38% 120% at 30% 70%,rgba(255,138,76,.85),transparent 70%),
+    radial-gradient(30% 110% at 20% 30%,rgba(240,106,168,.8),transparent 70%),
+    radial-gradient(34% 140% at 60% 50%,rgba(45,99,216,.9),transparent 70%),
+    linear-gradient(115deg,#57c7f2 0%,#3fb7ec 35%,#2d8fe0 65%,#46b9ee 100%);
+  --ribs:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 3px,rgba(255,255,255,0) 3px 12px,rgba(0,40,90,.04) 12px 15px,rgba(255,255,255,0) 15px 22px);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.top{max-width:1360px;margin:0 auto;padding-block:32px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:end}
+.top h1{font-family:var(--display);font-weight:300;font-size:clamp(30px,4vw,44px);letter-spacing:-.02em;margin:0}
+.top p{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.switch{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.switch button{font:600 14px var(--body);border:0;background:none;padding:9px 14px;border-radius:9px;cursor:pointer;color:var(--muted)}
+.switch button[aria-selected="true"]{background:var(--ink);color:#fff}
+.switch button:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.frame-wrap{max-width:1360px;margin:0 auto;padding-bottom:48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:auto}
+.window{min-width:1100px;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 40px 90px -40px rgba(15,28,51,.5);border:1px solid rgba(15,28,51,.08)}
+.chrome{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f2f4f8;border-bottom:1px solid var(--line)}
+.chrome i{width:11px;height:11px;border-radius:50%;background:#d5dbe5}
+.chrome .url{margin-left:14px;flex:1;max-width:420px;font-size:12px;color:var(--muted);background:#fff;border-radius:8px;padding:5px 12px;border:1px solid var(--line)}
+.screen{display:none;height:800px;position:relative;background:#fff;overflow:hidden}
+.screen.on{display:block}
+
+/* the band */
+.band{position:relative;color:#fff;background:var(--ribs),var(--glow);padding:0 36px 96px}
+.band.tall{height:100%;padding-bottom:0}
+.nav{display:flex;align-items:center;gap:16px;padding-block:18px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:21px}
+.logo svg{width:24px;height:24px}
+.pills{display:flex;gap:3px;padding:4px;border-radius:13px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);backdrop-filter:blur(12px);margin-left:18px}
+.pills span{font-size:14px;padding:7px 14px;border-radius:9px}
+.pills span.on{background:rgba(255,255,255,.95);color:var(--ink);font-weight:600}
+.brand{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;padding:6px 8px 6px 12px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38)}
+.avatar{width:28px;height:28px;border-radius:50%;background:#fff;color:var(--cobalt);display:grid;place-items:center;font-weight:600;font-size:12px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.band .eyebrow{color:rgba(255,255,255,.85)}
+.band h2{font-family:var(--display);font-weight:300;font-size:46px;line-height:1.05;letter-spacing:-.02em;margin:10px 0 0;max-width:22ch}
+.band .sub{margin-top:12px;max-width:62ch;color:rgba(255,255,255,.92);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.gchip{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35)}
+
+/* content rising out of the band */
+.content{position:relative;margin-top:-70px;padding:0 36px;display:grid;gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 22px 50px -32px rgba(15,28,51,.35);min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 14px var(--body);padding:11px 16px;border-radius:12px;color:#fff;background:linear-gradient(110deg,var(--cobalt),var(--violet) 60%,var(--rose));white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.white{background:#fff;color:var(--ink)}
+
+/* screen 1 */
+.onb{display:grid;grid-template-columns:1.25fr .85fr;gap:22px;padding:8px 0 0;align-items:start}
+.glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:22px;padding:22px;backdrop-filter:blur(16px)}
+.found{display:grid;gap:12px}
+.fcard{background:rgba(255,255,255,.95);color:var(--ink);border-radius:16px;padding:16px;display:grid;gap:6px}
+.fhead{display:flex;justify-content:space-between;align-items:center}
+.fhead .eyebrow{color:var(--muted)}
+.edit{font-size:12.5px;color:var(--cobalt);font-weight:600}
+.cchips{display:flex;flex-wrap:wrap;gap:6px}
+.cchip{font-size:13px;padding:5px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line)}
+.cchip::after{content:" ×";color:var(--muted)}
+.cchip.add{border-style:dashed;color:var(--cobalt);background:none}
+.cchip.add::after{content:""}
+.prog{display:grid;gap:12px}
+.pstep{display:flex;gap:12px;align-items:flex-start}
+.pstep i{width:20px;height:20px;border-radius:50%;flex:none;border:2px solid rgba(255,255,255,.55);margin-top:2px}
+.pstep.done i{background:#fff;border-color:#fff}
+.pstep.now i{border-color:#fff;border-right-color:transparent;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pstep.now i{animation:none}}
+.pstep b{display:block;font-weight:600}
+.pstep span{font-size:13px;color:rgba(255,255,255,.85)}
+.preview{margin-top:16px;border-top:1px solid rgba(255,255,255,.35);padding-top:16px;display:grid;gap:8px}
+.mini{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.9);color:var(--ink);border-radius:12px;padding:8px}
+.mini .t{width:34px;height:46px;border-radius:8px;background:linear-gradient(160deg,#ffd2c2,#f7a6c8 50%,#8fb4f2);flex:none}
+.mini b{font-size:13px;font-weight:600;line-height:1.3}
+
+/* screen 2 */
+.feed{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.bo{display:grid;gap:10px}
+.thumb{aspect-ratio:4/3;border-radius:14px;position:relative;overflow:hidden;background:linear-gradient(160deg,#ffd2c2,#f7a6c8 50%,#8fb4f2)}
+.thumb.b{background:linear-gradient(160deg,#c9e8ff,#8fb4f2 55%,#c3b5f5)}
+.thumb.c{background:linear-gradient(160deg,#ffe2c4,#ffb38a 50%,#f48fb1)}
+.thumb .tag{position:absolute;top:10px;left:10px}
+.tag{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--cobalt);white-space:nowrap}
+.tag.rise{color:#c4307a}
+.tag.prov{color:#5a45d6}
+.who{font-size:13px;color:var(--muted)}
+.bo q{font-family:var(--display);font-size:20px;line-height:1.2;quotes:"\201C" "\201D"}
+.proof{display:flex;flex-wrap:wrap;gap:6px}
+.proof span{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--soft);border-radius:999px;padding:3px 9px}
+.side{display:grid;gap:14px}
+.side h3{font-family:var(--display);font-weight:400;font-size:20px;margin:0}
+.kv{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-top:1px solid var(--line)}
+.kv b{font-variant-numeric:tabular-nums}
+
+/* screen 3 */
+.brief{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+.lines{display:grid;gap:8px}
+.ln{display:grid;grid-template-columns:70px 1fr 200px;gap:14px;padding:12px 14px;border-radius:14px;background:var(--soft);font-size:14.5px}
+.ln .t{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ln .os{font-size:13px;color:var(--muted)}
+.ln.sel{background:rgba(45,99,216,.08);outline:1.5px solid rgba(45,99,216,.45)}
+.pop{margin:-2px 0 4px 84px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pop span{font-size:13px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.pop span.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.toast{display:flex;gap:10px;align-items:flex-start;border-radius:14px;padding:12px 14px;font-size:14px;color:#fff;background:rgba(15,28,51,.94)}
+.rule{font-size:14px;padding:10px 0;border-top:1px solid var(--line)}
+.rule.new{color:var(--cobalt);font-weight:600}
+.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.headrow h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0}
+.hooks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.hooks span{font-size:13px;padding:7px 12px;border-radius:12px;background:var(--soft);border:1px solid var(--line)}
+.hooks span.on{background:#fff;border-color:rgba(45,99,216,.45);color:var(--cobalt);font-weight:600}
+.note{max-width:1360px;margin:0 auto;padding-bottom:40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <h1>Ore on desktop</h1>
+    <p>The landing page's slatted glow carries into the app: it sits behind the header of every screen, and the white cards rise out of it.</p>
+  </div>
+  <div class="switch" role="tablist" aria-label="Screens">
+    <button type="button" role="tab" id="tab-onboard" aria-selected="true" data-s="s1">1. Set up your brand</button>
+    <button type="button" role="tab" id="tab-week" aria-selected="false" data-s="s2">2. This week</button>
+    <button type="button" role="tab" id="tab-brief" aria-selected="false" data-s="s3">3. A brief</button>
+  </div>
+</div>
+
+<div class="frame-wrap">
+  <div class="window">
+    <div class="chrome"><i></i><i></i><i></i><span class="url">app.ore / peptidepal</span></div>
+
+    <!-- 1. onboarding -->
+    <section class="screen on" id="s1">
+      <div class="band tall">
+        <div class="nav">
+          <span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span>
+          <span class="brand" style="margin-left:auto">Step 2 of 3 · Your brand</span>
+        </div>
+        <div style="padding-top:18px">
+          <p class="eyebrow">peptidepal.app</p>
+          <h2>Here's what I found. Fix anything that's off.</h2>
+          <p class="sub">I read your site and App Store page, then looked for who you compete with. Tap anything to change it.</p>
+        </div>
+        <div class="onb" style="margin-top:24px">
+          <div class="found">
+            <div class="fcard"><div class="fhead"><span class="eyebrow">What you sell</span><span class="edit">Edit</span></div><span>An iPhone app that tracks peptide and GLP-1 doses, schedules, vials and protein in one place, with an AI assistant.</span></div>
+            <div class="fcard"><div class="fhead"><span class="eyebrow">Who buys it</span><span class="edit">Edit</span></div><span>Adults 30-60 on one or more weekly shots who juggle alarms, notes and spreadsheets to keep track.</span></div>
+            <div class="fcard"><div class="fhead"><span class="eyebrow">Competitors I'll watch (12)</span><span class="edit">Edit</span></div><div class="cchips"><span class="cchip">Pep AI</span><span class="cchip">PeptIQ</span><span class="cchip">Regimen</span><span class="cchip">Shotsy</span><span class="cchip">Peptide Tracker</span><span class="cchip">Noom</span><span class="cchip">MyFitnessPal</span><span class="cchip add">+ Add one</span></div></div>
+            <div style="display:flex;gap:10px;margin-top:4px"><span class="btn white">Looks right, build my brand brain</span></div>
+          </div>
+          <div class="glass">
+            <p class="eyebrow">Building your brand brain</p>
+            <div class="prog" style="margin-top:14px">
+              <div class="pstep done"><i></i><div><b>Read 1,344 customer reviews</b><span>The words your buyers actually use</span></div></div>
+              <div class="pstep done"><i></i><div><b>Found 43 advertisers in your market</b><span>Their top 10 ads, checked daily</span></div></div>
+              <div class="pstep now"><i></i><div><b>Breaking down their newest winners</b><span>About 4 minutes left</span></div></div>
+              <div class="pstep"><i></i><div><b>Writing your research brief</b><span>Who buys, why, and what they doubt</span></div></div>
+            </div>
+            <div class="preview">
+              <p class="eyebrow">Already spotted</p>
+              <div class="mini"><span class="t"></span><b>A GLP-1 clinic's new ad just hit #2 in its top 10.</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. this week -->
+    <section class="screen" id="s2">
+      <div class="band">
+        <div class="nav">
+          <span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span>
+          <div class="pills"><span class="on">This week</span><span>Ideas</span><span>Briefs</span><span>My brand</span></div>
+          <span class="brand">PeptidePal ▾ <span class="avatar">SB</span></span>
+        </div>
+        <p class="eyebrow" style="margin-top:14px">Monday, Nov 2</p>
+        <h2>3 new ads broke into your market's top 10s.</h2>
+        <div class="chips"><span class="gchip">43 advertisers watched</span><span class="gchip">checked this morning</span><span class="gchip">2 on an angle you haven't tried</span></div>
+      </div>
+      <div class="content">
+        <div class="feed">
+          <div class="cards">
+            <div class="card bo"><div class="thumb"><span class="tag">New · #2</span></div><span class="who">GLP-1 clinic</span><q>Nausea is the number one reason people quit their GLP-1.</q><span class="small muted">Says the viewer's own fear out loud, then promises it's fixable.</span><div class="proof"><span>live 5 days</span><span>2 versions</span></div><span class="btn">Make this for my brand</span></div>
+            <div class="card bo"><div class="thumb b"><span class="tag rise">Rising</span></div><span class="who">Tracker app</span><q>I thought starting a GLP-1 would be hard until I found this app.</q><span class="small muted">The before and after in one line, product held back.</span><div class="proof"><span>live 23 days</span><span>#3</span></div><span class="btn">Make this for my brand</span></div>
+            <div class="card bo"><div class="thumb c"><span class="tag prov">Proven</span></div><span class="who">Hair supplement</span><q>If your hair is coming out in the shower every day…</q><span class="small muted">A checklist the viewer sees themselves in.</span><div class="proof"><span>live 153 days</span><span>#1</span></div><span class="btn">Make this for my brand</span></div>
+          </div>
+          <aside class="side">
+            <div class="card"><h3>Your week</h3>
+              <div class="kv" style="margin-top:8px"><span>Briefs left this month</span><b>11 of 15</b></div>
+              <div class="kv"><span>Ideas waiting</span><b>4</b></div>
+              <div class="kv"><span>Rules Ore follows</span><b>18</b></div>
+            </div>
+            <div class="card"><h3>What your buyers say</h3><p class="small muted" style="margin-top:8px">"I couldn't remember if I took it Tuesday or Wednesday."</p><p class="small muted" style="margin-top:6px">"The math confuses me."</p></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. brief -->
+    <section class="screen" id="s3">
+      <div class="band">
+        <div class="nav">
+          <span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span>
+          <div class="pills"><span>This week</span><span>Ideas</span><span class="on">Briefs</span><span>My brand</span></div>
+          <span class="brand">PeptidePal ▾ <span class="avatar">SB</span></span>
+        </div>
+        <p class="eyebrow" style="margin-top:14px">Brief · UGC · 60 seconds · from the nausea breakout</p>
+        <h2>Your shot has a schedule.</h2>
+        <div class="chips"><span class="btn white">Share with creator</span><span class="gchip">Export to Google Docs</span><span class="gchip">Copy script</span></div>
+      </div>
+      <div class="content">
+        <div class="brief">
+          <div class="card">
+            <div class="headrow"><h3>Script</h3><span class="small muted">Tap any line to react</span></div>
+            <div class="hooks"><span class="on">Hook A · "If Wednesdays wreck you, this is why."</span><span>Hook B · "Nobody told me my shot had a schedule."</span></div>
+            <div class="lines">
+              <div class="ln"><span class="t">0-4s</span><span>"If you're on a GLP-1 and Wednesdays wreck you, this is why."</span><span class="os">Text: "it's not random"</span></div>
+              <div class="ln sel"><span class="t">4-12s</span><span>"So I downloaded this app, and honestly it's a game changer for my whole routine."</span><span class="os">App on screen</span></div>
+              <div class="pop"><span class="on">Too salesy</span><span>Weak hook</span><span>Love this</span><span>Rewrite this line</span><span>Write a note…</span></div>
+              <div class="ln"><span class="t">12-20s</span><span>"Your shot peaks a day or two after you take it. That's the day you can't eat."</span><span class="os">Text: "peaks 1-2 days after"</span></div>
+              <div class="ln"><span class="t">20-30s</span><span>"So your 'random' Wednesdays? You took it on Monday."</span><span class="os"></span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <div class="toast"><span>✓</span><span>Got it. I'll keep the app out of the first 15 seconds from now on.</span></div>
+            <div class="card"><h3>Why we're making this</h3><p class="small muted" style="margin-top:8px">A GLP-1 clinic just pushed a "nobody told you" ad to #2 in its top 10 and launched 4 sister ads the same week. Your reviews say the same thing: "the math confuses me."</p></div>
+            <div class="card"><h3>What Ore knows about your voice</h3>
+              <div class="rule new">New: keep the app out of the first 15 seconds</div>
+              <div class="rule">Open with curiosity, never a command</div>
+              <div class="rule">Explain half-life plainly, no metaphors</div>
+              <div class="rule">End on how the viewer feels, not a number</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<p class="note">Mockup only. Example content uses PeptidePal's market; nothing here is wired up.</p>
+
+<script>
+document.querySelectorAll('.switch button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.switch button').forEach(function(x){x.setAttribute('aria-selected',String(x===b));});
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.s);});
+  });
+});
+</script>
+</body>
+</html>
