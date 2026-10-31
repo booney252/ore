@@ -136,6 +136,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("report", help="Winning Ads Report: top winners broken down, patterns, gaps"
                    ).add_argument("brand")
 
+    sub.add_parser("cards", help="the latest report's top patterns and open lanes as cards for the app"
+                   ).add_argument("brand")
+
     p = sub.add_parser("iterations", help="turn winners from a report into iterations for the brand")
     p.add_argument("brand")
     p.add_argument("--ads", default="", help="winner ranks from the report, e.g. 1,3,5-7")
@@ -243,6 +246,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "report":
             stages.run_report(storage, args.brand)
+            return 0
+        if args.command == "cards":
+            stages.run_report_cards(storage, args.brand)
             return 0
         if args.command == "iterations":
             report_key = (brandlib.brand_key(args.brand, f"reports/{args.report}.md")

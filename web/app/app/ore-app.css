@@ -184,3 +184,26 @@
 .oa-link input { font-family: var(--font-data), monospace; font-size: 13px; }
 .oa-forchip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 9px 3px 4px; border-radius: 999px; background: rgba(45, 99, 216, 0.1); color: var(--oa-cobalt); }
 .oa-forchip i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-style: normal; font-size: 10px; background: var(--oa-cobalt); }
+
+/* This week: patterns, open lanes, single winners, your own idea */
+.oa-sec { display: grid; gap: 14px; }
+.oa-sec > header { display: flex; align-items: end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.oa-sec > header h2 { font-weight: 400; font-size: 24px; margin-top: 4px; }
+.oa-more { font-size: 14px; font-weight: 600; color: var(--oa-cobalt); text-decoration: none; }
+.oa-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.oa-pat { display: grid; gap: 10px; align-content: start; }
+.oa-pat h3 { font-family: var(--font-display), sans-serif; font-weight: 400; font-size: 21px; line-height: 1.2; }
+.oa-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.oa-strip span { aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; background: linear-gradient(160deg, #c9e8ff, #8fb4f2 55%, #f7a6c8); }
+.oa-strip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.oa-ex { font-size: 14px; line-height: 1.4; padding: 10px 12px; border-radius: 12px; background: var(--oa-soft); quotes: "\201C" "\201D"; }
+.oa-gap { background: linear-gradient(180deg, rgba(122, 92, 230, 0.07), var(--oa-surface) 60%); border-color: rgba(122, 92, 230, 0.22); }
+.oa-open { justify-self: start; font-family: var(--font-data), monospace; font-size: 11px; padding: 4px 9px; border-radius: 999px; background: rgba(122, 92, 230, 0.12); color: var(--oa-violet); }
+.oa-who summary { cursor: pointer; list-style: none; display: flex; justify-content: flex-start; gap: 10px; }
+.oa-who summary::-webkit-details-marker { display: none; }
+.oa-who summary span { color: var(--oa-cobalt); font-weight: 600; }
+.oa-who[open] summary span { visibility: hidden; }
+.oa-who .oa-pick { margin-top: 8px; }
+.oa-make textarea { width: 100%; font: inherit; font-size: 15px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--oa-line); background: var(--oa-soft); resize: vertical; }
+@media (max-width: 900px) { .oa-grid2 { grid-template-columns: minmax(0, 1fr); } }
+.oa-who { width: 100%; justify-self: stretch; text-align: left; }

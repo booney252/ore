@@ -33,6 +33,7 @@ PROMPTS = {
     "iterations": Path("prompts/06-iterations.md"),
     "own_idea": Path("prompts/06-iterations-own-idea.md"),
     "briefs": Path("prompts/07-creative-briefs.md"),
+    "cards": Path("prompts/16-report-cards.md"),
 }
 KNOWLEDGE_DIR = Path("knowledge")
 TOP_N = 10
@@ -491,6 +492,62 @@ def run_report(storage, slug: str, top_n: int = REPORT_TOTAL, today: date | None
                  "lane": p["lane"], "lane_title": p["title"], "full": p["full"]}
                 for i, p in enumerate(picks)]}, indent=2) + "\n")
     log.info("report: saved %s", out_key)
+    run_report_cards(storage, slug, out_key, client=client)
+    return out_key
+
+
+def report_overview(md: str) -> str:
+    """The report's big picture and gaps, without the per-ad breakdowns in between."""
+    big = re.search(r"^##\s*1\..*?(?=^##\s*2\.)", md, re.M | re.S)
+    gaps = re.search(r"^##\s*\d+\.\s*Gaps.*", md, re.M | re.S)
+    return "\n\n".join(m.group(0).strip() for m in (big, gaps) if m) or md[:40000]
+
+
+def clean_cards(raw, ranks: set[int]) -> dict:
+    """Keep the cards' known fields, real ranks only, at most 3 patterns and 2 gaps."""
+    out = {}
+    for kind, most in (("patterns", 3), ("gaps", 2)):
+        cards = []
+        for c in (raw.get(kind) or [] if isinstance(raw, dict) else []):
+            if not isinstance(c, dict) or not str(c.get("title") or "").strip():
+                continue
+            cards.append({
+                "title": str(c["title"]).strip()[:120],
+                "why": str(c.get("why") or "").strip()[:500],
+                "ranks": [int(r) for r in (c.get("ranks") or []) if str(r).isdigit() and int(r) in ranks][:5],
+                "example": str(c.get("example") or "").strip()[:300],
+                "idea": str(c.get("idea") or "").strip()[:900],
+            })
+        out[kind] = cards[:most]
+    return out
+
+
+def run_report_cards(storage, slug: str, report_key: str | None = None, client=None) -> str | None:
+    """The report's top patterns and open lanes as short cards (reports/<date>-cards.json) for the
+    customer app's home page; each card is an idea Ore can write a script from for every creator."""
+    report_key = report_key or latest_key(storage, slug, "reports")
+    md = storage.read_text(report_key)
+    top = json.loads(storage.read_text(report_key[:-3] + ".json"))["top"]
+    ads = {a["ad_id"]: a for a in load_ads(storage, slug)}
+    ctx = brand_context(storage, slug)
+    lines = []
+    for t in top:
+        a = ads.get(t["ad_id"], {})
+        h = (a.get("breakdown") or {}).get("hook") or a.get("hook") or a.get("headline") or ""
+        lines.append(f"{t['rank']}: {t.get('brand')}, {str(h)[:160]}")
+    prompt = llm.render(PROMPTS["cards"].read_text(), {
+        **ctx, "report": report_overview(md), "ranks": "\n".join(lines)})
+    try:
+        answer = llm.ask(storage, slug, f"cards-{Path(report_key).stem}", prompt, client=client,
+                         max_tokens=4000)
+    except llm.HandoffPending as p:
+        log.info("cards: prompt ready at %s; answer it in %s, then re-run.", p.prompt_key, p.answer_key)
+        return None
+    cards = clean_cards(llm.parse_json(answer), {t["rank"] for t in top})
+    out_key = report_key[:-3] + "-cards.json"
+    storage.write_text(out_key, json.dumps(cards, indent=2) + "\n")
+    log.info("cards: saved %s (%d patterns, %d open lanes)", out_key,
+             len(cards["patterns"]), len(cards["gaps"]))
     return out_key
 
 

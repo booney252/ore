@@ -2,8 +2,10 @@ import Link from "next/link";
 import { hook, loadAds, posterUrl, winners, type Ad } from "@/lib/ads";
 import { brandName, setupState } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
+import { cardIdea, readCards } from "@/lib/cards";
 import { listJobs } from "@/lib/jobs";
-import { oaFindBreakouts, oaMake } from "../actions";
+import { oaFindBreakouts } from "../actions";
+import MakeForm from "../MakeForm";
 import { Band, Working } from "../ui";
 
 export const dynamic = "force-dynamic";
@@ -47,18 +49,24 @@ function proof(ad: Ad): string[] {
 export default async function ThisWeek({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, ads, creators, jobs, state] = await Promise.all([
+  const [name, ads, creators, jobs, state, cards] = await Promise.all([
     brandName(brand),
     loadAds(brand),
     listCreators(brand),
     listJobs(brand, 10),
     setupState(brand),
+    readCards(brand),
   ]);
-  const cards = pick(ads);
-  const posters = await Promise.all(cards.map((c) => posterUrl(c.ad)));
+  const winnersPicked = pick(ads);
+  const byId = new Map(ads.map((a) => [a.ad_id, a]));
+  const patterns = (cards?.patterns ?? []).map((c) => ({ c, ads: c.ranks.map((r) => byId.get(cards!.byRank[r] ?? "")).filter((a): a is Ad => !!a).slice(0, 4) }));
+  const [posters, strips] = await Promise.all([
+    Promise.all(winnersPicked.map((c) => posterUrl(c.ad))),
+    Promise.all(patterns.map((p) => Promise.all(p.ads.map((a) => posterUrl(a))))),
+  ]);
   const advertisers = new Set(ads.filter((a) => !a.is_own).map((a) => a.brand)).size;
-  const fresh = cards.filter((c) => c.cls === "").length;
   const busy = jobs.filter((j) => j.status === "pending" || j.status === "running");
+  const who = creators.map((c) => ({ id: c.id, name: c.name }));
 
   return (
     <>
@@ -66,7 +74,7 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
         brand={brand}
         name={name}
         label={`This week · ${name}`}
-        title={fresh ? `${fresh} new ad${fresh === 1 ? "" : "s"} broke into your market's top 10s.` : "What's winning in your market."}
+        title={patterns.length ? `${patterns.length} things are working in your market.` : "What's winning in your market."}
         chips={
           <>
             <span className="oa-gchip">{advertisers} advertisers watched</span>
@@ -75,28 +83,109 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
         }
       />
       <main className="oa-main">
-        <div className="oa-wrap oa-stack">
+        <div className="oa-wrap oa-stack" style={{ gap: 34 }}>
           {(q.checking || busy.some((j) => j.type === "report" || j.type === "setup")) && <Working text="Ore is checking your market for new breakouts." />}
+          {busy.some((j) => j.type === "iterations" || j.type === "briefs") && (
+            <div className="oa-notice">
+              {(() => { const n = busy.filter((j) => j.type === "iterations" || j.type === "briefs").length; return `Writing ${n} brief${n === 1 ? "" : "s"} now.`; })()}{" "}
+              <Link href={`/app/${brand}/briefs`} style={{ color: "var(--oa-cobalt)", fontWeight: 600 }}>Briefs</Link>
+            </div>
+          )}
           {!state.ready && (
             <div className="oa-notice">
               Your brand brain is still being built. <Link href={`/app/${brand}/brand`} style={{ color: "var(--oa-cobalt)", fontWeight: 600 }}>See progress</Link>
             </div>
           )}
-          <div className="oa-split">
+          {creators.length === 0 && (
+            <div className="oa-notice">
+              Add your creators and Ore writes each brief in their own voice. <Link href={`/app/${brand}/creators`} style={{ color: "var(--oa-cobalt)", fontWeight: 600 }}>Add a creator</Link>
+            </div>
+          )}
+
+          {patterns.length > 0 && (
+            <section className="oa-sec">
+              <header>
+                <div>
+                  <p className="oa-label">1 · The patterns</p>
+                  <h2>What the winning ads have in common</h2>
+                </div>
+                <Link href={`/app/${brand}/report`} className="oa-more">See the full breakdown →</Link>
+              </header>
+              <div className="oa-grid3">
+                {patterns.map(({ c, ads: ev }, i) => (
+                  <article key={c.title} className="oa-card oa-pat">
+                    <div className="oa-strip" aria-label={`${ev.length} winning ads show this`}>
+                      {ev.map((a, j) => (
+                        <span key={a.ad_id} title={`${a.brand}: ${hook(a) || a.headline || ""}`}>
+                          {strips[i][j] && <img src={strips[i][j]!} alt="" loading="lazy" />}
+                        </span>
+                      ))}
+                    </div>
+                    <h3>{c.title}</h3>
+                    <p className="oa-small oa-muted">{c.why}</p>
+                    {c.example && <q className="oa-ex">{c.example}</q>}
+                    <details className="oa-why">
+                      <summary>The idea for you</summary>
+                      <p>{c.idea}</p>
+                    </details>
+                    <MakeForm brand={brand} creators={who} hidden={{ idea: cardIdea(c, "pattern"), ranks: c.ranks.join(",") }} />
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {(cards?.gaps.length ?? 0) > 0 && (
+            <section className="oa-sec">
+              <header>
+                <div>
+                  <p className="oa-label">2 · Open lanes</p>
+                  <h2>What your buyers say that no ad is saying</h2>
+                </div>
+              </header>
+              <div className="oa-grid2">
+                {cards!.gaps.map((c) => (
+                  <article key={c.title} className="oa-card oa-pat oa-gap">
+                    <span className="oa-open">Nobody&apos;s saying this</span>
+                    <h3>{c.title}</h3>
+                    {c.example && <q className="oa-ex">{c.example}</q>}
+                    <p className="oa-small oa-muted">{c.why}</p>
+                    <details className="oa-why">
+                      <summary>The idea for you</summary>
+                      <p>{c.idea}</p>
+                    </details>
+                    <MakeForm brand={brand} creators={who} hidden={{ idea: cardIdea(c, "gap") }} />
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="oa-sec">
+            <header>
+              <div>
+                <p className="oa-label">{cards ? "3 · " : ""}One ad to copy</p>
+                <h2>New and rising winners</h2>
+              </div>
+              <form action={oaFindBreakouts}>
+                <input type="hidden" name="brand" value={brand} />
+                <button type="submit" className="oa-btn quiet">Check again</button>
+              </form>
+            </header>
             <div className="oa-grid3">
-              {cards.length === 0 && (
+              {winnersPicked.length === 0 && (
                 <div className="oa-card oa-empty" style={{ gridColumn: "1 / -1" }}>
                   No breakouts yet. Ore fills this in after the first check of your competitors.
                 </div>
               )}
-              {cards.map(({ ad, tag, cls }, i) => (
+              {winnersPicked.map(({ ad, tag, cls }, i) => (
                 <article key={ad.ad_id} className="oa-card oa-bo">
                   <div className="oa-thumb">
                     {posters[i] && <img src={posters[i]!} alt="" loading="lazy" />}
                     <span className={`oa-tag ${cls}`}>{tag}</span>
                   </div>
                   <span className="oa-small oa-muted">{ad.brand}</span>
-                  <q>{hook(ad) || ad.headline || "Untitled ad"}</q>
+                  <q>{hook(ad) || ad.headline}</q>
                   {proof(ad).length > 0 && (
                     <div className="oa-proof">
                       {proof(ad).map((p) => (
@@ -110,51 +199,30 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
                       <p>{why(ad)}</p>
                     </details>
                   )}
-                  <form action={oaMake} className="oa-make">
-                    <input type="hidden" name="brand" value={brand} />
-                    <input type="hidden" name="hook" value={hook(ad) || ad.headline || ""} />
-                    <input type="hidden" name="advertiser" value={ad.brand} />
-                    <input type="hidden" name="why" value={why(ad).slice(0, 700)} />
-                    <input type="hidden" name="proof" value={proof(ad).join(", ")} />
-                    {creators.length > 0 && (
-                      <fieldset className="oa-pick">
-                        <legend className="oa-small oa-muted">Write it for</legend>
-                        {creators.map((c) => (
-                          <label key={c.id} className="oa-chip">
-                            <input type="checkbox" name="creator" value={c.id} defaultChecked /> {c.name}
-                          </label>
-                        ))}
-                      </fieldset>
-                    )}
-                    <button type="submit" className="oa-btn">{creators.length ? "Make a brief for each" : "Make this for my brand"}</button>
-                  </form>
+                  <MakeForm
+                    brand={brand}
+                    creators={who}
+                    hidden={{ hook: hook(ad) || ad.headline || "", advertiser: ad.brand ?? "", why: why(ad).slice(0, 700), proof: proof(ad).join(", ") }}
+                  />
                 </article>
               ))}
             </div>
-            <aside className="oa-stack">
-              <div className="oa-card">
-                <h2>Your week</h2>
-                <div style={{ marginTop: 8 }}>
-                  <div className="oa-kv"><span>Writing now</span><b>{busy.filter((j) => j.type === "iterations" || j.type === "briefs").length}</b></div>
-                  <div className="oa-kv"><span>Creators</span><b>{creators.length}</b></div>
-                  <div className="oa-kv"><span>Advertisers watched</span><b>{advertisers}</b></div>
-                </div>
+          </section>
+
+          <section className="oa-sec" id="own">
+            <header>
+              <div>
+                <p className="oa-label">Your own idea</p>
+                <h2>Got something in mind?</h2>
               </div>
-              {creators.length === 0 && (
-                <div className="oa-card">
-                  <h2>Add your creators</h2>
-                  <p className="oa-small oa-muted" style={{ margin: "8px 0 12px" }}>Ore writes each brief in a creator's own voice once it knows who they are.</p>
-                  <Link href={`/app/${brand}/creators`} className="oa-btn ghost">Add a creator</Link>
-                </div>
-              )}
-              <form action={oaFindBreakouts} className="oa-card">
-                <input type="hidden" name="brand" value={brand} />
-                <h2>Check again</h2>
-                <p className="oa-small oa-muted" style={{ margin: "8px 0 12px" }}>Pull your competitors' newest ads and find this week's breakouts.</p>
-                <button type="submit" className="oa-btn ghost">Find new breakouts</button>
-              </form>
-            </aside>
-          </div>
+            </header>
+            <div className="oa-card">
+              <MakeForm brand={brand} creators={who} hidden={{}}>
+                {q.empty && <p className="oa-small oa-muted">Write the idea first.</p>}
+                <textarea name="idea" rows={3} required placeholder="Something you saw in the patterns above plus what you want to make. Ore writes it for each creator, using everything it knows about your market." />
+              </MakeForm>
+            </div>
+          </section>
         </div>
       </main>
     </>

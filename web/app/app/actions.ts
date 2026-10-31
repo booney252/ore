@@ -44,13 +44,19 @@ export async function oaMake(form: FormData) {
   const picked = form.getAll("creator").map((v) => String(v).trim()).filter(Boolean).slice(0, 12);
   const creators: string[] = [];
   for (const id of picked) if (await creatorExists(brand, id)) creators.push(id);
+  // a pattern, an open lane or the user's own idea come as one written idea; a single winner as its parts
+  const own = text(form, "idea", 2000);
+  if (!own && !hook) redirect(`/app/${brand}?empty=1#own`);
   const idea =
+    own ||
     `Rebuild this breakout for our product: ${advertiser ? advertiser + "'s " : ""}ad "${hook}"` +
-    (proof ? ` (${proof})` : "") +
-    (why ? `. Why it works: ${why}` : "") +
-    ". Keep the parts that make it work and make it sound like the creator's own story.";
+      (proof ? ` (${proof})` : "") +
+      (why ? `. Why it works: ${why}` : "") +
+      ". Keep the parts that make it work and make it sound like the creator's own story.";
+  // the report ads that show a pattern, as extra inspiration
+  const ads = text(form, "ranks", 40).split(",").map(Number).filter((n) => Number.isInteger(n) && n > 0 && n < 100).slice(0, 5);
   const [latest] = await listDocs(brand, "reports");
-  const base = { type: "iterations" as const, brand, ...(latest && { report: latest }), ads: [], format: "ugc", per_ad: 1, idea };
+  const base = { type: "iterations" as const, brand, ...(latest && { report: latest }), ads: latest ? ads : [], format: "ugc", per_ad: 1, idea };
   // one script per creator, each written for that creator's story and voice
   if (creators.length) for (const creator of creators) await createJob({ ...base, creator });
   else await createJob(base);
