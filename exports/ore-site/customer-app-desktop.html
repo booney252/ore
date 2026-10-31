@@ -124,7 +124,7 @@ body{margin:0;background:var(--page);color:var(--ink);font-family:var(--body);fo
 .rule{font-size:14px;padding:10px 0;border-top:1px solid var(--line)}
 .rule.new{color:var(--cobalt);font-weight:600}
 .headrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
-.headrow h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0}
+.headrow h3,.card h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0}
 .hooks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .hooks span{font-size:13px;padding:7px 12px;border-radius:12px;background:var(--soft);border:1px solid var(--line)}
 .hooks span.on{background:#fff;border-color:rgba(45,99,216,.45);color:var(--cobalt);font-weight:600}
@@ -138,9 +138,10 @@ body{margin:0;background:var(--page);color:var(--ink);font-family:var(--body);fo
     <p>The landing page's slatted glow carries into the app: it sits behind the header of every screen, and the white cards rise out of it.</p>
   </div>
   <div class="switch" role="tablist" aria-label="Screens">
-    <button type="button" role="tab" id="tab-onboard" aria-selected="true" data-s="s1">1. Set up your brand</button>
-    <button type="button" role="tab" id="tab-week" aria-selected="false" data-s="s2">2. This week</button>
-    <button type="button" role="tab" id="tab-brief" aria-selected="false" data-s="s3">3. A brief</button>
+    <button type="button" role="tab" id="tab-onboard" aria-selected="true" data-s="s1">1. What you sell</button>
+    <button type="button" role="tab" id="tab-research" aria-selected="false" data-s="s1b">2. Research</button>
+    <button type="button" role="tab" id="tab-week" aria-selected="false" data-s="s2">3. This week</button>
+    <button type="button" role="tab" id="tab-brief" aria-selected="false" data-s="s3">4. A brief</button>
   </div>
 </div>
 
@@ -148,38 +149,74 @@ body{margin:0;background:var(--page);color:var(--ink);font-family:var(--body);fo
   <div class="window">
     <div class="chrome"><i></i><i></i><i></i><span class="url">app.ore / peptidepal</span></div>
 
-    <!-- 1. onboarding -->
+    <!-- 1. tell Ore what you sell -->
     <section class="screen on" id="s1">
       <div class="band tall">
-        <div class="nav">
-          <span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span>
-          <span class="brand" style="margin-left:auto">Step 2 of 3 · Your brand</span>
-        </div>
-        <div style="padding-top:18px">
-          <p class="eyebrow">peptidepal.app</p>
-          <h2>Here's what I found. Fix anything that's off.</h2>
-          <p class="sub">I read your site and App Store page, then looked for who you compete with. Tap anything to change it.</p>
-        </div>
-        <div class="onb" style="margin-top:24px">
-          <div class="found">
-            <div class="fcard"><div class="fhead"><span class="eyebrow">What you sell</span><span class="edit">Edit</span></div><span>An iPhone app that tracks peptide and GLP-1 doses, schedules, vials and protein in one place, with an AI assistant.</span></div>
-            <div class="fcard"><div class="fhead"><span class="eyebrow">Who buys it</span><span class="edit">Edit</span></div><span>Adults 30-60 on one or more weekly shots who juggle alarms, notes and spreadsheets to keep track.</span></div>
-            <div class="fcard"><div class="fhead"><span class="eyebrow">Competitors I'll watch (12)</span><span class="edit">Edit</span></div><div class="cchips"><span class="cchip">Pep AI</span><span class="cchip">PeptIQ</span><span class="cchip">Regimen</span><span class="cchip">Shotsy</span><span class="cchip">Peptide Tracker</span><span class="cchip">Noom</span><span class="cchip">MyFitnessPal</span><span class="cchip add">+ Add one</span></div></div>
-            <div style="display:flex;gap:10px;margin-top:4px"><span class="btn white">Looks right, build my brand brain</span></div>
+        <div class="nav"><span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span><span class="brand" style="margin-left:auto">Step 1 of 2 · Your product</span></div>
+        <div class="onb" style="margin-top:28px">
+          <div>
+            <p class="eyebrow">New brand</p>
+            <h2>What do you sell?</h2>
+            <p class="sub">Tell Ore about your product in a sentence or two. It does the rest: finds your competitors, reads what your buyers say, studies the ads that are winning, and builds your brand brain.</p>
+            <div class="found" style="margin-top:22px">
+              <div class="fcard"><span class="eyebrow" style="color:var(--muted)">Your product</span><span>An iPhone app that tracks peptide and GLP-1 doses, schedules, vials and protein in one place, with an AI assistant.</span></div>
+              <div class="fcard"><span class="eyebrow" style="color:var(--muted)">Website or app store link (optional)</span><span class="muted">peptidepal.app</span></div>
+              <div class="fcard"><div class="fhead"><span class="eyebrow">Competitors you already know (optional)</span><span class="edit">Ore finds the rest</span></div><div class="cchips"><span class="cchip">Shotsy</span><span class="cchip">Pep AI</span><span class="cchip add">+ Add one</span></div></div>
+              <div style="display:flex;gap:10px;margin-top:4px"><span class="btn white">Research my market</span></div>
+            </div>
           </div>
           <div class="glass">
-            <p class="eyebrow">Building your brand brain</p>
+            <p class="eyebrow">What Ore will build</p>
             <div class="prog" style="margin-top:14px">
-              <div class="pstep done"><i></i><div><b>Read 1,344 customer reviews</b><span>The words your buyers actually use</span></div></div>
-              <div class="pstep done"><i></i><div><b>Found 43 advertisers in your market</b><span>Their top 10 ads, checked daily</span></div></div>
-              <div class="pstep now"><i></i><div><b>Breaking down their newest winners</b><span>About 4 minutes left</span></div></div>
-              <div class="pstep"><i></i><div><b>Writing your research brief</b><span>Who buys, why, and what they doubt</span></div></div>
-            </div>
-            <div class="preview">
-              <p class="eyebrow">Already spotted</p>
-              <div class="mini"><span class="t"></span><b>A GLP-1 clinic's new ad just hit #2 in its top 10.</b></div>
+              <div class="pstep"><i></i><div><b>Competitor map</b><span>Direct, adjacent and nearby brands, plus any you add</span></div></div>
+              <div class="pstep"><i></i><div><b>Customer research</b><span>Real quotes from reviews and comments, with sources</span></div></div>
+              <div class="pstep"><i></i><div><b>Winning ads</b><span>Every competitor's top ads, broken down</span></div></div>
+              <div class="pstep"><i></i><div><b>Psychographics</b><span>What your buyers hope for, fear and believe</span></div></div>
+              <div class="pstep"><i></i><div><b>Market awareness</b><span>How much your buyers already know</span></div></div>
+              <div class="pstep"><i></i><div><b>Research brief and unique mechanisms</b><span>Your brand brain, which every brief reads</span></div></div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. research running -->
+    <section class="screen" id="s1b">
+      <div class="band">
+        <div class="nav"><span class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3 28 10v12L16 29 4 22V10L16 3Z" stroke="#fff" stroke-width="2"/><path d="M16 3v26M4 10l12 7 12-7" stroke="#fff" stroke-width="1.4" opacity=".7"/></svg>Ore</span><span class="brand" style="margin-left:auto">Step 2 of 2 · Researching</span></div>
+        <p class="eyebrow" style="margin-top:14px">PeptidePal · about 8 minutes</p>
+        <h2>Ore is researching your market.</h2>
+        <div class="chips"><span class="gchip">5 of 7 steps done</span><span class="gchip">we'll email you when it's ready</span></div>
+      </div>
+      <div class="content">
+        <div class="feed">
+          <div class="card">
+            <div class="headrow"><h3>Competitor map</h3><span class="btn ghost">+ Add a competitor</span></div>
+            <div style="display:grid;gap:14px">
+              <div><p class="eyebrow muted">Direct · same product, same buyer</p><div class="cchips" style="margin-top:8px"><span class="cchip">Pep AI</span><span class="cchip">PeptIQ</span><span class="cchip">Regimen</span><span class="cchip">Shotsy <b style="color:var(--cobalt);font-weight:600">· yours</b></span><span class="cchip">Peptide Tracker</span><span class="cchip">LynkDose</span></div></div>
+              <div><p class="eyebrow muted">Adjacent · different product, same problem</p><div class="cchips" style="margin-top:8px"><span class="cchip">Noom</span><span class="cchip">MyFitnessPal</span><span class="cchip">Cal AI</span><span class="cchip">Glapp</span></div></div>
+              <div><p class="eyebrow muted">Nearby · same buyer, nearby problem</p><div class="cchips" style="margin-top:8px"><span class="cchip">Hims</span><span class="cchip">Eden</span><span class="cchip">IM8</span><span class="cchip">Zafira</span></div></div>
+            </div>
+            <div class="headrow" style="margin-top:22px"><h3>What your buyers say</h3><span class="small muted">1,344 quotes so far</span></div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+              <div class="ln" style="grid-template-columns:1fr"><span>"I couldn't remember if I took it Tuesday or Wednesday."</span><span class="os">Pain · App Store review</span></div>
+              <div class="ln" style="grid-template-columns:1fr"><span>"The math confuses me."</span><span class="os">Doubt · Instagram comment</span></div>
+              <div class="ln" style="grid-template-columns:1fr"><span>"Finally one place for everything."</span><span class="os">Desire · App Store review</span></div>
+            </div>
+          </div>
+          <aside class="side">
+            <div class="card"><h3>Research steps</h3>
+              <div style="display:grid;gap:10px;margin-top:12px">
+                <div class="kv"><span>Competitor map</span><b style="color:var(--cobalt)">Done</b></div>
+                <div class="kv"><span>Customer research</span><b style="color:var(--cobalt)">Done</b></div>
+                <div class="kv"><span>Winning ads</span><b style="color:var(--cobalt)">Done</b></div>
+                <div class="kv"><span>Psychographics</span><b style="color:var(--cobalt)">Done</b></div>
+                <div class="kv"><span>Market awareness</span><b style="color:var(--cobalt)">Done</b></div>
+                <div class="kv"><span>Research brief</span><b>Writing…</b></div>
+                <div class="kv"><span>Unique mechanisms</span><b class="muted">Next</b></div>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
