@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 import Markdown from "@/app/Markdown";
 import { brandName, checkFile, readDoc, type Kind } from "@/lib/brands";
 import { readLessons, rules } from "@/lib/lessons";
-import { oaFeedback } from "../../../../actions";
+import { headers } from "next/headers";
+import { listCreators } from "@/lib/creators";
+import { oaFeedback, oaShare } from "../../../../actions";
+import CopyLink from "../../../../CopyLink";
 import { Band } from "../../../../ui";
 
 export const dynamic = "force-dynamic";
@@ -25,19 +28,49 @@ export default async function BriefDoc({
   } catch {
     notFound();
   }
-  const [name, md, lessons] = await Promise.all([brandName(brand), readDoc(brand, kind as Kind, file), readLessons(brand)]);
+  const [name, md, lessons, creators, hdrs] = await Promise.all([brandName(brand), readDoc(brand, kind as Kind, file), readLessons(brand), listCreators(brand), headers()]);
+  const forId = file.match(/-for-([a-z0-9-]+)/)?.[1];
+  const forCreator = creators.find((c) => c.id === forId);
+  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
+  const proto = hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  const shareUrl = q.shared && /^[A-Za-z0-9_-]{8,40}$/.test(q.shared) ? `${proto}://${host}/c/${q.shared}` : "";
   if (!md) notFound();
-  const title = md.match(/^#\s+(.+)$/m)?.[1]?.replace(/[*_`]/g, "") ?? "Brief";
+  const heads = [...md.matchAll(/^#\s+(.+)$/gm)];
+  const title = heads[heads.length - 1]?.[1]?.replace(/[*_`]/g, "") ?? "Brief";
   const brandRules = rules(lessons.brand).slice(-6).reverse();
   return (
     <>
-      <Band brand={brand} name={name} label={kind === "briefs" ? "Creative brief" : "Scripts"} title={title} />
+      <Band brand={brand} name={name} label={kind === "briefs" ? "Creative brief" : "Scripts"} title={title}>
+        {forCreator && (
+          <div className="oa-gchips">
+            <span className="oa-gchip">Written for {forCreator.name}</span>
+          </div>
+        )}
+      </Band>
       <main className="oa-main">
         <div className="oa-wrap oa-split">
           <article className="oa-card oa-doc">
-            <Markdown text={md.replace(/^#\s+.+\n/m, "")} />
+            <Markdown text={md.replace(/^#\s+.+\n/gm, "")} />
           </article>
           <aside className="oa-sticky">
+            <form action={oaShare} className="oa-card oa-send" id="send">
+              <input type="hidden" name="brand" value={brand} />
+              <input type="hidden" name="kind" value={kind} />
+              <input type="hidden" name="file" value={file} />
+              <input type="hidden" name="creator" value={forCreator?.id ?? ""} />
+              <h2>Send to {forCreator ? forCreator.name : "your creator"}</h2>
+              {shareUrl ? (
+                <>
+                  <p className="oa-small oa-muted">Send this link. {forCreator ? forCreator.name : "They"} can open it on any phone, no account needed.</p>
+                  <CopyLink url={shareUrl} />
+                </>
+              ) : (
+                <>
+                  <p className="oa-small oa-muted">Makes a private link {forCreator ? forCreator.name : "your creator"} can open without an account.</p>
+                  <button type="submit" className="oa-btn">Create link</button>
+                </>
+              )}
+            </form>
             <form action={oaFeedback} className="oa-card oa-form" id="feedback">
               <input type="hidden" name="brand" value={brand} />
               <input type="hidden" name="doc" value={`${kind}/${file}`} />

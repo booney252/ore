@@ -12,7 +12,7 @@ const DAY = 86_400_000;
 
 /** New ads that broke into a top 10 lately first, then rising ads, then proven winners. */
 function pick(ads: Ad[]): { ad: Ad; tag: string; cls: string }[] {
-  const pool = ads.filter((a) => !a.is_own && !a.removed_from_library && a.source !== "organic");
+  const pool = ads.filter((a) => !a.is_own && !a.removed_from_library && a.source !== "organic" && (hook(a) || a.headline));
   const since = Date.now() - 14 * DAY;
   const out: { ad: Ad; tag: string; cls: string }[] = [];
   const seen = new Set<string>();
@@ -117,16 +117,16 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
                     <input type="hidden" name="why" value={why(ad).slice(0, 700)} />
                     <input type="hidden" name="proof" value={proof(ad).join(", ")} />
                     {creators.length > 0 && (
-                      <select name="creator" aria-label="Who's filming it" defaultValue="">
-                        <option value="">Any creator</option>
+                      <fieldset className="oa-pick">
+                        <legend className="oa-small oa-muted">Write it for</legend>
                         {creators.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            For {c.name}
-                          </option>
+                          <label key={c.id} className="oa-chip">
+                            <input type="checkbox" name="creator" value={c.id} defaultChecked /> {c.name}
+                          </label>
                         ))}
-                      </select>
+                      </fieldset>
                     )}
-                    <button type="submit" className="oa-btn">Make this for my brand</button>
+                    <button type="submit" className="oa-btn">{creators.length ? "Make a brief for each" : "Make this for my brand"}</button>
                   </form>
                 </article>
               ))}

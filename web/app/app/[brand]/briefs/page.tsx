@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { brandName, docTitles, listDocs } from "@/lib/brands";
+import { listCreators } from "@/lib/creators";
 import { listJobs } from "@/lib/jobs";
 import { Band, Working } from "../../ui";
 
@@ -13,7 +14,8 @@ function when(file: string): string {
 export default async function Briefs({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, its, briefs, jobs] = await Promise.all([brandName(brand), listDocs(brand, "iterations"), listDocs(brand, "briefs"), listJobs(brand, 10)]);
+  const [name, its, briefs, jobs, creators] = await Promise.all([brandName(brand), listDocs(brand, "iterations"), listDocs(brand, "briefs"), listJobs(brand, 10), listCreators(brand)]);
+  const forName = (f: string) => creators.find((c) => c.id === f.match(/-for-([a-z0-9-]+)/)?.[1])?.name;
   const [itTitles, brTitles] = await Promise.all([docTitles(brand, "iterations", its.slice(0, 30)), docTitles(brand, "briefs", briefs.slice(0, 30))]);
   const docs = [
     ...its.slice(0, 30).map((f) => ({ kind: "iterations", file: f, titles: itTitles[f] ?? [], type: "Scripts" })),
@@ -36,6 +38,7 @@ export default async function Briefs({ params, searchParams }: { params: Promise
                     <span>
                       <b>{d.titles.slice(0, 3).join(" · ") || d.file}</b>
                       <span className="oa-small oa-muted">
+                        {forName(d.file) ? `For ${forName(d.file)} · ` : ""}
                         {d.type} · {when(d.file)}
                         {d.titles.length > 3 ? ` · ${d.titles.length} scripts` : ""}
                       </span>

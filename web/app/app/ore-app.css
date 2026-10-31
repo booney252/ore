@@ -174,3 +174,13 @@
 }
 .oa-band.full::after { display: none; }
 .oa-main { margin-top: -110px; }
+
+.oa-pick { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.oa-pick legend { width: 100%; margin-bottom: 2px; }
+.oa-pick .oa-chip { padding: 5px 11px 5px 8px; cursor: pointer; }
+.oa-pick input { width: auto; margin: 0; accent-color: var(--oa-cobalt); }
+.oa-send { display: grid; gap: 10px; }
+.oa-link { display: flex; gap: 6px; }
+.oa-link input { font-family: var(--font-data), monospace; font-size: 13px; }
+.oa-forchip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 9px 3px 4px; border-radius: 999px; background: rgba(45, 99, 216, 0.1); color: var(--oa-cobalt); }
+.oa-forchip i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-style: normal; font-size: 10px; background: var(--oa-cobalt); }

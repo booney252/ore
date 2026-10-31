@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { brandExists, checkSlug, createBrand, listDocs, slugify } from "@/lib/brands";
+import { randomBytes } from "node:crypto";
+import { brandExists, checkFile, checkSlug, createBrand, listDocs, slugify } from "@/lib/brands";
+import { writeText } from "@/lib/storage";
 import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { createJob } from "@/lib/jobs";
@@ -39,16 +41,33 @@ export async function oaMake(form: FormData) {
   const advertiser = text(form, "advertiser", 120);
   const why = text(form, "why", 800);
   const proof = text(form, "proof", 300);
-  const creatorId = text(form, "creator", 60);
-  const creator = creatorId && (await creatorExists(brand, creatorId)) ? { creator: creatorId } : {};
+  const picked = form.getAll("creator").map((v) => String(v).trim()).filter(Boolean).slice(0, 12);
+  const creators: string[] = [];
+  for (const id of picked) if (await creatorExists(brand, id)) creators.push(id);
   const idea =
     `Rebuild this breakout for our product: ${advertiser ? advertiser + "'s " : ""}ad "${hook}"` +
     (proof ? ` (${proof})` : "") +
     (why ? `. Why it works: ${why}` : "") +
     ". Keep the parts that make it work and make it sound like the creator's own story.";
   const [latest] = await listDocs(brand, "reports");
-  await createJob({ type: "iterations", brand, ...(latest && { report: latest }), ads: [], format: "ugc", per_ad: 1, idea, ...creator });
-  redirect(`/app/${brand}/briefs?writing=1`);
+  const base = { type: "iterations" as const, brand, ...(latest && { report: latest }), ads: [], format: "ugc", per_ad: 1, idea };
+  // one script per creator, each written for that creator's story and voice
+  if (creators.length) for (const creator of creators) await createJob({ ...base, creator });
+  else await createJob(base);
+  redirect(`/app/${brand}/briefs?writing=${Math.max(creators.length, 1)}`);
+}
+
+/** "Send to creator": a private link the creator opens without an account. */
+export async function oaShare(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const kind = text(form, "kind", 20);
+  const file = checkFile(text(form, "file", 160));
+  if (kind !== "iterations" && kind !== "briefs") redirect(`/app/${brand}/briefs`);
+  const creator = text(form, "creator", 60);
+  const token = randomBytes(12).toString("base64url");
+  await writeText(`shares/${token}.json`, JSON.stringify({ brand, kind, file, creator, created_at: new Date().toISOString() }));
+  redirect(`/app/${brand}/briefs/${kind}/${file}?shared=${token}#send`);
 }
 
 export async function oaSaveCreator(form: FormData) {
