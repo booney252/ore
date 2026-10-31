@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600&family=Instrument+Serif:ital@1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: slatted glow hero, then the idea tree (one winning ad branching into a brief per creator), then the loop, proof and pricing on a calm light ground. */
 :root{
@@ -12,6 +12,7 @@
   --display:"Urbanist",ui-sans-serif,system-ui,sans-serif;
   --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --serif:"Instrument Serif",ui-serif,Georgia,serif;
   --ribs:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 3px,rgba(255,255,255,0) 3px 12px,rgba(0,40,90,.035) 12px 15px,rgba(255,255,255,0) 15px 22px);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1322;--surface:#121d31;--soft:#17243b;--ink:#eaf1fb;--muted:#9db0c9;--line:#24344e;color-scheme:dark}}
@@ -31,10 +32,12 @@ p{margin:0}
   radial-gradient(35% 50% at 30% 40%,rgba(240,106,168,.9),transparent 70%),
   radial-gradient(30% 60% at 56% 46%,rgba(45,99,216,.95),transparent 70%),
   linear-gradient(115deg,#57c7f2 0%,#3fb7ec 35%,#2d8fe0 65%,#46b9ee 100%)}
-.hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:var(--ribs)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:var(--ribs);z-index:1}
 /* fade the bottom of the glow into the page so blue never cuts straight into the next section */
-.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:220px;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0),var(--bg) 92%)}
-.hero>*{position:relative;z-index:1}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:220px;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0),var(--bg) 92%);z-index:1}
+.hero>*{position:relative;z-index:2}
+.hero>canvas.gl{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:0;transition:opacity 1.2s ease}
+.hero>canvas.gl.on{opacity:1}
 nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:22px}
 .logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;text-decoration:none}
 .logo svg{width:26px;height:26px}
@@ -172,6 +175,115 @@ ol.loop{margin:0;padding:0}
 footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .sticky-cta{display:none}
 
+
+/* italic serif accent word in headlines */
+.it{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;padding-right:.04em}
+h1 .it{font-size:1.06em}
+
+/* hero: copy on the left, Ore working on the right */
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;align-items:center;padding-block:40px 150px}
+.hero-grid .hero-body{padding:0}
+.demo{position:relative;border-radius:22px;padding:16px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 40px 80px -40px rgba(10,30,70,.6);color:#fff;font-size:14px;transform:perspective(1400px) rotateY(-6deg) rotateX(2deg);transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.demo:hover{transform:perspective(1400px) rotateY(-2deg)}
+.demo-top{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.demo-top i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55)}
+.demo-top span{margin-left:auto}
+.dcard{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;padding:12px;border-radius:16px;background:rgba(255,255,255,.95);color:#0f1c33}
+.dthumb{border-radius:10px;aspect-ratio:9/14;background:radial-gradient(60% 50% at 35% 35%,#ffb38a,transparent 70%),radial-gradient(60% 60% at 70% 70%,#7a5ce6,transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)}
+.dtag{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:999px;background:#e8f0fd;color:#2d63d8}
+.dcard q{display:block;font-family:var(--display);font-size:17px;line-height:1.2;margin:6px 0;quotes:"\201C" "\201D"}
+.dproof{font-family:var(--mono);font-size:10.5px;color:#53627a}
+.drows{display:grid;gap:8px;margin-top:10px}
+.drow{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);opacity:.35;transform:translateY(6px);transition:opacity .5s,transform .5s,background .5s}
+.drow .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:12px;background:var(--c)}
+.drow b{font-size:13px}.drow small{display:block;font-size:12px;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drow .st{font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.2)}
+.drow.go{opacity:1;transform:none}
+.drow.done{background:rgba(255,255,255,.24)}
+.drow.done .st{background:#fff;color:#0f1c33}
+.dsend{margin-top:10px;display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:#fff;color:#0f1c33;font-size:13px;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.dsend.go{opacity:1;transform:none}
+.dsend code{font-family:var(--mono);font-size:11.5px;color:#2d63d8;margin-left:auto}
+
+/* watch Ore work: sticky product window + steps */
+.show{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:start}
+.stage{position:sticky;top:max(24px,calc(50vh - 260px));height:480px;border-radius:24px;overflow:hidden;background:var(--ribs),radial-gradient(50% 60% at 20% 30%,rgba(240,106,168,.55),transparent 70%),radial-gradient(50% 60% at 85% 80%,rgba(255,138,76,.5),transparent 70%),linear-gradient(150deg,#4cc3f0,#2d63d8);box-shadow:0 40px 80px -46px rgba(15,28,51,.6)}
+.screen{position:absolute;inset:22px;border-radius:18px;background:var(--surface);color:var(--ink);padding:20px;display:flex;flex-direction:column;gap:12px;opacity:0;transform:translateY(24px) scale(.98);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1);overflow:hidden}
+.screen.on{opacity:1;transform:none}
+.screen .label{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px}
+.steps{display:grid;gap:0}
+.step{min-height:62vh;display:flex;flex-direction:column;justify-content:center;gap:10px;padding-block:24px;opacity:.35;transition:opacity .4s}
+.step.on{opacity:1}
+.step .n{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--cobalt)}
+.step h3{font-size:clamp(28px,3vw,40px)}
+.step p{color:var(--muted);font-size:17px;max-width:44ch}
+.step .mini{display:none}
+/* screen parts */
+.t10{display:grid;gap:6px}
+.t10 div{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 11px;border-radius:12px;background:var(--soft);font-size:14px}
+.t10 div b{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.t10 div span:last-child{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.t10 .new{background:linear-gradient(90deg,rgba(63,183,236,.22),rgba(240,106,168,.2));box-shadow:0 0 0 1.5px rgba(45,99,216,.5);animation:pop .8s cubic-bezier(.2,.8,.2,1.2) both}
+.t10 .new span:last-child{color:var(--cobalt);font-weight:600}
+@keyframes pop{from{transform:translateX(-30px);opacity:0}to{transform:none;opacity:1}}
+.apart{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start}
+.phone{aspect-ratio:9/16;border-radius:16px;background:radial-gradient(60% 50% at 35% 30%,#ffb38a,transparent 70%),radial-gradient(60% 60% at 70% 70%,#7a5ce6,transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8);position:relative}
+.phone::after{content:"";position:absolute;left:10%;right:10%;bottom:12%;height:3px;border-radius:3px;background:rgba(255,255,255,.7)}
+.marks{display:grid;gap:8px}
+.marks div{display:grid;gap:2px;padding:10px 12px;border-radius:12px;border-left:3px solid var(--c);background:var(--soft);font-size:14px}
+.marks small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.pat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.pat i{aspect-ratio:9/14;border-radius:10px;background:linear-gradient(160deg,var(--a),var(--b))}
+.patcard{padding:12px 14px;border-radius:14px;background:var(--soft)}
+.patcard b{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.2;display:block}
+.patcard span{font-size:13px;color:var(--muted)}
+.lane{padding:12px 14px;border-radius:14px;border:1.5px dashed rgba(122,92,230,.5);font-size:14px}
+.lane small{display:block;font-family:var(--mono);font-size:11px;color:var(--violet)}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:1}
+.three div{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--soft);font-size:13px;min-width:0}
+.three .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;background:var(--c)}
+.three q{font-family:var(--display);font-size:15.5px;line-height:1.25;quotes:"\201C" "\201D"}
+.three small{color:var(--muted)}
+.sent{display:grid;grid-template-columns:minmax(0,1fr) 130px;gap:14px;align-items:start}
+.link{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--soft);font-family:var(--mono);font-size:12px;color:var(--cobalt)}
+.res{display:grid;gap:8px;margin-top:10px}
+.res div{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.res .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:12px;background:var(--c)}
+.res b{font-family:var(--mono);font-size:12px}
+.res .up{color:#1f9d6b}
+.mph{aspect-ratio:9/17;border-radius:18px;border:5px solid #0f1c33;background:#fff;padding:10px 8px;display:grid;gap:6px;align-content:start;font-size:10px;color:#0f1c33}
+.mph b{font-family:var(--display);font-size:12.5px;line-height:1.2}
+.mph i{display:block;height:5px;border-radius:3px;background:#e3e9f2}
+.stage-note{position:absolute;left:22px;right:22px;bottom:6px;font-size:11px;color:rgba(255,255,255,.85);text-align:right}
+
+/* scroll reveal (added by script, so the page still shows everything without it) */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.tree svg.links path{stroke-dasharray:var(--len,2000);stroke-dashoffset:var(--len,2000);transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)}
+.tree.drawn svg.links path{stroke-dashoffset:0}
+
+@media (max-width:1100px){
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .demo{transform:none;max-width:560px}
+}
+@media (max-width:980px){
+  .show{grid-template-columns:1fr;gap:0}
+  .stage{display:none}
+  .step{min-height:0;opacity:1;padding-block:22px;border-top:1px solid var(--line)}
+  .step .mini{display:block;position:relative;border-radius:20px;overflow:hidden;padding:14px;margin-top:6px;background:var(--ribs),radial-gradient(50% 60% at 20% 30%,rgba(240,106,168,.55),transparent 70%),linear-gradient(150deg,#4cc3f0,#2d63d8)}
+  .step .mini .screen{position:relative;inset:auto;opacity:1;transform:none}
+  .screen .label{font-size:10.5px}
+  .t10 div:nth-child(n+6){display:none}
+}
+@media (max-width:640px){
+  .hero-grid{padding-block:20px 120px}
+  .demo{padding:12px}
+  .apart{grid-template-columns:90px minmax(0,1fr)}
+  .three{grid-template-columns:1fr}
+  .sent{grid-template-columns:minmax(0,1fr) 96px}
+}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.demo{transform:none}.tree svg.links path{stroke-dasharray:none}.t10 .new{animation:none}}
+
 @media (max-width:980px){
   .pills{display:none}
   .same,.secret{grid-template-columns:1fr}
@@ -217,15 +329,32 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
       </div>
       <a class="btn btn-white" href="#teardown">Free teardown</a>
     </nav>
-    <div class="hero-body" id="top">
+    <div class="hero-grid" id="top">
+    <div class="hero-body">
       <p class="label">For brands and teams running UGC creator programs</p>
-      <h1>Stop sending every creator the same brief.</h1>
+      <h1>Stop sending every creator the <span class="it">same</span> brief.</h1>
       <p class="sub">Ore finds the ads winning in your market right now, works out why they win, and writes a brief for each of your creators in their own voice. Then it tracks whose videos work, and gets better every week.</p>
       <div class="cta-row">
         <a class="btn btn-white" href="#teardown">Get a free teardown</a>
         <a class="btn btn-ghost" href="#tree">See one idea become four briefs</a>
       </div>
       <div class="hero-chips"><span>Breakout tracking</span><span>Creator-fit briefs</span><span>Creator results</span><span>Brand memory</span></div>
+    </div>
+    <div class="demo" id="demo" role="img" aria-label="Ore at work: a new ad breaks into a competitor's top 10, and Ore writes a brief for each creator.">
+      <div class="demo-top"><i></i><i></i><i></i>Ore · This week<span>New in a top 10</span></div>
+      <div class="dcard">
+        <div class="dthumb"></div>
+        <div><span class="dtag">#1 in its top 10 · live 9 days</span>
+          <q>Nobody told me what to expect when I started this medication.</q>
+          <div class="dproof">Why it works: names the gap · sounds like a person · product held back</div></div>
+      </div>
+      <div class="drows">
+        <div class="drow" style="--c:#2d63d8"><span class="av">J</span><span><b>Jenny, nurse</b><small>"I'm a nurse, and the thing my clients never get told…"</small></span><span class="st">writing</span></div>
+        <div class="drow" style="--c:#7a5ce6"><span class="av">J</span><span><b>John, ex-trainer</b><small>"I trained people for ten years. Nobody told me…"</small></span><span class="st">writing</span></div>
+        <div class="drow" style="--c:#f06aa8"><span class="av">M</span><span><b>Maya, mom of three</b><small>"Nobody told me I'd need a spreadsheet…"</small></span><span class="st">writing</span></div>
+      </div>
+      <div class="dsend">Sent to Jenny, John and Maya <code>ore.app/c/…</code></div>
+    </div>
     </div>
   </div>
 </header>
@@ -235,7 +364,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="wrap">
       <div class="sec-head">
         <p class="label">The problem</p>
-        <h2>UGC doesn't fail because of the creator. <span class="grad-text">It fails because of the brief.</span></h2>
+        <h2>UGC doesn't fail because of the creator. <span class="grad-text">It fails because of the <span class="it">brief</span>.</span></h2>
         <p>Most brands send ten creators one brief. The nurse, the mom and the gym guy read the same words, so nobody sounds real. Two videos work, and nobody can say why.</p>
       </div>
       <div class="same">
@@ -259,7 +388,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="wrap">
       <div class="sec-head">
         <p class="label">How Ore works</p>
-        <h2>One winning idea. <span class="grad-text">A different brief for every creator.</span></h2>
+        <h2>One winning idea. <span class="grad-text">A different brief for <span class="it">every</span> creator.</span></h2>
         <p>Ore keeps the parts that make a winning ad work, then rebuilds them around each creator's real story. Tap a creator to see their brief.</p>
       </div>
       <div class="tree" id="treebox">
@@ -315,18 +444,69 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
   <section id="loop" style="padding-top:0">
     <div class="wrap">
       <div class="sec-head">
-        <p class="label">The loop</p>
-        <h2>Every batch makes the next one smarter.</h2>
+        <p class="label">Watch Ore work</p>
+        <h2>From a new winner to a brief in each creator's hands. <span class="grad-text">Every <span class="it">week</span>.</span></h2>
       </div>
-      <ol class="loop">
-        <li><b>Learn your brand</b><span>Tell Ore what you sell. It researches your market, competitors and what buyers say.</span></li>
-        <li><b>Catch breakouts</b><span>It checks every competitor's top 10 ads daily and flags the new ones getting money.</span></li>
-        <li><b>Find why they win</b><span>It marks the parts that carry each ad, with proof.</span></li>
-        <li><b>Brief each creator</b><span>One idea becomes a brief per creator, in their voice and story.</span></li>
-        <li><b>Track their posts</b><span>It pulls each creator's videos and flags who beat their usual.</span></li>
-        <li><b>Learn what wins</b><span>Your notes become rules, and winning creator and angle pairs shape the next briefs.</span></li>
-      </ol>
-      <div class="loop-back"><svg viewBox="0 0 520 28" aria-hidden="true"><path d="M510 4 C 510 24, 10 24, 10 4" fill="none" stroke="url(#lg2)" stroke-width="2" stroke-dasharray="5 6"/><defs><linearGradient id="lg2" x1="0" x2="1"><stop offset="0" stop-color="#3fb7ec"/><stop offset="1" stop-color="#f06aa8"/></linearGradient></defs><path d="M4 10 L10 2 L16 10" fill="none" stroke="#3fb7ec" stroke-width="2"/></svg><span>and back to step 2, every week</span></div>
+      <div class="show">
+        <div class="stage" aria-hidden="true">
+          <div class="screen on" data-s="1">
+            <p class="label"><span>Competitor ads · top 10 today</span><span>Daily check</span></p>
+            <div class="t10">
+              <div class="new"><b>#1</b><span>"Nobody told me what to expect…"</span><span>NEW · 9 days</span></div>
+              <div><b>#2</b><span>"If you're taking peptides, you have to get this app."</span><span>23 days</span></div>
+              <div><b>#3</b><span>"I thought starting a GLP-1 would be hard…"</span><span>23 days</span></div>
+              <div><b>#4</b><span>"Best apps to see progress on a GLP."</span><span>15 days</span></div>
+              <div><b>#5</b><span>"You have one day…"</span><span>295 days</span></div>
+              <div><b>#6</b><span>"If your skin looks like this, skip the facials…"</span><span>61 days</span></div>
+              <div><b>#7</b><span>"This is fake, this is fake…"</span><span>44 days</span></div>
+            </div>
+          </div>
+          <div class="screen" data-s="2">
+            <p class="label"><span>Why it works</span><span>#1 · 0:00 to 0:34</span></p>
+            <div class="apart"><div class="phone"></div>
+              <div class="marks">
+                <div style="--c:#2d63d8"><small>0:00 to 0:03 · the hook</small><b>Names the gap.</b> "Nobody told me" is the viewer's own complaint.</div>
+                <div style="--c:#7a5ce6"><small>0:03 to 0:15 · the voice</small><b>Sounds like a person.</b> First person, no claims up top.</div>
+                <div style="--c:#f06aa8"><small>0:22 · the product</small><b>Held back</b> until the problem has landed.</div>
+              </div></div>
+          </div>
+          <div class="screen" data-s="3">
+            <p class="label"><span>Patterns this week</span><span>3 of the top 10</span></p>
+            <div class="pat"><i style="--a:#4cc3f0;--b:#2d63d8"></i><i style="--a:#ffb38a;--b:#f06aa8"></i><i style="--a:#a48cf0;--b:#2d63d8"></i><i style="--a:#4cc3f0;--b:#7a5ce6"></i></div>
+            <div class="patcard"><b>"Nobody told me": the expert explains what got skipped.</b><span>New patients feel lost after the prescription. The winners say it for them.</span></div>
+            <div class="lane"><small>OPEN LANE · NO AD IS SAYING THIS</small>"Wait, did I take my shot Sunday or Monday?"</div>
+          </div>
+          <div class="screen" data-s="4">
+            <p class="label"><span>A brief for each creator</span><span>3 written</span></p>
+            <div class="three">
+              <div style="--c:#2d63d8"><span class="av">J</span><b>Jenny, 52</b><small>Aesthetic nurse</small><q>Last Wednesday a client sat in my chair and said, nobody told me it would feel like this.</q></div>
+              <div style="--c:#7a5ce6"><span class="av">J</span><b>John, 34</b><small>Ex-trainer</small><q>I trained people for ten years, and nobody told me what it does to your lifts.</q></div>
+              <div style="--c:#f06aa8"><span class="av">M</span><b>Maya, 41</b><small>Mom of three</small><q>Nobody told me the hardest part would be remembering if I took it.</q></div>
+            </div>
+          </div>
+          <div class="screen" data-s="5">
+            <p class="label"><span>Sent and tracked</span><span>2 weeks later</span></p>
+            <div class="sent"><div>
+              <div class="link">🔗 ore.app/c/jenny-nobody-told-me</div>
+              <div class="res">
+                <div style="--c:#2d63d8"><span class="av">J</span><span>Jenny's video</span><b class="up">3.1x her usual</b></div>
+                <div style="--c:#7a5ce6"><span class="av">J</span><span>John's video</span><b class="up">1.8x his usual</b></div>
+                <div style="--c:#f06aa8"><span class="av">M</span><span>Maya's video</span><b>about her usual</b></div>
+              </div>
+              <p style="font-size:13px;color:var(--muted);margin-top:12px">Next week's briefs lean into what worked for each of them.</p></div>
+              <div class="mph"><span style="font-family:var(--mono);font-size:8px;color:#53627a">FOR JENNY</span><b>What I tell my clients</b><i></i><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>
+            </div>
+          </div>
+          <p class="stage-note">Example brand and roster</p>
+        </div>
+        <div class="steps">
+          <div class="step on" data-s="1"><span class="n">01</span><h3>It catches the <span class="it">new</span> winners.</h3><p>Every day Ore reads each competitor's top 10 ads and flags a new one the day it breaks in, before anyone else copies it.</p></div>
+          <div class="step" data-s="2"><span class="n">02</span><h3>It takes them <span class="it">apart</span>.</h3><p>The hook, the voice, the moment it sells. Ore marks the parts actually carrying the ad, with the proof.</p></div>
+          <div class="step" data-s="3"><span class="n">03</span><h3>It finds the <span class="it">pattern</span>.</h3><p>What the winners have in common, and what your buyers keep saying that no ad is saying yet.</p></div>
+          <div class="step" data-s="4"><span class="n">04</span><h3>It writes for <span class="it">each</span> creator.</h3><p>One idea becomes a different brief for every creator, built on their real story and the way they talk.</p></div>
+          <div class="step" data-s="5"><span class="n">05</span><h3>You send it. It <span class="it">learns</span>.</h3><p>Each creator gets a link. Ore tracks whose video beat their usual, and the next briefs lean that way.</p></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -334,7 +514,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="wrap">
       <div class="sec-head">
         <p class="label">It learns your roster</p>
-        <h2>Know who wins with what.</h2>
+        <h2>Know who wins with <span class="it">what</span>.</h2>
         <p>After a few batches, Ore stops guessing. Each creator's briefs lean into what has actually worked for them.</p>
       </div>
       <div class="learn">
@@ -350,7 +530,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="wrap">
       <div class="sec-head">
         <p class="label">Why the ideas are current</p>
-        <h2>Most "winning ads" are old ads nobody turned off.</h2>
+        <h2>Most "winning ads" are <span class="it">old</span> ads nobody turned off.</h2>
         <p>Sorting an ad library by longest running shows you what worked months ago. Ore watches each competitor's top 10 instead, where brands put money on the ads working now. In one market it watches:</p>
       </div>
       <div class="proofbar">
@@ -364,7 +544,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
   <section style="padding-top:0">
     <div class="wrap">
       <div class="panel secret">
-        <div><p class="label">Your edge stays yours</p><h2 style="margin-top:12px">Two brands can watch the same competitors. <span class="grad-text">They never get the same brief.</span></h2></div>
+        <div><p class="label">Your edge stays yours</p><h2 style="margin-top:12px">Two brands can watch the same competitors. <span class="grad-text">They <span class="it">never</span> get the same brief.</span></h2></div>
         <div class="secret-points">
           <p>Every brief is written from your research, your customers' words, your creators' stories and your notes. That memory belongs to your brand alone.</p>
           <p>Your research, roster and briefs are never shown to anyone else on Ore, including a competitor who signs up tomorrow.</p>
@@ -375,7 +555,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
 
   <section id="who" style="padding-top:0">
     <div class="wrap">
-      <div class="sec-head"><p class="label">Who it's for</p><h2>Built for anyone running creators.</h2></div>
+      <div class="sec-head"><p class="label">Who it's for</p><h2>Built for anyone running <span class="it">creators</span>.</h2></div>
       <div class="who3">
         <div class="panel"><h3>Brands with a UGC program</h3><p>You pay creators every month and want more of their videos to work.</p></div>
         <div class="panel"><h3>Affiliate and creator communities</h3><p>You want every member posting content that sells and builds their own brand.</p></div>
@@ -389,7 +569,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="wrap">
       <div class="sec-head">
         <p class="label">Pricing</p>
-        <h2>Priced on your program. <span class="grad-text">The research is included.</span></h2>
+        <h2>Priced on your program. <span class="grad-text">The research is <span class="it">included</span>.</span></h2>
         <p>Every plan includes the full research setup, breakout tracking, creator-fit briefs, creator results and brand memory. Start with a free teardown, no card needed.</p>
       </div>
       <div class="plans">
@@ -409,7 +589,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
 
   <section style="padding-top:0">
     <div class="wrap">
-      <div class="sec-head"><p class="label">What happens next</p><h2>Three steps, and the first one takes a minute.</h2></div>
+      <div class="sec-head"><p class="label">What happens next</p><h2>Three steps, and the first one takes a <span class="it">minute</span>.</h2></div>
       <ol class="next">
         <li><b>Send your product and 3 creators.</b><span>A line on each creator is enough: who they are and what they post.</span></li>
         <li><b>Get your teardown in a couple of days.</b><span>This week's breakouts in your market, and a brief written for each creator.</span></li>
@@ -437,7 +617,7 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
     <div class="wrap">
       <div class="final">
         <p class="label">Free teardown</p>
-        <h2>Send us your product and 3 creators.</h2>
+        <h2>Send us your product and <span class="it">3 creators</span>.</h2>
         <p>We'll run them through Ore and send this week's breakouts in your market, with a brief written for each creator. No call. No card.</p>
         <ul><li>The new ads breaking into your competitors' top 10s</li><li>Why each one works</li><li>A creator-fit brief for each of your 3 creators</li></ul>
         <div class="cta-row"><a class="btn btn-white" href="#teardown">Request your teardown</a></div>
@@ -466,6 +646,98 @@ footer{padding-block:36px 48px;color:var(--muted);font-size:14px;display:flex;ju
   var bar=document.querySelector('.sticky-cta');if(bar&&'IntersectionObserver' in window){var seen={hero:true,end:false};function u(){bar.classList.toggle('show',!seen.hero&&!seen.end)}
     new IntersectionObserver(function(e){seen.hero=e[0].isIntersecting;u()}).observe(document.querySelector('.hero .cta-row'));
     new IntersectionObserver(function(e){seen.end=e[0].isIntersecting;u()}).observe(document.getElementById('teardown'));}
+})();
+</script>
+
+<script>
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 1. live glow: flowing light ribbons in Ore's colors, drawn in WebGL behind the hero */
+  (function(){
+    var hero=document.querySelector('.hero');if(!hero)return;
+    var c=document.createElement('canvas');c.className='gl';c.setAttribute('aria-hidden','true');hero.insertBefore(c,hero.firstChild);
+    var gl=c.getContext('webgl',{premultipliedAlpha:false,antialias:false});if(!gl){c.remove();return}
+    var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+    var fs=[
+    'precision mediump float;uniform vec2 r;uniform float t;uniform vec2 m;uniform float s;',
+    'float blob(vec2 u,vec2 c,float k){vec2 d=u-c;return exp(-dot(d,d)*k);}',
+    'void main(){vec2 uv=gl_FragCoord.xy/r;float a=r.x/r.y;vec2 u=vec2(uv.x*a,uv.y);',
+    ' vec3 col=mix(vec3(.34,.78,.95),vec3(.18,.56,.88),smoothstep(.1,.9,uv.x+.15*sin(t*.07)));',
+    ' col=mix(col,vec3(.27,.73,.93),smoothstep(.6,1.,uv.x));',
+    ' vec2 mm=(m-.5)*.12;float warm=mix(.45,1.,clamp(a,0.,1.));',
+    ' col=mix(col,vec3(.18,.39,.85),.9*blob(u,vec2(a*(.58+.06*sin(t*.11))+mm.x,.52+.08*cos(t*.13)),3.2));',
+    ' col=mix(col,vec3(.94,.42,.66),.55*warm*blob(u,vec2(a*(.30+.05*cos(t*.09))+mm.x,.62+.07*sin(t*.15)+mm.y),5.));',
+    ' col=mix(col,vec3(1.,.54,.30),.6*warm*blob(u,vec2(a*(.40+.06*sin(t*.12+1.))+mm.x,.40+.08*sin(t*.1)),5.5));',
+    ' float glow=0.;vec3 tint=vec3(0.);',
+    ' for(int i=0;i<4;i++){float fi=float(i);',
+    '  for(int j=0;j<6;j++){float fj=float(j);',
+    '   float x=uv.x;',
+    '   float y=.46+.10*fi*.4+.17*sin(x*2.2+t*.22+fi*1.7+s*1.5)+.06*sin(x*5.1-t*.35+fi)+fj*.011*sin(x*3.+t*.3+fi)+mm.y;',
+    '   float d=abs(uv.y-y);float w=.0025+.0012*fj;',
+    '   float g=w/(d+w)*.16*(1.-fj*.12)*smoothstep(-.1,.35,x)*smoothstep(1.15,.55,x);',
+    '   glow+=g;tint+=g*mix(vec3(1.,.82,.7),vec3(.85,.93,1.),fi/3.);}}',
+    ' col+=tint*mix(.35,.7,clamp(a,0.,1.));col=mix(col,vec3(1.),clamp(glow-.7,0.,.2));',
+    ' gl_FragColor=vec4(col,1.);}'].join('\n');
+    function sh(type,src){var o=gl.createShader(type);gl.shaderSource(o,src);gl.compileShader(o);return o}
+    var pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);
+    if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){c.remove();return}
+    gl.useProgram(pr);var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var ur=gl.getUniformLocation(pr,'r'),ut=gl.getUniformLocation(pr,'t'),um=gl.getUniformLocation(pr,'m'),us=gl.getUniformLocation(pr,'s');
+    var small=window.innerWidth<700,scale=small?.5:Math.min(window.devicePixelRatio||1,1.5)*.75;
+    function size(){var w=hero.clientWidth,h=hero.clientHeight;c.width=Math.max(1,Math.round(w*scale));c.height=Math.max(1,Math.round(h*scale));gl.viewport(0,0,c.width,c.height)}
+    size();window.addEventListener('resize',size);
+    var mx=.5,my=.5,tx=.5,ty=.5,visible=true,t0=performance.now(),last=0;
+    window.addEventListener('pointermove',function(e){tx=e.clientX/window.innerWidth;ty=1-e.clientY/window.innerHeight},{passive:true});
+    function frame(now){
+      if(!visible||document.hidden){requestAnimationFrame(frame);return}
+      if(small&&now-last<33){requestAnimationFrame(frame);return}last=now;
+      mx+=(tx-mx)*.04;my+=(ty-my)*.04;
+      gl.uniform2f(ur,c.width,c.height);gl.uniform1f(ut,reduce?8.:(now-t0)/1000);gl.uniform2f(um,mx,my);
+      gl.uniform1f(us,Math.min(window.scrollY/Math.max(hero.clientHeight,1),1));
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);c.classList.add('on');
+      if(!reduce)requestAnimationFrame(frame);
+    }
+    if('IntersectionObserver' in window)new IntersectionObserver(function(e){visible=e[0].isIntersecting}).observe(hero);
+    requestAnimationFrame(frame);
+  })();
+
+  /* 2. hero demo: the breakout card, then each creator's brief being written, then the send */
+  (function(){
+    var d=document.getElementById('demo');if(!d)return;
+    var rows=[].slice.call(d.querySelectorAll('.drow')),send=d.querySelector('.dsend');
+    function finalState(){rows.forEach(function(r){r.classList.add('go','done');r.querySelector('.st').textContent='ready'});send.classList.add('go')}
+    if(reduce){finalState();return}
+    function run(){
+      rows.forEach(function(r){r.classList.remove('go','done');r.querySelector('.st').textContent='writing'});send.classList.remove('go');
+      rows.forEach(function(r,i){setTimeout(function(){r.classList.add('go')},700+i*700);setTimeout(function(){r.classList.add('done');r.querySelector('.st').textContent='ready'},1900+i*900)});
+      setTimeout(function(){send.classList.add('go')},5000);
+      setTimeout(run,9500);
+    }
+    run();
+  })();
+
+  /* 3. watch Ore work: the window follows the step you're reading; on phones each step shows its own screen */
+  (function(){
+    var stage=document.querySelector('.stage');if(!stage)return;
+    var screens=[].slice.call(stage.querySelectorAll('.screen')),steps=[].slice.call(document.querySelectorAll('.step'));
+    steps.forEach(function(st){var sc=stage.querySelector('.screen[data-s="'+st.dataset.s+'"]');var mini=document.createElement('div');mini.className='mini';mini.setAttribute('aria-hidden','true');var cl=sc.cloneNode(true);cl.classList.add('on');mini.appendChild(cl);st.appendChild(mini)});
+    function show(n){screens.forEach(function(s){var on=s.dataset.s===n;if(on&&!s.classList.contains('on')){var x=s.querySelector('.new');if(x){x.style.animation='none';x.offsetWidth;x.style.animation=''}}s.classList.toggle('on',on)});steps.forEach(function(s){s.classList.toggle('on',s.dataset.s===n)})}
+    if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)show(e.target.dataset.s)})},{rootMargin:'-45% 0px -45% 0px'});steps.forEach(function(s){io.observe(s)})}
+  })();
+
+  /* 4. scroll reveals, the tree drawing itself, numbers counting up */
+  if('IntersectionObserver' in window&&!reduce){
+    var els=[].slice.call(document.querySelectorAll('main .sec-head, main .panel, .node, .creators, .plan, .next li, .faq, .final, .proofbar div, .who3 .panel'));
+    els.forEach(function(el){el.classList.add('rv')});
+    var rio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var el=e.target,sib=el.parentElement?[].indexOf.call(el.parentElement.children,el):0;el.style.transitionDelay=Math.min(sib,4)*90+'ms';el.classList.add('in');rio.unobserve(el)}})},{rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el){rio.observe(el)});
+    var tree=document.getElementById('treebox');
+    if(tree)new IntersectionObserver(function(es,o){if(es[0].isIntersecting){[].slice.call(tree.querySelectorAll('svg.links path')).forEach(function(p){p.style.setProperty('--len',Math.ceil(p.getTotalLength()))});setTimeout(function(){tree.classList.add('drawn')},250);o.disconnect()}},{threshold:.3}).observe(tree);
+    var nums=[].slice.call(document.querySelectorAll('.proofbar b'));
+    nums.forEach(function(b){var to=parseInt(b.textContent,10);if(!to)return;b.textContent='0';new IntersectionObserver(function(es,o){if(!es[0].isIntersecting)return;o.disconnect();var st=performance.now();(function tick(n){var k=Math.min((n-st)/1400,1);b.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(tick)})(st)}).observe(b)});
+  } else {var tb=document.getElementById('treebox');if(tb)tb.classList.add('drawn')}
 })();
 </script>
 </body></html>
