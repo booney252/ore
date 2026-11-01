@@ -189,7 +189,9 @@ h1 .it{font-size:1.06em}
 .demo-top i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55)}
 .demo-top span{margin-left:auto}
 .dcard{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;padding:12px;border-radius:16px;background:rgba(255,255,255,.95);color:#0f1c33}
-.dthumb{border-radius:10px;aspect-ratio:9/14;background:radial-gradient(60% 50% at 35% 35%,#ffb38a,transparent 70%),radial-gradient(60% 60% at 70% 70%,#7a5ce6,transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)}
+.dthumb{position:relative;border-radius:10px;aspect-ratio:9/14;overflow:hidden;background:#2d63d8 url(/ore/ugc-thumb.jpg) center/cover no-repeat}
+.dthumb::after{content:"nobody told me…";position:absolute;left:4px;right:4px;bottom:16%;text-align:center;font:600 9px/1.2 var(--body);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.dthumb::before{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(transparent,rgba(0,0,0,.35))}
 .dtag{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:999px;background:#e8f0fd;color:#2d63d8}
 .dcard q{display:block;font-family:var(--display);font-size:17px;line-height:1.2;margin:6px 0;quotes:"\201C" "\201D"}
 .dproof{font-family:var(--mono);font-size:10.5px;color:#53627a}
@@ -343,7 +345,7 @@ h1 .it{font-size:1.06em}
     <div class="demo" id="demo" role="img" aria-label="Ore at work: a new ad breaks into a competitor's top 10, and Ore writes a brief for each creator.">
       <div class="demo-top"><i></i><i></i><i></i>Ore · This week<span>New in a top 10</span></div>
       <div class="dcard">
-        <div class="dthumb"></div>
+        <div class="dthumb" role="img" aria-label="Thumbnail of a creator talking to camera"></div><!-- photo: Gabriel Silvério on Unsplash -->
         <div><span class="dtag">#1 in its top 10 · live 9 days</span>
           <q>Nobody told me what to expect when I started this medication.</q>
           <div class="dproof">Why it works: names the gap · sounds like a person · product held back</div></div>
