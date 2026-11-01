@@ -331,6 +331,35 @@ h1 .it{font-size:1.06em}
 }
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}.demo{transform:none}.tree svg.links path{stroke-dasharray:none}.t10 .new{animation:none}}
 
+
+/* the daily top 10 chart */
+.bumpwrap{display:grid;gap:12px}
+.bumpbox{position:relative}
+.bumpin{position:relative}
+.swipe{display:none}
+.bump{display:block;width:100%;height:auto;overflow:visible}
+.bump .rk,.bump .dy{font:500 12px var(--body);fill:var(--muted);text-anchor:middle}
+.bump .gl{stroke:var(--line);stroke-width:1}
+.bump .old{fill:none;stroke:var(--muted);stroke-opacity:.35;stroke-width:2}
+.bump .new{fill:none;stroke-width:5;stroke-linecap:round}
+.bump .nd{fill:var(--surface);stroke:#7a5ce6;stroke-width:3}
+.bump .nd.big{fill:#7a5ce6;stroke:var(--surface)}
+.btag{position:absolute;transform:translate(-50%,calc(-100% - 16px));padding:8px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);box-shadow:0 14px 30px -18px rgba(15,28,51,.55);font-size:12.5px;color:var(--muted);white-space:nowrap;display:grid;gap:1px}
+.btag b{font-family:var(--display);font-weight:500;font-size:15px;color:var(--ink)}
+.btag.t2{transform:translate(-50%,22px)}
+.daily3{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:d}
+.daily3 li{counter-increment:d;display:grid;gap:4px;align-content:start;padding:18px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.daily3 li::before{content:counter(d);font-family:var(--display);font-weight:300;font-size:30px;line-height:1;background:linear-gradient(120deg,var(--cobalt),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.daily3 b{font-family:var(--display);font-weight:500;font-size:18px}
+.daily3 span{color:var(--muted);font-size:14.5px}
+.bump .new{stroke-dasharray:1400;stroke-dashoffset:0;transition:stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1)}
+.bumpbox.wait .bump .new{stroke-dashoffset:1400}
+.bumpbox .btag,.bumpbox .nd{transition:opacity .5s}
+.bumpbox.wait .btag,.bumpbox.wait .nd{opacity:0}
+.bumpbox .t2{transition-delay:1.4s}
+@media (max-width:980px){.daily3{grid-template-columns:1fr}}
+@media (max-width:640px){.swipe{display:inline}.bumpwrap{overflow:hidden}.bumpbox{overflow-x:auto;margin-inline:-18px;padding:0 18px 6px;scrollbar-width:none}.bumpbox::-webkit-scrollbar{display:none}.bumpbox>svg,.bumpbox{min-width:0}.bumpin{position:relative;width:680px}.btag{font-size:11px;padding:6px 9px}.btag b{font-size:13px}}
+
 @media (max-width:980px){
   .pills{display:none}
   .brief-strip{grid-template-columns:1fr;gap:16px}
@@ -594,13 +623,19 @@ h1 .it{font-size:1.06em}
       <div class="sec-head">
         <p class="label">Why the ideas are current</p>
         <h2>Most "winning ads" are <span class="it">old</span> ads nobody turned off.</h2>
-        <p>Sorting an ad library by longest running shows you what worked months ago. Ore watches each competitor's top 10 instead, where brands put money on the ads working now. In one market it watches:</p>
+        <p>Sorting an ad library by longest running shows you what worked months ago. Ore reads each competitor's top 10 every morning and catches the new ad the day it starts getting money.</p>
       </div>
-      <div class="proofbar">
-        <div><b>49</b><span>GLP-1 and wellness advertisers</span></div>
-        <div><b>341</b><span>ads in their top 10s at the last check</span></div>
-        <div><b>152</b><span>of those under 30 days old. Almost half of what's working right now is new.</span></div>
+      <div class="panel bumpwrap">
+        <p class="label">One competitor's top 10, one week<span class="swipe"> · swipe →</span></p>
+        <div class="bumpbox"><div class="bumpin"><svg class="bump" viewBox="0 0 1000 330" role="img" aria-label="One competitor's top 10 ads over a week. A new ad enters at number 8 on Tuesday and reaches number 1 by Friday, while the older ads slide down.">
+<defs><linearGradient id="bk" x1="0" x2="1"><stop offset="0" stop-color="#3fb7ec"/><stop offset=".5" stop-color="#7a5ce6"/><stop offset="1" stop-color="#f06aa8"/></linearGradient></defs>
+<text x="52" y="34" class="rk">#1</text><line x1="70" x2="970" y1="30" y2="30" class="gl"/><text x="52" y="63" class="rk">#2</text><line x1="70" x2="970" y1="59" y2="59" class="gl"/><text x="52" y="92" class="rk">#3</text><line x1="70" x2="970" y1="88" y2="88" class="gl"/><text x="52" y="121" class="rk">#4</text><line x1="70" x2="970" y1="117" y2="117" class="gl"/><text x="52" y="150" class="rk">#5</text><line x1="70" x2="970" y1="146" y2="146" class="gl"/><text x="52" y="178" class="rk">#6</text><line x1="70" x2="970" y1="174" y2="174" class="gl"/><text x="52" y="207" class="rk">#7</text><line x1="70" x2="970" y1="203" y2="203" class="gl"/><text x="52" y="236" class="rk">#8</text><line x1="70" x2="970" y1="232" y2="232" class="gl"/><text x="52" y="265" class="rk">#9</text><line x1="70" x2="970" y1="261" y2="261" class="gl"/><text x="52" y="294" class="rk">#10</text><line x1="70" x2="970" y1="290" y2="290" class="gl"/><text x="70" y="318" class="dy">Mon</text><text x="220" y="318" class="dy">Tue</text><text x="370" y="318" class="dy">Wed</text><text x="520" y="318" class="dy">Thu</text><text x="670" y="318" class="dy">Fri</text><text x="820" y="318" class="dy">Sat</text><text x="970" y="318" class="dy">Sun</text><path d="M70 30 C145 30,145 30,220 30 C295 30,295 59,370 59 C445 59,445 117,520 117 C595 117,595 117,670 117 C745 117,745 146,820 146 C895 146,895 174,970 174" class="old"/><path d="M70 59 C145 59,145 59,220 59 C295 59,295 30,370 30 C445 30,445 30,520 30 C595 30,595 88,670 88 C745 88,745 59,820 59 C895 59,895 59,970 59" class="old"/><path d="M70 88 C145 88,145 88,220 88 C295 88,295 88,370 88 C445 88,445 59,520 59 C595 59,595 59,670 59 C745 59,745 88,820 88 C895 88,895 117,970 117" class="old"/><path d="M70 117 C145 117,145 146,220 146 C295 146,295 117,370 117 C445 117,445 146,520 146 C595 146,595 146,670 146 C745 146,745 117,820 117 C895 117,895 88,970 88" class="old"/><path d="M70 146 C145 146,145 117,220 117 C295 117,295 203,370 203 C445 203,445 174,520 174 C595 174,595 174,670 174 C745 174,745 174,820 174 C895 174,895 146,970 146" class="old"/><path d="M70 174 C145 174,145 174,220 174 C295 174,295 174,370 174 C445 174,445 203,520 203 C595 203,595 232,670 232 C745 232,745 261,820 261 C895 261,895 261,970 261" class="old"/><path d="M70 203 C145 203,145 203,220 203 C295 203,295 232,370 232 C445 232,445 261,520 261 C595 261,595 203,670 203 C745 203,745 203,820 203 C895 203,895 203,970 203" class="old"/><path d="M70 232 C145 232,145 261,220 261 C295 261,295 261,370 261 C445 261,445 232,520 232 C595 232,595 261,670 261 C745 261,745 232,820 232 C895 232,895 232,970 232" class="old"/><path d="M220 232 C295 232,295 146,370 146 C445 146,445 88,520 88 C595 88,595 30,670 30 C745 30,745 30,820 30 C895 30,895 30,970 30" class="new" stroke="url(#bk)"/><circle cx="220" cy="232" r="7" class="nd big"/><circle cx="370" cy="146" r="4.5" class="nd"/><circle cx="520" cy="88" r="4.5" class="nd"/><circle cx="670" cy="30" r="7" class="nd big"/><circle cx="820" cy="30" r="4.5" class="nd"/><circle cx="970" cy="30" r="4.5" class="nd"/></svg><div class="btag t1" style="left:22.0%;top:70.4%"><b>New in the top 10</b>Tuesday, #8. Ore flags it.</div><div class="btag t2" style="left:82.0%;top:9.1%"><b>#1 by Friday</b>Already broken down in your report.</div></div></div>
       </div>
+      <ol class="daily3">
+        <li><b>Every morning</b><span>Ore reads each competitor's top 10 ads. The ad library lists them by reach, so the top 10 is where the money is going.</span></li>
+        <li><b>It compares with yesterday</b><span>An ad that just launched and broke into the top 10 is a breakout. Old ads sitting there for months get ignored.</span></li>
+        <li><b>Broken down the same day</b><span>Each breakout is taken apart and lands in your next report, while it's still new.</span></li>
+      </ol>
     </div>
   </section>
 
@@ -795,6 +830,10 @@ h1 .it{font-size:1.06em}
     ph.classList.add('deal');[].slice.call(ph.children).forEach(function(c,i){c.style.transitionDelay=(i*70)+'ms'});
     new IntersectionObserver(function(es,o){if(!es[0].isIntersecting)return;o.disconnect();ph.classList.add('go');
       setTimeout(function(){[].slice.call(ph.children).forEach(function(c){c.style.transitionDelay='0ms'});ph.classList.add('lit')},1300)},{threshold:.35}).observe(ph)})();
+
+  /* the daily chart: the new ad's line draws in, then the tags appear */
+  (function(){var bx=document.querySelector('.bumpbox');if(!bx||reduce||!('IntersectionObserver' in window))return;bx.classList.add('wait');
+    new IntersectionObserver(function(es,o){if(!es[0].isIntersecting)return;o.disconnect();setTimeout(function(){bx.classList.remove('wait')},200)},{threshold:.4}).observe(bx)})();
 
   /* 4. scroll reveals, the tree drawing itself, numbers counting up */
   if('IntersectionObserver' in window&&!reduce){
