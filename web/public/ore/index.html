@@ -115,6 +115,11 @@ section{padding-block:88px}
 .pf.ask{position:relative}
 .pf.ask::before{content:"Would a nurse say this?";position:absolute;z-index:3;left:0;top:-34px;white-space:nowrap;padding:5px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:11.5px;color:var(--ink);box-shadow:0 10px 24px -14px rgba(15,28,51,.5)}
 .pf.ask::after{content:"";position:absolute;z-index:3;left:24px;top:-10px;width:9px;height:9px;background:var(--surface);border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.hq{margin:22px 0 0;padding:4px 0 4px 18px;border-left:2px solid rgba(255,255,255,.7);max-width:44ch}
+.hq blockquote{margin:0;font-family:var(--serif);font-style:italic;font-size:clamp(19px,1.9vw,23px);line-height:1.3;color:#fff}
+.hq figcaption{margin-top:6px;font-size:13px;color:rgba(255,255,255,.85)}
+.hq figcaption a{color:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.45);text-underline-offset:3px}
+.hq figcaption::before{content:"\2014  "}
 .why3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .why3 div{display:grid;gap:4px;align-content:start;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
 .why3 b{font-family:var(--display);font-weight:500;font-size:18px}
@@ -445,6 +450,10 @@ h1 .it{font-size:1.06em}
     <div class="hero-body">
       <p class="label">For brands and teams running UGC creator programs</p>
       <h1>Stop sending every creator the <span class="it">same</span> brief.</h1>
+      <figure class="hq">
+        <blockquote>"Increased ad diversity can improve people's experience with ads and drive better advertiser outcomes."</blockquote>
+        <figcaption><a href="https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/" target="_blank" rel="noopener">Meta Engineering, on how it picks which ads to show</a></figcaption>
+      </figure>
       <p class="sub">Ore finds the ads winning in your market right now, works out why they win, and writes a brief for each of your creators in their own voice. Then it tracks whose videos work, and gets better every week.</p>
       <div class="cta-row">
         <a class="btn btn-white" href="#teardown">Get a free teardown</a>
