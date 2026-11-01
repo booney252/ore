@@ -442,6 +442,66 @@ h1 .it{font-size:1.06em}
   a,button{-webkit-tap-highlight-color:transparent}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Watch Ore work: visual screens on the glow */
+.screen{background:linear-gradient(160deg,rgba(255,255,255,.2),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.38);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.screen .label{color:rgba(255,255,255,.88)}
+.vt{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;flex:none;background:var(--ribs),var(--g);box-shadow:0 18px 34px -18px rgba(10,20,60,.65);border:1px solid rgba(255,255,255,.35)}
+.vt::before{content:"";position:absolute;inset:0;background:radial-gradient(20% 12% at 50% 33%,rgba(255,255,255,.4) 0 97%,transparent 100%),radial-gradient(46% 26% at 50% 80%,rgba(255,255,255,.3) 0 97%,transparent 100%)}
+.vt.photo{background:#2d63d8 url(/ore/ugc-thumb.jpg) center/cover}.vt.photo::before{display:none}
+.vt .rk{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:8px;background:rgba(255,255,255,.94);color:#0f1c33;font:600 11px/1.3 var(--display)}
+.vt .cp{position:absolute;left:6px;right:6px;top:56%;padding:3px 5px;border-radius:7px;background:rgba(255,255,255,.94);color:#0f1c33;font:600 9px/1.2 var(--display);text-align:center}
+.vt .dl{position:absolute;left:6px;bottom:6px;font:500 9.5px/1 var(--body);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.s1{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:10px}
+.s1 .vt.sm{width:78px;filter:grayscale(.5);opacity:.75}
+.s1 .vt.top{width:150px;border:2px solid transparent;background:url(/ore/ugc-thumb.jpg) center/cover padding-box,linear-gradient(130deg,var(--sky),var(--cobalt) 40%,var(--rose) 75%,var(--ember)) border-box;box-shadow:0 30px 60px -24px rgba(240,106,168,.7);animation:pop .8s cubic-bezier(.2,.8,.2,1.2) both}
+.s1 .vt.top .rk{font-size:15px}
+.s1 .vt.top .cp{font-size:11px;top:62%}
+.tagnew{position:absolute;top:8px;right:6px;padding:3px 8px;border-radius:999px;font:600 10px/1.3 var(--body);color:#fff;background:linear-gradient(110deg,var(--cobalt),var(--violet) 55%,var(--rose))}
+.climb{display:flex;align-items:center;gap:12px;align-self:center;padding:8px 14px;border-radius:14px;background:rgba(255,255,255,.94);color:#0f1c33}
+.climb svg{width:96px;height:28px;fill:none;stroke:url(#lg);stroke:#7a5ce6;stroke-width:3;stroke-linecap:round}.climb circle{fill:#f06aa8;stroke:none}
+.climb span{display:grid;font-size:11.5px;color:#53627a}.climb b{font:500 15px/1.2 var(--display);color:#0f1c33}
+.s2{flex:1;display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center}
+.s2 .vt.big{width:150px}.s2 .vt.big .cp{top:auto;bottom:16%;font-size:10px}
+.play{position:absolute;left:50%;top:40%;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;background:rgba(255,255,255,.35);backdrop-filter:blur(6px)}
+.play::after{content:"";position:absolute;left:15px;top:11px;border-left:12px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent}
+.s2r{display:grid;gap:8px}
+.call{display:grid;gap:1px;padding:9px 12px;border-radius:14px;background:rgba(255,255,255,.94);color:#53627a;font-size:12.5px;line-height:1.3;border-left:4px solid var(--c)}
+.call small{font:600 10.5px/1.2 var(--body);color:var(--c);text-transform:uppercase;letter-spacing:.04em;filter:brightness(.8)}
+.call b{font:500 15px/1.2 var(--display);color:#0f1c33}
+.tl{position:relative;height:8px;border-radius:8px;background:rgba(255,255,255,.25)}
+.tl i{position:absolute;top:0;bottom:0;border-radius:8px;background:var(--c)}
+.tl .ph2{position:absolute;top:-5px;width:3px;height:18px;border-radius:2px;background:#fff;box-shadow:0 0 10px #fff}
+.s3{flex:1;display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:center}
+.fan{position:relative;height:250px}
+.fan .vt{position:absolute;bottom:10px;left:calc(var(--x)*.72 + 24px);width:92px;transform:rotate(var(--r));transform-origin:50% 100%}
+.cp.hl{box-shadow:0 0 0 2px #fff,0 0 18px 4px rgba(255,255,255,.9);top:46%}
+.s3r{position:relative;z-index:2;display:grid;gap:10px}
+.patc{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.94);color:#0f1c33;display:grid;gap:4px}
+.patc small,.bub small{font:600 10.5px/1.2 var(--body);text-transform:uppercase;letter-spacing:.05em;color:#2d63d8}
+.patc b{font:400 20px/1.2 var(--display)}
+.bub{position:relative;padding:12px 16px;border-radius:16px 16px 16px 4px;border:1.5px dashed rgba(255,255,255,.85);font:400 16px/1.3 var(--display);display:grid;gap:4px}
+.bub small{color:rgba(255,255,255,.85)}
+.s4{flex:1;display:flex;justify-content:center;align-items:center;gap:14px}
+.pm{width:150px;padding:5px;border-radius:22px;background:#0f1c33;box-shadow:0 26px 50px -24px rgba(10,20,60,.8)}
+.pm:nth-child(2){transform:translateY(-14px)}
+.pm .vt{width:100%;border-radius:17px;border:0;box-shadow:none}
+.pm .who{position:absolute;top:8px;left:8px;right:8px;display:flex;align-items:center;gap:5px;font:600 9.5px/1.2 var(--body);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.pm .who i{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:9px;box-shadow:0 0 0 1.5px #fff}
+.pm .cp.big{top:auto;bottom:34px;font:500 11px/1.25 var(--display);padding:6px 7px;text-align:left}
+.pm .ready{position:absolute;left:8px;bottom:8px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.94);color:#1f9d6b;font:600 9.5px/1.3 var(--body)}
+.s5{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:34px;padding-top:8px}
+.bar{position:relative;display:grid;justify-items:center;gap:10px;width:110px;height:100%;grid-template-rows:1fr auto}
+.bar .col{grid-row:1}
+.bar .x{position:absolute;left:50%;bottom:calc(var(--h) + 10px);transform:translateX(-50%);z-index:2;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.94);color:#0f1c33;font:600 11px/1.3 var(--body);white-space:nowrap}
+.bar .col{position:relative;width:64px;height:100%}
+.bar .u{position:absolute;left:0;right:0;bottom:0;height:30%;border-radius:12px 12px 4px 4px;border:1.5px dashed rgba(255,255,255,.7)}
+.bar .v{position:absolute;left:8px;right:8px;bottom:0;height:var(--h);border-radius:12px 12px 4px 4px;background:linear-gradient(var(--c),rgba(255,255,255,.85));box-shadow:0 0 24px -4px var(--c);transform-origin:bottom;transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+.screen:not(.on) .bar .v{transform:scaleY(.1)}
+.bar b{font:500 15px/1 var(--display)}
+.s5n{font-size:13px;color:rgba(255,255,255,.88);text-align:center}
+@media (max-width:980px){.step .mini .screen{height:400px}.s1 .vt.sm:nth-child(n+4){display:none}}
+@media (max-width:640px){.step .mini .screen{height:380px;padding:14px}.s1 .vt.sm{width:58px}.s1 .vt.top{width:120px}.s1 .vt.sm:nth-child(n+3){display:none}.s2{grid-template-columns:110px minmax(0,1fr);gap:10px}.s3{grid-template-columns:1fr;gap:6px;align-content:center}.s3 .fan{height:150px;width:220px;justify-self:center}.s1 .vt.sm .cp{display:none}.s2 .vt.big{width:110px}.call{font-size:11px;padding:7px 9px}.call b{font-size:13px}.fan .vt{width:66px;left:calc(var(--x)*.5 + 40px)}.patc b{font-size:15px}.bub{font-size:13px}.s4{gap:8px}.pm{width:31%}.pm .cp.big{font-size:8.5px}.pm .who{font-size:7.5px}.s5{gap:14px}.bar{width:84px}.bar .col{width:46px}.climb svg{width:60px}}
 </style>
 
 <header class="hero">
@@ -586,52 +646,43 @@ h1 .it{font-size:1.06em}
       <div class="show">
         <div class="stage" aria-hidden="true">
           <div class="screen on" data-s="1">
-            <p class="label"><span>Competitor ads · top 10 today</span><span>Daily check</span></p>
-            <div class="t10">
-              <div class="new"><b>#1</b><span>"Nobody told me what to expect…"</span><span>NEW · 9 days</span></div>
-              <div><b>#2</b><span>"If you're taking peptides, you have to get this app."</span><span>23 days</span></div>
-              <div><b>#3</b><span>"I thought starting a GLP-1 would be hard…"</span><span>23 days</span></div>
-              <div><b>#4</b><span>"Best apps to see progress on a GLP."</span><span>15 days</span></div>
-              <div><b>#5</b><span>"You have one day…"</span><span>295 days</span></div>
-              <div><b>#6</b><span>"If your skin looks like this, skip the facials…"</span><span>61 days</span></div>
-              <div><b>#7</b><span>"This is fake, this is fake…"</span><span>44 days</span></div>
+            <p class="label"><span>Competitor ads · top 10 today</span><span>Checked 6:00 am</span></p>
+            <div class="s1">
+              <div class="vt photo top new"><span class="rk">#1</span><span class="tagnew">New · day 9</span><span class="cp">nobody told me…</span></div>
+              <div class="vt sm" style="--g:radial-gradient(55% 45% at 70% 25%,rgba(255,138,76,.85),transparent 70%),radial-gradient(60% 55% at 25% 80%,rgba(122,92,230,.85),transparent 70%),linear-gradient(170deg,#57c7f2,#2d8fe0)"><span class="rk">#2</span><span class="cp">you have to get this app</span><span class="dl">live 23d</span></div><div class="vt sm" style="--g:radial-gradient(60% 50% at 40% 65%,rgba(255,138,76,.8),transparent 70%),radial-gradient(55% 45% at 70% 20%,rgba(240,106,168,.8),transparent 70%),linear-gradient(160deg,#46b9ee,#2d63d8)"><span class="rk">#3</span><span class="cp">starting a GLP-1…</span><span class="dl">live 23d</span></div><div class="vt sm" style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc)"><span class="rk">#4</span><span class="cp">best apps for a GLP</span><span class="dl">live 15d</span></div><div class="vt sm" style="--g:radial-gradient(60% 50% at 65% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(55% 50% at 30% 85%,rgba(63,183,236,.9),transparent 70%),linear-gradient(160deg,#2d8fe0,#7a5ce6)"><span class="rk">#5</span><span class="cp">you have one day</span><span class="dl">live 295d</span></div>
             </div>
+            <div class="climb"><svg viewBox="0 0 120 34" aria-hidden="true"><path d="M4 30 C24 30,28 20,44 18 S66 10,80 6 S104 4,116 4"/><circle cx="116" cy="4" r="3.5"/></svg><span><b>#8 → #1 in 4 days</b>Flagged the morning it broke in</span></div>
           </div>
           <div class="screen" data-s="2">
-            <p class="label"><span>Why it works</span><span>#1 · 0:00 to 0:34</span></p>
-            <div class="apart"><div class="phone"></div>
-              <div class="marks">
-                <div style="--c:#2d63d8"><small>0:00 to 0:03 · the hook</small><b>Names the gap.</b> "Nobody told me" is the viewer's own complaint.</div>
-                <div style="--c:#7a5ce6"><small>0:03 to 0:15 · the voice</small><b>Sounds like a person.</b> First person, no claims up top.</div>
-                <div style="--c:#f06aa8"><small>0:22 · the product</small><b>Held back</b> until the problem has landed.</div>
-              </div></div>
+            <p class="label"><span>Why it works</span><span>0:00 to 0:34</span></p>
+            <div class="s2">
+              <div class="vt photo big"><span class="cp">nobody told me what to expect…</span><span class="play"></span></div>
+              <div class="s2r">
+                <div class="call" style="--c:#3fb7ec"><small>0:00 · the hook</small><b>Names the gap</b>"Nobody told me" is the viewer's own complaint.</div>
+                <div class="call" style="--c:#a48cf0"><small>0:03 · the voice</small><b>Sounds like a person</b>First person, no claims up top.</div>
+                <div class="call" style="--c:#f06aa8"><small>0:22 · the product</small><b>Held back</b>The fix shows up after the problem lands.</div>
+              </div>
+            </div>
+            <div class="tl"><i style="left:0;width:9%;--c:#3fb7ec"></i><i style="left:9%;width:35%;--c:#a48cf0"></i><i style="left:64%;width:12%;--c:#f06aa8"></i><span class="ph2" style="left:66%"></span></div>
           </div>
           <div class="screen" data-s="3">
-            <p class="label"><span>Patterns this week</span><span>3 of the top 10</span></p>
-            <div class="pat"><i style="--a:#4cc3f0;--b:#2d63d8"></i><i style="--a:#ffb38a;--b:#f06aa8"></i><i style="--a:#a48cf0;--b:#2d63d8"></i><i style="--a:#4cc3f0;--b:#7a5ce6"></i></div>
-            <div class="patcard"><b>"Nobody told me": the expert explains what got skipped.</b><span>New patients feel lost after the prescription. The winners say it for them.</span></div>
-            <div class="lane"><small>OPEN LANE · NO AD IS SAYING THIS</small>"Wait, did I take my shot Sunday or Monday?"</div>
+            <p class="label"><span>Pattern this week</span><span>4 winners share it</span></p>
+            <div class="s3">
+              <div class="fan"><div class="vt fv" style="--g:radial-gradient(60% 45% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 50% at 75% 75%,rgba(45,99,216,.9),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8);--r:-14deg;--x:0px"><span class="cp hl">nobody told me…</span></div><div class="vt fv" style="--g:radial-gradient(55% 45% at 70% 25%,rgba(255,138,76,.85),transparent 70%),radial-gradient(60% 55% at 25% 80%,rgba(122,92,230,.85),transparent 70%),linear-gradient(170deg,#57c7f2,#2d8fe0);--r:-5deg;--x:46px"><span class="cp hl">nobody told me…</span></div><div class="vt fv" style="--g:radial-gradient(60% 50% at 40% 65%,rgba(255,138,76,.8),transparent 70%),radial-gradient(55% 45% at 70% 20%,rgba(240,106,168,.8),transparent 70%),linear-gradient(160deg,#46b9ee,#2d63d8);--r:5deg;--x:92px"><span class="cp hl">nobody told me…</span></div><div class="vt fv" style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc);--r:14deg;--x:138px"><span class="cp hl">nobody told me…</span></div></div>
+              <div class="s3r">
+                <div class="patc"><small>The pattern</small><b>"Nobody told me": the expert explains what got skipped.</b></div>
+                <div class="bub"><small>Open lane · no ad says this</small>"Wait, did I take my shot Sunday or Monday?"</div>
+              </div>
+            </div>
           </div>
           <div class="screen" data-s="4">
-            <p class="label"><span>A brief for each creator</span><span>3 written</span></p>
-            <div class="three">
-              <div style="--c:#2d63d8"><span class="av">J</span><b>Jenny, 52</b><small>Aesthetic nurse</small><q>Last Wednesday a client sat in my chair and said, nobody told me it would feel like this.</q></div>
-              <div style="--c:#7a5ce6"><span class="av">J</span><b>John, 34</b><small>Ex-trainer</small><q>I trained people for ten years, and nobody told me what it does to your lifts.</q></div>
-              <div style="--c:#f06aa8"><span class="av">M</span><b>Maya, 41</b><small>Mom of three</small><q>Nobody told me the hardest part would be remembering if I took it.</q></div>
-            </div>
+            <p class="label"><span>One idea, three briefs</span><span>Written for each creator</span></p>
+            <div class="s4"><div class="pm"><div class="vt" style="--g:radial-gradient(60% 45% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 50% at 75% 75%,rgba(45,99,216,.9),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)"><span class="who"><i style="background:#2d63d8">J</i>Jenny, 52 · nurse</span><span class="cp big">Last Wednesday a client sat in my chair and said, nobody told me…</span><span class="ready">Brief ready ✓</span></div></div><div class="pm"><div class="vt" style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc)"><span class="who"><i style="background:#7a5ce6">J</i>John, 34 · ex-trainer</span><span class="cp big">I trained people for ten years, and nobody told me what it does to your lifts.</span><span class="ready">Brief ready ✓</span></div></div><div class="pm"><div class="vt" style="--g:radial-gradient(60% 50% at 65% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(55% 50% at 30% 85%,rgba(63,183,236,.9),transparent 70%),linear-gradient(160deg,#2d8fe0,#7a5ce6)"><span class="who"><i style="background:#f06aa8">M</i>Maya, 41 · mom of three</span><span class="cp big">Nobody told me the hardest part would be remembering if I took it.</span><span class="ready">Brief ready ✓</span></div></div></div>
           </div>
           <div class="screen" data-s="5">
-            <p class="label"><span>Sent and tracked</span><span>2 weeks later</span></p>
-            <div class="sent"><div>
-              <div class="link">🔗 ore.app/c/jenny-nobody-told-me</div>
-              <div class="res">
-                <div style="--c:#2d63d8"><span class="av">J</span><span>Jenny's video</span><b class="up">3.1x her usual</b></div>
-                <div style="--c:#7a5ce6"><span class="av">J</span><span>John's video</span><b class="up">1.8x his usual</b></div>
-                <div style="--c:#f06aa8"><span class="av">M</span><span>Maya's video</span><b>about her usual</b></div>
-              </div>
-              <p style="font-size:13px;color:var(--muted);margin-top:12px">Next week's briefs lean into what worked for each of them.</p></div>
-              <div class="mph"><span style="font-family:var(--mono);font-size:8px;color:#53627a">FOR JENNY</span><b>What I tell my clients</b><i></i><i></i><i style="width:70%"></i><i></i><i style="width:55%"></i></div>
-            </div>
+            <p class="label"><span>Two weeks later</span><span>Each video vs that creator's usual</span></p>
+            <div class="s5"><div class="bar" style="--c:#2d63d8;--h:93%"><div class="col"><span class="x">3.1x her usual</span><i class="u"></i><i class="v"></i></div><b>Jenny</b></div><div class="bar" style="--c:#7a5ce6;--h:54%"><div class="col"><span class="x">1.8x his usual</span><i class="u"></i><i class="v"></i></div><b>John</b></div><div class="bar" style="--c:#f06aa8;--h:30%"><div class="col"><span class="x">her usual</span><i class="u"></i><i class="v"></i></div><b>Maya</b></div></div>
+            <p class="s5n">Next week's briefs lean into what worked for each of them.</p>
           </div>
           <p class="stage-note">Example brand and roster</p>
         </div>
