@@ -120,6 +120,10 @@ section{padding-block:88px}
 .hq figcaption{margin-top:6px;font-size:13px;color:rgba(255,255,255,.85)}
 .hq figcaption a{color:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.45);text-underline-offset:3px}
 .hq figcaption::before{content:"\2014  "}
+.pq{margin:4px 0 0;border-left:2px solid transparent;border-image:linear-gradient(var(--cobalt),var(--rose)) 1;max-width:52ch}
+.pq blockquote{color:var(--ink)}
+.pq figcaption{color:var(--muted)}
+.pq figcaption a{text-decoration-color:var(--line)}
 .why3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .why3 div{display:grid;gap:4px;align-content:start;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
 .why3 b{font-family:var(--display);font-weight:500;font-size:18px}
@@ -450,10 +454,6 @@ h1 .it{font-size:1.06em}
     <div class="hero-body">
       <p class="label">For brands and teams running UGC creator programs</p>
       <h1>Stop sending every creator the <span class="it">same</span> brief.</h1>
-      <figure class="hq">
-        <blockquote>"Increased ad diversity can improve people's experience with ads and drive better advertiser outcomes."</blockquote>
-        <figcaption><a href="https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/" target="_blank" rel="noopener">Meta Engineering, on how it picks which ads to show</a></figcaption>
-      </figure>
       <p class="sub">Ore finds the ads winning in your market right now, works out why they win, and writes a brief for each of your creators in their own voice. Then it tracks whose videos work, and gets better every week.</p>
       <div class="cta-row">
         <a class="btn btn-white" href="#teardown">Get a free teardown</a>
@@ -486,6 +486,10 @@ h1 .it{font-size:1.06em}
       <div class="sec-head">
         <p class="label">The problem</p>
         <h2>UGC doesn't fail because of the creator. <span class="grad-text">It fails because of the <span class="it">brief</span>.</span></h2>
+        <figure class="hq pq">
+          <blockquote>"Increased ad diversity can improve people's experience with ads and drive better advertiser outcomes."</blockquote>
+          <figcaption><a href="https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/" target="_blank" rel="noopener">Meta Engineering, on how it picks which ads to show</a></figcaption>
+        </figure>
         <p>Most brands send ten creators one brief. The nurse, the mom and the gym guy read the same words, so nobody sounds real. Two videos work, and nobody can say why.</p>
       </div>
       <div class="problem">
