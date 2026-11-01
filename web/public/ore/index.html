@@ -69,9 +69,29 @@ section{padding-block:88px}
 .same{display:grid;grid-template-columns:1fr 1.25fr;gap:20px;align-items:stretch}
 .brief-paper{font-family:var(--mono);font-size:13.5px;line-height:1.7;color:var(--muted)}
 .brief-paper b{color:var(--ink);font-weight:500}
-.ten{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
-.vid{aspect-ratio:9/14;border-radius:12px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:end center;padding:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
-.vid.win{background:linear-gradient(160deg,rgba(63,183,236,.25),rgba(240,106,168,.25));border-color:transparent;color:var(--ink)}
+.same{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr)}
+.brief{display:flex;flex-direction:column;gap:14px}
+.sentto{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--soft);font-size:14px}
+.sentto{display:grid;grid-template-columns:1fr;gap:6px}
+.sentto b{font-weight:600;font-size:16px}
+.dots{grid-column:1/-1;display:flex;padding-left:7px}
+.dots i{width:22px;height:22px;border-radius:50%;margin-left:-7px;background:hsl(var(--h) 55% 55%);box-shadow:0 0 0 2px var(--soft)}
+.sentto span{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.phones{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:14px}
+.ph{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(22% 13% at 50% 34%,hsl(var(--h) 30% 78%) 0 98%,transparent 100%),radial-gradient(48% 30% at 50% 82%,hsl(var(--h) 25% 62%) 0 98%,transparent 100%),linear-gradient(170deg,hsl(var(--h) 45% 88%),hsl(var(--h) 35% 70%));
+  filter:saturate(.35) brightness(.92);transition:filter .6s,transform .6s cubic-bezier(.2,.7,.2,1),box-shadow .6s,opacity .5s}
+.ph .who{position:absolute;top:8px;left:8px;width:16px;height:16px;border-radius:50%;background:hsl(var(--h) 55% 45%);box-shadow:0 0 0 2px rgba(255,255,255,.8)}
+.ph .cap{position:absolute;left:6px;right:6px;top:52%;padding:4px 5px;border-radius:6px;background:rgba(255,255,255,.92);color:#0f1c33;font:600 9.5px/1.25 var(--body);text-align:center}
+.ph .views{position:absolute;left:8px;bottom:7px;display:flex;align-items:center;gap:4px;font:600 11px/1 var(--mono);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.ph .views i{width:0;height:0;border-left:7px solid #fff;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+.ph.win{filter:none;border-color:transparent;box-shadow:0 0 0 2px var(--cobalt),0 18px 36px -18px rgba(45,99,216,.7)}
+.ph.win::after{content:"✓";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#fff;background:linear-gradient(120deg,var(--cobalt),var(--rose))}
+.phones.deal .ph{opacity:0;transform:translateY(18px) scale(.96)}
+.phones.deal.go .ph{opacity:1;transform:none}
+.phones.deal .ph.win{filter:saturate(.35) brightness(.92);box-shadow:none}
+.phones.deal.lit .ph.win{filter:none;box-shadow:0 0 0 2px var(--cobalt),0 18px 36px -18px rgba(45,99,216,.7);transform:translateY(-4px)}
+.phones.deal .ph.win::after{opacity:0;transition:opacity .4s}.phones.deal.lit .ph.win::after{opacity:1}
 .ten-note{margin-top:14px;color:var(--muted);font-size:15px}
 
 /* the tree */
@@ -288,6 +308,7 @@ h1 .it{font-size:1.06em}
 
 @media (max-width:980px){
   .pills{display:none}
+  .same{grid-template-columns:1fr}
   .same,.secret{grid-template-columns:1fr}
   .tree{grid-template-columns:1fr;gap:28px}
   .tree svg.links{display:none}
@@ -310,6 +331,10 @@ h1 .it{font-size:1.06em}
   .sec-head p{font-size:16px}
   .panel,.node{padding:18px}
   .loop{grid-template-columns:1fr}
+  .phones{gap:7px}
+  .ph .cap{font-size:7px;padding:2px 3px;top:36%}
+  .ph .views{font-size:9px}
+  .ph .who{width:12px;height:12px}
   .final{padding:36px 20px;border-radius:22px}
   footer{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .sticky-cta{display:flex;position:fixed;z-index:20;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));justify-content:center;align-items:center;min-height:52px;border-radius:16px;text-decoration:none;font:600 15px/1 var(--body);text-transform:uppercase;letter-spacing:.06em;color:#fff;background:linear-gradient(110deg,#2d63d8,#7a5ce6 55%,#f06aa8);box-shadow:0 14px 30px -12px rgba(45,99,216,.6);opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s ease,transform .25s ease}
@@ -370,16 +395,14 @@ h1 .it{font-size:1.06em}
         <p>Most brands send ten creators one brief. The nurse, the mom and the gym guy read the same words, so nobody sounds real. Two videos work, and nobody can say why.</p>
       </div>
       <div class="same">
-        <div class="panel">
-          <p class="label" style="margin-bottom:12px">The usual brief</p>
-          <p class="brief-paper"><b>Product:</b> GLP-1 tracking app<br><b>Talk about:</b> easy tracking, reminders, peace of mind<br><b>Tone:</b> authentic, relatable<br><b>Sent to:</b> all 10 creators</p>
+        <div class="panel brief">
+          <p class="label">The usual brief</p>
+          <p class="brief-paper"><b>Product:</b> GLP-1 tracking app<br><b>Talk about:</b> easy tracking, reminders, peace of mind<br><b>Tone:</b> authentic, relatable</p>
+          <p class="sentto"><span>Sent to</span><b>all 10 creators</b><em class="dots" aria-hidden="true"><i style="--h:205"></i><i style="--h:330"></i><i style="--h:160"></i><i style="--h:25"></i><i style="--h:265"></i><i style="--h:190"></i><i style="--h:45"></i><i style="--h:290"></i><i style="--h:0"></i><i style="--h:140"></i></em></p>
         </div>
         <div class="panel">
           <p class="label">What comes back</p>
-          <div class="ten" aria-label="Ten videos, two that work">
-            <div class="vid">1</div><div class="vid win">2 ✓</div><div class="vid">3</div><div class="vid">4</div><div class="vid">5</div>
-            <div class="vid">6</div><div class="vid">7</div><div class="vid win">8 ✓</div><div class="vid">9</div><div class="vid">10</div>
-          </div>
+          <div class="phones" id="phones" role="img" aria-label="Ten creators post videos with the same caption. Eight get under 1,500 views; two get around 40,000."><div class="ph" style="--h:205"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>812</span></div><div class="ph win" style="--h:330"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>48.2K</span></div><div class="ph" style="--h:160"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>1.1K</span></div><div class="ph" style="--h:25"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>640</span></div><div class="ph" style="--h:265"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>930</span></div><div class="ph" style="--h:190"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>1.4K</span></div><div class="ph" style="--h:45"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>720</span></div><div class="ph win" style="--h:290"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>39.6K</span></div><div class="ph" style="--h:0"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>1.0K</span></div><div class="ph" style="--h:140"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>560</span></div></div>
           <p class="ten-note">Ten videos that sound alike. Two land. Next month you guess again.</p>
         </div>
       </div>
@@ -728,6 +751,12 @@ h1 .it{font-size:1.06em}
     function show(n){screens.forEach(function(s){var on=s.dataset.s===n;if(on&&!s.classList.contains('on')){var x=s.querySelector('.new');if(x){x.style.animation='none';x.offsetWidth;x.style.animation=''}}s.classList.toggle('on',on)});steps.forEach(function(s){s.classList.toggle('on',s.dataset.s===n)})}
     if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)show(e.target.dataset.s)})},{rootMargin:'-45% 0px -45% 0px'});steps.forEach(function(s){io.observe(s)})}
   })();
+
+  /* the problem: ten phones deal in, then two of them light up */
+  (function(){var ph=document.getElementById('phones');if(!ph||reduce||!('IntersectionObserver' in window))return;
+    ph.classList.add('deal');[].slice.call(ph.children).forEach(function(c,i){c.style.transitionDelay=(i*70)+'ms'});
+    new IntersectionObserver(function(es,o){if(!es[0].isIntersecting)return;o.disconnect();ph.classList.add('go');
+      setTimeout(function(){[].slice.call(ph.children).forEach(function(c){c.style.transitionDelay='0ms'});ph.classList.add('lit')},1300)},{threshold:.35}).observe(ph)})();
 
   /* 4. scroll reveals, the tree drawing itself, numbers counting up */
   if('IntersectionObserver' in window&&!reduce){
