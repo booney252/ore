@@ -66,33 +66,40 @@ section{padding-block:88px}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;min-width:0}
 
 /* problem */
-.same{display:grid;grid-template-columns:1fr 1.25fr;gap:20px;align-items:stretch}
-.brief-paper{font-family:var(--mono);font-size:13.5px;line-height:1.7;color:var(--muted)}
-.brief-paper b{color:var(--ink);font-weight:500}
-.same{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr)}
-.brief{display:flex;flex-direction:column;gap:14px}
-.sentto{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--soft);font-size:14px}
-.sentto{display:grid;grid-template-columns:1fr;gap:6px}
-.sentto b{font-weight:600;font-size:16px}
-.dots{grid-column:1/-1;display:flex;padding-left:7px}
-.dots i{width:22px;height:22px;border-radius:50%;margin-left:-7px;background:hsl(var(--h) 55% 55%);box-shadow:0 0 0 2px var(--soft)}
-.sentto span{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.phones{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:14px}
-.ph{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;border:1px solid var(--line);
-  background:radial-gradient(22% 13% at 50% 34%,hsl(var(--h) 30% 78%) 0 98%,transparent 100%),radial-gradient(48% 30% at 50% 82%,hsl(var(--h) 25% 62%) 0 98%,transparent 100%),linear-gradient(170deg,hsl(var(--h) 45% 88%),hsl(var(--h) 35% 70%));
-  filter:saturate(.35) brightness(.92);transition:filter .6s,transform .6s cubic-bezier(.2,.7,.2,1),box-shadow .6s,opacity .5s}
-.ph .who{position:absolute;top:8px;left:8px;width:16px;height:16px;border-radius:50%;background:hsl(var(--h) 55% 45%);box-shadow:0 0 0 2px rgba(255,255,255,.8)}
-.ph .cap{position:absolute;left:6px;right:6px;top:52%;padding:4px 5px;border-radius:6px;background:rgba(255,255,255,.92);color:#0f1c33;font:600 9.5px/1.25 var(--body);text-align:center}
-.ph .views{position:absolute;left:8px;bottom:7px;display:flex;align-items:center;gap:4px;font:600 11px/1 var(--mono);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
-.ph .views i{width:0;height:0;border-left:7px solid #fff;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
-.ph.win{filter:none;border-color:transparent;box-shadow:0 0 0 2px var(--cobalt),0 18px 36px -18px rgba(45,99,216,.7)}
-.ph.win::after{content:"✓";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#fff;background:linear-gradient(120deg,var(--cobalt),var(--rose))}
+/* the problem: one brief strip, then ten videos that all say the same thing */
+.problem{display:grid;gap:22px}
+.brief-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:28px;align-items:center;padding:20px 22px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
+.brief-strip h3{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1;letter-spacing:-.01em}
+.brief-strip h3 small{display:block;margin-top:4px;font:400 13px/1.3 var(--body);color:var(--muted);letter-spacing:0}
+.bfields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bfields div{padding:10px 14px;border-radius:14px;background:var(--soft);min-width:0}
+.bfields span{display:block;font-size:12px;color:var(--muted)}
+.bfields b{display:block;font-family:var(--display);font-weight:500;font-size:16px;line-height:1.25;margin-top:2px}
+.sentto{display:grid;gap:6px;justify-items:end;text-align:right}
+.sentto span{font-size:12px;color:var(--muted)}
+.sentto b{font-family:var(--display);font-weight:500;font-size:16px}
+.dots{display:flex;padding-left:7px}
+.dots i{width:22px;height:22px;border-radius:50%;margin-left:-7px;background:var(--g);box-shadow:0 0 0 2px var(--surface)}
+.back{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.back h3{font-family:var(--display);font-weight:400;font-size:22px}
+.back p{color:var(--muted);font-size:15px}
+.ten-note{color:var(--muted);font-size:15px}
+.phones{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:10px;padding-top:8px}
+.ph{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;color:#fff;background:var(--ribs),var(--g);transition:filter .6s,opacity .6s,transform .6s cubic-bezier(.2,.7,.2,1),box-shadow .6s}
+.ph::before{content:"";position:absolute;inset:0;background:radial-gradient(20% 12% at 50% 33%,rgba(255,255,255,.32) 0 97%,transparent 100%),radial-gradient(46% 26% at 50% 80%,rgba(255,255,255,.24) 0 97%,transparent 100%)}
+.ph .cap{position:absolute;left:5px;right:5px;top:46%;padding:4px 5px;border-radius:8px;background:rgba(255,255,255,.94);color:#0f1c33;font:600 9.5px/1.2 var(--display);text-align:center;box-shadow:0 6px 16px -8px rgba(15,28,51,.5)}
+.ph .stats{position:absolute;left:4px;right:4px;bottom:4px;display:grid;gap:1px;padding:5px 6px;border-radius:10px;background:rgba(15,28,51,.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ph .stats>span{display:flex;justify-content:space-between;gap:4px}
+.ph .stats>span:first-child{font-size:8.5px;opacity:.8}
+.ph .stats b{font-family:var(--display);font-weight:500;font-size:12px;line-height:1.1}
+.ph:not(.win){filter:grayscale(.75) brightness(.95);opacity:.55}
+.ph.win{border:2px solid transparent;background:var(--ribs) padding-box,var(--g) padding-box,linear-gradient(130deg,var(--sky),var(--cobalt) 40%,var(--rose) 75%,var(--ember)) border-box;box-shadow:0 26px 50px -26px rgba(45,99,216,.75);transform:translateY(-6px)}
+.ph.win::after{content:"Winner";position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:999px;font:600 9px/1.4 var(--body);color:#fff;background:linear-gradient(110deg,var(--cobalt),var(--violet) 55%,var(--rose))}
 .phones.deal .ph{opacity:0;transform:translateY(18px) scale(.96)}
-.phones.deal.go .ph{opacity:1;transform:none}
-.phones.deal .ph.win{filter:saturate(.35) brightness(.92);box-shadow:none}
-.phones.deal.lit .ph.win{filter:none;box-shadow:0 0 0 2px var(--cobalt),0 18px 36px -18px rgba(45,99,216,.7);transform:translateY(-4px)}
+.phones.deal.go .ph{opacity:.55;transform:none}
+.phones.deal.go .ph.win{opacity:1;filter:grayscale(.75) brightness(.95);box-shadow:none}
+.phones.deal.lit .ph.win{filter:none;box-shadow:0 26px 50px -26px rgba(45,99,216,.75);transform:translateY(-6px)}
 .phones.deal .ph.win::after{opacity:0;transition:opacity .4s}.phones.deal.lit .ph.win::after{opacity:1}
-.ten-note{margin-top:14px;color:var(--muted);font-size:15px}
 
 /* the tree */
 .tree{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr) minmax(0,1.25fr);gap:56px;align-items:center}
@@ -308,7 +315,8 @@ h1 .it{font-size:1.06em}
 
 @media (max-width:980px){
   .pills{display:none}
-  .same{grid-template-columns:1fr}
+  .brief-strip{grid-template-columns:1fr;gap:16px}
+  .sentto{justify-items:start;text-align:left}
   .same,.secret{grid-template-columns:1fr}
   .tree{grid-template-columns:1fr;gap:28px}
   .tree svg.links{display:none}
@@ -331,10 +339,12 @@ h1 .it{font-size:1.06em}
   .sec-head p{font-size:16px}
   .panel,.node{padding:18px}
   .loop{grid-template-columns:1fr}
-  .phones{gap:7px}
-  .ph .cap{font-size:7px;padding:2px 3px;top:36%}
-  .ph .views{font-size:9px}
-  .ph .who{width:12px;height:12px}
+  .bfields{grid-template-columns:1fr}
+  .phones{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 2px 14px;margin-inline:-16px;padding-inline:16px;scrollbar-width:none}
+  .phones::-webkit-scrollbar{display:none}
+  .ph{flex:0 0 118px;scroll-snap-align:start}
+  .ph .cap{font-size:10px}
+  .ph .stats b{font-size:13px}
   .final{padding:36px 20px;border-radius:22px}
   footer{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   .sticky-cta{display:flex;position:fixed;z-index:20;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));justify-content:center;align-items:center;min-height:52px;border-radius:16px;text-decoration:none;font:600 15px/1 var(--body);text-transform:uppercase;letter-spacing:.06em;color:#fff;background:linear-gradient(110deg,#2d63d8,#7a5ce6 55%,#f06aa8);box-shadow:0 14px 30px -12px rgba(45,99,216,.6);opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s ease,transform .25s ease}
@@ -394,17 +404,19 @@ h1 .it{font-size:1.06em}
         <h2>UGC doesn't fail because of the creator. <span class="grad-text">It fails because of the <span class="it">brief</span>.</span></h2>
         <p>Most brands send ten creators one brief. The nurse, the mom and the gym guy read the same words, so nobody sounds real. Two videos work, and nobody can say why.</p>
       </div>
-      <div class="same">
-        <div class="panel brief">
-          <p class="label">The usual brief</p>
-          <p class="brief-paper"><b>Product:</b> GLP-1 tracking app<br><b>Talk about:</b> easy tracking, reminders, peace of mind<br><b>Tone:</b> authentic, relatable</p>
-          <p class="sentto"><span>Sent to</span><b>all 10 creators</b><em class="dots" aria-hidden="true"><i style="--h:205"></i><i style="--h:330"></i><i style="--h:160"></i><i style="--h:25"></i><i style="--h:265"></i><i style="--h:190"></i><i style="--h:45"></i><i style="--h:290"></i><i style="--h:0"></i><i style="--h:140"></i></em></p>
+      <div class="problem">
+        <div class="brief-strip">
+          <h3>The usual brief<small>One version, for everyone</small></h3>
+          <div class="bfields">
+            <div><span>Product</span><b>GLP-1 tracking app</b></div>
+            <div><span>Talk about</span><b>Easy tracking, reminders, peace of mind</b></div>
+            <div><span>Tone</span><b>Authentic, relatable</b></div>
+          </div>
+          <div class="sentto"><span>Sent to</span><b>All 10 creators</b><em class="dots" aria-hidden="true"><i style="--g:radial-gradient(60% 45% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 50% at 75% 75%,rgba(45,99,216,.9),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)"></i><i style="--g:radial-gradient(55% 45% at 70% 25%,rgba(255,138,76,.85),transparent 70%),radial-gradient(60% 55% at 25% 80%,rgba(122,92,230,.85),transparent 70%),linear-gradient(170deg,#57c7f2,#2d8fe0)"></i><i style="--g:radial-gradient(60% 50% at 40% 65%,rgba(255,138,76,.8),transparent 70%),radial-gradient(55% 45% at 70% 20%,rgba(240,106,168,.8),transparent 70%),linear-gradient(160deg,#46b9ee,#2d63d8)"></i><i style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc)"></i><i style="--g:radial-gradient(60% 50% at 65% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(55% 50% at 30% 85%,rgba(63,183,236,.9),transparent 70%),linear-gradient(160deg,#2d8fe0,#7a5ce6)"></i><i style="--g:radial-gradient(60% 45% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 50% at 75% 75%,rgba(45,99,216,.9),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)"></i><i style="--g:radial-gradient(55% 45% at 70% 25%,rgba(255,138,76,.85),transparent 70%),radial-gradient(60% 55% at 25% 80%,rgba(122,92,230,.85),transparent 70%),linear-gradient(170deg,#57c7f2,#2d8fe0)"></i><i style="--g:radial-gradient(60% 50% at 40% 65%,rgba(255,138,76,.8),transparent 70%),radial-gradient(55% 45% at 70% 20%,rgba(240,106,168,.8),transparent 70%),linear-gradient(160deg,#46b9ee,#2d63d8)"></i><i style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc)"></i><i style="--g:radial-gradient(60% 50% at 65% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(55% 50% at 30% 85%,rgba(63,183,236,.9),transparent 70%),linear-gradient(160deg,#2d8fe0,#7a5ce6)"></i></em></div>
         </div>
-        <div class="panel">
-          <p class="label">What comes back</p>
-          <div class="phones" id="phones" role="img" aria-label="Ten creators post videos with the same caption. Eight get under 1,500 views; two get around 40,000."><div class="ph" style="--h:205"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>812</span></div><div class="ph win" style="--h:330"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>48.2K</span></div><div class="ph" style="--h:160"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>1.1K</span></div><div class="ph" style="--h:25"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>640</span></div><div class="ph" style="--h:265"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>930</span></div><div class="ph" style="--h:190"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>1.4K</span></div><div class="ph" style="--h:45"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>720</span></div><div class="ph win" style="--h:290"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>39.6K</span></div><div class="ph" style="--h:0"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>1.0K</span></div><div class="ph" style="--h:140"><span class="who"></span><span class="cap">tracking has never been this easy 🙌</span><span class="views"><i></i>560</span></div></div>
-          <p class="ten-note">Ten videos that sound alike. Two land. Next month you guess again.</p>
-        </div>
+        <div class="back"><h3>What comes back</h3><p>Same script, ten faces. Two make money.</p></div>
+        <div class="phones" id="phones" role="img" aria-label="Ten creators post the same caption. Eight make under $70 each; two make about $3,000 to $4,000."><div class="ph" style="--g:radial-gradient(60% 45% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 50% at 75% 75%,rgba(45,99,216,.9),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>812</b><b>$38</b></span></span></div><div class="ph win" style="--g:radial-gradient(55% 45% at 70% 25%,rgba(255,138,76,.85),transparent 70%),radial-gradient(60% 55% at 25% 80%,rgba(122,92,230,.85),transparent 70%),linear-gradient(170deg,#57c7f2,#2d8fe0)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>48.2K</b><b>$4,120</b></span></span></div><div class="ph" style="--g:radial-gradient(60% 50% at 40% 65%,rgba(255,138,76,.8),transparent 70%),radial-gradient(55% 45% at 70% 20%,rgba(240,106,168,.8),transparent 70%),linear-gradient(160deg,#46b9ee,#2d63d8)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>1.1K</b><b>$52</b></span></span></div><div class="ph" style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>640</b><b>$21</b></span></span></div><div class="ph" style="--g:radial-gradient(60% 50% at 65% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(55% 50% at 30% 85%,rgba(63,183,236,.9),transparent 70%),linear-gradient(160deg,#2d8fe0,#7a5ce6)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>930</b><b>$44</b></span></span></div><div class="ph" style="--g:radial-gradient(60% 45% at 30% 30%,rgba(240,106,168,.85),transparent 70%),radial-gradient(60% 50% at 75% 75%,rgba(45,99,216,.9),transparent 70%),linear-gradient(160deg,#4cc3f0,#2d63d8)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>1.4K</b><b>$63</b></span></span></div><div class="ph" style="--g:radial-gradient(55% 45% at 70% 25%,rgba(255,138,76,.85),transparent 70%),radial-gradient(60% 55% at 25% 80%,rgba(122,92,230,.85),transparent 70%),linear-gradient(170deg,#57c7f2,#2d8fe0)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>720</b><b>$29</b></span></span></div><div class="ph win" style="--g:radial-gradient(60% 50% at 40% 65%,rgba(255,138,76,.8),transparent 70%),radial-gradient(55% 45% at 70% 20%,rgba(240,106,168,.8),transparent 70%),linear-gradient(160deg,#46b9ee,#2d63d8)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>39.6K</b><b>$3,380</b></span></span></div><div class="ph" style="--g:radial-gradient(60% 50% at 25% 25%,rgba(122,92,230,.85),transparent 70%),radial-gradient(55% 45% at 75% 70%,rgba(255,138,76,.75),transparent 70%),linear-gradient(150deg,#3fb7ec,#2d6fdc)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>1.0K</b><b>$47</b></span></span></div><div class="ph" style="--g:radial-gradient(60% 50% at 65% 40%,rgba(240,106,168,.85),transparent 70%),radial-gradient(55% 50% at 30% 85%,rgba(63,183,236,.9),transparent 70%),linear-gradient(160deg,#2d8fe0,#7a5ce6)"><span class="cap">tracking has never been this easy 🙌</span><span class="stats"><span><span>Views</span><span>Revenue</span></span><span><b>560</b><b>$18</b></span></span></div></div>
+        <p class="ten-note">Ten videos that sound alike. Two land. Next month you guess again.</p>
       </div>
     </div>
   </section>
