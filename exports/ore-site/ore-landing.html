@@ -115,7 +115,12 @@ section{padding-block:88px}
 .phones.deal .pf.ask::before,.phones.deal .pf.ask::after{opacity:0;transition:opacity .5s .9s}.phones.deal.go .pf.ask::before,.phones.deal.go .pf.ask::after{opacity:1}
 
 /* the tree */
-.tree{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr) minmax(0,1.25fr);gap:56px;align-items:center}
+.tree{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:64px;justify-items:center}
+.tree > #n-root{width:min(100%,560px);text-align:center}
+.tree > #n-root .chips{justify-content:center}
+.tree > #n-why{width:min(100%,900px)}
+.tree > #n-why .why-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tree > #n-why .label{text-align:center}
 .tree svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
 .tree svg.links path{fill:none;stroke-width:2;stroke-linecap:round}
 .node{position:relative;z-index:1;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;min-width:0;box-shadow:0 22px 50px -34px rgba(15,28,51,.4)}
@@ -129,7 +134,7 @@ section{padding-block:88px}
 .why-list li{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:14.5px}
 .why-list li b{font-weight:600}
 .why-list li span{color:var(--muted);font-size:13px}
-.creators{display:grid;gap:12px}
+.creators{display:grid;gap:12px;width:100%;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}
 .creator{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;text-align:left;width:100%;font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;transition:border-color .2s,box-shadow .2s,transform .15s}
 .creator:hover{border-color:rgba(45,99,216,.4)}
 .creator[aria-expanded="true"]{border-color:transparent;box-shadow:0 0 0 2px var(--c),0 20px 40px -26px rgba(15,28,51,.45)}
@@ -332,6 +337,8 @@ h1 .it{font-size:1.06em}
   .sentto{justify-items:start;text-align:left}
   .same,.secret{grid-template-columns:1fr}
   .tree{grid-template-columns:1fr;gap:28px}
+  .tree > #n-why .why-list{grid-template-columns:1fr}
+  .creators{grid-template-columns:1fr}
   .tree svg.links{display:none}
   .tree > .node:not(:last-child)::after,.tree > .creators::before{content:"";position:absolute;left:50%;bottom:-28px;width:2px;height:28px;background:linear-gradient(var(--cobalt),var(--rose))}
   .tree > .creators{position:relative}
@@ -692,11 +699,11 @@ h1 .it{font-size:1.06em}
   cards.forEach(function(c){c.addEventListener('click',function(){cards.forEach(function(x){x.setAttribute('aria-expanded',String(x===c))});draw()})});
   // connector lines: root -> why -> each creator
   var box=document.getElementById('treebox'),svg=box.querySelector('svg.links'),NS='http://www.w3.org/2000/svg';
-  function mid(el,side){var b=box.getBoundingClientRect(),r=el.getBoundingClientRect();return{x:(side==='r'?r.right:r.left)-b.left,y:r.top-b.top+r.height/2}}
-  function path(a,c,color){var p=document.createElementNS(NS,'path');var dx=(c.x-a.x)/2;p.setAttribute('d','M'+a.x+' '+a.y+' C '+(a.x+dx)+' '+a.y+', '+(c.x-dx)+' '+c.y+', '+c.x+' '+c.y);p.setAttribute('stroke',color);svg.appendChild(p)}
+  function mid(el,side){var b=box.getBoundingClientRect(),r=el.getBoundingClientRect();return{x:r.left-b.left+r.width/2,y:(side==='b'?r.bottom:r.top)-b.top}}
+  function path(a,c,color){var p=document.createElementNS(NS,'path');var dy=(c.y-a.y)/2;p.setAttribute('d','M'+a.x+' '+a.y+' C '+a.x+' '+(a.y+dy)+', '+c.x+' '+(c.y-dy)+', '+c.x+' '+c.y);p.setAttribute('stroke',color);svg.appendChild(p)}
   function draw(){[].slice.call(svg.querySelectorAll('path')).forEach(function(p){p.remove()});if(getComputedStyle(svg).display==='none')return;
-    var root=document.getElementById('n-root'),why=document.getElementById('n-why');path(mid(root,'r'),mid(why,'l'),'url(#lg)');
-    var cols=['#2d63d8','#7a5ce6','#f06aa8','#ff8a4c'];cards.forEach(function(c,i){path(mid(why,'r'),mid(c,'l'),cols[i])})}
+    var root=document.getElementById('n-root'),why=document.getElementById('n-why');path(mid(root,'b'),mid(why,'t'),'#3fb7ec');
+    var cols=['#2d63d8','#7a5ce6','#f06aa8','#ff8a4c'];cards.forEach(function(c,i){path(mid(why,'b'),mid(c,'t'),cols[i])})}
   window.addEventListener('resize',draw);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);setTimeout(draw,60);draw();
   // sticky CTA only between hero and the final offer
   var bar=document.querySelector('.sticky-cta');if(bar&&'IntersectionObserver' in window){var seen={hero:true,end:false};function u(){bar.classList.toggle('show',!seen.hero&&!seen.end)}
