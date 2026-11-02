@@ -106,9 +106,19 @@ def brand_context(storage, slug: str) -> dict:
         "format_notes": fields.get("ad_format") or "",
         "research_brief": brainlib.with_brief(
             storage.read_text(brandlib.brand_key(slug, "research-brief.md")), storage, slug),
-        "knowledge": "\n\n".join(x for x in (load_knowledge(slug), lessonlib.for_prompt(storage, slug)) if x),
+        "knowledge": "\n\n".join(x for x in (load_knowledge(slug), lessonlib.for_prompt(storage, slug),
+                                               performance_notes(storage, slug)) if x),
         "creator": creatorlib.describe(None),
     }
+
+
+def performance_notes(storage, slug: str) -> str:
+    """How the brand's Ore scripts did in paid ads (from its Ads Manager uploads), so new briefs
+    lean toward the openings, angles and creators that made money."""
+    key = brandlib.brand_key(slug, "performance.md")
+    if not storage.exists(key):
+        return ""
+    return f'<file name="performance.md">\n{storage.read_text(key).strip()}\n</file>'
 
 
 def audience(storage, slug: str, segment: str | None) -> str:

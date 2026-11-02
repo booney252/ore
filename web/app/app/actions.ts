@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
+import { parseExport, saveResults, writePerformanceNotes } from "@/lib/results";
+import { notesFor, performance } from "@/lib/performance";
 import { brandExists, checkFile, checkSlug, createBrand, listDocs, slugify } from "@/lib/brands";
 import { writeText } from "@/lib/storage";
 import { addCompetitor, removeCompetitor, RINGS, type Ring, setCompetitorPage } from "@/lib/competitors";
@@ -150,6 +152,26 @@ export async function oaSetPage(form: FormData) {
   const ok = await setCompetitorPage(brand, text(form, "name", 120), text(form, "link", 600));
   revalidatePath(`/app/${brand}/brand`);
   redirect(`/app/${brand}/brand?page=${ok ? "saved" : "bad"}#pages`);
+}
+
+/** An Ads Manager CSV export: each ad whose name carries a brief code gets its numbers saved. */
+export async function oaUploadResults(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const file = form.get("file");
+  const back = `/app/${brand}/performance`;
+  if (!(file instanceof File) || !file.size) redirect(`${back}?results=empty`);
+  if ((file as File).size > 8 * 1024 * 1024) redirect(`${back}?results=big`);
+  const parsed = parseExport(await (file as File).text());
+  if (parsed.error) redirect(`${back}?results=bad`);
+  if (parsed.rows.length) {
+    await saveResults(brand, parsed.rows, parsed.period);
+    // what's working, in plain words: every future brief prompt reads it
+    const p = await performance(brand);
+    if (p) await writePerformanceNotes(brand, notesFor(p));
+  }
+  revalidatePath(back);
+  redirect(`${back}?results=ok&matched=${parsed.rows.length}&other=${parsed.unmatched}`);
 }
 
 export async function oaRefreshResearch(form: FormData) {

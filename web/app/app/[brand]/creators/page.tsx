@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { brandName } from "@/lib/brands";
 import { ensureInvite, inviteUrl } from "@/lib/invites";
+import { codeIndex, readResults, sum, money, x, pct } from "@/lib/results";
 import CopyLink from "../../CopyLink";
 import { CREATOR_FIELDS, listCreators } from "@/lib/creators";
 import { oaRemoveCreator, oaSaveCreator } from "../../actions";
@@ -18,7 +19,13 @@ const SHOW: { key: "about" | "story" | "voice" | "can_claim"; label: string }[] 
 export default async function Creators({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, creators, token, hdrs] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers()]);
+  const [name, creators, token, hdrs, results, codes] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers(), readResults(brand), codeIndex(brand)]);
+  const byCreator: Record<string, NonNullable<typeof results>["rows"]> = {};
+  for (const r of results?.rows ?? []) {
+    const id = codes[r.code]?.file.match(/-for-([a-z0-9-]+)/)?.[1];
+    if (id) (byCreator[id] ??= []).push(r);
+  }
+  const all = sum(results?.rows ?? []);
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
   const link = inviteUrl(host, hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https"), token);
   const editing = q.edit ? creators.find((c) => c.id === q.edit) : undefined;
@@ -44,6 +51,17 @@ export default async function Creators({ params, searchParams }: { params: Promi
                     <p className="oa-small oa-muted">{[c.handle, c.platforms].filter(Boolean).join(" · ")}</p>
                   </div>
                 </div>
+                {byCreator[c.id] && (() => {
+                  const s = sum(byCreator[c.id]);
+                  return (
+                    <div className="oa-stats">
+                      <span><b>{s.ads}</b>ad{s.ads > 1 ? "s" : ""} live</span>
+                      <span><b>{x(s.roas)}</b>ROAS{all.roas && s.roas ? <i className={s.roas >= all.roas ? "up" : "down"}>{s.roas >= all.roas ? "above" : "below"} avg</i> : null}</span>
+                      <span><b>{money(s.cpa)}</b>CPA</span>
+                      <span><b>{pct(s.hook)}</b>hook</span>
+                    </div>
+                  );
+                })()}
                 <div className="oa-dl">
                   {SHOW.filter((s) => c[s.key]).map((s) => (
                     <div key={s.key}>
