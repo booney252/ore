@@ -12,7 +12,7 @@ Mid-30s, a younger mom, written as someone with two little ones who's been on pe
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you think your peptides stopped working, don't quit yet." | Text hook: I owe my peptides an apology |
+| 0-4s | "If you think your peptides stopped working, don't quit yet." | Text hook: It wasn't them. It was mornings. |
 | 4-11s | "I've been on peptides for about a year, and a few weeks ago I was sure they'd stopped working. Tired, bloated, nothing changing." | |
 | 11-17s | "I was blaming them, I was blaming my body, I was about to stop." | |
 | 17-23s | "I owe them an apology, because it wasn't them. It was my mornings, and I'll show you what I mean." | |
@@ -33,7 +33,7 @@ Mid-30s, a younger mom, written as someone with two little ones who's been on pe
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're starting peptides, don't guess your units." | Text hook: Starting peptides? Don't guess your units |
+| 0-4s | "If you're starting peptides, don't guess your units." | Text hook: #2 every mom forgets |
 | 4-10s | "Every mom I know is either on peptides or asking me about them. So here's what I wish someone told me." | |
 | 10-20s | "One, the math. You're mixing your own vial, your syringe is in units, and everyone's copying numbers from a Facebook group. I'm not telling you what to take, that's for you and your provider. But getting it into units shouldn't be a guess." | |
 | 20-30s | "Two, you need to know what it's actually doing to you. How you feel, how you sleep, your energy. Because with kids, every day blurs together, and you won't remember in three weeks." | |
@@ -52,7 +52,7 @@ Mid-30s, a younger mom, written as someone with two little ones who's been on pe
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're a mom starting peptides, watch this before your first 30 days." | Text hook: 30 days on peptides as a mom |
+| 0-4s | "If you're a mom starting peptides, watch this before your first 30 days." | Text hook: Day 24, 9pm, at the fridge |
 | 4-10s | "Day one, you're so organized. Fridge cleared, everything laid out, you've got this." | |
 | 10-18s | "Day five, school drop-off runs late, and your dose just... doesn't happen. You'll do it later. You won't." | |
 | 18-26s | "Day twelve, someone asks how it's going, and you honestly can't tell. Do you feel better? Worse? You didn't write anything down." | |

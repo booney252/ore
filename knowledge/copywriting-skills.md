@@ -65,7 +65,7 @@ Use them the way a good copywriter does: pick the few that fit this brand, audie
 ## C. Hooks and the first seconds
 
 ### 10. Write the hook (the 4 U's)
-- The hook is the first spoken line, frame 0 and the on-screen text working as one unit.
+- The hook is the first spoken line, frame 0 and the on-screen text working as one unit: the text adds a second loop, never repeats the spoken line (see skill 36).
 - It needs at least two of: **unique** (something they haven't seen in the feed; non-negotiable), **useful** (what's in it for them; curiosity alone doesn't hold), **ultra-specific** (odd, exact numbers and details feel real), **urgent** (why it matters now).
 - Keep it short: most top hooks are eight words or fewer.
 - Breakthrough hooks put into words what the audience already thinks or fears right now.
@@ -244,7 +244,9 @@ Before a script ships, go start to finish once:
 - *From: Halbert.*
 
 ### 36. Use on-screen text and emphasis
-- On-screen text carries skimmers and people watching with the sound off: two to five words, a benefit the hook didn't give, placed just before the line that proves it.
+- **The text hook** (on screen from frame 0) is 3-8 words and never repeats the spoken hook. It opens a second loop, so the viewer has two reasons to keep watching. Spoken "I owe my GLP-1 an apology", text "It was never the medication"; spoken "here are two things nobody tells you", text "#2 is why your cravings come back". No labels like "Nurse here:".
+- After the text hook, keep the screen clean: a product overlay (screen recording) only on the lines where they talk about using the product, and the logo popping up on the CTA.
+- On-screen text carries skimmers and people watching with the sound off, so any extra text gives a benefit the spoken line didn't, placed just before the line that proves it.
 - Scale emphasis to the news. Save the loudest treatment (caps, color, size, motion) for the biggest moment; emphasize everything and it's just yelling.
 - Captions: short lines, first line carries a benefit, no wall of text.
 - *From: Halbert.*

@@ -12,7 +12,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "I need to admit something. I took a peptide to lose my lower belly, and I lost my butt instead." | Text hook: Wanted a flat belly, lost my butt |
+| 0-4s | "I need to admit something. I took a peptide to lose my lower belly, and I lost my butt instead." | Text hook: The mistake everyone makes starting out |
 | 4-12s | "I'm naturally slim. I just wanted that lower belly gone. So I started a peptide that everyone online swears by for belly fat." | |
 | 12-20s | "A few weeks in, I put on my favorite jeans, turned around in the mirror, and... my butt was gone. My belly? Still there." | |
 | 20-26s | "And I'm a stylist. I dress bodies for a living. Trust me, I noticed." | |
@@ -33,7 +33,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "Everyone's on peptides now. Here are two things nobody tells you before you start." | Text hook: 2 things nobody tells you about peptides |
+| 0-4s | "Everyone's on peptides now. Here are two things nobody tells you before you start." | Text hook: One worked. One went very wrong. |
 | 4-10s | "I've done two. One was amazing, and one... we don't talk about. So here's what I learned." | |
 | 10-20s | "Number one. It's not going to do the same thing for your body that it did for the girl in the video. I took one for my lower belly, and because I'm naturally slim, it took my butt instead. Not the plan." | |
 | 20-26s | "So you have to actually watch what it's doing to you. How you feel, what's changing, from the very first week." | |

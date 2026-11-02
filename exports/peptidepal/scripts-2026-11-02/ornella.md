@@ -12,7 +12,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're microdosing a GLP-1 to lean out, don't guess. Here's why." | Text hook: Microdosing to lean out? Read this |
+| 0-4s | "If you're microdosing a GLP-1 to lean out, don't guess. Here's why." | Text hook: Half my gym is doing this |
 | 4-12s | "I'm a bikini fitness athlete. I've changed my body completely, and for this prep I started microdosing a GLP-1. So did half the girls at my gym." | Photo overlay: Her transformation photos, then her at the gym |
 | 12-16s | "And there are two things nobody told any of us." | |
 | 16-26s | "One, the math. You're mixing your own vial, your syringe is in units, and everyone's just copying numbers from each other. I'm not telling anyone what to take, that's for you and your provider. But turning it into units shouldn't be a guess." | |
@@ -33,7 +33,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you lift and you just started a GLP-1, protect your muscle on days two and three." | Text hook: Lifting on a GLP-1? Protect your muscle |
+| 0-4s | "If you lift and you just started a GLP-1, protect your muscle on days two and three." | Text hook: What happened to my lifts on day 2 |
 | 4-9s | "I'm a bikini fitness athlete, and I just finished my first 30 days. Here's what I learned." | |
 | 9-14s | "Day one, shot day. I felt totally normal." | |
 | 14-22s | "Day two and three, my levels peaked and my appetite basically disappeared. The food noise was just gone." | |

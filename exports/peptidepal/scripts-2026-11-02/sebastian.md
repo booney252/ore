@@ -12,7 +12,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you think your peptides stopped working, check this before you quit." | Text hook: Your peptides didn't stop working |
+| 0-4s | "If you think your peptides stopped working, check this before you quit." | Text hook: Blame my 1-year-old |
 | 4-11s | "I run peptides every day. Focus, fat loss, skin. And for a month I was convinced they'd stopped doing anything." | |
 | 11-18s | "Brain fog was back, I stopped leaning out, and I was about ready to drop the whole stack." | |
 | 18-24s | "I owe them an apology, because it wasn't them. It was me, and I'll show you what I mean." | |
@@ -33,7 +33,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're microdosing, stop copying your buddy's units." | Text hook: Stop copying your gym buddy's units |
+| 0-4s | "If you're microdosing, stop copying your buddy's units." | Text hook: #2 is costing you muscle |
 | 4-10s | "Everyone at my gym is microdosing a GLP-1 now. I've been running peptides every day for over a year, so here's what nobody's telling you." | |
 | 10-20s | "One, the math. You're mixing your own vial, your syringe is in units, and guys are just texting each other numbers. I'm not telling you what to take, that's you and your doctor. But getting it into units should never be a guess." | |
 | 20-30s | "Two, and this one actually costs you. The day or two after your shot, your levels peak and you don't want to eat. That's when you skip protein without noticing." | |
@@ -53,7 +53,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you run more than one peptide, stop keeping it in your head." | Text hook: 30 days, a peptide stack, a baby |
+| 0-4s | "If you run more than one peptide, stop keeping it in your head." | Text hook: Day 9 caught me off guard |
 | 4-10s | "I run three peptides every day, I work, and I've got a one-year-old. Here's what 30 days of that actually looks like." | |
 | 10-16s | "Day one, it's all fresh. You know exactly what you're taking and when." | |
 | 16-24s | "Day four, the baby's up all night, and you miss your morning one. No big deal, right?" | |

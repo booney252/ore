@@ -12,7 +12,7 @@ She speaks as the nurse and never says her name.
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "Everyone's microdosing their GLP-1 now, and as a nurse, there are two things I really wish someone would tell you first." | Text hook: 2 things nobody tells you about microdosing |
+| 0-5s | "Everyone's microdosing their GLP-1 now, and as a nurse, there are two things I really wish someone would tell you first." | Text hook: #2 is why your cravings come back |
 | 5-12s | "My clients ask me about it every week, and honestly, I get why. A smaller dose, fewer side effects, it costs less." | |
 | 12-20s | "So here's the first thing. When you go smaller, the math gets harder. Your provider gives you a dose, your syringe is in units, and now you're mixing your own vial." | |
 | 20-27s | "And that's where people get it wrong. They do the math once on the back of a receipt, or they copy someone's number from Reddit, and they never check it again." | |
@@ -34,7 +34,7 @@ She speaks as the nurse and never says her name.
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "If you're in your first month on a GLP-1, here's what I tell every client about the next 30 days." | Text hook: Nurse here: your first 30 days |
+| 0-5s | "If you're in your first month on a GLP-1, here's what I tell every client about the next 30 days." | Text hook: Day 14 is where everyone slips |
 | 5-11s | "Day one is your shot day. Most people feel totally fine and think, oh, this is easy." | |
 | 11-20s | "Day two and three, your levels are peaking. Food sounds awful, you can barely finish a yogurt, and the food noise is just gone. It honestly feels amazing." | |
 | 20-32s | "And what most people don't realize is that's exactly the day they skip protein. Protein is what makes this work. It's what keeps you losing fat instead of muscle. Skip it every peak day, week after week, and yes, you're losing weight, but you're losing muscle with it." | |

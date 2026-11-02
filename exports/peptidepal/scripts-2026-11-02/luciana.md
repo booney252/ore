@@ -12,7 +12,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "I owe my GLP-1 an apology. For two months I told everyone it stopped working." | Text hook: I owe my GLP-1 an apology |
+| 0-4s | "I owe my GLP-1 an apology. For two months I told everyone it stopped working." | Text hook: It was never the medication |
 | 4-10s | "And I've lost 130 pounds on this journey, so believe me, I know what it feels like when it's working." | Photo overlay: Her before picture next to her now |
 | 10-18s | "Then I hit a wall. The scale didn't move for weeks. I was tired, I was hungry on days I shouldn't have been, and I was convinced it had just quit on me." | |
 | 18-24s | "I told my friends. I was ready to ask my doctor to switch. And honestly, I was scared I'd gain it all back." | |
@@ -33,7 +33,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "I've lost 130 pounds, and if I could go back to my first 30 days on a GLP-1, here's what I'd want to know." | Text hook: 130 lbs down: what I wish I knew |
+| 0-5s | "I've lost 130 pounds, and if I could go back to my first 30 days on a GLP-1, here's what I'd want to know." | Text hook: Days 2 and 3 matter most |
 | 5-11s | "Day one, shot day. I felt totally fine. I thought, okay, this is easy." | |
 | 11-19s | "Day two and three, that's when your levels peak. Food sounded awful. The food noise I'd had my whole life was just gone." | |
 | 19-31s | "And here's what nobody told me. Those are the days you skip protein without even noticing. Protein is what makes this work. It's what keeps you losing fat instead of muscle. And at my age, with menopause, I can't afford to lose muscle." | |

@@ -12,7 +12,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "I owe my GLP-1 an apology, and as a psych student, I really should have known better." | Text hook: Storytime: I owe my GLP-1 an apology |
+| 0-4s | "I owe my GLP-1 an apology, and as a psych student, I really should have known better." | Text hook: Your brain blames the wrong thing |
 | 4-12s | "So I've been on a GLP-1 for a few months. It was working, and then all of a sudden it wasn't. Scale stuck, hungry again, exhausted." | |
 | 12-18s | "And I was so sure the medication stopped working. I was about to ask my doctor to switch." | |
 | 18-26s | "Here's the psychology part. When something goes wrong, we blame the thing we can see. The shot is right there. The pattern isn't." | |
@@ -33,7 +33,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "Everyone's microdosing their GLP-1 now. I work in health insurance, and I microdose, so here are two things nobody tells you." | Text hook: Microdosing? 2 things nobody tells you |
+| 0-5s | "Everyone's microdosing their GLP-1 now. I work in health insurance, and I microdose, so here are two things nobody tells you." | Text hook: #2 almost made me quit |
 | 5-12s | "I hear about GLP-1s all day at work, and microdosing is all anyone asks about. Smaller dose, fewer side effects, cheaper. That's why I do it." | |
 | 12-22s | "But one, the math. When you microdose, you're usually mixing your own vial, and your syringe is in units. I'm not telling anyone what to take, that's for you and your provider. But turning it into units shouldn't be a guess, and I used to guess." | |
 | 22-32s | "Two, and this is the one that almost made me quit. A smaller dose wears off sooner, so the food noise comes back before your next shot. I thought it wasn't working. It was. It's timing." | |
@@ -53,7 +53,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "Storytime: my first 30 days on a GLP-1, and everything nobody warned me about." | Text hook: Storytime: my first 30 days |
+| 0-5s | "Storytime: my first 30 days on a GLP-1, and everything nobody warned me about." | Text hook: Day 14 was a disaster |
 | 5-11s | "Day one, shot day. I'm like, 'I feel nothing, this is so easy.'" | |
 | 11-19s | "Day two, I go to dinner with my friends, order, take three bites, and push the plate away. I'm peaking. Zero appetite." | |
 | 19-29s | "Which sounds great, but those are the days you skip protein without noticing. And protein's what keeps you losing fat instead of muscle. Nobody tells you that." | |

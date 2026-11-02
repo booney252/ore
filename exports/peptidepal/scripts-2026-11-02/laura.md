@@ -12,7 +12,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're on a GLP-1 and you're blaming it for your bad days, stop." | Text hook: It's not your GLP-1 |
+| 0-4s | "If you're on a GLP-1 and you're blaming it for your bad days, stop." | Text hook: Your bad days aren't random |
 | 4-10s | "Mine is working. I've dropped clothing sizes, my appetite is way down." | |
 | 10-18s | "But some weeks I'd get these days where I felt awful. No energy, couldn't eat, felt sick. And I blamed the shot. I honestly thought about stopping." | |
 | 18-24s | "I owe it an apology, because it wasn't random. It was timing, and I'll show you what I mean." | |
@@ -33,7 +33,7 @@
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-4s | "If you're starting a GLP-1, watch this before your first 30 days." | Text hook: My first 30 days on a GLP-1 |
+| 0-4s | "If you're starting a GLP-1, watch this before your first 30 days." | Text hook: Nobody warned me about day 6 |
 | 4-8s | "I just finished mine, and here's what nobody told me." | |
 | 8-14s | "Day one, shot day. I felt normal. I thought, okay, easy." | |
 | 14-23s | "Day two and three, that's when it peaks. Zero appetite. Like, I'd look at food and just... no." | |
