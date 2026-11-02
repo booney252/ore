@@ -47,6 +47,63 @@ def pick_page(name: str, candidates: list[dict]) -> dict | None:
     return max(pool, key=lambda c: c.get("likes") or 0) if pool else None
 
 
+def _site_root(url: str) -> str:
+    """'https://www.tryatria.com/x' -> 'tryatria' (the part that shows up in links and handles)."""
+    from urllib.parse import urlparse
+    host = urlparse(url if "//" in (url or "") else f"//{url or ''}").netloc.lower().split(":")[0]
+    parts = [p for p in host.split(".") if p and p != "www"]
+    return parts[-2] if len(parts) >= 2 else (parts[0] if parts else "")
+
+
+def _mentions(ads: list[dict], root: str) -> bool:
+    """Do any of these ads link to (or name) the competitor's own site?"""
+    if len(root) < 3:
+        return False
+    for a in ads:
+        text = " ".join(str(a.get(k) or "") for k in ("link", "body", "headline", "cta")).lower()
+        if root in text.replace(" ", ""):
+            return True
+    return False
+
+
+VERIFY_TOP = 3  # same-name pages to check before picking one (1 credit each)
+
+
+def find_page(source, name: str, website: str = "", search: str | None = None) -> tuple[dict | None, list[dict], str]:
+    """The right Ad Library page for a competitor, checked against its website.
+
+    Same-name pages are common ("Atria", "Motion"), so name and likes aren't enough. Look at the
+    top few same-name pages, pull one page of each one's ads, and keep the page whose ads link to the
+    competitor's own site ("verified"). With no site to check, keep the first page that has ads ("auto").
+    If none verify, fall back to the best name match ("unverified") so a person can check it.
+    Returns (page, its ads, how it was matched); the ads are reused so the check costs nothing extra."""
+    target, words = _norm(search or name), _words(search or name)
+    root = _site_root(website)
+    candidates = list(source.find_pages(search or name))
+    # a brand's page is often named after its site ("Trendtrack.io", "tryatria"): search that too
+    if root and _norm(root) != target:
+        seen = {c["page_id"] for c in candidates}
+        candidates += [c for c in source.find_pages(root) if c["page_id"] not in seen]
+    by_site = lambda c: bool(root) and len(root) >= 3 and (root in _norm(c.get("ig_username") or "") or root in _norm(c["name"]))
+    exact = lambda c: _norm(c["name"]) == target
+    pool = [c for c in candidates if exact(c) or by_site(c) or (words and set(words) <= set(_words(c["name"])))]
+    if not pool:
+        return None, [], ""
+    pool.sort(key=lambda c: (not by_site(c), not exact(c), -(c.get("likes") or 0)))
+    first_with_ads = None
+    for c in pool[:VERIFY_TOP]:
+        ads = source.fetch_ads(c["page_id"], max_pages=1)
+        if root and _mentions(ads, root):
+            return c, ads, "verified"
+        if ads and first_with_ads is None and (not root or exact(c) or by_site(c)):
+            first_with_ads = (c, ads)
+    if first_with_ads:
+        return first_with_ads[0], first_with_ads[1], "unverified" if root else "auto"
+    # with a site to check, never settle for a page whose name only roughly matches
+    fallback = next((c for c in pool if exact(c) or by_site(c)), None) if root else pool[0]
+    return (fallback, [], "unverified" if root else "auto") if fallback else (None, [], "")
+
+
 def dedupe_creatives(ads: list[dict], today: date) -> list[dict]:
     """One ad per collation group: prefer active, then longest running."""
     groups: dict[str, dict] = {}
@@ -146,21 +203,23 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
         if comp.get("fb_page_id") == "none":
             counts[name] = 0
             continue
+        first = None
         if not comp.get("fb_page_id"):
-            search = comp.get("fb_search_name") or name
-            page = pick_page(search, source.find_pages(search))
+            page, first, how = find_page(source, name, comp.get("website") or "", comp.get("fb_search_name"))
             if not page:
                 log.info("  %-22s no Ad Library page found", name)
                 counts[name] = 0
                 continue
             comp["fb_page_id"], comp["fb_page_name"] = page["page_id"], page["name"]
-            comp["fb_page_match"] = "auto"  # check this matched the right brand
-        pulled = dedupe_creatives(source.fetch_ads(comp["fb_page_id"], max_pages=max_pages), today)
+            comp["fb_page_match"] = how  # verified = its ads link to the competitor's site
+        raw = first if first and max_pages <= 1 else source.fetch_ads(comp["fb_page_id"], max_pages=max_pages)
+        pulled = dedupe_creatives(raw, today)
         new_ids = merge_ads(existing, pulled, comp, today)
         all_new.extend(new_ids)
         counts[name] = len(pulled)
-        log.info("  %-22s %3d creatives (%d new)  page: %s", name, len(pulled), len(new_ids),
-                 comp.get("fb_page_name") or comp["fb_page_id"])
+        log.info("  %-22s %3d creatives (%d new)  page: %s%s", name, len(pulled), len(new_ids),
+                 comp.get("fb_page_name") or comp["fb_page_id"],
+                 f" ({comp['fb_page_match']})" if comp.get("fb_page_match") in ("verified", "unverified") else "")
 
     for ad_id in all_new:
         download_media(storage, slug, existing[ad_id], session)
@@ -250,3 +309,25 @@ def verify(storage, slug: str, ad_ids: list[str], source=None, today: date | Non
     log.info("verify: %d checked, %d removed, %d changed status, %s credits used",
              len(ad_ids), removed, changed, getattr(source, "credits_used", None))
     return {"removed": removed, "changed": changed}
+
+
+def rematch_pages(storage, slug: str, only_empty: bool = True) -> list[str]:
+    """Forget auto-matched pages (by default only the ones that gave no ads) so the next `ads` run
+    finds them again with the website check. Pages a person set by hand are left alone."""
+    comp_key = brandlib.brand_key(slug, "competitors.json")
+    ads_key = brandlib.brand_key(slug, "ads.json")
+    doc = json.loads(storage.read_text(comp_key))
+    have = set()
+    if storage.exists(ads_key):
+        have = {a.get("brand") for a in json.loads(storage.read_text(ads_key))["ads"].values()}
+    cleared = []
+    for c in doc["competitors"]:
+        if c.get("fb_page_match") not in ("auto", "unverified") or c.get("fb_page_id") in (None, "", "none"):
+            continue
+        if only_empty and c["name"] in have:
+            continue
+        for f in PAGE_FIELDS:
+            c.pop(f, None)
+        cleared.append(c["name"])
+    storage.write_text(comp_key, json.dumps(doc, indent=2) + "\n")
+    return cleared

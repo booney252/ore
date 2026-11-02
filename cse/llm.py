@@ -69,6 +69,31 @@ def web_research(client, prompt: str, max_searches: int = 20) -> tuple[str, int]
     return "".join(b.text for b in content if b.type == "text").strip(), searches
 
 
+def web_citations(client, prompt: str, max_searches: int = 20) -> tuple[list[dict], int]:
+    """Run a prompt with web search and return every citation: the exact text quoted from a page
+    (cited_text), its url and title. Cited text is the page's own words, never the model's."""
+    messages = [{"role": "user", "content": prompt}]
+    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": max_searches}]
+    content: list = []
+    for _ in range(MAX_PAUSE_RESUMES + 1):
+        response = _create(client, max_tokens=32000, tools=tools, messages=messages)
+        content += response.content
+        if response.stop_reason != "pause_turn":
+            break
+        messages = [messages[0], {"role": "assistant", "content": content}]
+    get = lambda o, k: (o.get(k) if isinstance(o, dict) else getattr(o, k, None))
+    out = []
+    for b in content:
+        for c in (get(b, "citations") or []):
+            text = get(c, "cited_text")
+            if text:
+                out.append({"text": text, "url": get(c, "url") or "", "title": get(c, "title") or ""})
+    texts = [b for b in content if get(b, "type") == "text"]
+    log.info("web citations: %d text blocks, %d with citations, %d citations, stop=%s",
+             len(texts), sum(1 for b in texts if get(b, "citations")), len(out), getattr(response, "stop_reason", ""))
+    return out, sum(1 for b in content if get(b, "type") == "server_tool_use")
+
+
 def extract_json(client, instructions: str, source: str, schema: dict) -> dict:
     """Turn free-text research notes into JSON matching `schema`."""
     response = _create(

@@ -164,7 +164,19 @@ def run(storage, slug: str, session=None) -> dict:
         counts[t["name"]] = len(got)
         log.info("  %-22s %d App Store reviews", t["name"], len(got))
 
-    kept = [q for q in previous if q.get("source") not in ("app_store", "pasted")]
+    # reviews from the rest of the web (G2, Capterra, Trustpilot, Reddit...): fresh when the API is on,
+    # otherwise the ones from the last run are kept below
+    web = []
+    try:
+        web = web_reviews(fields, [t["name"] for t in targets])
+    except Exception as e:  # noqa: BLE001 - the web step failing shouldn't stop the run
+        log.warning("  web reviews failed: %s", e)
+    for q in web:
+        quotes[_id(q)] = q
+    counts["web"] = len(web)
+
+    kept = [q for q in previous if q.get("source") not in ("app_store", "pasted")
+            and not (web and str(q.get("source", "")).startswith("web:"))]
     for q in kept:  # testimonials, post comments: added by other steps, not re-pulled here
         quotes[_id(q)] = q
     if kept:
@@ -181,8 +193,8 @@ def run(storage, slug: str, session=None) -> dict:
     doc = {"brand": slug, "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "counts": counts, "quotes": list(quotes.values())}
     storage.write_text(voc_key, json.dumps(doc, indent=1) + "\n")
-    log.info("voc: %d quotes (%d App Store, %d pasted)", len(quotes),
-             sum(v for k, v in counts.items() if k != "pasted"), pasted)
+    log.info("voc: %d quotes (%d App Store, %d from review sites and forums, %d pasted)", len(quotes),
+             sum(v for k, v in counts.items() if k not in ("pasted", "web", "other")), counts.get("web", 0), pasted)
     return counts
 
 
@@ -205,3 +217,61 @@ def for_prompt(quotes: list[dict], limit: int = PROMPT_QUOTES) -> str:
                          if q.get(k) is not None},
                         ensure_ascii=False) for q in picked]
     return "\n".join(lines) or "(no customer quotes collected yet)"
+
+
+# --- Web reviews: G2, Capterra, Trustpilot, Reddit, Product Hunt, YouTube, Amazon -------------
+# Apple's feed only covers apps. For everything else Ore searches the web and keeps the exact
+# text each page is cited for, so a quote is always the customer's words, never a summary.
+
+WEB_SEARCHES = 20
+WEB_MAX = 150
+NOT_REVIEWS = ("wikipedia.org",)
+
+
+def web_prompt(fields: dict, names: list[str]) -> str:
+    product = fields.get("product") or fields.get("name") or ""
+    return f"""Find what real customers say, in their own words, about this kind of product and these brands.
+
+Product: {product}
+Brands: {", ".join(names[:20]) or "(none listed)"}
+
+Search wherever real buyers of this kind of product leave honest reviews and complaints. Pick the
+sources that fit: for software, G2, Capterra, Trustpilot, Product Hunt and Reddit threads; for apps,
+Reddit and Trustpilot; for physical products, Amazon reviews, Trustpilot and Reddit; for services,
+Google and Yelp reviews and Reddit. Prefer reviews and comments over the brands' own pages.
+
+For each brand and for the category as a whole, quote what customers love, what frustrates them,
+what made them switch or cancel, and the words they use for the problem. Quote them exactly and cite
+the page for every quote. Don't quote marketing copy or the brand's own claims."""
+
+
+def from_citations(cites: list[dict], names: list[str], own_site: str = "") -> list[dict]:
+    """Turn web citations into quotes: real review pages only, long enough to say something."""
+    out, seen = [], set()
+    own = domain(own_site) if own_site else ""
+    for c in cites:
+        text = re.sub(r"\s+", " ", c["text"]).strip().strip('"')
+        url = c.get("url") or ""
+        site = domain(url)
+        if not url or len(text.split()) < MIN_WORDS:
+            continue
+        if any(n in site for n in NOT_REVIEWS) or (own and site == own):
+            continue
+        about = next((n for n in names if n.lower() in (text + " " + c.get("title", "")).lower()), "the category")
+        q = {"text": text, "source": f"web:{site}", "about": about, "url": url, "title": c.get("title", "")}
+        if _id(q) in seen:
+            continue
+        seen.add(_id(q))
+        out.append(q)
+    return out[:WEB_MAX]
+
+
+def web_reviews(fields: dict, names: list[str], client=None) -> list[dict]:
+    from . import llm
+    if llm.mode() != "api":
+        return []
+    client = client or llm.make_client()
+    cites, searches = llm.web_citations(client, web_prompt(fields, names), max_searches=WEB_SEARCHES)
+    got = from_citations(cites, names, fields.get("website") or "")
+    log.info("  web reviews: %d quotes from %d searches", len(got), searches)
+    return got
