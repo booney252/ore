@@ -41,6 +41,21 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
         <div className="oa-wrap oa-stack">
           <Link href={`/app/${brand}/scripts`} className="oa-small cp-back">← All scripts</Link>
           {(q.revising || revising) && <Working text="Ore is revising the script with your note. It updates here when it's done." />}
+          {m.creators.some((c) => m.versions[c]?.status === "approved") && (
+            <div className="oa-card ms-where">
+              <h3>Status</h3>
+              <div className="ms-where-row">
+                {[...m.creators]
+                  .sort((a, b) => ["done", "edited", "filmed", "todo", "ready", ""].indexOf(where(a).key) - ["done", "edited", "filmed", "todo", "ready", ""].indexOf(where(b).key))
+                  .map((cid) => (
+                    <span key={cid} className="ms-where-chip">
+                      <b>{who(cid)?.name.split(" ")[0] ?? cid}</b>
+                      <span className={`cp-pill ${pillClass(where(cid).key)}`}>{where(cid).label}</span>
+                    </span>
+                  ))}
+              </div>
+            </div>
+          )}
           <div className="cp-script">
             <div className="oa-stack">
               <article className="oa-card oa-doc">
@@ -134,21 +149,6 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                 </form>
               )}
             </div>
-            {m.creators.some((c) => m.versions[c]?.status === "approved") && (
-              <div className="oa-card ms-where">
-                <h3>Where everyone is</h3>
-                <div className="ms-where-row">
-                  {[...m.creators]
-                    .sort((a, b) => ["done", "edited", "filmed", "todo", "ready", ""].indexOf(where(a).key) - ["done", "edited", "filmed", "todo", "ready", ""].indexOf(where(b).key))
-                    .map((cid) => (
-                      <span key={cid} className="ms-where-chip">
-                        <b>{who(cid)?.name.split(" ")[0] ?? cid}</b>
-                        <span className={`cp-pill ${pillClass(where(cid).key)}`}>{where(cid).label}</span>
-                      </span>
-                    ))}
-                </div>
-              </div>
-            )}
             {(q.versions || making) && <Working text="Ore is making the creator versions." />}
             {q.sent && <p className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Sent {q.sent} to the creator portal{q.sent === "1" ? "" : "s"}.</p>}
             <div className="ms-versions">
