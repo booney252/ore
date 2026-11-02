@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { brandName, setupState } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
+import GlowBg from "@/app/app/GlowBg";
 import { Logo } from "../../ui";
 import Refresh from "./Refresh";
 
@@ -21,6 +22,7 @@ export default async function Welcome({ params }: { params: Promise<{ brand: str
 
   return (
     <header className="oa-band full">
+      <GlowBg />
       <div className="oa-wrap">
         <nav className="oa-nav">
           <Logo />

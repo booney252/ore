@@ -249,3 +249,9 @@
 .ob-mark { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; font-size: 38px; color: #2d63d8; background: #fff; box-shadow: 0 0 50px 12px rgba(255, 255, 255, 0.5); margin-bottom: 6px; }
 .ob-done .ob-nav { justify-content: center; }
 .ob-done .ob-nav > span { display: none; }
+
+/* live glow behind the onboarding screens */
+.oa-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0; transition: opacity 1.2s ease; pointer-events: none; }
+.oa-gl.on { opacity: 1; }
+.oa-band.full > .oa-wrap { position: relative; z-index: 2; }
+.oa-band.full::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: var(--oa-ribs); }

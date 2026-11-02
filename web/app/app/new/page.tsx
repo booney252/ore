@@ -1,4 +1,5 @@
 import { requireOwner } from "@/lib/session";
+import GlowBg from "@/app/app/GlowBg";
 import { Logo } from "../ui";
 import Onboard from "./Onboard";
 
@@ -10,6 +11,7 @@ export default async function NewBrand({ searchParams }: { searchParams: Promise
   const error = q.missing ? "Add a brand name and a line about what you sell." : q.taken ? `A brand called ${q.taken} already exists.` : undefined;
   return (
     <header className="oa-band full">
+      <GlowBg />
       <div className="oa-wrap">
         <nav className="oa-nav">
           <Logo />
