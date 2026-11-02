@@ -8,7 +8,7 @@
   - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
   - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
   - Never say the app prevents or fixes side effects.
-- Lines in [brackets] are yours to fill in, or to say only if they're true for you. If one isn't true, skip it or use the swap listed under the script.
+- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
 - The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
 
 ---
@@ -33,10 +33,6 @@
 | 54-62s | "And the copper peptide I use for my skin, which honestly did amazing things, I'm starting again, and it's all going in there. My vial, my schedule, everything." | Screen recording: protocol + vial |
 | 62-68s | "I'm not guessing anymore. I actually know what I'm putting in my body, and I feel so much more confident about it." | |
 | 68-72s | "It's PeptidePal, this one, on the App Store." | PeptidePal icon pops up |
-
-**Swaps if a line isn't true for her:**
-- **12-20s:** if it wasn't her favorite jeans, any real moment she noticed works.
-- **54-62s:** if she hasn't restarted the copper peptide yet, "I'm starting it again soon, and this time it's all going in there."
 
 ---
 

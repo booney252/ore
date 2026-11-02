@@ -24,7 +24,7 @@ export default async function Creators({
         <h1 className="display">Creators</h1>
         <p className="lede">
           The people who film your ads. Pick one when you make iterations or briefs, and Ore writes
-          for them: their story, their voice, what they can film, and only claims they can honestly make.
+          for them: who they can believably play, their voice and what they can film.
         </p>
       </header>
 

@@ -14,7 +14,7 @@ const SHOW: { key: "about" | "story" | "voice" | "can_claim"; label: string }[] 
   { key: "about", label: "Who they are" },
   { key: "story", label: "Their story with your product" },
   { key: "voice", label: "How they talk" },
-  { key: "can_claim", label: "What they can honestly claim" },
+  { key: "can_claim", label: "What they can believably say" },
 ];
 
 export default async function Creators({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
@@ -39,7 +39,7 @@ export default async function Creators({ params, searchParams }: { params: Promi
         name={name}
         label="Creators"
         title={creators.length ? `${creators.length} creator${creators.length === 1 ? "" : "s"} on your roster.` : "Add your first creator."}
-        sub="Every brief is written for one creator: their story, their voice, what they can honestly say."
+        sub="Every brief is written for one creator: who they can believably play, their voice, where they film."
       />
       <main className="oa-main">
         <div className="oa-wrap oa-split">

@@ -17,8 +17,8 @@ export default async function StudioMe({
         <p className="mono muted">{first ? "Step 1 of 1 · before you start" : "Creator Studio"}</p>
         <h1 className="display">{first ? "First, tell Ore who you are" : "Your profile"}</h1>
         <p className="lede">
-          Everything Ore writes is for you: your story, the way you talk, what you can film, and
-          only what you can honestly say. You fill this in once and change it any time.
+          Everything Ore writes is for you: who you are on camera, the way you talk and what you
+          can film. You fill this in once and change it any time.
         </p>
       </section>
       {missing && <p className="error">Add your name.</p>}

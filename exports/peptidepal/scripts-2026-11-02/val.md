@@ -1,6 +1,6 @@
 # PeptidePal: 3 scripts for Val
 
-Mid-30s, a younger mom, does peptides herself. We don't have her full story yet, so these stay general: she fills in the [brackets] with what's true for her (which kind of peptide, how long, her kids). If she's on a GLP-1, she can say "my GLP-1" wherever it says "my peptides."
+Mid-30s, a younger mom, written as someone with two little ones who's been on peptides about a year. She can swap in her own details anywhere.
 
 **Before you film (all scripts):**
 - Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
@@ -8,7 +8,7 @@ Mid-30s, a younger mom, does peptides herself. We don't have her full story yet,
   - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
   - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
   - Never say the app prevents or fixes side effects.
-- Lines in [brackets] are yours to fill in, or to say only if they're true for you. If one isn't true, skip it or use the swap listed under the script.
+- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
 - The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
 
 ---
@@ -24,10 +24,10 @@ Mid-30s, a younger mom, does peptides herself. We don't have her full story yet,
 | Time | They say | On screen |
 |---|---|---|
 | 0-4s | "If you think your peptides stopped working, don't quit yet." | Text: I owe my peptides an apology |
-| 4-11s | "I've been on peptides for [how long], and [a few weeks ago] I was sure they'd stopped working. [Tired, bloated, nothing changing.]" | |
+| 4-11s | "I've been on peptides for about a year, and a few weeks ago I was sure they'd stopped working. Tired, bloated, nothing changing." | |
 | 11-17s | "I was blaming them, I was blaming my body, I was about to stop." | |
 | 17-23s | "I owe them an apology, because it wasn't them. It was my mornings, and I'll show you what I mean." | |
-| 23-33s | "I've got [two little ones]. Some days my dose happened at seven, some days at noon, some days [I honestly don't know if it happened]." | |
+| 23-33s | "I've got two little ones. Some days my dose happened at seven, some days at noon, some days I honestly don't know if it happened." | |
 | 33-43s | "And what most people don't realize is your body doesn't reset every day. If your doses slide around, your good days and your bad days slide with them, so it feels random. It's not. It's timing." | |
 | 43-48s | "When I started tracking it, I saw the pattern right away." | |
 | 48-60s | "I use an app called PeptidePal. It reminds me on my real schedule. Every dose gets logged with the time, so I can see the days it slid. And I write a quick note on how I felt, so I can match my bad days to my doses." | Screen recording: reminders, dose history, a note |
@@ -55,16 +55,13 @@ Mid-30s, a younger mom, does peptides herself. We don't have her full story yet,
 | 48-55s | "I feel like I actually know what I'm doing now, instead of hoping." | |
 | 55-59s | "PeptidePal, this one, on the App Store." | PeptidePal icon pops up |
 
-**Swaps if a line isn't true for her:**
-- **4-10s:** "Peptides are everywhere right now, so here's what I wish someone told me."
-
 ---
 
 ### Iteration 3: 30 days on peptides as a mom
 
 - **Funnel stage:** TOFU. Moms in their first month on peptides (or a GLP-1).
 - **Lead hook (command):** "If you're a mom starting peptides, watch this before your first 30 days."
-- **Other hook (open loop):** "30 days on peptides with [two kids under five]. Here's what you need to know."
+- **Other hook (open loop):** "30 days on peptides with two kids under five. Here's what you need to know."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. The day-by-day ladder keeps people watching, and a mom's 30 days has the real tracking moments built in: the missed morning, the vial running out, "did I do it today?"
 
@@ -81,5 +78,3 @@ Mid-30s, a younger mom, does peptides herself. We don't have her full story yet,
 | 60-66s | "It's one less thing in my head, and as a mom, that's everything. I feel on top of it." | |
 | 66-70s | "PeptidePal, this one, on the App Store." | PeptidePal icon pops up |
 
-**Swaps if a line isn't true for her:**
-- Pick the 4 or 5 moments from the ladder that really happened to her and cut the rest.

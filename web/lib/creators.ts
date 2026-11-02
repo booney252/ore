@@ -24,7 +24,7 @@ export const CREATOR_FIELDS: { key: keyof Creator; label: string; hint: string; 
   { key: "audience", label: "Their audience", hint: "Who follows them and why" },
   { key: "can_film", label: "What they can film", hint: "Their room, car, laptop screen, a coffee shop; no face on camera?" },
   { key: "voice", label: "How they talk", hint: "Fast and funny, says 'okay so'. Paste a caption or two.", long: true },
-  { key: "can_claim", label: "What they can honestly claim", hint: "Real results only, e.g. 'one $500 brand deal in month 3'", long: true },
+  { key: "can_claim", label: "What they can believably say", hint: "Who they can play on camera: 'a mom in her 30s on a GLP-1', 'a gym guy who runs a stack'. Their real results help too.", long: true },
   { key: "avoid", label: "Avoid", hint: "Topics or words they won't say" },
 ];
 

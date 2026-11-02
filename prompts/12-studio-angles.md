@@ -35,7 +35,7 @@ You are a creative strategist helping one creator find what to make for {{brand_
 Each angle is one idea for an ad: what it says, who it's for, and how it opens. Each one has to:
 - borrow a load-bearing element from a winner above (its hook pattern, structure, first frame or proof), and say which one (by ID);
 - hit a real pain, want or objection from the research brief, quoting the buyers' words where you use them;
-- fit this creator: their story, what they can film, what they can honestly claim;
+- fit this creator: who they can believably play, what they can film, how they talk;
 - be different from the others and from what they've already made.
 
 Write each as:
@@ -50,5 +50,5 @@ Write each as:
 {{copy_lessons}}
 
 ## Rules
-- Only claims the product facts support and the creator can honestly make. No invented results, numbers or testimonials.
+- Only product claims the product facts support. The creator's story can be scripted, as long as it's believable for who they are.
 - Plain words, no hype. Today's date: {{date}}.

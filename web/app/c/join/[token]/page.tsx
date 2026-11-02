@@ -37,7 +37,7 @@ export default async function Join({ params, searchParams }: { params: Promise<{
               <div className="ob-mark" aria-hidden="true">✓</div>
               <p className="oa-label">{name}</p>
               <h1>You're all set.</h1>
-              <p className="oa-sub">Thanks. Every script {name} sends you will be written for you: your story, your voice, and only what you can honestly say.</p>
+              <p className="oa-sub">Thanks. Every script {name} sends you will be written for you: your voice, your life and what you can film.</p>
             </div>
           ) : (
             <form action={joinAsCreator} className="ob join">

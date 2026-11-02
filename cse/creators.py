@@ -2,7 +2,7 @@
 
 A brand (an offer) can have a roster of creators in brands/<brand>/creators.json. Iterations and
 briefs can be written for one of them: their story, their voice, what they can film and what they
-can honestly claim. Without a creator, prompts write for the creator described in the brand's
+can believably say. Without a creator, prompts write for the creator described in the brand's
 ad_format notes.
 """
 
@@ -21,11 +21,11 @@ FIELDS = [
     ("audience", "Their audience"),
     ("can_film", "What they can film"),
     ("voice", "How they talk"),
-    ("can_claim", "What they can honestly claim"),
+    ("can_claim", "What they can believably say"),
     ("avoid", "Avoid"),
 ]
 NO_CREATOR = ("No specific creator. Write for the creator described in the format notes, and keep "
-              "any personal story generic enough that a real creator can say it truthfully.")
+              "any personal story general enough that most creators could believably say it.")
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,40}$")
 
 
@@ -51,6 +51,10 @@ def describe(creator: dict | None) -> str:
         return NO_CREATOR
     lines = [f"**{creator.get('name', 'The creator')}** will film and say this ad. Write it for them:"]
     lines += [f"- {label}: {creator[k].strip()}" for k, label in FIELDS if str(creator.get(k) or "").strip()]
-    lines.append("Use their real story and their way of talking. Only claim what they can honestly "
-                 "claim (above); never invent results, numbers or experiences for them.")
+    lines.append("The profile is who they can believably play: their age, life stage, job, look, where "
+                 "they film and how they talk. The story in the ad can be scripted for them; it doesn't "
+                 "have to be something that literally happened to them, so write a strong first-person "
+                 "story. Never write anything that contradicts who they visibly are (a 24-year-old guy "
+                 "isn't a menopause coach), use their real details where they make the story stronger, "
+                 "and follow their Avoid list.")
     return "\n".join(lines)

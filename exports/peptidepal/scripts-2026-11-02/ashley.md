@@ -1,6 +1,6 @@
 # PeptidePal: 2 scripts for Ashley (aesthetic nurse)
 
-She speaks as the nurse and never says her name. Every "my clients" line has to be something she actually sees; if it isn't, swap "my clients" for "you".
+She speaks as the nurse and never says her name.
 
 **Before you film (all scripts):**
 - Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
@@ -8,7 +8,7 @@ She speaks as the nurse and never says her name. Every "my clients" line has to 
   - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
   - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
   - Never say the app prevents or fixes side effects.
-- Lines in [brackets] are yours to fill in, or to say only if they're true for you. If one isn't true, skip it or use the swap listed under the script.
+- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
 - The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
 
 ---
@@ -24,7 +24,7 @@ She speaks as the nurse and never says her name. Every "my clients" line has to 
 | Time | They say | On screen |
 |---|---|---|
 | 0-5s | "Everyone's microdosing their GLP-1 now, and as a nurse, there are two things I really wish someone would tell you first." | Text: Nurse here: 2 things nobody tells you about microdosing |
-| 5-12s | "[My clients ask me about it every week,] and honestly, I get why. A smaller dose, fewer side effects, it costs less." | |
+| 5-12s | "My clients ask me about it every week, and honestly, I get why. A smaller dose, fewer side effects, it costs less." | |
 | 12-20s | "So here's the first thing. When you go smaller, the math gets harder. Your provider gives you a dose, your syringe is in units, and now you're mixing your own vial." | Text: 1. the math |
 | 20-27s | "And that's where people get it wrong. They do the math once on the back of a receipt, or they copy someone's number from Reddit, and they never check it again." | |
 | 27-32s | "I'm not going to tell you what your dose should be. That's between you and your provider. But turning it into units should never be a guess." | |
@@ -35,23 +35,19 @@ She speaks as the nurse and never says her name. Every "my clients" line has to 
 | 68-75s | "For my own peptides, it's the first time I've felt completely on top of it. No second-guessing, no doing math at midnight." | |
 | 75-80s | "If you're microdosing, it's honestly the one I'd point any client to. PeptidePal, this one, on the App Store." | PeptidePal icon pops up |
 
-**Swaps if a line isn't true for her:**
-- **5-12s:** if clients don't ask about it, say "It's everywhere right now, and honestly, I get why."
-- **75-80s:** "it's honestly the one I'd point anyone to."
-
 ---
 
 ### Iteration 2: Your first 30 days on a GLP-1
 
 - **Funnel stage:** TOFU. People in their first month on a weekly GLP-1.
-- **Lead hook (open loop):** "If you're in your first month on a GLP-1, here's what I tell [every client] about the next 30 days."
+- **Lead hook (open loop):** "If you're in your first month on a GLP-1, here's what I tell every client about the next 30 days."
 - **Other hook (command):** "If you just started a GLP-1, don't skip protein on days two and three."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. The day-by-day ladder keeps people watching to the end, and every rung is a real moment where tracking helps (peak days, protein, the hunger coming back, forgetting which day). Told by a nurse, it reads as advice, not an ad.
 
 | Time | They say | On screen |
 |---|---|---|
-| 0-5s | "If you're in your first month on a GLP-1, here's what I tell [every client] about the next 30 days." | Text: Nurse here: your first 30 days |
+| 0-5s | "If you're in your first month on a GLP-1, here's what I tell every client about the next 30 days." | Text: Nurse here: your first 30 days |
 | 5-11s | "Day one is your shot day. Most people feel totally fine and think, oh, this is easy." | Text: Day 1 |
 | 11-20s | "Day two and three, your levels are peaking. Food sounds awful, you can barely finish a yogurt, and the food noise is just gone. It honestly feels amazing." | Text: Days 2-3 |
 | 20-32s | "And what most people don't realize is that's exactly the day they skip protein. Protein is what makes this work. It's what keeps you losing fat instead of muscle. Skip it every peak day, week after week, and yes, you're losing weight, but you're losing muscle with it." | |
@@ -63,5 +59,3 @@ She speaks as the nurse and never says her name. Every "my clients" line has to 
 | 74-80s | "For my own routine, I just feel on top of it now. Calm. Not guessing." | |
 | 80-85s | "PeptidePal, this one, on the App Store." | PeptidePal icon pops up |
 
-**Swaps if a line isn't true for her:**
-- **0-5s:** "If you're in your first month on a GLP-1, here's what nobody tells you about the next 30 days."
