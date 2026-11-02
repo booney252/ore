@@ -2,8 +2,6 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { brandName } from "@/lib/brands";
 import { ensureInvite, inviteUrl } from "@/lib/invites";
-import { listMasters } from "@/lib/masters";
-import { statusesFor } from "@/lib/portal";
 import CopyLink from "../../CopyLink";
 import { CREATOR_FIELDS, listCreators } from "@/lib/creators";
 import { oaSaveCreator } from "../../actions";
@@ -15,20 +13,9 @@ export const dynamic = "force-dynamic";
 export default async function Creators({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, creators, token, hdrs, masters, statuses] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers(), listMasters(brand), statusesFor(brand)]);
+  const [name, creators, token, hdrs] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers()]);
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
   const link = inviteUrl(host, hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https"), token);
-  /** Each creator's scripts: how many, how many done. */
-  const tally = (cid: string) => {
-    let total = 0, done = 0;
-    for (const m of masters) {
-      if (!m.creators.includes(cid)) continue;
-      total += 1;
-      const f = m.versions[cid]?.file;
-      if (f && statuses[cid]?.[`iterations~${f}~1`]?.status === "done") done += 1;
-    }
-    return { total, done };
-  };
   return (
     <>
       <Band
@@ -42,19 +29,12 @@ export default async function Creators({ params, searchParams }: { params: Promi
         <div className="oa-wrap oa-split">
           <div className="cr-grid">
             {creators.length === 0 && <div className="oa-card oa-empty" style={{ gridColumn: "1 / -1" }}>No creators yet. Send them the invite link, or add one yourself.</div>}
-            {creators.map((c, i) => {
-              const t = tally(c.id);
-              return (
-                <Link key={c.id} href={`/app/${brand}/creators/${c.id}`} className="oa-card cr-card">
-                  <span className={`oa-cav c${i % 5}`}>{initials(c.name)}</span>
-                  <b>{c.name}</b>
-                  <span className="oa-small oa-muted">{t.total ? `${t.done} of ${t.total} script${t.total === 1 ? "" : "s"} done` : "No scripts yet"}</span>
-                  {t.total > 0 && (
-                    <span className="cr-bar" aria-hidden><i style={{ width: `${(t.done / t.total) * 100}%` }} /></span>
-                  )}
-                </Link>
-              );
-            })}
+            {creators.map((c, i) => (
+              <Link key={c.id} href={`/app/${brand}/creators/${c.id}`} className="oa-card cr-card">
+                <span className={`oa-cav c${i % 5}`}>{initials(c.name)}</span>
+                <b>{c.name}</b>
+              </Link>
+            ))}
           </div>
           <aside className="oa-stack oa-sticky">
             <div className="oa-card oa-invite">
