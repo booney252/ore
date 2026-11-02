@@ -4,6 +4,7 @@ import Markdown from "@/app/Markdown";
 import { brandName } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
 import { listJobs } from "@/lib/jobs";
+import { STATUSES, statusesFor } from "@/lib/portal";
 import { changedRows, getMaster, rows, stale, textHookOf } from "@/lib/masters";
 import { oaAssignOne, oaMasterApprove, oaMasterEdit, oaMasterRevise, oaSuggestOne, oaVersionApprove, oaVersionsRemake } from "../../../actions";
 import { Band, initials, Working } from "../../../ui";
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 export default async function MasterPage({ params, searchParams }: { params: Promise<{ brand: string; id: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand, id } = await params;
   const q = await searchParams;
-  const [name, m, creators, jobs] = await Promise.all([brandName(brand), getMaster(brand, id), listCreators(brand), listJobs(brand, 20)]);
+  const [name, m, creators, jobs, statuses] = await Promise.all([brandName(brand), getMaster(brand, id), listCreators(brand), listJobs(brand, 20), statusesFor(brand)]);
   if (!m) notFound();
   const mine = jobs.filter((j) => (j.status === "pending" || j.status === "running") && j.master === m.id);
   const revising = mine.some((j) => j.type === "revise");
@@ -23,6 +24,16 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
   const who = (cid: string) => creators.find((c) => c.id === cid);
   const ready = m.creators.filter((c) => m.versions[c]?.status === "ready" && !stale(m, m.versions[c]));
   const missing = m.creators.filter((c) => !m.versions[c] || stale(m, m.versions[c]));
+  /** Where a creator is: their portal status once their version is sent. */
+  const where = (cid: string) => {
+    const v = m.versions[cid];
+    if (!v || stale(m, v)) return { key: "", label: v ? "Out of date" : "Not made yet", note: "" };
+    if (v.status !== "approved" || !v.file) return { key: "ready", label: "Ready for you", note: "" };
+    const s = statuses[cid]?.[`iterations~${v.file}~1`];
+    const key = s?.status ?? "todo";
+    return { key, label: STATUSES.find((x) => x.key === key)?.label ?? "To film", note: s?.note ?? "", at: s?.updated_at };
+  };
+  const pillClass = (k: string) => (k === "done" ? "done" : k === "edited" ? "edited" : k === "filmed" ? "filmed" : "");
   return (
     <>
       <Band brand={brand} name={name} label="Script" title={m.title} sub={m.status === "approved" ? "Approved. Each creator's version is below." : "Review this once. Every creator's version is made from it."} />
@@ -38,7 +49,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
               {m.changes.length > 0 && (
                 <div className="oa-card ms-fixed">
                   <h2>What Ore fixed before you saw it</h2>
-                  <ul>{m.changes.map((c) => <li key={c}>{c}</li>)}</ul>
+                  <ul>{m.changes.map((c) => <li key={c}>{c.replace(/\*\*/g, "")}</li>)}</ul>
                 </div>
               )}
               <details className="oa-card ms-edit">
@@ -123,6 +134,21 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                 </form>
               )}
             </div>
+            {m.creators.some((c) => m.versions[c]?.status === "approved") && (
+              <div className="oa-card ms-where">
+                <h3>Where everyone is</h3>
+                <div className="ms-where-row">
+                  {[...m.creators]
+                    .sort((a, b) => ["done", "edited", "filmed", "todo", "ready", ""].indexOf(where(a).key) - ["done", "edited", "filmed", "todo", "ready", ""].indexOf(where(b).key))
+                    .map((cid) => (
+                      <span key={cid} className="ms-where-chip">
+                        <b>{who(cid)?.name.split(" ")[0] ?? cid}</b>
+                        <span className={`cp-pill ${pillClass(where(cid).key)}`}>{where(cid).label}</span>
+                      </span>
+                    ))}
+                </div>
+              </div>
+            )}
             {(q.versions || making) && <Working text="Ore is making the creator versions." />}
             {q.sent && <p className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Sent {q.sent} to the creator portal{q.sent === "1" ? "" : "s"}.</p>}
             <div className="ms-versions">
@@ -130,7 +156,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                 const c = who(cid);
                 const v = m.versions[cid];
                 const old = stale(m, v);
-                const state = !v ? "Not made yet" : old ? "Out of date" : v.status === "approved" ? "In their portal" : "Ready for you";
+                const w = where(cid);
                 const vr = v ? rows(v.md) : [];
                 const diff = v ? changedRows(m.md, v.md) : [];
                 return (
@@ -138,11 +164,17 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                     <div className="ms-vhead">
                       <span className={`oa-cav c${i % 5}`}>{initials(c?.name ?? cid)}</span>
                       <b>{c?.name ?? cid}</b>
-                      <span className={`cp-pill ${!v ? "" : old ? "filmed" : v.status === "approved" ? "done" : "edited"}`}>{state}</span>
+                      <span className={`cp-pill ${pillClass(w.key)}`}>{w.label}</span>
                     </div>
+                    {w.note && <p className="ms-note">“{w.note}”</p>}
                     {v && (
                       <>
-                        {v.changes.length > 0 && <ul className="ms-why">{v.changes.map((x) => <li key={x}>{x}</li>)}</ul>}
+                        {v.changes.length > 0 && (
+                          <details className="ms-whydetails">
+                            <summary>Why these changes</summary>
+                            <ul className="ms-why">{v.changes.map((x) => <li key={x}>{x.replace(/\*\*/g, "")}</li>)}</ul>
+                          </details>
+                        )}
                         <div className="ms-lines">
                           {textHookOf(v.md) && textHookOf(v.md) !== textHookOf(m.md) && (
                             <div className="ms-line">
