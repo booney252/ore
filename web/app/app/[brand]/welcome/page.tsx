@@ -54,7 +54,7 @@ export default async function Welcome({ params }: { params: Promise<{ brand: str
               ))}
             </ol>
             <div className="ob-next">
-              <b>While you wait</b>
+              <b>While you wait, tell Ore who films for you</b>
               <Link href={`/app/${brand}/creators`}>{creators.length ? `Check your ${creators.length} creator${creators.length > 1 ? "s" : ""}` : "Add your creators"} →</Link>
             </div>
           </div>

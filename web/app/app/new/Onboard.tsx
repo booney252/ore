@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { oaNewBrand } from "../actions";
 
-const TOTAL = 3;
+const TOTAL = 2;
 
-/** New brand, one question per screen: what you sell, who you're up against, who films for you. One submit at the end. */
+/** New brand, one question per screen: what you sell, then who you're up against. Creators get added while the research runs. */
 export default function Onboard({ error }: { error?: string }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
@@ -23,7 +23,7 @@ export default function Onboard({ error }: { error?: string }) {
       </div>
 
       <section className={`ob-step${step === 0 ? " on" : ""}`} aria-hidden={step !== 0}>
-        <p className="oa-label">Step 1 of 3</p>
+        <p className="oa-label">Step 1 of 2</p>
         <h1>What do you sell?</h1>
         <p className="oa-sub">A sentence or two is enough. Ore does the rest.</p>
         {error && <p className="ob-err">{error}</p>}
@@ -33,18 +33,12 @@ export default function Onboard({ error }: { error?: string }) {
       </section>
 
       <section className={`ob-step${step === 1 ? " on" : ""}`} aria-hidden={step !== 1}>
-        <p className="oa-label">Step 2 of 3</p>
+        <p className="oa-label">Step 2 of 2</p>
         <h1>Who are you up against?</h1>
         <p className="oa-sub">Name the ones you already watch. Ore finds the rest, so skip this if you're not sure.</p>
         <textarea className="ob-in" name="competitors" rows={3} placeholder="Shotsy, Pep AI, Peptide Tracker" />
       </section>
 
-      <section className={`ob-step${step === 2 ? " on" : ""}`} aria-hidden={step !== 2}>
-        <p className="oa-label">Step 3 of 3</p>
-        <h1>Who films for you?</h1>
-        <p className="oa-sub">One creator per line: a name and who they are. Ore writes each brief in their voice. You can add more later.</p>
-        <textarea className="ob-in" name="creators" rows={4} placeholder={"Ashley, 38, aesthetic nurse, on peptides herself\nMike, 34, dad who lifts, first month on a GLP-1"} />
-      </section>
 
       <div className="ob-nav">
         {step > 0 ? (
