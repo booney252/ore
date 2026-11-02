@@ -96,9 +96,9 @@ export async function oaSaveCreator(form: FormData) {
   if (!name) redirect(`/app/${brand}/creators?missing=1`);
   const fields = Object.fromEntries(CREATOR_FIELDS.map((f) => [f.key, text(form, f.key, f.long ? 1500 : 200)]));
   const id = text(form, "id", 60);
-  await saveCreator(brand, { name, ...fields } as Parameters<typeof saveCreator>[1], id || undefined);
+  const saved = await saveCreator(brand, { name, ...fields } as Parameters<typeof saveCreator>[1], id || undefined);
   revalidatePath(`/app/${brand}/creators`);
-  redirect(`/app/${brand}/creators?saved=1`);
+  redirect(`/app/${brand}/creators/${saved}?saved=1`);
 }
 
 export async function oaRemoveCreator(form: FormData) {
@@ -116,7 +116,7 @@ export async function oaPortal(form: FormData) {
   const id = text(form, "id", 60);
   if (await creatorExists(brand, id)) await ensurePortal(brand, id, text(form, "reset", 5) === "1");
   revalidatePath(`/app/${brand}/creators`);
-  redirect(`/app/${brand}/creators#c-${id}`);
+  redirect(`/app/${brand}/creators/${id}`);
 }
 
 /** Feedback on a brief: saved, then the lessons job turns it into rules Ore follows. */
