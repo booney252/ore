@@ -27,9 +27,17 @@ export default async function PortalScript({ params, searchParams }: { params: P
     <Shell token={token} label={name} title={sc.title} sub="Say it in your own words. Keep the order of the beats and the facts the same.">
       <Link href={`/c/p/${token}`} className="oa-small cp-back">← All my scripts</Link>
       <div className="cp-script">
-        <article className="oa-card oa-doc">
-          <Markdown text={sc.body} />
-        </article>
+        <div className="oa-stack">
+          {sc.intro && (
+            <details className="oa-card oa-doc cp-intro" open>
+              <summary>Before you film</summary>
+              <Markdown text={sc.intro} />
+            </details>
+          )}
+          <article className="oa-card oa-doc">
+            <Markdown text={sc.body} />
+          </article>
+        </div>
         <aside className="oa-stack oa-sticky">
           <div className="oa-card cp-side">
             <h2>Where is it?</h2>

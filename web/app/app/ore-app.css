@@ -448,3 +448,5 @@
 .cp-note { flex-basis: 100%; padding-left: 4px; }
 .cp-pw { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .cp-pw code { font-size: 13.5px; padding: 4px 9px; border-radius: 8px; background: rgba(15, 28, 51, 0.06); }
+.cp-intro summary { cursor: pointer; font-weight: 600; font-size: 15px; color: var(--oa-cobalt); }
+.cp-intro[open] summary { margin-bottom: 8px; }

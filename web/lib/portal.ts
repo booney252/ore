@@ -23,7 +23,7 @@ export const isStatus = (s: string): s is Status => STATUSES.some((x) => x.key =
 
 export type PortalInfo = { token: string; password: string; created_at: string };
 export type ScriptStatus = { status: Status; video?: string; note?: string; updated_at?: string };
-export type Script = { key: string; kind: Kind; file: string; n: number; title: string; body: string };
+export type Script = { key: string; kind: Kind; file: string; n: number; title: string; body: string; intro: string };
 
 const TOKEN = /^[A-Za-z0-9_-]{10,40}$/;
 const WORDS = ["sunny", "river", "maple", "coral", "cedar", "olive", "amber", "frost", "lucky", "pixel", "mango", "orbit", "tulip", "velvet", "zesty", "breeze", "cobalt", "honey", "lemon", "meadow"];
@@ -86,14 +86,20 @@ const NOTE = /^\s*[-*]\s+\*\*(Built on|Why it should work for us|Why it works|Wr
 const HEAD = /^#{2,4}\s*(?:Iteration|Brief|Script|Idea)?\s*(\d{1,2})\s*[:.\-)]\s*(.+)$/gm;
 
 /** One file can hold several scripts ("### Iteration 2: Fridge", "## 1. The Hair"); split them. */
-export function splitScripts(md: string): { n: number; title: string; body: string }[] {
+export function splitScripts(md: string): { n: number; title: string; body: string; intro: string }[] {
   const heads = [...md.matchAll(HEAD)];
   const clean = (s: string) => s.split("\n").filter((l) => !NOTE.test(l)).join("\n").trim();
   if (!heads.length) {
     const h1 = md.match(/^#\s+(.+)$/m);
-    return [{ n: 1, title: h1?.[1].replace(/[*_`]/g, "") ?? "Your script", body: clean(h1 ? md.slice(h1.index! + h1[0].length) : md) }];
+    return [{ n: 1, title: h1?.[1].replace(/[*_`]/g, "") ?? "Your script", body: clean(h1 ? md.slice(h1.index! + h1[0].length) : md), intro: "" }];
   }
+  // What comes before the first script (minus the doc title): notes for every script in the file, e.g. "Before you film".
+  // Only the "Before you film" part: notes about the creator above it are for the brand.
+  const pre = md.slice(0, heads[0].index!);
+  const at = pre.search(/\*\*Before you film[^*]*\*\*/i);
+  const intro = at < 0 ? "" : clean(pre.slice(at).replace(/^\*\*Before you film[^*]*\*\*:?\s*/i, "").replace(/^\s*-{3,}\s*$/gm, ""));
   return heads.map((h, i) => ({
+    intro,
     n: Number(h[1]),
     title: h[2].replace(/[*_`]/g, "").trim(),
     body: clean(md.slice(h.index! + h[0].length, heads[i + 1]?.index ?? md.length)),
