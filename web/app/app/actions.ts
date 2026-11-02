@@ -29,8 +29,19 @@ export async function oaNewBrand(form: FormData) {
   if (!slug || !about) redirect("/app/new?missing=1");
   if (await brandExists(slug)) redirect(`/app/new?taken=${slug}`);
   await createBrand({ slug, name, about, website, competitors, ingredients: [], mechanism: "" });
+  // creators from the last onboarding step: "Name, who they are" per line
+  const people = String(form.get("creators") ?? "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .slice(0, 20);
+  for (const line of people) {
+    const [first, ...rest] = line.split(/[,:]/);
+    const who = first.trim().slice(0, 80);
+    if (who) await saveCreator(slug, { name: who, about: rest.join(",").trim() || line });
+  }
   await createJob({ type: "setup", brand: slug });
-  redirect(`/app/${slug}/brand?started=1`);
+  redirect(`/app/${slug}/welcome`);
 }
 
 /** "Make this for <creator>": one breakout becomes a creator-fit brief. */

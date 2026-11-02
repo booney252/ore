@@ -207,3 +207,45 @@
 .oa-make textarea { width: 100%; font: inherit; font-size: 15px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--oa-line); background: var(--oa-soft); resize: vertical; }
 @media (max-width: 900px) { .oa-grid2 { grid-template-columns: minmax(0, 1fr); } }
 .oa-who { width: 100%; justify-self: stretch; text-align: left; }
+
+/* Onboarding: one question per screen */
+.ob { max-width: 640px; margin: 7vh auto 0; display: grid; gap: 18px; color: #fff; }
+.ob h1 { font-family: var(--font-display), sans-serif; font-weight: 300; font-size: clamp(38px, 6vw, 60px); line-height: 1.04; letter-spacing: -0.02em; }
+.ob .oa-label { color: rgba(255, 255, 255, 0.85); }
+.ob .oa-sub { color: rgba(255, 255, 255, 0.92); font-size: 17px; }
+.ob-dots { display: flex; gap: 8px; }
+.ob-dots i { width: 28px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.3); transition: background 0.3s, width 0.3s; }
+.ob-dots i.done { background: rgba(255, 255, 255, 0.75); }
+.ob-dots i.on { background: #fff; width: 44px; }
+.ob-step { display: none; gap: 14px; }
+.ob-step.on { display: grid; animation: ob-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes ob-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.ob-in { width: 100%; font: inherit; font-size: 17px; color: var(--oa-ink); padding: 16px 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.9); box-shadow: 0 18px 40px -26px rgba(15, 28, 51, 0.6); resize: vertical; }
+.ob-in:focus { outline: 2px solid #fff; outline-offset: 2px; }
+.ob-err { padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.5); }
+.ob-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.ob-nav .oa-btn.white { padding: 15px 26px; font-size: 15px; }
+.ob-nav .oa-btn[disabled] { opacity: 0.5; cursor: default; }
+.ob-back { color: #fff !important; }
+/* waiting and ready */
+.ob-wait, .ob-done { text-align: center; justify-items: center; }
+.ob-wait .oa-sub, .ob-done .oa-sub { max-width: 46ch; }
+.ob-orb { position: relative; width: 120px; height: 120px; margin-bottom: 8px; }
+.ob-orb i { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.55); animation: ob-pulse 3s ease-out infinite; }
+.ob-orb i:nth-child(2) { animation-delay: 1s; }
+.ob-orb i:nth-child(3) { animation-delay: 2s; }
+.ob-orb::after { content: ""; position: absolute; inset: 36px; border-radius: 50%; background: #fff; box-shadow: 0 0 40px 10px rgba(255, 255, 255, 0.6); }
+@keyframes ob-pulse { from { transform: scale(0.35); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+.ob-progress { list-style: none; margin: 8px 0 0; padding: 18px 22px; display: grid; gap: 12px; text-align: left; border-radius: 20px; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.4); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); min-width: min(100%, 380px); }
+.ob-progress li { display: flex; gap: 12px; align-items: center; font-size: 15px; color: rgba(255, 255, 255, 0.7); }
+.ob-progress i { width: 18px; height: 18px; border-radius: 50%; flex: none; border: 2px solid rgba(255, 255, 255, 0.5); }
+.ob-progress li.done { color: #fff; }
+.ob-progress li.done i { background: #fff; border-color: #fff; box-shadow: inset 0 0 0 4px rgba(45, 99, 216, 0.85); }
+.ob-progress li.now { color: #fff; font-weight: 600; }
+.ob-progress li.now i { border-color: #fff; border-right-color: transparent; animation: oa-spin 1s linear infinite; }
+.ob-next { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; font-size: 14px; margin-top: 6px; }
+.ob-next b { font-weight: 600; color: rgba(255, 255, 255, 0.85); }
+.ob-next a { color: #fff; font-weight: 600; text-decoration: none; padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.45); }
+.ob-mark { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; font-size: 38px; color: #2d63d8; background: #fff; box-shadow: 0 0 50px 12px rgba(255, 255, 255, 0.5); margin-bottom: 6px; }
+.ob-done .ob-nav { justify-content: center; }
+.ob-done .ob-nav > span { display: none; }
