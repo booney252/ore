@@ -9,7 +9,7 @@
 - **Hook:** "If you're on a GLP-1 and you're blaming it for your bad days, stop."
 - **Text hook:** Your bad days aren't random
 
-- **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. "It's working, I've dropped sizes, but some days are awful" makes "the bad days aren't the medication" believable.
+- **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. "It's working, I've dropped sizes, but some days are awful" makes "the bad days aren't the GLP-1" believable.
 
 | Time | They say |
 |---|---|

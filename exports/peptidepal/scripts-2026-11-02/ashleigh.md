@@ -15,8 +15,8 @@ Mid-40s mom, written as on a GLP-1 (weekly shot, Sundays). Warm and conversation
 |---|---|
 | 0-4s | "I owe my GLP-1 an apology. And if you're not always perfect with your schedule, you might too." |
 | 4-11s | "I take my shot on Sundays. At least, that's the plan. Between the kids' games and everything else, Sunday turns into Monday, sometimes Tuesday." |
-| 11-18s | "And for months I had these random awful days. No energy, felt sick, couldn't eat. And I blamed the medication. I was ready to come off it." |
-| 18-23s | "But it wasn't the medication, and it wasn't random. It was timing." |
+| 11-18s | "And for months I had these random awful days. No energy, felt sick, couldn't eat. And I blamed my GLP-1. I was ready to come off it." |
+| 18-23s | "But it wasn't my GLP-1, and it wasn't random. It was timing." |
 | 23-33s | "Your levels peak a day or two after your shot. So when my shot slid to Tuesday, my bad day slid to Thursday. It felt like it came out of nowhere, but it was right on schedule. My schedule was just off." |
 | 33-43s | "And those peak days, when you can't even look at food? That's when I was skipping protein. What most people don't realize is protein is what keeps you losing fat instead of muscle." |
 | 43-48s | "I only figured it out when I put everything in one place." |

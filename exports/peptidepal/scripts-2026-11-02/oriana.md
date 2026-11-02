@@ -15,7 +15,7 @@
 |---|---|
 | 0-4s | "I owe my GLP-1 an apology, and as a psych student, I really should have known better." |
 | 4-12s | "So I've been on a GLP-1 for a few months. It was working, and then all of a sudden it wasn't. Scale stuck, hungry again, exhausted." |
-| 12-18s | "And I was so sure the medication stopped working. I was about to ask my doctor to switch." |
+| 12-18s | "And I was so sure my GLP-1 stopped working. I was about to ask my doctor to switch." |
 | 18-26s | "Here's the psychology part. When something goes wrong, we blame the thing we can see. The shot is right there. The pattern isn't." |
 | 26-35s | "Because when I actually looked, I wasn't taking it on the same day every week. I was taking it... mostly on the same day. A day late here, two days late there." |
 | 35-45s | "And every time it slid, my peak days moved, the days you barely want to eat. So I'd skip protein on those days, and protein's what keeps you losing fat instead of muscle." |

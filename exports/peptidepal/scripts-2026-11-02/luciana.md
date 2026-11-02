@@ -7,7 +7,7 @@
 ### Iteration 1: I owe my GLP-1 an apology
 
 - **Hook:** "I owe my GLP-1 an apology. For two months I told everyone it stopped working."
-- **Text hook:** It was never the medication
+- **Text hook:** It was never the peptides
 
 - **Why it should work for us:** Zafira's "We need to publicly apologize... because we lied" broke into Zafira's top 10 at #3, and Zafira's "Break a stubborn plateau on GLP-1" is breaking in too. A plateau is the pain competitors are paying to reach right now, and a confession doesn't read like an ad. Her 130 lbs makes the "it stopped working" fear land harder.
 
@@ -17,7 +17,7 @@
 | 4-10s | "And I've lost 130 pounds on this journey, so believe me, I know what it feels like when it's working." |
 | 10-18s | "Then I hit a wall. The scale didn't move for weeks. I was tired, I was hungry on days I shouldn't have been, and I was convinced it had just quit on me." |
 | 18-24s | "I told my friends. I was ready to ask my doctor to switch. And honestly, I was scared I'd gain it all back." |
-| 24-30s | "But it wasn't the medication, and it wasn't me. There was a pattern I couldn't see, until I found the app that showed it to me. I'll show you in a sec." |
+| 24-30s | "But it wasn't my GLP-1, and it wasn't me. There was a pattern I couldn't see, until I found the app that showed it to me. I'll show you in a sec." |
 | 30-40s | "When I finally logged everything, my shots had been sliding. A day late one week, two days the next. Work, coaching, life. And every time it slid, my good days and my bad days moved with it." |
 | 40-52s | "And the day or two after my shot, when my levels peak and I can barely look at food? I was barely eating protein. What most people don't realize is protein is what keeps you losing fat instead of muscle. So yes, I was still losing, but I was losing the wrong thing." |
 | 52-64s | "It's called PeptidePal. My dose history showed me every shot that slid. The Today screen tells me when I'm about to peak, so I get my protein in the day before. And my second peptide, the one I take for sleep and recovery, is on the same schedule, so nothing lives in my head anymore." |
