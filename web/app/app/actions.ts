@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
 import { parseExport, saveResults, writePerformanceNotes } from "@/lib/results";
 import { notesFor, performance } from "@/lib/performance";
-import { brandExists, checkFile, checkSlug, createBrand, listDocs, slugify } from "@/lib/brands";
+import { brandExists, brandName, checkFile, checkSlug, createBrand, listDocs, slugify } from "@/lib/brands";
 import { writeText } from "@/lib/storage";
 import { addCompetitor, removeCompetitor, RINGS, type Ring, setCompetitorPage } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
@@ -13,6 +13,7 @@ import { createJob } from "@/lib/jobs";
 import { addFeedback } from "@/lib/lessons";
 import { requireBrand, requireOwner } from "@/lib/session";
 import { ensurePortal } from "@/lib/portal";
+import { approveVersion, getMaster, listMasters, saveMaster, stale, unassign } from "@/lib/masters";
 
 const text = (form: FormData, key: string, max: number) => String(form.get(key) ?? "").trim().slice(0, max);
 
@@ -70,11 +71,9 @@ export async function oaMake(form: FormData) {
   // the report ads that show a pattern, as extra inspiration
   const ads = text(form, "ranks", 40).split(",").map(Number).filter((n) => Number.isInteger(n) && n > 0 && n < 100).slice(0, 5);
   const [latest] = await listDocs(brand, "reports");
-  const base = { type: "iterations" as const, brand, ...(latest && { report: latest }), ads: latest ? ads : [], format: "ugc", per_ad: 1, idea };
-  // one script per creator, each written for that creator's story and voice
-  if (creators.length) for (const creator of creators) await createJob({ ...base, creator });
-  else await createJob(base);
-  redirect(`/app/${brand}/briefs?writing=${Math.max(creators.length, 1)}`);
+  // one master script for the idea; each picked creator gets their own version once it's approved
+  await createJob({ type: "master", brand, ...(latest && { report: latest }), ads: latest ? ads : [], idea, creators });
+  redirect(`/app/${brand}/scripts?writing=1`);
 }
 
 /** "Send to creator": a private link the creator opens without an account. */
@@ -197,4 +196,98 @@ export async function oaFindBreakouts(form: FormData) {
   await requireBrand(brand);
   await createJob({ type: "report", brand });
   redirect(`/app/${brand}?checking=1`);
+}
+
+
+// --- Master scripts: review once, every creator's version is made from it ---
+
+async function masterFrom(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const m = await getMaster(brand, text(form, "id", 60));
+  if (!m) redirect(`/app/${brand}/scripts`);
+  return { brand, m: m! };
+}
+
+/** "What would you change?" on a master: Ore revises it (and learns the rule for next time). */
+export async function oaMasterRevise(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  const note = text(form, "note", 5000);
+  const back = `/app/${brand}/scripts/${m.id}`;
+  if (!note) redirect(`${back}?empty=1`);
+  const fid = await addFeedback(brand, { text: note, who: "", about: `Master script "${m.title}"`, doc: "" });
+  await createJob({ type: "revise", brand, master: m.id, note });
+  await createJob({ type: "lessons", brand, feedback: fid });
+  redirect(`${back}?revising=1`);
+}
+
+/** Edit the master's text by hand. The creator versions show as out of date. */
+export async function oaMasterEdit(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  const md = String(form.get("md") ?? "").trim().slice(0, 20000);
+  if (md && md !== m.md.trim()) {
+    m.md = md;
+    m.rev += 1;
+    m.status = "draft";
+    m.changes = ["Edited by hand."];
+    await saveMaster(brand, m);
+  }
+  redirect(`/app/${brand}/scripts/${m.id}?saved=1`);
+}
+
+/** Approve the master and make every assigned creator's version from it. */
+export async function oaMasterApprove(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  m.status = "approved";
+  await saveMaster(brand, m);
+  const todo = m.creators.filter((c) => !m.versions[c] || stale(m, m.versions[c]));
+  if (todo.length) await createJob({ type: "versions", brand, master: m.id, creators: todo });
+  redirect(`/app/${brand}/scripts/${m.id}${todo.length ? "?versions=1" : ""}#versions`);
+}
+
+/** Remake one creator's version (or all out-of-date ones). */
+export async function oaVersionsRemake(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  const one = text(form, "creator", 60);
+  const todo = one ? [one] : m.creators.filter((c) => !m.versions[c] || stale(m, m.versions[c]));
+  if (todo.length) await createJob({ type: "versions", brand, master: m.id, creators: todo });
+  redirect(`/app/${brand}/scripts/${m.id}?versions=1#versions`);
+}
+
+/** Approve one creator's version, or every ready one: it lands in their portal. */
+export async function oaVersionApprove(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  const one = text(form, "creator", 60);
+  const name = await brandName(brand);
+  const ids = one ? [one] : Object.keys(m.versions).filter((c) => m.versions[c].status === "ready" && !stale(m, m.versions[c]));
+  for (const c of ids) if (m.creators.includes(c)) await approveVersion(brand, m, c, name);
+  await saveMaster(brand, m);
+  revalidatePath(`/app/${brand}/creators`);
+  redirect(`/app/${brand}/scripts/${m.id}?sent=${ids.length}#versions`);
+}
+
+/** The who-films-what grid. Unticking a creator removes their version from their portal. */
+export async function oaAssign(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const ticked = new Set(form.getAll("a").map(String));
+  for (const m of await listMasters(brand)) {
+    const want: string[] = [];
+    for (const t of ticked) {
+      const [mid, cid] = t.split(":");
+      if (mid === m.id && (await creatorExists(brand, cid))) want.push(cid);
+    }
+    for (const c of [...m.creators]) if (!want.includes(c)) await unassign(brand, m, c);
+    m.creators = want;
+    await saveMaster(brand, m);
+  }
+  redirect(`/app/${brand}/scripts?assigned=1#grid`);
+}
+
+/** Ore suggests who films which script. */
+export async function oaSuggest(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  await createJob({ type: "assign", brand });
+  redirect(`/app/${brand}/scripts?suggesting=1#grid`);
 }

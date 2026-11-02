@@ -29,7 +29,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, lessons, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
+from . import ads, breakdown, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -163,6 +163,16 @@ def run_job(storage, job: dict) -> str | None:
         return studio.run_tweak(storage, job["session"], str(job["script"]), job["action"])
     if job["type"] == "rank_mechanisms":
         return mechanisms.rank(storage, slug)
+    if job["type"] == "master":  # a new master script from an idea, then Ore's rules check
+        return masters.create(storage, slug, job["idea"], report=job.get("report"),
+                              ads=[int(a) for a in job.get("ads") or []],
+                              creators=job.get("creators") or [])
+    if job["type"] == "revise":
+        return masters.revise(storage, slug, job["master"], feedback=job.get("note") or "")
+    if job["type"] == "versions":
+        return masters.make_versions(storage, slug, job["master"], only=job.get("creators") or None)
+    if job["type"] == "assign":
+        return masters.suggest(storage, slug)
     if job["type"] == "lessons":  # fold one piece of copy feedback into the brand + craft lessons
         return lessons.learn(storage, slug, job["feedback"])
     if job["type"] == "ingredients":

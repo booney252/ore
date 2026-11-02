@@ -3,7 +3,7 @@ import { oaMake } from "./actions";
 
 type Creator = { id: string; name: string };
 
-/** The one button every idea ends in: a script for each ticked creator. Who it's for stays folded away. */
+/** The one button every idea ends in: one script to review, then a version for each ticked creator. */
 export default function MakeForm({ brand, creators, hidden, children }: { brand: string; creators: Creator[]; hidden: Record<string, string>; children?: ReactNode }) {
   return (
     <form action={oaMake} className="oa-make">
@@ -26,7 +26,7 @@ export default function MakeForm({ brand, creators, hidden, children }: { brand:
           </fieldset>
         </details>
       )}
-      <button type="submit" className="oa-btn">{creators.length > 1 ? "Make a brief for each" : "Make a brief"}</button>
+      <button type="submit" className="oa-btn">Write the script</button>
     </form>
   );
 }
