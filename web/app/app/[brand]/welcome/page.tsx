@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+import { ensureInvite, inviteUrl } from "@/lib/invites";
+import CopyLink from "../../CopyLink";
 import { brandName, setupState } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
 import GlowBg from "@/app/app/GlowBg";
@@ -10,7 +13,9 @@ export const dynamic = "force-dynamic";
 /** After onboarding: a calm "Ore is on it" screen that turns into "your market is ready". */
 export default async function Welcome({ params }: { params: Promise<{ brand: string }> }) {
   const { brand } = await params;
-  const [name, state, creators] = await Promise.all([brandName(brand), setupState(brand), listCreators(brand)]);
+  const [name, state, creators, token, hdrs] = await Promise.all([brandName(brand), setupState(brand), listCreators(brand), ensureInvite(brand), headers()]);
+  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
+  const link = inviteUrl(host, hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https"), token);
   const steps = [
     { label: "Learning what you sell", done: state.profile },
     { label: "Finding your competitors", done: state.competitors || state.organic },
@@ -53,9 +58,11 @@ export default async function Welcome({ params }: { params: Promise<{ brand: str
                 </li>
               ))}
             </ol>
-            <div className="ob-next">
-              <b>While you wait, tell Ore who films for you</b>
-              <Link href={`/app/${brand}/creators`}>{creators.length ? `Check your ${creators.length} creator${creators.length > 1 ? "s" : ""}` : "Add your creators"} →</Link>
+            <div className="ob-invite">
+              <b>While you wait, send this to your creators</b>
+              <span className="oa-small">They fill in who they are in about 3 minutes, no account needed, and every brief gets written in their voice.{creators.length ? ` ${creators.length} creator${creators.length > 1 ? "s have" : " has"} joined so far.` : ""}</span>
+              <CopyLink url={link} />
+              <Link href={`/app/${brand}/creators`}>Or add them yourself →</Link>
             </div>
           </div>
         )}

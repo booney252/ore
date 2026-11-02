@@ -255,3 +255,16 @@
 .oa-gl.on { opacity: 1; }
 .oa-band.full > .oa-wrap { position: relative; z-index: 2; }
 .oa-band.full::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: var(--oa-ribs); }
+
+/* creator invite form */
+.join { gap: 16px; padding-bottom: 40px; }
+.join-f { display: grid; gap: 6px; }
+.join-f span { font-size: 14px; font-weight: 600; color: #fff; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+/* invite card */
+.oa-invite { display: grid; gap: 10px; }
+.oa-invite h2 { font-weight: 400; font-size: 21px; }
+.ob-invite { display: grid; gap: 10px; width: min(100%, 520px); padding: 18px 20px; border-radius: 20px; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.4); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); text-align: left; }
+.ob-invite b { font-weight: 600; }
+.ob-invite .oa-small { color: rgba(255, 255, 255, 0.88); }
+.ob-invite a { color: #fff; font-size: 13px; }

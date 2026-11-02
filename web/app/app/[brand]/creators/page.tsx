@@ -1,4 +1,7 @@
+import { headers } from "next/headers";
 import { brandName } from "@/lib/brands";
+import { ensureInvite, inviteUrl } from "@/lib/invites";
+import CopyLink from "../../CopyLink";
 import { CREATOR_FIELDS, listCreators } from "@/lib/creators";
 import { oaRemoveCreator, oaSaveCreator } from "../../actions";
 import { Band, initials } from "../../ui";
@@ -15,7 +18,9 @@ const SHOW: { key: "about" | "story" | "voice" | "can_claim"; label: string }[] 
 export default async function Creators({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, creators] = await Promise.all([brandName(brand), listCreators(brand)]);
+  const [name, creators, token, hdrs] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers()]);
+  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
+  const link = inviteUrl(host, hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https"), token);
   const editing = q.edit ? creators.find((c) => c.id === q.edit) : undefined;
   return (
     <>
@@ -29,7 +34,7 @@ export default async function Creators({ params, searchParams }: { params: Promi
       <main className="oa-main">
         <div className="oa-wrap oa-split">
           <div className="oa-creators">
-            {creators.length === 0 && <div className="oa-card oa-empty" style={{ gridColumn: "1 / -1" }}>No creators yet. Add one on the right.</div>}
+            {creators.length === 0 && <div className="oa-card oa-empty" style={{ gridColumn: "1 / -1" }}>No creators yet. Send them the invite link on the right, or add one yourself.</div>}
             {creators.map((c, i) => (
               <article key={c.id} className="oa-card oa-creator">
                 <div className="oa-creator-top">
@@ -58,10 +63,16 @@ export default async function Creators({ params, searchParams }: { params: Promi
               </article>
             ))}
           </div>
-          <form action={oaSaveCreator} className="oa-card oa-form oa-sticky" id="creator-form">
+          <aside className="oa-stack oa-sticky">
+          <div className="oa-card oa-invite">
+            <h2>Invite your creators</h2>
+            <p className="oa-small oa-muted">Send this link to every creator. They fill in their own profile in about 3 minutes, no account, and it shows up here.</p>
+            <CopyLink url={link} />
+          </div>
+          <form action={oaSaveCreator} className="oa-card oa-form" id="creator-form">
             <input type="hidden" name="brand" value={brand} />
             {editing && <input type="hidden" name="id" value={editing.id} />}
-            <h2>{editing ? `Edit ${editing.name}` : "Add a creator"}</h2>
+            <h2>{editing ? `Edit ${editing.name}` : "Or add one yourself"}</h2>
             {q.saved && <p className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Saved.</p>}
             <label className="oa-field">
               <span>Name</span>
@@ -79,6 +90,7 @@ export default async function Creators({ params, searchParams }: { params: Promi
             ))}
             <button type="submit" className="oa-btn">{editing ? "Save changes" : "Add creator"}</button>
           </form>
+          </aside>
         </div>
       </main>
     </>
