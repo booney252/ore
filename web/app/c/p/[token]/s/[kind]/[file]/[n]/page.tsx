@@ -8,7 +8,7 @@ import { Shell, Stepper } from "../../../../../ui";
 
 export const dynamic = "force-dynamic";
 
-/** One script, with its status, the video link and a note to the brand. */
+/** One script, with its status and a note to the brand. */
 export default async function PortalScript({ params, searchParams }: { params: Promise<{ token: string; kind: string; file: string; n: string }>; searchParams: Promise<Record<string, string>> }) {
   const { token, kind, file, n } = await params;
   const q = await searchParams;
@@ -41,12 +41,8 @@ export default async function PortalScript({ params, searchParams }: { params: P
             <input type="hidden" name="key" value={key} />
             <input type="hidden" name="back" value={here} />
             <label className="oa-field">
-              <span>Link to the video</span>
-              <input name="video" type="url" defaultValue={cur?.video ?? ""} placeholder="Google Drive, Dropbox, Frame.io..." />
-            </label>
-            <label className="oa-field">
               <span>Note for the brand</span>
-              <textarea name="note" rows={3} defaultValue={cur?.note ?? ""} placeholder="Changed the hook a little, filmed 2 versions..." />
+              <textarea name="note" rows={3} defaultValue={cur?.note ?? ""} placeholder="Changed the hook a little, submitted on Trybe..." />
             </label>
             <button type="submit" className="oa-btn">Save</button>
           </form>

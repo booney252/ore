@@ -91,7 +91,6 @@ export default async function Creators({ params, searchParams }: { params: Promi
                               <li key={x.key}>
                                 <span className={`cp-pill ${st(x.key)}`}>{STATUSES.find((y) => y.key === st(x.key))?.label}</span>
                                 <a href={`/app/${brand}/briefs/${x.kind}/${x.file}`}>{x.title}</a>
-                                {v?.video && <a className="cp-video" href={v.video} target="_blank" rel="noreferrer">Video ↗</a>}
                                 {v?.note && <span className="oa-small oa-muted cp-note">“{v.note}”</span>}
                               </li>
                             );
