@@ -2,22 +2,11 @@
 
 24, married, a 1-year-old at home, in the gym. Runs peptides every day for focus, fat loss and skin. He's our only guy, and men are 43% of PeptidePal's signups with almost no ads talking to them. Film in the car, at his desk or in the kitchen. Keep his own peptide company out of these.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: I owe my peptides an apology
 
-- **Funnel stage:** TOFU/MOFU. Guys running more than one peptide who think theirs "stopped working."
-- **Lead hook (command):** "If you think your peptides stopped working, check this before you quit."
-- **Other hook (open loop):** "I owe my peptides an apology. For a month I thought they stopped working."
+- **Hook:** "If you think your peptides stopped working, check this before you quit."
 
 - **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. For a guy running a daily stack, the real cause is missed and doubled doses and vials running out, which shows off the features no competitor ad mentions (vial countdown, reminders, dose history).
 
@@ -38,9 +27,7 @@
 
 ### Iteration 2: Everyone at the gym is microdosing
 
-- **Funnel stage:** TOFU. Guys at the gym microdosing a GLP-1 or about to.
-- **Lead hook (command):** "If you're microdosing, stop copying your buddy's units."
-- **Other hook (open loop):** "Everyone at my gym is microdosing now. Here are two things nobody tells you."
+- **Hook:** "If you're microdosing, stop copying your buddy's units."
 
 - **Why it should work for us:** Noom's "Microdose GLP-1s starting at $79" is #1 in Noom's top 10, and it's spreading through gyms. Hone Health's man-led breakout shows men's health ads are working right now. A young guy who runs peptides daily is a credible "here's what you're missing" voice for lifters.
 
@@ -60,9 +47,7 @@
 
 ### Iteration 3: 30 days running a stack with a baby at home
 
-- **Funnel stage:** MOFU. Guys running two or more peptides who keep it all in their head.
-- **Lead hook (command):** "If you run more than one peptide, stop keeping it in your head."
-- **Other hook (open loop):** "30 days running a peptide stack with a one-year-old at home. Here's what you need to know."
+- **Hook:** "If you run more than one peptide, stop keeping it in your head."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." is the first man-led breakout this week. Same day-by-day ladder, but for stacking, which is where PeptidePal is strongest (several schedules, vials running out, which one did I take). Half-life fits here because it's a stacking script.
 

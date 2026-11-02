@@ -2,22 +2,11 @@
 
 39, empowerment coach and fashion stylist, mom of twin teens. She used a copper peptide for her skin (loved it, starting again soon) and a peptide for lower belly fat that took fat from her butt instead, so she stopped. She isn't on a GLP-1, so both scripts are about peptides. No skimpy clothes: show the butt story with how her jeans fit, fully dressed.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: I need to admit something
 
-- **Funnel stage:** TOFU. Women curious about peptides, or on one, who picked it off a video and aren't tracking anything.
-- **Lead hook (open loop):** "I need to admit something. I took a peptide to lose my lower belly, and I lost my butt instead."
-- **Other hook (command):** "If you're taking a peptide for belly fat, watch this first."
+- **Hook:** "I need to admit something. I took a peptide to lose my lower belly, and I lost my butt instead."
 
 - **Why it should work for us:** confession and warning hooks are breaking into top 10s this week (Zafira's "We need to publicly apologize", the talking bottle's "don't order from Amazon"). Her story is real, funny and specific, and it opens the second-compound and "you're not tracking anything" problems without a single dosing claim.
 
@@ -38,9 +27,7 @@
 
 ### Iteration 2: Everyone's on peptides now
 
-- **Funnel stage:** TOFU. Women hearing about peptides everywhere and thinking about starting.
-- **Lead hook (open loop):** "Everyone's on peptides now. Here are two things nobody tells you before you start."
-- **Other hook (command):** "If you're about to start peptides, don't do it off a TikTok."
+- **Hook:** "Everyone's on peptides now. Here are two things nobody tells you before you start."
 
 - **Why it should work for us:** our microdosing idea, reworked for a peptide user (Noom's "Microdose GLP-1s starting at $79" is #1 in Noom's top 10, so the "everyone's doing it" wave is real). It keeps the listicle shape Michael likes ("here are the things nobody tells you") and puts her two real results, one good and one bad, in one video.
 

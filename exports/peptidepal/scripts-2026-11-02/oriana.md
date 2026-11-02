@@ -2,22 +2,11 @@
 
 28, works in healthcare insurance and studies psychology, no kids, written as someone on a GLP-1. She loves explaining things and telling storytimes, so these are her own story told storytime-style, with her psych and insurance background as the twist. Film anywhere.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: I owe my GLP-1 an apology
 
-- **Funnel stage:** TOFU. People on a GLP-1 who are about to blame it for a plateau or bad weeks.
-- **Lead hook (open loop):** "I owe my GLP-1 an apology, and as a psych student, I really should have known better."
-- **Other hook (command):** "If you think your GLP-1 stopped working, listen to this first."
+- **Hook:** "I owe my GLP-1 an apology, and as a psych student, I really should have known better."
 
 - **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. Told as a storytime with a psychology twist (we blame what we can see), it feels like content, not an ad, which is what Michael keeps asking for.
 
@@ -38,9 +27,7 @@
 
 ### Iteration 2: Everyone's microdosing now
 
-- **Funnel stage:** TOFU. People microdosing a GLP-1 or about to.
-- **Lead hook (open loop):** "Everyone's microdosing their GLP-1 now. I work in health insurance, and I microdose, so here are two things nobody tells you."
-- **Other hook (command):** "If you're microdosing, stop guessing your units."
+- **Hook:** "Everyone's microdosing their GLP-1 now. I work in health insurance, and I microdose, so here are two things nobody tells you."
 
 - **Why it should work for us:** Noom's "Microdose GLP-1s starting at $79" is #1 in Noom's top 10. Her insurance job gives the explainer authority, and her storytelling makes the two points easy to follow.
 
@@ -60,9 +47,7 @@
 
 ### Iteration 3: My first 30 days, storytime
 
-- **Funnel stage:** TOFU. People about to start or in their first month on a GLP-1.
-- **Lead hook (open loop):** "Storytime: my first 30 days on a GLP-1, and everything nobody warned me about."
-- **Other hook (command):** "If you're starting a GLP-1, watch this before day two."
+- **Hook:** "Storytime: my first 30 days on a GLP-1, and everything nobody warned me about."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. A storytime version of the day-by-day ladder plays to her strength, and the dinner and phone-call moments make it feel like content.
 

@@ -2,22 +2,11 @@
 
 56, IT director and menopause coach, down 130 lbs, currently on a GLP-1 plus a second peptide. Her before pictures are the strongest proof we have: use them in the first seconds of both.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: I owe my GLP-1 an apology
 
-- **Funnel stage:** TOFU/MOFU. People on a GLP-1 who've hit a plateau or a stretch of bad weeks and are starting to blame the medication.
-- **Lead hook (open loop):** "I owe my GLP-1 an apology. For two months I told everyone it stopped working."
-- **Other hook (command):** "If you think your GLP-1 stopped working, don't switch yet."
+- **Hook:** "I owe my GLP-1 an apology. For two months I told everyone it stopped working."
 
 - **Why it should work for us:** Zafira's "We need to publicly apologize... because we lied" broke into Zafira's top 10 at #3, and Zafira's "Break a stubborn plateau on GLP-1" is breaking in too. A plateau is the pain competitors are paying to reach right now, and a confession doesn't read like an ad. Her 130 lbs makes the "it stopped working" fear land harder.
 
@@ -38,9 +27,7 @@
 
 ### Iteration 2: My first 30 days, looking back
 
-- **Funnel stage:** TOFU. People in their first month on a weekly GLP-1, especially women over 45.
-- **Lead hook (open loop):** "I've lost 130 pounds, and if I could go back to my first 30 days on a GLP-1, here's what I'd want to know."
-- **Other hook (command):** "If you just started a GLP-1, write down your shot day. I'm serious."
+- **Hook:** "I've lost 130 pounds, and if I could go back to my first 30 days on a GLP-1, here's what I'd want to know."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. The day-by-day ladder keeps people to the end, and someone 130 lbs down looking back is the most believable narrator we have for a first-month viewer. Her age matches our core buyer (38-64).
 

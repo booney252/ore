@@ -2,22 +2,11 @@
 
 29, yoga teacher and bikini fitness athlete, written as microdosing a GLP-1 to lean out. Her real transformation photos and her gym are her authority. Film at the gym, in the car, kitchen or outside.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: Everyone at my gym is microdosing
 
-- **Funnel stage:** TOFU. Fit women and gym-goers microdosing a GLP-1 to lean out, or about to.
-- **Lead hook (command):** "If you're microdosing a GLP-1 to lean out, don't guess. Here's why."
-- **Other hook (open loop):** "Everyone at my gym is microdosing now, and there are two things nobody tells you."
+- **Hook:** "If you're microdosing a GLP-1 to lean out, don't guess. Here's why."
 
 - **Why it should work for us:** Noom's "Microdose GLP-1s starting at $79" is #1 in Noom's top 10, and microdosing is moving into gym culture. A bikini athlete reaches the fit, younger crowd none of our ads talk to, and the muscle-loss stake is what an athlete fears most: our strongest protein message.
 
@@ -38,9 +27,7 @@
 
 ### Iteration 2: My first 30 days, athlete version
 
-- **Funnel stage:** TOFU. People who lift and are starting a GLP-1.
-- **Lead hook (command):** "If you lift and you just started a GLP-1, protect your muscle on days two and three."
-- **Other hook (open loop):** "I spent years building this body, so here's what I learned in my first 30 days on a GLP-1."
+- **Hook:** "If you lift and you just started a GLP-1, protect your muscle on days two and three."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. Same day-by-day ladder, told by an athlete, with the muscle-loss stake front and center.
 

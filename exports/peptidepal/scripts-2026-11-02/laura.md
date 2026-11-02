@@ -2,24 +2,13 @@
 
 29, full-time creator, Venezuelan living in Spain, written as someone on a GLP-1 right now (she has real experience with it from earlier this year, so it'll sound natural). Film in the car or the living room (her kitchen lighting isn't good). PeptidePal also runs ads in Spanish: if she's comfortable, film each script once in English and once in Spanish.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: I owe my GLP-1 an apology
 
-- **Funnel stage:** TOFU. People on a GLP-1 who blame it for their bad days.
-- **Lead hook (command):** "If you're on a GLP-1 and you're blaming it for your bad days, stop."
-- **Other hook (open loop):** "I owe my GLP-1 an apology."
+- **Hook:** "If you're on a GLP-1 and you're blaming it for your bad days, stop."
 
-- **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. Laura is the command-hook arm of the split test. "It's working, I've dropped sizes, but some days are awful" makes "the bad days aren't the medication" believable.
+- **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. "It's working, I've dropped sizes, but some days are awful" makes "the bad days aren't the medication" believable.
 
 | Time | They say | On screen |
 |---|---|---|
@@ -38,9 +27,7 @@
 
 ### Iteration 2: My first 30 days on a GLP-1
 
-- **Funnel stage:** TOFU. People about to start or in their first month.
-- **Lead hook (command):** "If you're starting a GLP-1, watch this before your first 30 days."
-- **Other hook (open loop):** "I just finished my first 30 days on a GLP-1. Here's what nobody told me."
+- **Hook:** "If you're starting a GLP-1, watch this before your first 30 days."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. A 29-year-old telling it widens us past our 45+ core without changing the message, and the Spanish version reaches the Spanish-language ads we already run.
 

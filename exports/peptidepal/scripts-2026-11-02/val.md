@@ -2,22 +2,11 @@
 
 Mid-30s, a younger mom, written as someone with two little ones who's been on peptides about a year. She can swap in her own details anywhere.
 
-**Before you film (all scripts):**
-- Say it in your own words, with your own personality. The lines below are a guide, not a teleprompter. Keep the beats in order.
-- **Must keep:** the facts in the protein and timing explanations, the app name plus the icon at the end, and these limits:
-  - Never say a peptide or drug name. Say "my GLP-1", "my weekly shot", "a second peptide", "the copper peptide I use for my skin".
-  - No dosing or timing advice ("take X", "take it on Y day"). You explain why things happen; the app does the tracking.
-  - Never say the app prevents or fixes side effects.
-- Change any detail so it sounds like you: your shot day, your kids, your job, how long you've been on it.
-- The **lead hook** is the one we want from you (we're split-testing hook styles across creators). The **other hook** is a backup.
-
 ---
 
 ### Iteration 1: I owe my peptides an apology
 
-- **Funnel stage:** TOFU/MOFU. Busy moms on peptides who blame them for the bad weeks.
-- **Lead hook (command):** "If you think your peptides stopped working, don't quit yet."
-- **Other hook (open loop):** "I owe my peptides an apology."
+- **Hook:** "If you think your peptides stopped working, don't quit yet."
 
 - **Why it should work for us:** Zafira's confession hook ("We need to publicly apologize... because we lied") broke into Zafira's top 10 at #3. The mom version puts the blame where it really is (mornings that fall apart, doses that slide), which is the inconsistency Michael says every script has to lead with.
 
@@ -38,9 +27,7 @@ Mid-30s, a younger mom, written as someone with two little ones who's been on pe
 
 ### Iteration 2: Everyone's on peptides now
 
-- **Funnel stage:** TOFU. Moms seeing peptides and microdosing everywhere and thinking about it.
-- **Lead hook (command):** "If you're starting peptides, don't guess your units."
-- **Other hook (open loop):** "Everyone's on peptides now. Here are two things nobody tells you."
+- **Hook:** "If you're starting peptides, don't guess your units."
 
 - **Why it should work for us:** Noom's "Microdose GLP-1s starting at $79" is #1 in Noom's top 10, so "everyone's doing it" is true right now. Two simple things nobody says (the math, and noticing what it's actually doing to you), told by a mom who's done it.
 
@@ -59,9 +46,7 @@ Mid-30s, a younger mom, written as someone with two little ones who's been on pe
 
 ### Iteration 3: 30 days on peptides as a mom
 
-- **Funnel stage:** TOFU. Moms in their first month on peptides (or a GLP-1).
-- **Lead hook (command):** "If you're a mom starting peptides, watch this before your first 30 days."
-- **Other hook (open loop):** "30 days on peptides with two kids under five. Here's what you need to know."
+- **Hook:** "If you're a mom starting peptides, watch this before your first 30 days."
 
 - **Why it should work for us:** Hone Health's "90 days on TRT. Here's what you need to know." broke into Hone's top 10 this week. The day-by-day ladder keeps people watching, and a mom's 30 days has the real tracking moments built in: the missed morning, the vial running out, "did I do it today?"
 
