@@ -4,7 +4,8 @@ import { ensureInvite, inviteUrl } from "@/lib/invites";
 import { codeIndex, readResults, sum, money, x, pct } from "@/lib/results";
 import CopyLink from "../../CopyLink";
 import { CREATOR_FIELDS, listCreators } from "@/lib/creators";
-import { oaRemoveCreator, oaSaveCreator } from "../../actions";
+import { oaPortal, oaRemoveCreator, oaSaveCreator } from "../../actions";
+import { STATUSES, portalUrl, portalsFor, scriptsFor, statusesFor } from "@/lib/portal";
 import { Band, initials } from "../../ui";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,8 @@ const SHOW: { key: "about" | "story" | "voice" | "can_claim"; label: string }[] 
 export default async function Creators({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, creators, token, hdrs, results, codes] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers(), readResults(brand), codeIndex(brand)]);
+  const [name, creators, token, hdrs, results, codes, portals, statuses] = await Promise.all([brandName(brand), listCreators(brand), ensureInvite(brand), headers(), readResults(brand), codeIndex(brand), portalsFor(brand), statusesFor(brand)]);
+  const scripts = Object.fromEntries(await Promise.all(creators.map(async (c) => [c.id, await scriptsFor(brand, c.id)] as const)));
   const byCreator: Record<string, NonNullable<typeof results>["rows"]> = {};
   for (const r of results?.rows ?? []) {
     const id = codes[r.code]?.file.match(/-for-([a-z0-9-]+)/)?.[1];
@@ -27,7 +29,8 @@ export default async function Creators({ params, searchParams }: { params: Promi
   }
   const all = sum(results?.rows ?? []);
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
-  const link = inviteUrl(host, hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https"), token);
+  const proto = hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  const link = inviteUrl(host, proto, token);
   const editing = q.edit ? creators.find((c) => c.id === q.edit) : undefined;
   return (
     <>
@@ -43,7 +46,7 @@ export default async function Creators({ params, searchParams }: { params: Promi
           <div className="oa-creators">
             {creators.length === 0 && <div className="oa-card oa-empty" style={{ gridColumn: "1 / -1" }}>No creators yet. Send them the invite link on the right, or add one yourself.</div>}
             {creators.map((c, i) => (
-              <article key={c.id} className="oa-card oa-creator">
+              <article key={c.id} id={`c-${c.id}`} className="oa-card oa-creator">
                 <div className="oa-creator-top">
                   <span className={`oa-cav c${i % 5}`}>{initials(c.name)}</span>
                   <div>
@@ -70,6 +73,55 @@ export default async function Creators({ params, searchParams }: { params: Promi
                     </div>
                   ))}
                 </div>
+                {(() => {
+                  const list = scripts[c.id] ?? [];
+                  const st = (k: string) => statuses[c.id]?.[k]?.status ?? "todo";
+                  const p = portals[c.id];
+                  return (
+                    <div className="cp-admin">
+                      <div className="cp-admin-head">
+                        <b>Their portal</b>
+                        <span className="oa-small oa-muted">{list.length ? `${list.filter((x) => st(x.key) === "done").length} of ${list.length} scripts done` : "No scripts written for them yet"}</span>
+                      </div>
+                      {list.length > 0 && (
+                        <ul className="cp-admin-list">
+                          {list.map((x) => {
+                            const v = statuses[c.id]?.[x.key];
+                            return (
+                              <li key={x.key}>
+                                <span className={`cp-pill ${st(x.key)}`}>{STATUSES.find((y) => y.key === st(x.key))?.label}</span>
+                                <a href={`/app/${brand}/briefs/${x.kind}/${x.file}`}>{x.title}</a>
+                                {v?.video && <a className="cp-video" href={v.video} target="_blank" rel="noreferrer">Video ↗</a>}
+                                {v?.note && <span className="oa-small oa-muted cp-note">“{v.note}”</span>}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                      {p ? (
+                        <>
+                          <CopyLink url={portalUrl(host, proto, p.token)} />
+                          <div className="cp-pw">
+                            <span className="oa-small oa-muted">Password</span>
+                            <code>{p.password}</code>
+                            <form action={oaPortal}>
+                              <input type="hidden" name="brand" value={brand} />
+                              <input type="hidden" name="id" value={c.id} />
+                              <input type="hidden" name="reset" value="1" />
+                              <button type="submit" className="oa-btn quiet">New password</button>
+                            </form>
+                          </div>
+                        </>
+                      ) : (
+                        <form action={oaPortal}>
+                          <input type="hidden" name="brand" value={brand} />
+                          <input type="hidden" name="id" value={c.id} />
+                          <button type="submit" className="oa-btn ghost">Make their portal link</button>
+                        </form>
+                      )}
+                    </div>
+                  );
+                })()}
                 <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
                   <a className="oa-btn ghost" href={`/app/${brand}/creators?edit=${c.id}#creator-form`}>Edit</a>
                   <form action={oaRemoveCreator}>

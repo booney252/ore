@@ -12,6 +12,7 @@ import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib
 import { createJob } from "@/lib/jobs";
 import { addFeedback } from "@/lib/lessons";
 import { requireBrand, requireOwner } from "@/lib/session";
+import { ensurePortal } from "@/lib/portal";
 
 const text = (form: FormData, key: string, max: number) => String(form.get(key) ?? "").trim().slice(0, max);
 
@@ -107,6 +108,16 @@ export async function oaRemoveCreator(form: FormData) {
   await removeCreator(brand, text(form, "id", 60));
   revalidatePath(`/app/${brand}/creators`);
   redirect(`/app/${brand}/creators`);
+}
+
+/** Make a creator's portal link + password, or give them a new password. */
+export async function oaPortal(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const id = text(form, "id", 60);
+  if (await creatorExists(brand, id)) await ensurePortal(brand, id, text(form, "reset", 5) === "1");
+  revalidatePath(`/app/${brand}/creators`);
+  redirect(`/app/${brand}/creators#c-${id}`);
 }
 
 /** Feedback on a brief: saved, then the lessons job turns it into rules Ore follows. */

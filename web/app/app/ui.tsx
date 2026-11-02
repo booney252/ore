@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Tabs from "./Tabs";
 
-export function Logo() {
+export function Logo({ href = "/app" }: { href?: string }) {
   return (
-    <Link href="/app" className="oa-logo" aria-label="Ore">
+    <Link href={href} className="oa-logo" aria-label="Ore" prefetch={false}>
       <svg viewBox="42 42 116 116" fill="none" aria-hidden="true">
         <circle cx="100" cy="100" r="46" stroke="#fff" strokeWidth="17" />
         <path d="M148 46 C150 60 152 62 166 64 C152 66 150 68 148 82 C146 68 144 66 130 64 C144 62 146 60 148 46 Z" fill="#fff" transform="translate(100 100) scale(1.05) translate(-148 -64)" />

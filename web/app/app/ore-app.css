@@ -401,3 +401,50 @@
 .oa-curve .fill { fill: rgba(45, 99, 216, 0.12); stroke: none; }
 .oa-curve .avg { fill: none; stroke: var(--oa-muted); stroke-width: 1.5; stroke-dasharray: 3 4; }
 @media (max-width: 900px) { .oa-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .oa-perf { grid-template-columns: 1fr; } .oa-table > div { grid-template-columns: 1.4fr repeat(5, minmax(0, 1fr)); font-size: 12.5px; } }
+
+/* Creator portal (/c/p/<token>) */
+.cp-login { max-width: 440px; }
+.cp-progress { display: grid; gap: 14px; }
+.cp-bar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: rgba(15, 28, 51, 0.08); gap: 2px; }
+.cp-bar i.todo { background: rgba(15, 28, 51, 0.16); }
+.cp-bar i.filmed { background: #7a5ce6; }
+.cp-bar i.edited { background: #3fb7ec; }
+.cp-bar i.done { background: linear-gradient(90deg, #2d63d8, #f06aa8); }
+.cp-legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13.5px; color: var(--oa-muted); }
+.cp-legend b { font-family: var(--font-display), sans-serif; font-weight: 400; font-size: 26px; color: var(--oa-ink); margin-right: 6px; }
+.cp-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.cp-item { display: flex; flex-direction: column; gap: 14px; }
+.cp-item.done { opacity: 0.72; }
+.cp-item-top { display: grid; gap: 8px; }
+.cp-item-title { font-family: var(--font-display), sans-serif; font-size: 22px; line-height: 1.2; color: var(--oa-ink); text-decoration: none; }
+.cp-item-title:hover { color: var(--oa-cobalt); }
+.cp-item q { font-size: 14.5px; line-height: 1.45; color: var(--oa-muted); }
+.cp-pill { justify-self: start; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; background: rgba(15, 28, 51, 0.07); color: var(--oa-muted); }
+.cp-pill.filmed { background: rgba(122, 92, 230, 0.12); color: #5a45d6; }
+.cp-pill.edited { background: rgba(63, 183, 236, 0.14); color: #0b7fb0; }
+.cp-pill.done { background: rgba(45, 99, 216, 0.12); color: #2d63d8; }
+.cp-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.cp-steps button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 4px; border-radius: 12px; border: 1px solid rgba(15, 28, 51, 0.1); background: rgba(255, 255, 255, 0.6); font: inherit; font-size: 12.5px; color: var(--oa-muted); cursor: pointer; transition: transform 0.1s ease, background 0.15s ease; }
+.cp-steps button:active { transform: scale(0.97); }
+.cp-steps button:hover { border-color: rgba(45, 99, 216, 0.4); }
+.cp-steps i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11.5px; font-weight: 700; background: rgba(15, 28, 51, 0.08); }
+.cp-steps .past { color: var(--oa-ink); }
+.cp-steps .past i { background: rgba(45, 99, 216, 0.15); color: #2d63d8; }
+.cp-steps .now { background: linear-gradient(135deg, #2d63d8, #7a5ce6); border-color: transparent; color: #fff; font-weight: 600; }
+.cp-steps .now i { background: rgba(255, 255, 255, 0.25); color: #fff; }
+.cp-back { color: var(--oa-cobalt); text-decoration: none; font-weight: 600; }
+.cp-script { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+.cp-side h2 { font-size: 17px; font-weight: 500; margin-bottom: 10px; }
+@media (max-width: 860px) { .cp-list, .cp-script { grid-template-columns: 1fr; } }
+.cp-admin { display: grid; gap: 10px; padding: 14px; border-radius: 16px; background: rgba(255, 255, 255, 0.55); border: 1px solid rgba(15, 28, 51, 0.06); }
+.cp-admin-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cp-admin-head b { font-weight: 600; font-size: 14px; }
+.cp-admin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.cp-admin-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13.5px; }
+.cp-admin-list a { color: var(--oa-ink); text-decoration: none; }
+.cp-admin-list a:hover { color: var(--oa-cobalt); }
+.cp-admin-list .cp-pill { font-size: 10.5px; padding: 3px 7px; }
+.cp-admin-list .cp-video { color: var(--oa-cobalt); font-weight: 600; }
+.cp-note { flex-basis: 100%; padding-left: 4px; }
+.cp-pw { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cp-pw code { font-size: 13.5px; padding: 4px 9px; border-radius: 8px; background: rgba(15, 28, 51, 0.06); }
