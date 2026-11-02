@@ -28,7 +28,8 @@ FORMATS = {
         "fields": """\
 - **Setup:** who's on camera (age, look, role), where, how it's shot, target length (25-40s unless the winner it's built from needs longer)
 - **Alternate hooks (2):** each a different first line the creator says AND its first frame
-- **Script:** a table `| Time | They say | On screen |`, 0s to the end. "They say" is every spoken word, written the way a real person talks to their phone (contractions, short sentences). "On screen" is the shot, any cut, and any text overlay word for word. The first row is the main hook.""",
+- **Text hook:** the words on screen from frame 0: 3-8 words that open a second loop next to the spoken hook, never a repeat of it. Every other overlay, cut and shot is left to the creator.
+- **Script:** a table `| Time | They say |`, 0s to the end. "They say" is every spoken word, written the way a real person talks to their phone (contractions, short sentences). The first row is the main hook.""",
     },
     "broll": {
         "label": "B-roll video",
@@ -49,7 +50,8 @@ FORMATS = {
         "fields": """\
 - **Setup:** where they film, what's behind them or green-screened behind them (a profile, a screenshot, a video), target length (15-60s)
 - **Alternate hooks (2):** each a different first line they say AND the text overlay on frame 0
-- **Script:** a table `| Time | They say | On screen |`, 0s to the end. "They say" is every spoken word, in the creator's own voice. "On screen" is the text overlay word for word, any green-screen background and any cut. The first row is the main hook.
+- **Text hook:** the words on screen from frame 0: 3-8 words that open a second loop next to the spoken hook, never a repeat of it. Every other overlay and cut is left to the creator.
+- **Script:** a table `| Time | They say |`, 0s to the end. "They say" is every spoken word, in the creator's own voice. The first row is the main hook.
 - **Call to action:** the exact line, and the comment keyword or DM word if there is one""",
     },
     "static": {

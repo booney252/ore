@@ -4,7 +4,7 @@ import Markdown from "@/app/Markdown";
 import { brandName } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
 import { listJobs } from "@/lib/jobs";
-import { changedRows, getMaster, rows, stale } from "@/lib/masters";
+import { changedRows, getMaster, rows, stale, textHookOf } from "@/lib/masters";
 import { oaMasterApprove, oaMasterEdit, oaMasterRevise, oaVersionApprove, oaVersionsRemake } from "../../../actions";
 import { Band, initials, Working } from "../../../ui";
 
@@ -118,6 +118,12 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                       <>
                         {v.changes.length > 0 && <ul className="ms-why">{v.changes.map((x) => <li key={x}>{x}</li>)}</ul>}
                         <div className="ms-lines">
+                          {textHookOf(v.md) && textHookOf(v.md) !== textHookOf(m.md) && (
+                            <div className="ms-line">
+                              <span>Text</span>
+                              <p>{textHookOf(v.md)}</p>
+                            </div>
+                          )}
                           {vr.map((r, k) => (diff[k] ? (
                             <div key={k} className="ms-line">
                               <span>{r[0]}</span>

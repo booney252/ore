@@ -245,7 +245,7 @@ Before a script ships, go start to finish once:
 
 ### 36. Use on-screen text and emphasis
 - **The text hook** (on screen from frame 0) is 3-8 words and never repeats the spoken hook. It opens a second loop, so the viewer has two reasons to keep watching. Spoken "I owe my GLP-1 an apology", text "It was never the medication"; spoken "here are two things nobody tells you", text "#2 is why your cravings come back". No labels like "Nurse here:".
-- After the text hook, keep the screen clean: a product overlay (screen recording) only on the lines where they talk about using the product, and the logo popping up on the CTA.
+- In a UGC script, write only the text hook. Every other overlay, cut and shot is left to the creator, so the script is the text hook plus what they say.
 - On-screen text carries skimmers and people watching with the sound off, so any extra text gives a benefit the spoken line didn't, placed just before the line that proves it.
 - Scale emphasis to the news. Save the loudest treatment (caps, color, size, motion) for the biggest moment; emphasize everything and it's just yelling.
 - Captions: short lines, first line carries a benefit, no wall of text.

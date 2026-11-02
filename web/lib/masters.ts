@@ -47,6 +47,7 @@ export async function saveMaster(brand: string, m: Master): Promise<void> {
 }
 
 export const hookOf = (md: string) => md.match(/\*\*Hook:\*\*\s*"?([^"\n]+)"?/)?.[1]?.trim() ?? "";
+export const textHookOf = (md: string) => md.match(/\*\*Text hook:\*\*\s*([^\n]+)/)?.[1]?.trim() ?? "";
 
 /** The rows of a script table: [time, they say, on screen]. */
 export function rows(md: string): string[][] {
