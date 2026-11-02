@@ -16,8 +16,6 @@ export default async function Join({ params, searchParams }: { params: Promise<{
   if (!brand) notFound();
   const name = await brandName(brand);
   const Q: [string, string, string, boolean?][] = [
-    ["handle", "Your handle", "@yourname"],
-    ["platforms", "Where you post", "TikTok, Instagram"],
     ["about", "About you in one line", "34, ex-personal trainer, two kids, lives in Austin", true],
     ["story", `Your story with ${name}`, "Are you using it? Since when, and why? What was hard at the start?", true],
     ["can_claim", "What's actually changed for you", "Only what's true for you. This keeps every script honest.", true],
