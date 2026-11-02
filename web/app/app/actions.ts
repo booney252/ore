@@ -13,7 +13,7 @@ import { createJob } from "@/lib/jobs";
 import { addFeedback } from "@/lib/lessons";
 import { requireBrand, requireOwner } from "@/lib/session";
 import { ensurePortal } from "@/lib/portal";
-import { approveVersion, getMaster, listMasters, saveMaster, stale, unassign } from "@/lib/masters";
+import { approveVersion, getMaster, saveMaster, stale, unassign } from "@/lib/masters";
 
 const text = (form: FormData, key: string, max: number) => String(form.get(key) ?? "").trim().slice(0, max);
 
@@ -266,28 +266,20 @@ export async function oaVersionApprove(form: FormData) {
   redirect(`/app/${brand}/scripts/${m.id}?sent=${ids.length}#versions`);
 }
 
-/** The who-films-what grid. Unticking a creator removes their version from their portal. */
-export async function oaAssign(form: FormData) {
-  const brand = checkSlug(text(form, "brand", 80));
-  await requireBrand(brand);
-  const ticked = new Set(form.getAll("a").map(String));
-  for (const m of await listMasters(brand)) {
-    const want: string[] = [];
-    for (const t of ticked) {
-      const [mid, cid] = t.split(":");
-      if (mid === m.id && (await creatorExists(brand, cid))) want.push(cid);
-    }
-    for (const c of [...m.creators]) if (!want.includes(c)) await unassign(brand, m, c);
-    m.creators = want;
-    await saveMaster(brand, m);
-  }
-  redirect(`/app/${brand}/scripts?assigned=1#grid`);
+/** Who films this one script (on the script's own page). */
+export async function oaAssignOne(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  const want: string[] = [];
+  for (const c of form.getAll("c").map(String)) if (await creatorExists(brand, c)) want.push(c);
+  for (const c of [...m.creators]) if (!want.includes(c)) await unassign(brand, m, c);
+  m.creators = want;
+  await saveMaster(brand, m);
+  redirect(`/app/${brand}/scripts/${m.id}?assigned=1#who`);
 }
 
-/** Ore suggests who films which script. */
-export async function oaSuggest(form: FormData) {
-  const brand = checkSlug(text(form, "brand", 80));
-  await requireBrand(brand);
-  await createJob({ type: "assign", brand });
-  redirect(`/app/${brand}/scripts?suggesting=1#grid`);
+/** Ore suggests who films this script. */
+export async function oaSuggestOne(form: FormData) {
+  const { brand, m } = await masterFrom(form);
+  await createJob({ type: "assign", brand, master: m.id });
+  redirect(`/app/${brand}/scripts/${m.id}?suggesting=1#who`);
 }

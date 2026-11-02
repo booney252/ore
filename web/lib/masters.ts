@@ -94,3 +94,21 @@ export async function unassign(brand: string, m: Master, creator: string): Promi
   delete m.versions[creator];
   m.creators = m.creators.filter((c) => c !== creator);
 }
+
+export type Progress = { creators: number; review: number; todo: number; filmed: number; edited: number; done: number };
+
+/** Where a script's creators are: versions waiting for the brand, then each sent one's portal status. */
+export function progress(m: Master, statuses: Record<string, Record<string, { status: string }>>): Progress {
+  const p: Progress = { creators: m.creators.length, review: 0, todo: 0, filmed: 0, edited: 0, done: 0 };
+  for (const c of m.creators) {
+    const v = m.versions[c];
+    if (!v || v.status !== "approved" || !v.file) {
+      p.review += 1;
+      continue;
+    }
+    const st = statuses[c]?.[`iterations~${v.file}~1`]?.status ?? "todo";
+    if (st === "filmed" || st === "edited" || st === "done") p[st] += 1;
+    else p.todo += 1;
+  }
+  return p;
+}

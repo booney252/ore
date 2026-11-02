@@ -166,8 +166,10 @@ def make_versions(storage, slug: str, mid: str, only: list[str] | None = None,
     return None if waiting else key(slug, mid)
 
 
-def suggest(storage, slug: str, per_creator: int = 2, client=None) -> str | None:
-    """Ore's pick of who films which master; fills each master's creator list."""
+def suggest(storage, slug: str, per_creator: int = 2, only: str | None = None,
+            client=None) -> str | None:
+    """Ore's pick of who films which master; fills each master's creator list (just `only`'s
+    when given, so a suggestion on one script doesn't change the others)."""
     ids = list_ids(storage, slug)
     masters = [load(storage, slug, i) for i in ids]
     roster = creatorlib.load(storage, slug)
@@ -189,6 +191,8 @@ def suggest(storage, slug: str, per_creator: int = 2, client=None) -> str | None
     picks = llm.parse_json(answer)
     known = {c["id"] for c in roster}
     for m in masters:
+        if only and m["id"] != only:
+            continue
         chosen = [c for c in picks.get(m["id"], []) if c in known]
         cur = load(storage, slug, m["id"])
         cur["creators"] = chosen

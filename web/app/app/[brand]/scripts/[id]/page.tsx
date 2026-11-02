@@ -5,7 +5,7 @@ import { brandName } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
 import { listJobs } from "@/lib/jobs";
 import { changedRows, getMaster, rows, stale, textHookOf } from "@/lib/masters";
-import { oaMasterApprove, oaMasterEdit, oaMasterRevise, oaVersionApprove, oaVersionsRemake } from "../../../actions";
+import { oaAssignOne, oaMasterApprove, oaMasterEdit, oaMasterRevise, oaSuggestOne, oaVersionApprove, oaVersionsRemake } from "../../../actions";
 import { Band, initials, Working } from "../../../ui";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +19,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
   const mine = jobs.filter((j) => (j.status === "pending" || j.status === "running") && j.master === m.id);
   const revising = mine.some((j) => j.type === "revise");
   const making = mine.some((j) => j.type === "versions");
+  const suggesting = mine.some((j) => j.type === "assign");
   const who = (cid: string) => creators.find((c) => c.id === cid);
   const ready = m.creators.filter((c) => m.versions[c]?.status === "ready" && !stale(m, m.versions[c]));
   const missing = m.creators.filter((c) => !m.versions[c] || stale(m, m.versions[c]));
@@ -55,8 +56,8 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                 <h2>{m.status === "approved" ? "Approved" : "Happy with it?"}</h2>
                 <p className="oa-small oa-muted">
                   {m.creators.length
-                    ? `${m.creators.map((c) => who(c)?.name.split(" ")[0] ?? c).join(", ")} ${m.creators.length === 1 ? "films" : "film"} this.`
-                    : "No creators yet. Pick them on the Scripts page."}
+                    ? `${m.creators.length} creator${m.creators.length === 1 ? "" : "s"} film${m.creators.length === 1 ? "s" : ""} this.`
+                    : "Pick who films it below."}
                 </p>
                 {m.creators.length > 0 && (m.status === "draft" || missing.length > 0) && (
                   <form action={oaMasterApprove}>
@@ -68,6 +69,31 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                   </form>
                 )}
                 {q.saved && <p className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Saved.</p>}
+              </div>
+              <div className="oa-card cp-side" id="who">
+                <div className="ms-whohead">
+                  <h2>Who films this</h2>
+                  <form action={oaSuggestOne}>
+                    <input type="hidden" name="brand" value={brand} />
+                    <input type="hidden" name="id" value={m.id} />
+                    <button type="submit" className="oa-btn quiet">Let Ore suggest</button>
+                  </form>
+                </div>
+                {(q.suggesting || suggesting) && <p className="oa-small oa-muted">Ore is picking who fits this script...</p>}
+                <form action={oaAssignOne} className="ms-who-form">
+                  <input type="hidden" name="brand" value={brand} />
+                  <input type="hidden" name="id" value={m.id} />
+                  <div className="ms-chips">
+                    {creators.map((c) => (
+                      <label key={c.id} className="oa-chip">
+                        <input type="checkbox" name="c" value={c.id} defaultChecked={m.creators.includes(c.id)} /> {c.name.split(" ")[0]}
+                      </label>
+                    ))}
+                  </div>
+                  <button type="submit" className="oa-btn ghost">Save</button>
+                  {q.assigned && <span className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Saved.</span>}
+                </form>
+                <p className="oa-small oa-muted">Unticking someone takes their version out of their portal.</p>
               </div>
               <form action={oaMasterRevise} className="oa-card oa-form cp-side">
                 <input type="hidden" name="brand" value={brand} />

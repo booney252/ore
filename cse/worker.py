@@ -172,7 +172,7 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "versions":
         return masters.make_versions(storage, slug, job["master"], only=job.get("creators") or None)
     if job["type"] == "assign":
-        return masters.suggest(storage, slug)
+        return masters.suggest(storage, slug, only=job.get("master"))
     if job["type"] == "lessons":  # fold one piece of copy feedback into the brand + craft lessons
         return lessons.learn(storage, slug, job["feedback"])
     if job["type"] == "ingredients":
