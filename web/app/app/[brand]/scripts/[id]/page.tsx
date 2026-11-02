@@ -6,6 +6,7 @@ import { listCreators } from "@/lib/creators";
 import { listJobs } from "@/lib/jobs";
 import { STATUSES, statusesFor } from "@/lib/portal";
 import { changedRows, getMaster, rows, stale, textHookOf } from "@/lib/masters";
+import { briefCode } from "@/lib/results";
 import { oaAssignOne, oaMasterApprove, oaMasterEdit, oaMasterRevise, oaSuggestOne, oaVersionApprove, oaVersionsRemake } from "../../../actions";
 import { Band, initials, Working } from "../../../ui";
 
@@ -166,6 +167,9 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                       <b>{c?.name ?? cid}</b>
                       <span className={`cp-pill ${pillClass(w.key)}`}>{w.label}</span>
                     </div>
+                    {v?.file && v.status === "approved" && (
+                      <p className="oa-small oa-muted">Ad code <code className="cr-code" title="Put this in the ad name in Ads Manager">{briefCode(v.file, 1)}</code></p>
+                    )}
                     {w.note && <p className="ms-note">“{w.note}”</p>}
                     {v && (
                       <>

@@ -6,7 +6,7 @@ import { CREATOR_FIELDS, listCreators } from "@/lib/creators";
 import { listMasters } from "@/lib/masters";
 import { performance } from "@/lib/performance";
 import { STATUSES, portalUrl, portalsFor, scriptsFor, statusesFor } from "@/lib/portal";
-import { money, pct, sum, x } from "@/lib/results";
+import { briefCode, money, pct, scriptHref, sum, x } from "@/lib/results";
 import CopyLink from "../../../CopyLink";
 import { oaPortal, oaRemoveCreator, oaSaveCreator } from "../../../actions";
 import { Band, initials } from "../../../ui";
@@ -41,11 +41,11 @@ export default async function CreatorPage({ params, searchParams }: { params: Pr
   const rows = scripts.map((s) => {
     const mid = s.file.match(/-m-([a-z0-9-]+)-for-/)?.[1];
     const st = mine[s.key];
-    return { key: s.key, title: s.title, href: mid ? `/app/${brand}/scripts/${mid}` : `/app/${brand}/briefs/${s.kind}/${s.file}`, status: (st?.status ?? "todo") as string, note: st?.note ?? "", sent: true };
+    return { key: s.key, title: s.title, href: scriptHref(brand, s.kind, s.file), code: briefCode(s.file, s.n), status: (st?.status ?? "todo") as string, note: st?.note ?? "", sent: true };
   });
   for (const m of masters) {
     if (m.creators.includes(id) && !(m.versions[id]?.status === "approved" && m.versions[id]?.file)) {
-      rows.push({ key: m.id, title: m.title, href: `/app/${brand}/scripts/${m.id}`, status: "", note: "", sent: false });
+      rows.push({ key: m.id, title: m.title, href: `/app/${brand}/scripts/${m.id}`, code: "", status: "", note: "", sent: false });
     }
   }
   const order = ["", "todo", "filmed", "edited", "done"];
@@ -143,6 +143,7 @@ export default async function CreatorPage({ params, searchParams }: { params: Pr
                     {rows.map((r) => (
                       <li key={r.key}>
                         <Link href={r.href}>{r.title}</Link>
+                        {r.code && <code className="cr-code" title="Put this in the ad name in Ads Manager">{r.code}</code>}
                         <span className={`cp-pill ${r.sent ? pill(r.status) : ""}`}>{r.sent ? label(r.status) : "Not sent yet"}</span>
                         {r.note && <p className="ms-note">“{r.note}”</p>}
                       </li>

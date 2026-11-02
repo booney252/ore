@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { brandName } from "@/lib/brands";
 import { performance, type AdView, type Finding } from "@/lib/performance";
-import { money, pct, x } from "@/lib/results";
+import { money, pct, scriptHref, x } from "@/lib/results";
 import { oaUploadResults } from "../../actions";
 import { Band, initials } from "../../ui";
 
@@ -86,7 +86,7 @@ function Byline({ ad }: { ad: AdView }) {
 }
 
 function Insight({ f, brand, avg, avgRet }: { f: Finding; brand: string; avg: { roas: number | null; hook: number | null }; avgRet: number[] | null }) {
-  const href = f.ad ? `/app/${brand}/briefs/${f.ad.kind}/${f.ad.file}` : null;
+  const href = f.ad ? scriptHref(brand, f.ad.kind, f.ad.file) : null;
   const tone = f.kind === "best" || f.kind === "creator" ? "good" : f.kind === "retention" ? "info" : "warn";
   if (f.kind === "creator" && f.creator) {
     return (
@@ -247,7 +247,7 @@ export default async function Performance({ params, searchParams }: { params: Pr
                         <Curve ret={a.ret} avg={avgRet} />
                       </div>
                     )}
-                    <Link className="oa-small" href={`/app/${brand}/briefs/${a.kind}/${a.file}`}>Open the script →</Link>
+                    <Link className="oa-small" href={scriptHref(brand, a.kind, a.file)}>Open the script →</Link>
                   </article>
                 ))}
               </div>

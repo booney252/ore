@@ -82,7 +82,7 @@ export async function oaShare(form: FormData) {
   await requireBrand(brand);
   const kind = text(form, "kind", 20);
   const file = checkFile(text(form, "file", 160));
-  if (kind !== "iterations" && kind !== "briefs") redirect(`/app/${brand}/briefs`);
+  if (kind !== "iterations" && kind !== "briefs") redirect(`/app/${brand}/scripts`);
   const creator = text(form, "creator", 60);
   const token = randomBytes(12).toString("base64url");
   await writeText(`shares/${token}.json`, JSON.stringify({ brand, kind, file, creator, created_at: new Date().toISOString() }));

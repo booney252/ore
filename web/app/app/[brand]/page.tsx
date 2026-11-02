@@ -85,10 +85,10 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
       <main className="oa-main">
         <div className="oa-wrap oa-stack" style={{ gap: 34 }}>
           {(q.checking || busy.some((j) => j.type === "report" || j.type === "setup")) && <Working text="Ore is checking your market for new breakouts." />}
-          {busy.some((j) => j.type === "iterations" || j.type === "briefs") && (
+          {busy.some((j) => j.type === "master" || j.type === "versions") && (
             <div className="oa-notice">
-              {(() => { const n = busy.filter((j) => j.type === "iterations" || j.type === "briefs").length; return `Writing ${n} brief${n === 1 ? "" : "s"} now.`; })()}{" "}
-              <Link href={`/app/${brand}/briefs`} style={{ color: "var(--oa-cobalt)", fontWeight: 600 }}>Briefs</Link>
+              Ore is writing your script now.{" "}
+              <Link href={`/app/${brand}/scripts`} style={{ color: "var(--oa-cobalt)", fontWeight: 600 }}>Scripts</Link>
             </div>
           )}
           {!state.ready && (

@@ -200,3 +200,9 @@ export function openingLine(md: string, n?: number): string {
 export async function writePerformanceNotes(slug: string, notes: string): Promise<void> {
   await writeText(`brands/${checkSlug(slug)}/performance.md`, notes, "text/markdown");
 }
+
+/** Where a script lives on the site: its master script's page for a creator version, else the old brief page. */
+export function scriptHref(brand: string, kind: string, file: string): string {
+  const mid = file.match(/-m-([a-z0-9-]+)-for-/)?.[1];
+  return mid ? `/app/${brand}/scripts/${mid}` : `/app/${brand}/briefs/${kind}/${file}`;
+}
