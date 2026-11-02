@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { checkSlug, listDocs, parseIterations, readDoc } from "./brands";
-import { readText, writeText } from "./storage";
+import { readText, readTextCached, writeText } from "./storage";
 
 /* Creator results from a Meta Ads Manager export.
  * Every brief has a short code (ORE-JEN-7F3A-1). The brand puts it in the ad's name when they
@@ -47,7 +47,8 @@ export async function codeIndex(slug: string): Promise<Record<string, { kind: "i
   const out: Record<string, { kind: "iterations" | "briefs"; file: string; title: string }> = {};
   for (const kind of ["iterations", "briefs"] as const) {
     const files = (await listDocs(slug, kind)).slice(0, 200);
-    const mds = await Promise.all(files.map((f) => readDoc(slug, kind, f)));
+    // scripts rarely change once written, so keep them in memory between page loads
+    const mds = await Promise.all(files.map((f) => readTextCached(`brands/${checkSlug(slug)}/${kind}/${f}.md`, 60_000)));
     files.forEach((f, i) => {
       for (const c of docCodes(f, mds[i] ?? "")) out[c.code] = { kind, file: f, title: c.title };
       out[briefCode(f)] = out[briefCode(f)] ?? { kind, file: f, title: f };

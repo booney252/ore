@@ -531,3 +531,19 @@
 .cr-ads em { font-style: normal; font-size: 12px; color: var(--oa-muted); }
 @media (max-width: 900px) { .cr-layout { grid-template-columns: 1fr; } }
 .cr-code { font-size: 12px; padding: 3px 8px; border-radius: 7px; background: rgba(15, 28, 51, 0.06); color: var(--oa-ink); }
+
+/* Loading: skeleton shown on click, and pressed buttons */
+.sk { display: block; border-radius: 10px; background: linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.4), rgba(255,255,255,0.18)); background-size: 200% 100%; animation: sk 1.2s ease-in-out infinite; }
+.sk-label { width: 90px; height: 12px; margin-bottom: 14px; }
+.sk-title { width: min(520px, 80%); height: 46px; margin-bottom: 14px; }
+.sk-sub { width: min(420px, 70%); height: 16px; }
+.sk-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.sk-card { display: grid; gap: 12px; min-height: 150px; align-content: start; }
+.sk-card .sk { background: linear-gradient(90deg, rgba(15,28,51,0.05), rgba(15,28,51,0.1), rgba(15,28,51,0.05)); background-size: 200% 100%; }
+.sk-line { height: 14px; } .sk-line.w40 { width: 40%; } .sk-line.w60 { width: 60%; } .sk-line.w80 { width: 80%; }
+@keyframes sk { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
+@media (max-width: 900px) { .sk-grid { grid-template-columns: 1fr; } }
+.oa-btn.is-pending { opacity: 0.85; cursor: progress; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

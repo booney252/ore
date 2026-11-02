@@ -10,6 +10,7 @@ import { briefCode, money, pct, scriptHref, sum, x } from "@/lib/results";
 import CopyLink from "../../../CopyLink";
 import { oaPortal, oaRemoveCreator, oaSaveCreator } from "../../../actions";
 import { Band, initials } from "../../../ui";
+import SubmitButton from "../../../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -98,7 +99,7 @@ export default async function CreatorPage({ params, searchParams }: { params: Pr
                         {f.long ? <textarea name={f.key} rows={3} defaultValue={c[f.key] ?? ""} placeholder={f.hint} /> : <input name={f.key} defaultValue={c[f.key] ?? ""} placeholder={f.hint} />}
                       </label>
                     ))}
-                    <button type="submit" className="oa-btn">Save</button>
+                    <SubmitButton className="oa-btn">Save</SubmitButton>
                   </form>
                 </details>
               </div>
@@ -114,7 +115,7 @@ export default async function CreatorPage({ params, searchParams }: { params: Pr
                         <input type="hidden" name="brand" value={brand} />
                         <input type="hidden" name="id" value={c.id} />
                         <input type="hidden" name="reset" value="1" />
-                        <button type="submit" className="oa-btn quiet">New password</button>
+                        <SubmitButton className="oa-btn quiet">New password</SubmitButton>
                       </form>
                     </div>
                   </>
@@ -122,14 +123,14 @@ export default async function CreatorPage({ params, searchParams }: { params: Pr
                   <form action={oaPortal}>
                     <input type="hidden" name="brand" value={brand} />
                     <input type="hidden" name="id" value={c.id} />
-                    <button type="submit" className="oa-btn ghost">Make their portal link</button>
+                    <SubmitButton className="oa-btn ghost">Make their portal link</SubmitButton>
                   </form>
                 )}
               </div>
               <form action={oaRemoveCreator}>
                 <input type="hidden" name="brand" value={brand} />
                 <input type="hidden" name="id" value={c.id} />
-                <button type="submit" className="oa-btn quiet">Remove {c.name.split(" ")[0]} from the roster</button>
+                <SubmitButton className="oa-btn quiet">Remove {c.name.split(" ")[0]} from the roster</SubmitButton>
               </form>
             </aside>
 

@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { checkSlug } from "./brands";
-import { readText, signedUrl } from "./storage";
+import { readText, readTextCached, signedUrl } from "./storage";
 
 export type Line = { start: number; end: number; text: string };
 export type Ad = {
@@ -55,7 +55,7 @@ export type Ad = {
 };
 
 export const loadAds = cache(async (slug: string): Promise<Ad[]> => {
-  const raw = await readText(`brands/${checkSlug(slug)}/ads.json`);
+  const raw = await readTextCached(`brands/${checkSlug(slug)}/ads.json`);
   if (!raw) return [];
   return Object.values(JSON.parse(raw).ads as Record<string, Ad>);
 });

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { oaMake } from "./actions";
+import SubmitButton from "./SubmitButton";
 
 type Creator = { id: string; name: string };
 
@@ -26,7 +27,7 @@ export default function MakeForm({ brand, creators, hidden, children }: { brand:
           </fieldset>
         </details>
       )}
-      <button type="submit" className="oa-btn">Write the script</button>
+      <SubmitButton className="oa-btn">Write the script</SubmitButton>
     </form>
   );
 }

@@ -4,6 +4,7 @@ import { performance, type AdView, type Finding } from "@/lib/performance";
 import { money, pct, scriptHref, x } from "@/lib/results";
 import { oaUploadResults } from "../../actions";
 import { Band, initials } from "../../ui";
+import SubmitButton from "../../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -195,7 +196,7 @@ export default async function Performance({ params, searchParams }: { params: Pr
             </div>
             <div className="oa-upload-row">
               <input type="file" name="file" accept=".csv,text/csv" required />
-              <button type="submit" className="oa-btn">Upload</button>
+              <SubmitButton className="oa-btn">Upload</SubmitButton>
             </div>
             <details className="oa-howto" open={!p}>
               <summary>How to export from Ads Manager</summary>

@@ -9,6 +9,7 @@ import { changedRows, getMaster, rows, stale, textHookOf } from "@/lib/masters";
 import { briefCode } from "@/lib/results";
 import { oaAssignOne, oaMasterApprove, oaMasterEdit, oaMasterRevise, oaSuggestOne, oaVersionApprove, oaVersionsRemake } from "../../../actions";
 import { Band, initials, Working } from "../../../ui";
+import SubmitButton from "../../../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +75,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                   <input type="hidden" name="brand" value={brand} />
                   <input type="hidden" name="id" value={m.id} />
                   <textarea name="md" rows={18} defaultValue={m.md} />
-                  <button type="submit" className="oa-btn">Save</button>
+                  <SubmitButton className="oa-btn">Save</SubmitButton>
                 </form>
               </details>
             </div>
@@ -90,9 +91,9 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                   <form action={oaMasterApprove}>
                     <input type="hidden" name="brand" value={brand} />
                     <input type="hidden" name="id" value={m.id} />
-                    <button type="submit" className="oa-btn" style={{ width: "100%" }}>
+                    <SubmitButton className="oa-btn" style={{ width: "100%" }}>
                       {m.status === "approved" ? `Make ${missing.length} creator version${missing.length === 1 ? "" : "s"}` : `Approve and make ${m.creators.length} version${m.creators.length === 1 ? "" : "s"}`}
-                    </button>
+                    </SubmitButton>
                   </form>
                 )}
                 {q.saved && <p className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Saved.</p>}
@@ -103,7 +104,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                   <form action={oaSuggestOne}>
                     <input type="hidden" name="brand" value={brand} />
                     <input type="hidden" name="id" value={m.id} />
-                    <button type="submit" className="oa-btn quiet">Let Ore suggest</button>
+                    <SubmitButton className="oa-btn quiet">Let Ore suggest</SubmitButton>
                   </form>
                 </div>
                 {(q.suggesting || suggesting) && <p className="oa-small oa-muted">Ore is picking who fits this script...</p>}
@@ -117,7 +118,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                       </label>
                     ))}
                   </div>
-                  <button type="submit" className="oa-btn ghost">Save</button>
+                  <SubmitButton className="oa-btn ghost">Save</SubmitButton>
                   {q.assigned && <span className="oa-small" style={{ color: "var(--oa-cobalt)" }}>Saved.</span>}
                 </form>
                 <p className="oa-small oa-muted">Unticking someone takes their version out of their portal.</p>
@@ -130,7 +131,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                   <textarea name="note" rows={4} placeholder="The payoff is too short, dig deeper into the problem..." />
                 </label>
                 {q.empty && <p className="oa-small" style={{ color: "#c2410c" }}>Write a note first.</p>}
-                <button type="submit" className="oa-btn">Revise it</button>
+                <SubmitButton className="oa-btn">Revise it</SubmitButton>
                 <p className="oa-small oa-muted">Ore rewrites the script, remakes the creator versions from it, and remembers the note for next time.</p>
               </form>
             </aside>
@@ -146,7 +147,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                 <form action={oaVersionApprove}>
                   <input type="hidden" name="brand" value={brand} />
                   <input type="hidden" name="id" value={m.id} />
-                  <button type="submit" className="oa-btn">{ready.length === 1 ? "Send it to their portal" : `Send all ${ready.length} to their portals`}</button>
+                  <SubmitButton className="oa-btn">{ready.length === 1 ? "Send it to their portal" : `Send all ${ready.length} to their portals`}</SubmitButton>
                 </form>
               )}
             </div>
@@ -203,7 +204,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                           <input type="hidden" name="brand" value={brand} />
                           <input type="hidden" name="id" value={m.id} />
                           <input type="hidden" name="creator" value={cid} />
-                          <button type="submit" className="oa-btn">Send to {c?.name.split(" ")[0] ?? cid}</button>
+                          <SubmitButton className="oa-btn">Send to {c?.name.split(" ")[0] ?? cid}</SubmitButton>
                         </form>
                       )}
                       {(m.status === "approved" || v) && (
@@ -211,7 +212,7 @@ export default async function MasterPage({ params, searchParams }: { params: Pro
                           <input type="hidden" name="brand" value={brand} />
                           <input type="hidden" name="id" value={m.id} />
                           <input type="hidden" name="creator" value={cid} />
-                          <button type="submit" className="oa-btn quiet">{v ? "Remake" : "Make it"}</button>
+                          <SubmitButton className="oa-btn quiet">{v ? "Remake" : "Make it"}</SubmitButton>
                         </form>
                       )}
                     </div>

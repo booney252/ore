@@ -6,6 +6,7 @@ import CopyLink from "../../CopyLink";
 import { CREATOR_FIELDS, listCreators } from "@/lib/creators";
 import { oaSaveCreator } from "../../actions";
 import { Band, initials } from "../../ui";
+import SubmitButton from "../../SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,7 @@ export default async function Creators({ params, searchParams }: { params: Promi
                     {f.long ? <textarea name={f.key} rows={2} placeholder={f.hint} /> : <input name={f.key} placeholder={f.hint} />}
                   </label>
                 ))}
-                <button type="submit" className="oa-btn">Add creator</button>
+                <SubmitButton className="oa-btn">Add creator</SubmitButton>
               </form>
             </details>
           </aside>

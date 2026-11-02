@@ -48,9 +48,12 @@ export async function listJobs(brand: string, limit = 10, types?: JobType[]): Pr
   const [jobs, cancelling] = await Promise.all([
     Promise.all(
       STATES.map(async (state) => {
+        // ids start with a timestamp, so the newest are last; finished jobs only need the latest few
+        const keys = (await listKeys(`jobs/${state}/`)).sort().reverse();
+        const recent = state === "pending" || state === "running" ? keys : keys.slice(0, 25);
+        const raws = await Promise.all(recent.map((key) => readText(key)));
         const out: Job[] = [];
-        for (const key of await listKeys(`jobs/${state}/`)) {
-          const raw = await readText(key);
+        for (const raw of raws) {
           if (!raw) continue;
           const job = JSON.parse(raw) as Job;
           if (job.brand === brand && (!types || types.includes(job.type))) {

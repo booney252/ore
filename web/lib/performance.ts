@@ -6,16 +6,21 @@ export type AdView = AdResult & { title: string; creator: string; creatorId: str
 
 /** Everything the Performance tab shows, plus plain-words findings Ore also feeds into future briefs. */
 export async function performance(brand: string) {
-  const [results, codes, creators] = await Promise.all([readResults(brand), codeIndex(brand), listCreators(brand)]);
-  if (!results?.rows.length) return null;
+  const results = await readResults(brand);
+  if (!results?.rows.length) return null; // no upload yet: skip reading every script for its codes
+  const [codes, creators] = await Promise.all([codeIndex(brand), listCreators(brand)]);
   const names = Object.fromEntries(creators.map((c) => [c.id, c.name]));
   const mds: Record<string, string> = {};
+  const needed = [...new Set(results.rows.map((r) => codes[r.code]).filter(Boolean).map((d) => `${d.kind}/${d.file}`))];
+  await Promise.all(needed.map(async (k) => {
+    const [kind, file] = k.split("/");
+    mds[k] = (await readDoc(brand, kind as "iterations" | "briefs", file)) ?? "";
+  }));
   const ads: AdView[] = [];
   for (const r of results.rows) {
     const doc = codes[r.code];
     if (!doc) continue;
     const key = `${doc.kind}/${doc.file}`;
-    mds[key] ??= (await readDoc(brand, doc.kind, doc.file)) ?? "";
     const n = Number(r.code.match(/-(\d{1,2})$/)?.[1]) || undefined;
     const id = doc.file.match(/-for-([a-z0-9-]+)/)?.[1] ?? "";
     ads.push({ ...r, title: doc.title, creatorId: id, creator: names[id] ?? (id ? id : "Any creator"), opening: openingLine(mds[key], n), kind: doc.kind, file: doc.file, n });

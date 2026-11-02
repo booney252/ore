@@ -52,7 +52,42 @@ export async function readText(key: string): Promise<string | null> {
   }
 }
 
+/**
+ * readText for big files that rarely change (ads.json is ~9 MB): kept in this server's memory and
+ * only downloaded again when the file's ETag changes. Within `freshMs` it isn't even checked.
+ */
+const memo = new Map<string, { etag?: string; text: string | null; at: number }>();
+export async function readTextCached(key: string, freshMs = 20_000): Promise<string | null> {
+  const hit = memo.get(key);
+  if (hit && Date.now() - hit.at < freshMs) return hit.text;
+  if (hit) {
+    try {
+      const head = await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
+      if (head.ETag && head.ETag === hit.etag) {
+        hit.at = Date.now();
+        return hit.text;
+      }
+    } catch (err) {
+      const name = (err as { name?: string }).name;
+      if (name !== "NotFound" && name !== "NoSuchKey") throw err;
+    }
+  }
+  try {
+    const out = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+    const text = (await out.Body?.transformToString("utf-8")) ?? null;
+    memo.set(key, { etag: out.ETag, text, at: Date.now() });
+    return text;
+  } catch (err) {
+    if ((err as { name?: string }).name === "NoSuchKey") {
+      memo.set(key, { text: null, at: Date.now() });
+      return null;
+    }
+    throw err;
+  }
+}
+
 export async function writeText(key: string, text: string, contentType = "application/json") {
+  memo.delete(key);
   await client.send(
     new PutObjectCommand({ Bucket: bucket, Key: key, Body: text, ContentType: contentType }),
   );

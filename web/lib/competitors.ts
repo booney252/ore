@@ -1,5 +1,5 @@
 import { checkSlug } from "./brands";
-import { readText, writeText } from "./storage";
+import { readText, readTextCached, writeText } from "./storage";
 
 export type Ring = "direct" | "adjacent" | "relative";
 export const RINGS: Ring[] = ["direct", "adjacent", "relative"];
@@ -73,7 +73,7 @@ export async function setCompetitorPage(slug: string, name: string, link: string
 
 /** How many ads Ore has for each competitor. */
 export async function adCounts(slug: string): Promise<Record<string, number>> {
-  const raw = await readText(`brands/${checkSlug(slug)}/ads.json`);
+  const raw = await readTextCached(`brands/${checkSlug(slug)}/ads.json`);
   const out: Record<string, number> = {};
   if (!raw) return out;
   for (const a of Object.values(JSON.parse(raw).ads as Record<string, { brand?: string }>)) if (a.brand) out[a.brand] = (out[a.brand] ?? 0) + 1;
