@@ -24,37 +24,48 @@ export async function performance(brand: string) {
   const byCreator = Object.entries(
     ads.reduce<Record<string, AdView[]>>((a, ad) => ((a[ad.creator] ??= []).push(ad), a), {}),
   )
-    .map(([creator, list]) => ({ creator, ...sum(list) }))
+    .map(([creator, list]) => ({ creator, id: list[0].creatorId, ...sum(list) }))
     .sort((a, b) => (b.roas ?? 0) - (a.roas ?? 0));
   const ranked = [...ads].sort((a, b) => (b.roas ?? -1) - (a.roas ?? -1) || b.spend - a.spend);
   return { uploaded_at: results.uploaded_at, period: results.period, all, ads: ranked, byCreator, findings: findings(ranked, all, byCreator) };
 }
 
-function findings(ads: AdView[], all: ReturnType<typeof sum>, byCreator: { creator: string; roas: number | null; spend: number }[]): string[] {
-  const out: string[] = [];
+export type Finding = {
+  kind: "best" | "worst" | "creator" | "stops" | "hook" | "retention";
+  /** Plain words, also written into performance.md for the brief prompts. */
+  text: string;
+  ad?: AdView;
+  creator?: { name: string; id: string; roas: number | null; ads: number; spend: number };
+  value?: number;
+};
+
+function findings(ads: AdView[], all: ReturnType<typeof sum>, byCreator: { creator: string; id: string; roas: number | null; spend: number; ads: number }[]): Finding[] {
+  const out: Finding[] = [];
   const real = ads.filter((a) => a.spend >= Math.max(50, all.spend * 0.03));
   const best = real[0];
   if (best && best.roas != null && all.roas) {
-    out.push(`Best script: "${best.title}" by ${best.creator}, ${x(best.roas)} ROAS on ${money(best.spend)} (your average is ${x(all.roas)}). It opens: "${best.opening || best.title}"`);
-  }
-  const worst = real.length > 2 ? real[real.length - 1] : null;
-  if (worst && worst.roas != null && all.roas && worst.roas < all.roas * 0.7) {
-    out.push(`Weakest: "${worst.title}" by ${worst.creator}, ${x(worst.roas)} ROAS. Opens: "${worst.opening || worst.title}"`);
+    out.push({ kind: "best", ad: best, text: `Best script: "${best.title}" by ${best.creator}, ${x(best.roas)} ROAS on ${money(best.spend)} (your average is ${x(all.roas)}). It opens: "${best.opening || best.title}"` });
   }
   if (byCreator.length > 1 && byCreator[0].roas && all.roas) {
-    out.push(`${byCreator[0].creator}'s ads return ${x(byCreator[0].roas)} vs ${x(all.roas)} overall. Give ${byCreator[0].creator} more of the next briefs.`);
+    const c = byCreator[0];
+    out.push({ kind: "creator", creator: { name: c.creator, id: c.id, roas: c.roas, ads: c.ads, spend: c.spend }, text: `${c.creator}'s ads return ${x(c.roas)} vs ${x(all.roas)} overall. Give ${c.creator} more of the next briefs.` });
+  }
+  const last = real.length > 2 ? real[real.length - 1] : null;
+  const worst = last && last.roas != null && all.roas && last.roas < all.roas * 0.7 ? last : null;
+  if (worst && worst.roas != null) {
+    out.push({ kind: "worst", ad: worst, text: `Weakest: "${worst.title}" by ${worst.creator}, ${x(worst.roas)} ROAS. Opens: "${worst.opening || worst.title}"` });
   }
   if (all.hook != null) {
     for (const a of real) {
-      if (a.hook == null || a.roas == null || !all.roas) continue;
-      if (a.hook >= all.hook * 1.2 && a.roas < all.roas) out.push(`"${a.title}" stops the scroll (${pct(a.hook)} hook rate) but doesn't sell: keep the opening, fix the middle or the offer.`);
-      else if (a.hook <= all.hook * 0.75) out.push(`"${a.title}" loses people in the first 3 seconds (${pct(a.hook)} hook rate vs ${pct(all.hook)}): test a new first line.`);
+      if (a.hook == null || a.roas == null || !all.roas || a === worst) continue;
+      if (a.hook >= all.hook * 1.2 && a.roas < all.roas) out.push({ kind: "stops", ad: a, text: `"${a.title}" stops the scroll (${pct(a.hook)} hook rate) but doesn't sell: keep the opening, fix the middle or the offer.` });
+      else if (a.hook <= all.hook * 0.75) out.push({ kind: "hook", ad: a, text: `"${a.title}" loses people in the first 3 seconds (${pct(a.hook)} hook rate vs ${pct(all.hook)}): test a new first line.` });
     }
   }
   const curves = real.filter((a) => a.ret && a.ret.length >= 2);
   if (curves.length) {
     const half = curves.map((a) => a.ret![1]).reduce((s, v) => s + v, 0) / curves.length;
-    out.push(`On average ${pct(half)} of people who watch 3 seconds are still there halfway through.`);
+    out.push({ kind: "retention", value: half, text: `On average ${pct(half)} of people who watch 3 seconds are still there halfway through.` });
   }
   return out.slice(0, 7);
 }
@@ -68,7 +79,7 @@ export function notesFor(p: NonNullable<Awaited<ReturnType<typeof performance>>>
     "Lean new scripts toward what's working here: the openings, angles and creators at the top. Avoid repeating the patterns at the bottom.",
     "",
     "## What the numbers say",
-    ...p.findings.map((f) => `- ${f}`),
+    ...p.findings.map((f) => `- ${f.text}`),
     "",
     "## Every ad, best first",
     ...p.ads.map((a) => `- ${a.creator} | "${a.title}" | ROAS ${x(a.roas)}, CPA ${money(a.cpa)}, hook ${pct(a.hook)}, spend ${money(a.spend)}${a.opening ? ` | opens: "${a.opening}"` : ""}`),
