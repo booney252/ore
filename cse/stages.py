@@ -234,8 +234,8 @@ def balance_segments(top: list[dict], pool: list[dict], segs: list[dict],
 # (key, title, what it is, how many ads). Each ad appears once; the first FULL_PER_LANE of a
 # lane get the full line-by-line breakdown, the rest a short card.
 PAID_LANES = [
-    ("cracked", "Breaking into the top 10", "new ads that broke into their brand's 10 most-shown ads "
-                "in the last 14 days (daily tracking): where brands are moving money right now", 5),
+    ("cracked", "New in the top 10", "new ads (30 days or less) in their brand's 10 most-shown ads right now, "
+                "and any that broke in during the last 14 days (daily tracking): where brands are moving money", 5),
     ("proven", "Proven winners", "the best long-runners: months of paid spend and still winning", 5),
     ("rising", "Rising now", "new ads (under 30 days) already outlasting how long their brand usually "
                "keeps an ad, or being scaled with 5+ versions: what's working right now", 5),
@@ -309,12 +309,15 @@ def is_organic(ads: list[dict]) -> bool:
 
 
 BREAKOUT_DAYS = 14  # how long a top-10 breakout stays in the report's first section
+NEW_TOP10_DAYS = 30  # an ad this young that's already in its brand's top 10 counts as new
 
 
 def in_lane(ad: dict, key: str, unknown_video_ok: bool = False) -> bool:
     if key == "cracked":
-        return bool(ad.get("breakout")) and (
-            date.today() - date.fromisoformat(ad["breakout"])).days <= BREAKOUT_DAYS
+        if ad.get("breakout") and (date.today() - date.fromisoformat(ad["breakout"])).days <= BREAKOUT_DAYS:
+            return True
+        # first report for a brand (no history yet to flag a breakout): young ads already in a top 10
+        return bool(ad.get("top10_rank")) and ad.get("is_active", True) and (ad.get("days_running") or 99) <= NEW_TOP10_DAYS
     if key == "proven":
         return not ad.get("rising")
     if key == "rising":
@@ -388,7 +391,7 @@ def pick_lanes(ads: list[dict], total: int = REPORT_TOTAL, segs: list[dict] | No
             continue
         eligible = [a for a in pool if a["ad_id"] not in taken and in_lane(a, key)]
         if key == "cracked":  # newest breakouts first, then the highest spot in the top 10
-            eligible.sort(key=lambda a: (a["breakout"], -(a.get("top10_rank") or 99)), reverse=True)
+            eligible.sort(key=lambda a: (a.get("breakout") or "", -(a.get("top10_rank") or 99)), reverse=True)
         # Few advertisers (a new category): let each fill more of a lane. The filler lane has no cap.
         cap = len(eligible) if key == "more" else max(LANE_PER_BRAND, -(-want // advertisers))
         chosen, per = [], {}

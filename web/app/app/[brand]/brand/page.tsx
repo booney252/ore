@@ -1,9 +1,9 @@
 import { brandName, readResearch, setupState, vocCounts } from "@/lib/brands";
-import { listCompetitors, RINGS } from "@/lib/competitors";
+import { adCounts, listCompetitors, RINGS } from "@/lib/competitors";
 import { listJobs } from "@/lib/jobs";
 import { readLessons, rules } from "@/lib/lessons";
 import { readText } from "@/lib/storage";
-import { oaAddCompetitor, oaRefreshResearch, oaRemoveCompetitor } from "../../actions";
+import { oaAddCompetitor, oaRefreshResearch, oaRemoveCompetitor, oaSetPage } from "../../actions";
 import { Band, Working } from "../../ui";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ function field(md: string, key: string): string {
 export default async function MyBrand({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<Record<string, string>> }) {
   const { brand } = await params;
   const q = await searchParams;
-  const [name, md, state, research, voc, competitors, lessons, jobs] = await Promise.all([
+  const [name, md, state, research, voc, competitors, lessons, jobs, counts] = await Promise.all([
     brandName(brand),
     readText(`brands/${brand}/brand.md`),
     setupState(brand),
@@ -37,6 +37,7 @@ export default async function MyBrand({ params, searchParams }: { params: Promis
     listCompetitors(brand),
     readLessons(brand),
     listJobs(brand, 10),
+    adCounts(brand),
   ]);
   const product = field(md ?? "", "product");
   const audience = field(md ?? "", "audience");
@@ -103,6 +104,44 @@ export default async function MyBrand({ params, searchParams }: { params: Promis
                   <button type="submit" className="oa-btn ghost">Add</button>
                 </form>
               </div>
+              {(() => {
+                const check = competitors.filter((c) => c.fb_page_match !== "verified" && c.fb_page_match !== "set by you" && c.fb_page_id !== "none" && !(counts[c.name] > 0));
+                const fixable = competitors.filter((c) => c.fb_page_match !== "verified");
+                if (!state.ads || !fixable.length) return null;
+                return (
+                  <div className="oa-card" id="pages">
+                    <h2>Ad Library pages</h2>
+                    <p className="oa-small oa-muted" style={{ marginTop: 4 }}>
+                      {check.length
+                        ? `Ore couldn't confirm the Facebook page for ${check.length} competitor${check.length > 1 ? "s" : ""}, so it has no ads for them. Paste the right Ad Library link and Ore uses that page from the next pull.`
+                        : "Ore matched these by name only. If one looks wrong, paste the right Ad Library link."}
+                    </p>
+                    {q.page === "saved" && <p className="oa-small" style={{ color: "var(--oa-cobalt)", marginTop: 8 }}>Saved. Ore pulls that page next time.</p>}
+                    {q.page === "bad" && <p className="oa-small" style={{ color: "#c23b3b", marginTop: 8 }}>That link has no page id in it. Open the brand in the Ad Library and copy the address from there.</p>}
+                    <div className="oa-pages">
+                      {[...check, ...fixable.filter((c) => !check.includes(c))].map((c) => (
+                        <details key={c.name} className="oa-page" open={check.includes(c) && check.length <= 4}>
+                          <summary>
+                            <b>{c.name}</b>
+                            <span className={check.includes(c) ? "bad" : ""}>
+                              {check.includes(c) ? "No ads found" : `${counts[c.name] ?? 0} ads · ${c.fb_page_name || "page set"}`}
+                            </span>
+                          </summary>
+                          <form action={oaSetPage}>
+                            <input type="hidden" name="brand" value={brand} />
+                            <input type="hidden" name="name" value={c.name} />
+                            <input name="link" placeholder="facebook.com/ads/library/?…view_all_page_id=…" />
+                            <button type="submit" className="oa-btn ghost">Use this page</button>
+                          </form>
+                          <a className="oa-small" href={`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&q=${encodeURIComponent(c.name)}&search_type=keyword_unordered`} target="_blank" rel="noreferrer">
+                            Find {c.name} in the Ad Library ↗
+                          </a>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="oa-card" id="rules">
                 <h2>How Ore writes for you</h2>
                 <p className="oa-small oa-muted" style={{ marginTop: 4 }}>Built from your notes on briefs. {brandRules.length} rules.</p>

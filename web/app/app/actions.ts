@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { randomBytes } from "node:crypto";
 import { brandExists, checkFile, checkSlug, createBrand, listDocs, slugify } from "@/lib/brands";
 import { writeText } from "@/lib/storage";
-import { addCompetitor, removeCompetitor, RINGS, type Ring } from "@/lib/competitors";
+import { addCompetitor, removeCompetitor, RINGS, type Ring, setCompetitorPage } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { createJob } from "@/lib/jobs";
 import { addFeedback } from "@/lib/lessons";
@@ -141,6 +141,15 @@ export async function oaRemoveCompetitor(form: FormData) {
   await removeCompetitor(brand, text(form, "name", 80));
   revalidatePath(`/app/${brand}/brand`);
   redirect(`/app/${brand}/brand`);
+}
+
+/** "That's the wrong page": the brand pastes the competitor's Ad Library link. */
+export async function oaSetPage(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const ok = await setCompetitorPage(brand, text(form, "name", 120), text(form, "link", 600));
+  revalidatePath(`/app/${brand}/brand`);
+  redirect(`/app/${brand}/brand?page=${ok ? "saved" : "bad"}#pages`);
 }
 
 export async function oaRefreshResearch(form: FormData) {

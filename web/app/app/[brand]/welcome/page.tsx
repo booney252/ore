@@ -2,7 +2,8 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { ensureInvite, inviteUrl } from "@/lib/invites";
 import CopyLink from "../../CopyLink";
-import { brandName, setupState } from "@/lib/brands";
+import { brandName, listDocs, setupState } from "@/lib/brands";
+import { listJobs } from "@/lib/jobs";
 import { listCreators } from "@/lib/creators";
 import GlowBg from "@/app/app/GlowBg";
 import { Logo } from "../../ui";
@@ -13,7 +14,11 @@ export const dynamic = "force-dynamic";
 /** After onboarding: a calm "Ore is on it" screen that turns into "your market is ready". */
 export default async function Welcome({ params }: { params: Promise<{ brand: string }> }) {
   const { brand } = await params;
-  const [name, state, creators, token, hdrs] = await Promise.all([brandName(brand), setupState(brand), listCreators(brand), ensureInvite(brand), headers()]);
+  const [name, state, creators, token, hdrs, reports, jobs] = await Promise.all([brandName(brand), setupState(brand), listCreators(brand), ensureInvite(brand), headers(), listDocs(brand, "reports"), listJobs(brand, 10)]);
+  const setupRunning = jobs.some((j) => j.type === "setup" && (j.status === "pending" || j.status === "running"));
+  const report = reports.length > 0;
+  // ready once the first report is in (or setup has finished without one)
+  const ready = state.ready && (report || !setupRunning);
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
   const link = inviteUrl(host, hdrs.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https"), token);
   const steps = [
@@ -22,6 +27,7 @@ export default async function Welcome({ params }: { params: Promise<{ brand: str
     { label: "Reading what your buyers say", done: state.voc },
     { label: "Pulling the ads that are winning", done: state.ads },
     { label: "Writing your brand brief", done: state.brief },
+    { label: "Finding what's working right now", done: report },
   ];
   const now = steps.findIndex((s) => !s.done);
 
@@ -32,7 +38,7 @@ export default async function Welcome({ params }: { params: Promise<{ brand: str
         <nav className="oa-nav">
           <Logo />
         </nav>
-        {state.ready ? (
+        {ready ? (
           <div className="ob ob-done">
             <div className="ob-mark" aria-hidden="true">✓</div>
             <p className="oa-label">{name}</p>

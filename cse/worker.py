@@ -65,6 +65,24 @@ def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | 
     return stages.run_report(storage, slug)
 
 
+def run_first_report(storage, slug: str, check=lambda: None) -> str | None:
+    """A new brand's first report. There's no history yet, so no breakouts: today's top 10 for
+    every competitor (the baseline) shows which young ads are already getting money, next to the
+    long-runners they keep paying for. Daily tracking flags real breakouts from tomorrow on."""
+    name = stages.brand_context(storage, slug)["brand_name"]
+    fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
+    tracking.run(storage, slug)
+    check()
+    lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
+    creative.run(storage, slug, per_brand=5, ids=lanes)
+    check()
+    lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
+    if breakdown.run(storage, slug, name, per_brand=5, ids=lanes)["waiting"]:
+        raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
+    check()
+    return stages.run_report(storage, slug)
+
+
 def run_track(storage, slug: str, check=lambda: None) -> str:
     """Daily top-10 tracking, then transcribe and break down whatever broke into a top 10, so a
     breakout is ready to read (and to iterate on) the day it shows up."""
@@ -119,7 +137,14 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "setup":
         if not llm.api_key():  # web research has no handoff mode
             raise llm.HandoffPending("", "")
-        return setup.run(storage, slug, check=check)
+        out = setup.run(storage, slug, check=check)
+        try:  # the first report, so a new brand lands on what's working, not an empty page
+            run_first_report(storage, slug, check=check)
+        except Cancelled:
+            raise
+        except Exception:  # noqa: BLE001 - the research is done; a failed report shouldn't undo it
+            log.exception("setup: first report failed for %s", slug)
+        return out
     if job["type"] == "research":
         voc.run(storage, slug)
         check()
