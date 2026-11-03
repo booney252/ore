@@ -223,6 +223,11 @@ ol.loop{margin:0;padding:0}
 .who3 p{color:var(--muted);font-size:15px}
 .notfor{margin-top:20px;color:var(--muted);font-size:16px;max-width:75ch}
 .notfor b{color:var(--ink)}
+.who-switch{display:inline-flex;gap:4px;padding:5px;margin:0 0 22px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(14px)}
+.who-switch button{font:600 13px/1.2 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:10px 16px;border-radius:10px;border:0;background:transparent;color:inherit;cursor:pointer}
+.who-switch button[aria-selected="true"]{background:linear-gradient(135deg,#2d63d8,#7a5ce6);color:#fff}
+.who-switch button{white-space:nowrap}
+@media (max-width:560px){.who-switch button{font-size:12px;padding:9px 12px}}
 .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
 .plan{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:14px;min-width:0}
 .plan.featured{background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(120deg,var(--sky),var(--cobalt) 40%,var(--rose) 75%,var(--ember)) border-box;border:2px solid transparent;box-shadow:0 30px 60px -36px rgba(45,99,216,.5)}
@@ -765,15 +770,30 @@ h1 .it{font-size:1.06em}
         <h2>Priced on your program. <span class="grad-text">The research is <span class="it">included</span>.</span></h2>
         <p>Every plan includes the full research setup, breakout tracking, creator-fit briefs, creator results and brand memory. Start with a free teardown, no card needed.</p>
       </div>
-      <div class="plans">
-        <div class="plan"><p class="label">Starter</p><p class="price"><b>$99</b><span>/month</span></p><p class="for">For a brand starting its creator program.</p>
-          <ul><li><b>1 brand</b></li><li><b>10 creators</b> on your roster</li><li><b>50 briefs</b> a month</li><li>10 competitors tracked</li><li>Weekly breakout report</li></ul>
+      <div class="who-switch" role="tablist" aria-label="Who's it for">
+        <button type="button" role="tab" aria-selected="true" data-who="brand">Brands</button>
+        <button type="button" role="tab" aria-selected="false" data-who="agency">Strategists &amp; agencies</button>
+      </div>
+      <div class="plans" data-plans="brand">
+        <div class="plan"><p class="label">Starter</p><p class="price"><b>$129</b><span>/month</span></p><p class="for">For a brand starting its creator program.</p>
+          <ul><li><b>10 creators</b> on your roster</li><li><b>50 briefs</b> a month</li><li>10 competitors tracked</li><li>Weekly breakout report</li><li>Creator portal and results</li></ul>
           <a class="btn btn-line" href="#teardown">Start with a free teardown</a></div>
-        <div class="plan featured"><p class="label">Pro <span class="pop">Most popular</span></p><p class="price"><b>$249</b><span>/month</span></p><p class="for">For brands scaling creators and solo strategists.</p>
-          <ul><li><b>3 brands</b></li><li><b>40 creators</b></li><li><b>120 briefs</b> a month</li><li>20 competitors tracked per brand</li><li>Daily breakout checks</li></ul>
+        <div class="plan featured"><p class="label">Growth <span class="pop">Most popular</span></p><p class="price"><b>$399</b><span>/month</span></p><p class="for">For brands scaling their creator program.</p>
+          <ul><li><b>40 creators</b> on your roster</li><li><b>150 briefs</b> a month</li><li>20 competitors tracked</li><li>Daily breakout checks</li><li>Competitors&#39; ads run through creators&#39; accounts</li></ul>
           <a class="btn btn-grad" href="#teardown">Start with a free teardown</a></div>
-        <div class="plan"><p class="label">Studio</p><p class="price"><b>$599</b><span>/month</span></p><p class="for">For agencies and creator communities.</p>
-          <ul><li><b>8 brands</b></li><li><b>150 creators</b></li><li><b>250 briefs</b> a month</li><li>20 competitors tracked per brand</li><li>Team seats</li></ul>
+        <div class="plan"><p class="label">Scale</p><p class="price"><b>$899</b><span>/month</span></p><p class="for">For brands running creators at volume.</p>
+          <ul><li><b>Unlimited creators</b></li><li><b>400 briefs</b> a month</li><li>40 competitors tracked</li><li>Everything in Growth</li><li>Team seats</li></ul>
+          <a class="btn btn-line" href="#teardown">Start with a free teardown</a></div>
+      </div>
+      <div class="plans" data-plans="agency" hidden>
+        <div class="plan"><p class="label">Per brand</p><p class="price"><b>$199</b><span>/brand/month</span></p><p class="for">For strategists with one or two clients.</p>
+          <ul><li><b>Growth plan for each client</b></li><li>40 creators per brand</li><li>150 briefs per brand a month</li><li>Daily breakout checks</li><li>Add or drop a brand any month</li></ul>
+          <a class="btn btn-line" href="#teardown">Start with a free teardown</a></div>
+        <div class="plan featured"><p class="label">Agency 3 <span class="pop">Most popular</span></p><p class="price"><b>$499</b><span>/month</span></p><p class="for">For strategists running a few brands.</p>
+          <ul><li><b>3 brands</b>, Growth plan each</li><li>40 creators per brand</li><li>150 briefs per brand a month</li><li>Daily breakout checks</li><li>One login for every client</li></ul>
+          <a class="btn btn-grad" href="#teardown">Start with a free teardown</a></div>
+        <div class="plan"><p class="label">Agency 8</p><p class="price"><b>$1,199</b><span>/month</span></p><p class="for">For agencies and creator communities.</p>
+          <ul><li><b>8 brands</b>, Growth plan each</li><li>40 creators per brand</li><li>150 briefs per brand a month</li><li>Team seats</li><li>Extra brands $149 each</li></ul>
           <a class="btn btn-line" href="#teardown">Start with a free teardown</a></div>
       </div>
       <p class="plan-note">Need more briefs? Add 25 for $15 any time. Pay yearly and get 1 month free. Cancel any time.</p>
@@ -801,7 +821,7 @@ h1 .it{font-size:1.06em}
         <details><summary>Does it handle payments, contracts or finding creators?</summary><p>No. Keep the tools you use for that. Ore covers what each creator should make and which of their videos work.</p></details>
         <details><summary>Which platforms does it cover?</summary><p>Meta ads from your competitors, plus Reels, TikToks and YouTube Shorts from creator accounts.</p></details>
         <details><summary>Will my competitors see my briefs?</summary><p>No. Your research, roster and briefs are private to your brand.</p></details>
-        <details><summary>What does it cost?</summary><p>The teardown is free. Plans start at $99 a month. See <a href="#pricing">Pricing</a> above.</p></details>
+        <details><summary>What does it cost?</summary><p>The teardown is free. Plans start at $129 a month. See <a href="#pricing">Pricing</a> above.</p></details>
       </div>
     </div>
   </section>
@@ -824,6 +844,8 @@ h1 .it{font-size:1.06em}
 
 <script>
 (function(){
+  // pricing: brands or strategists & agencies
+  [].slice.call(document.querySelectorAll('.who-switch button')).forEach(function(b){b.addEventListener('click',function(){var w=b.getAttribute('data-who');[].slice.call(document.querySelectorAll('.who-switch button')).forEach(function(x){x.setAttribute('aria-selected',String(x===b))});[].slice.call(document.querySelectorAll('[data-plans]')).forEach(function(g){g.hidden=g.getAttribute('data-plans')!==w})})});
   // creators expand one at a time
   var cards=[].slice.call(document.querySelectorAll('.creator'));
   cards.forEach(function(c){c.addEventListener('click',function(){cards.forEach(function(x){x.setAttribute('aria-expanded',String(x===c))});draw()})});
