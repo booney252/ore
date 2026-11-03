@@ -122,7 +122,7 @@ def revise(storage, slug: str, mid: str, feedback: str = "", client=None) -> str
     tag = hashlib.sha1(f"{m['md']}|{feedback}".encode()).hexdigest()[:8]
     try:
         answer = llm.ask(storage, slug, f"master-{mid}-{tag}", prompt, client=client,
-                         max_tokens=16000, effort="high")
+                         max_tokens=16000, effort="high", cache=ctx["knowledge"])
     except llm.HandoffPending as p:
         log.info("masters: prompt ready at %s; answer it in %s", p.prompt_key, p.answer_key)
         return None
@@ -152,7 +152,8 @@ def make_versions(storage, slug: str, mid: str, only: list[str] | None = None,
             "knowledge": ctx["knowledge"], "script": m["md"]})
         try:
             answer = llm.ask(storage, slug, f"version-{mid}-r{m.get('rev', 1)}-{cid}", prompt,
-                             client=client, max_tokens=16000, effort="medium")
+                             client=client, max_tokens=16000, effort="medium",
+                             cache=ctx["knowledge"])
         except llm.HandoffPending as p:
             log.info("masters: prompt ready at %s", p.prompt_key)
             waiting = True

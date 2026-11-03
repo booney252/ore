@@ -52,13 +52,17 @@ def _text(response) -> str:
     return "\n".join(b.text for b in response.content if b.type == "text").strip()
 
 
-def web_research(client, prompt: str, max_searches: int = 20) -> tuple[str, int]:
-    """Run a research prompt with web search. Returns (notes, number of searches used)."""
+def web_research(client, prompt: str, max_searches: int = 20,
+                 spent: list | None = None) -> tuple[str, int]:
+    """Run a research prompt with web search. Returns (notes, number of searches used).
+    `spent` collects (model, usage) for each call, for the usage log."""
     messages = [{"role": "user", "content": prompt}]
     tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": max_searches}]
     content: list = []
     for _ in range(MAX_PAUSE_RESUMES + 1):
         response = _create(client, max_tokens=32000, tools=tools, messages=messages)
+        if spent is not None:
+            spent.append((response.model, response.usage))
         content += response.content
         if response.stop_reason != "pause_turn":
             break
@@ -164,14 +168,48 @@ def shrink_image(data: bytes) -> bytes:
     return out.stdout
 
 
+CACHE_HEAD = "# Ore's writing knowledge\n\nReference for the task in the next part of this message.\n\n"
+CACHE_NOTE = "(Ore's writing knowledge is the first part of this message.)"
+MIN_CACHE_CHARS = 8000  # shorter text is under the API's minimum cacheable size anyway
+
+
+def _content(storage, prompt: str, image_keys: list[str] | None, cache: str | None) -> list[dict]:
+    """The message content. With `cache` (text that repeats across calls, like the writing
+    knowledge), that text moves to a first block marked for prompt caching, so the next call
+    within a few minutes (the next creator's version, say) reads it at a tenth of the price."""
+    import base64
+
+    blocks, rest = [], prompt
+    if cache and len(cache) >= MIN_CACHE_CHARS and cache in prompt:
+        blocks.append({"type": "text", "text": CACHE_HEAD + cache,
+                       "cache_control": {"type": "ephemeral"}})
+        rest = prompt.replace(cache, CACHE_NOTE, 1)
+    for key in image_keys or []:
+        data = shrink_image(storage.read_bytes(key))
+        blocks.append({"type": "image", "source": {
+            "type": "base64", "media_type": image_type(data),
+            "data": base64.standard_b64encode(data).decode()}})
+    blocks.append({"type": "text", "text": rest})
+    return blocks
+
+
+class BatchQueued(HandoffPending):
+    """Inside batch.collect(): the request was queued for the Batch API instead of run."""
+
+
 def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None = None,
-        client=None, max_tokens: int = 32000, effort: str = "high", web: bool = False) -> str:
+        client=None, max_tokens: int = 32000, effort: str = "high", web: bool = False,
+        cache: str | None = None) -> str:
     """Run one prompt step and return the model's text answer. `web` lets the API model
     search the web (for facts like pricing); in handoff mode the session can search itself.
+    `cache`: a part of the prompt that repeats across calls, sent once for prompt caching.
 
     Handoff mode writes brands/<slug>/handoff/<step>.prompt.md and returns the answer
     once brands/<slug>/handoff/<step>.answer.md exists (written by Claude Code).
+    Every API call's tokens and cost go to the usage log (cse/usage.py).
     """
+    from . import batch, usage
+
     base = f"brands/{slug}/handoff/{step}"
     prompt_key, answer_key = f"{base}.prompt.md", f"{base}.answer.md"
     if mode() == "handoff":
@@ -182,26 +220,37 @@ def ask(storage, slug: str, step: str, prompt: str, image_keys: list[str] | None
                                                  if images else ""))
         raise HandoffPending(prompt_key, answer_key)
 
+    batched, failed = f"{base}.batch.md", f"{base}.batch.err"
+    if storage.exists(batched):  # answered by an earlier Batch API run
+        answer = storage.read_text(batched)
+        storage.write_text(answer_key, answer)
+        storage.delete(batched)
+        return answer
+
     if web:
-        answer, _ = web_research(client or make_client(), prompt)
+        spent: list = []
+        answer, _ = web_research(client or make_client(), prompt, spent=spent)
+        for m, u in spent:
+            usage.record(storage, slug, step, u, m)
         storage.write_text(answer_key, answer)
         return answer
 
-    import base64
+    content = _content(storage, prompt, image_keys, cache)
+    if batch.active() and not storage.exists(failed):
+        batch.add(slug, step, answer_key, {
+            "model": model(), "max_tokens": max_tokens, "output_config": {"effort": effort},
+            "messages": [{"role": "user", "content": content}]})
+        raise BatchQueued(prompt_key, answer_key)
+    if storage.exists(failed):
+        storage.delete(failed)
 
-    content = []
-    for key in image_keys or []:
-        data = shrink_image(storage.read_bytes(key))
-        content.append({"type": "image", "source": {
-            "type": "base64", "media_type": image_type(data),
-            "data": base64.standard_b64encode(data).decode()}})
-    content.append({"type": "text", "text": prompt})
     client = client or make_client()
     with client.beta.messages.stream(
         model=model(), betas=BETAS, fallbacks="default", max_tokens=max_tokens,
         output_config={"effort": effort}, messages=[{"role": "user", "content": content}],
     ) as stream:
         response = stream.get_final_message()
+    usage.record(storage, slug, step, response.usage, response.model)
     if response.stop_reason == "refusal":
         raise LLMError(f"Claude declined the request: {response.stop_details}")
     answer = _text(response)

@@ -673,7 +673,7 @@ def run_iterations(storage, slug: str, report_key: str | None, ranks: list[int],
     stem += (f"-for-{who['id']}" if who else "") + (f"-to-{segment}" if seg else "") + formats.suffix(fmt)
     try:
         answer = llm.ask(storage, slug, f"iterations-{stem}", prompt, client=client,
-                         max_tokens=64000, effort="high")
+                         max_tokens=64000, effort="high", cache=ctx["knowledge"])
     except llm.HandoffPending as p:
         log.info("iterations: prompt ready at %s; answer it in %s, then re-run.",
                  p.prompt_key, p.answer_key)
@@ -767,7 +767,7 @@ def run_brief_picks(storage, slug: str, picks: list[tuple[str, int]],
         out_stem += f"-to-{segment}"
     try:
         answer = llm.ask(storage, slug, f"briefs-{out_stem}", prompt, client=client,
-                         max_tokens=64000, effort="high")
+                         max_tokens=64000, effort="high", cache=ctx["knowledge"])
     except llm.HandoffPending as p:
         log.info("briefs: prompt ready at %s; answer it in %s, then re-run.",
                  p.prompt_key, p.answer_key)

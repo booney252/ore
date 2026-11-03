@@ -19,6 +19,11 @@ Job types:
   track   {brand}                     daily: each advertiser's top 10; break down the new ones breaking in
   setup   {brand}                     new brand: profile, competitors, VOC, ads, research brief
   research {brand}                    refresh: re-pull customer quotes, re-run the 4 research prompts
+  breakdown {brand, ad}               one ad, on demand: transcribe it if needed, then take it apart
+
+A report job with batch: true (the scheduled weekly run) sends its breakdowns and the report to
+the Batch API (half price). It waits in jobs/batching/ until the batch ends, then goes back to
+jobs/pending/ with resume set, and picks up where it stopped without pulling ads again.
 """
 
 from __future__ import annotations
@@ -27,9 +32,10 @@ import json
 import logging
 import os
 import time
+from contextlib import nullcontext
 from datetime import datetime, timezone
 
-from . import ads, breakdown, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
+from . import ads, batch, breakdown, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -42,27 +48,56 @@ class Cancelled(Exception):
 WEEKLY_ORGANIC_PAGES = 2  # newest ~24 posts per account: what's new since last week (1 credit a page)
 
 
-def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None) -> str | None:
+def run_weekly(storage, slug: str, pages: int = 1, check=lambda: None, batch_api: bool = False,
+               resume: str | None = None) -> str | None:
+    """ads -> creative -> breakdown -> verify -> report. With batch_api, the breakdowns and the
+    report go through the Batch API: raises batch.Pending after sending each, and `resume`
+    ("breakdown" or "report") continues from there once the answers are in."""
     name = stages.brand_context(storage, slug)["brand_name"]
     fields = brandlib.parse(storage.read_text(brandlib.brand_key(slug)))[0]
-    if storage.exists(brandlib.brand_key(slug, "competitors.json")):
-        ads.run(storage, slug, max_pages=pages)
+    batching = batch_api and llm.mode() == "api"
+    if resume is None:
+        if storage.exists(brandlib.brand_key(slug, "competitors.json")):
+            ads.run(storage, slug, max_pages=pages)
+            check()
+        if organic.accounts(fields):  # organic brands (e.g. an affiliate campaign): Reels, TikToks, Shorts
+            organic.pull(storage, slug, max_pages=WEEKLY_ORGANIC_PAGES)
+            organic.check_topics(storage, slug)  # winners that aren't about the niche drop out
+            check()
+        # Each advertiser's top 5, plus the best of every report lane (proven, rising, UGC, statics,
+        # LFS, B-roll), so each section of the report has broken-down winners to pick from.
+        lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
+        creative.run(storage, slug, per_brand=5, ids=lanes)
         check()
-    if organic.accounts(fields):  # organic brands (e.g. an affiliate campaign): Reels, TikToks, Shorts
-        organic.pull(storage, slug, max_pages=WEEKLY_ORGANIC_PAGES)
-        organic.check_topics(storage, slug)  # winners that aren't about the niche drop out
+    if resume in (None, "breakdown"):
+        lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
+        with (batch.collect(storage) if batching else nullcontext()) as b:
+            waiting = breakdown.run(storage, slug, name, per_brand=5, ids=lanes)["waiting"]
+        if b is not None and b.ids:
+            raise batch.Pending(b.ids, "breakdown")
+        if waiting:
+            raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
         check()
-    # Each advertiser's top 5, plus the best of every report lane (proven, rising, UGC, statics,
-    # LFS, B-roll), so each section of the report has broken-down winners to pick from.
-    lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
-    creative.run(storage, slug, per_brand=5, ids=lanes)
+        ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
+    with (batch.collect(storage) if batching else nullcontext()) as b:
+        key = stages.run_report(storage, slug)
+    if b is not None and b.ids:
+        raise batch.Pending(b.ids, "report")
+    return key
+
+
+def run_breakdown(storage, slug: str, ad_id: str, check=lambda: None) -> str | None:
+    """One ad on demand (someone opened it on the site): transcribe it if it hasn't been, then
+    take it apart. Returns the ads file key, or None if the ad couldn't be broken down."""
+    creative.run(storage, slug, limit=0, ids=[ad_id])
     check()
-    lanes = stages.lane_candidates(stages.load_ads(storage, slug), formats=stages.report_formats(fields))
-    if breakdown.run(storage, slug, name, per_brand=5, ids=lanes)["waiting"]:
-        raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-*", "(breakdown answers)")
-    check()
-    ads.verify(storage, slug, stages.report_candidates(stages.load_ads(storage, slug)))
-    return stages.run_report(storage, slug)
+    name = stages.brand_context(storage, slug)["brand_name"]
+    out = breakdown.run(storage, slug, name, limit=0, ids=[ad_id])
+    if out["waiting"]:
+        raise llm.HandoffPending(f"brands/{slug}/handoff/breakdown-{ad_id}", "(breakdown answer)")
+    if not out["done"]:
+        raise llm.LLMError("Ore couldn't take this ad apart (its video may have expired)")
+    return brandlib.brand_key(slug, "ads.json")
 
 
 def run_first_report(storage, slug: str, check=lambda: None) -> str | None:
@@ -117,7 +152,10 @@ def run_job(storage, job: dict) -> str | None:
 
     check()
     if job["type"] == "report":
-        return run_weekly(storage, slug, check=check)
+        return run_weekly(storage, slug, check=check, batch_api=bool(job.get("batch")),
+                          resume=job.get("resume"))
+    if job["type"] == "breakdown":
+        return run_breakdown(storage, slug, str(job["ad"]), check=check)
     if job["type"] == "iterations":
         report_key = (brandlib.brand_key(slug, f"reports/{job['report']}.md")
                       if job.get("report") else None)
@@ -205,6 +243,9 @@ def process_one(storage) -> bool:
         storage.delete(cancel_marker(job))
         _move(storage, job, "running", "cancelled")
         log.info("worker: %s cancelled", job["id"])
+    except batch.Pending as p:
+        _move(storage, job, "running", "batching", batch_ids=p.ids, resume=p.resume)
+        log.info("worker: %s waiting on the Batch API (%s)", job["id"], ", ".join(p.ids))
     except llm.HandoffPending:
         _move(storage, job, "running", "waiting",
               error="waiting on a Claude step: add ORE_ANTHROPIC_API_KEY to run unattended")
@@ -214,9 +255,30 @@ def process_one(storage) -> bool:
     return True
 
 
+def check_batches(storage, client=None) -> int:
+    """Jobs waiting on the Batch API: once all their batches have ended, save the answers and
+    put the job back in pending to resume. Returns how many jobs went back."""
+    moved = 0
+    for key in sorted(k for k in storage.list("jobs/batching/") if k.endswith(".json")):
+        job = json.loads(storage.read_text(key))
+        try:
+            if not all(batch.ended(b, client) for b in job.get("batch_ids") or []):
+                continue
+            for b in job.get("batch_ids") or []:
+                batch.fetch(storage, b, client)
+        except Exception as e:  # noqa: BLE001 - a lookup failure: try again next round
+            log.warning("worker: couldn't check batch for %s: %s", job["id"], e)
+            continue
+        _move(storage, {k: v for k, v in job.items() if k != "batch_ids"}, "batching", "pending")
+        moved += 1
+        log.info("worker: %s batch done, resuming at %s", job["id"], job.get("resume"))
+    return moved
+
+
 def loop(storage, once: bool = False, every: int = 30) -> None:
     log.info("worker: watching jobs/pending/ in %s", storage.describe())
     while True:
+        check_batches(storage)
         did = process_one(storage)
         if once and not did:
             return

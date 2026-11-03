@@ -2,10 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { advertiser, hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
 import { brandName } from "@/lib/brands";
+import { listJobs } from "@/lib/jobs";
 import { listCreators } from "@/lib/creators";
 import { explain } from "@/lib/score";
 import { signedUrl } from "@/lib/storage";
+import { oaBreakdown } from "../../../actions";
 import MakeForm from "../../../MakeForm";
+import SubmitButton from "../../../SubmitButton";
 import { Band } from "../../../ui";
 
 export const dynamic = "force-dynamic";
@@ -30,9 +33,17 @@ const list = (v: unknown): string[] => (Array.isArray(v) ? v.map(text).filter(Bo
 /** One winning ad: watch it, why it's graded the way it is, how it's built, and make it yours. */
 export default async function AdDetail({ params }: { params: Promise<{ brand: string; id: string }> }) {
   const { brand, id } = await params;
-  const [name, ads, creators] = await Promise.all([brandName(brand), loadAds(brand), listCreators(brand)]);
+  const [name, ads, creators, jobs] = await Promise.all([
+    brandName(brand),
+    loadAds(brand),
+    listCreators(brand),
+    listJobs(brand, 20, ["breakdown"]),
+  ]);
   const ad = ads.find((a) => a.ad_id === id);
   if (!ad) notFound();
+  const job = jobs.find((j) => j.ad === id);
+  const working = Boolean(job && ["pending", "running", "waiting"].includes(job.status ?? ""));
+  const failed = job?.status === "failed" ? job.error : null;
   const b = (ad.breakdown ?? {}) as Record<string, unknown>;
   const a = ad.analysis ?? {};
   const g = explain(ad);
@@ -125,7 +136,23 @@ export default async function AdDetail({ params }: { params: Promise<{ brand: st
               )}
 
               {!ad.breakdown && (
-                <p className="oa-small oa-muted">Ore hasn&apos;t taken this one apart yet. It gets its breakdown in the next weekly run.</p>
+                <section className="oa-card wa-takeapart">
+                  {working ? (
+                    <>
+                      <p><span className="spin" aria-hidden="true" /> Ore is taking this one apart. It takes a minute or two.</p>
+                      <a className="oa-small cp-back" href={`/app/${brand}/ads/${id}`}>Refresh</a>
+                    </>
+                  ) : (
+                    <form action={oaBreakdown}>
+                      <input type="hidden" name="brand" value={brand} />
+                      <input type="hidden" name="ad" value={id} />
+                      <p className="oa-small oa-muted">
+                        {failed ? `That didn't work: ${failed}` : "Ore hasn't taken this one apart yet. See the hook, the structure and what's carrying it."}
+                      </p>
+                      <SubmitButton className="oa-btn ghost">Take it apart</SubmitButton>
+                    </form>
+                  )}
+                </section>
               )}
 
               <section className="oa-card wa-make">

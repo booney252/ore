@@ -9,7 +9,7 @@ import { brandExists, brandName, checkFile, checkSlug, createBrand, listDocs, sl
 import { writeText } from "@/lib/storage";
 import { addCompetitor, removeCompetitor, RINGS, type Ring, setCompetitorPage } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
-import { createJob } from "@/lib/jobs";
+import { createJob, listJobs } from "@/lib/jobs";
 import { addFeedback } from "@/lib/lessons";
 import { requireBrand, requireOwner } from "@/lib/session";
 import { ensurePortal } from "@/lib/portal";
@@ -74,6 +74,19 @@ export async function oaMake(form: FormData) {
   // one master script for the idea; each picked creator gets their own version once it's approved
   await createJob({ type: "master", brand, ...(latest && { report: latest }), ads: latest ? ads : [], idea, creators });
   redirect(`/app/${brand}/scripts?writing=1`);
+}
+
+/** "Take it apart": break down one ad now (it wasn't among the ones done in the weekly run). */
+export async function oaBreakdown(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const ad = text(form, "ad", 60);
+  if (!/^[A-Za-z0-9_-]{1,60}$/.test(ad)) redirect(`/app/${brand}/ads`);
+  const busy = (await listJobs(brand, 20, ["breakdown"])).some(
+    (j) => j.ad === ad && ["pending", "running", "waiting"].includes(j.status ?? ""),
+  );
+  if (!busy) await createJob({ type: "breakdown", brand, ad });
+  redirect(`/app/${brand}/ads/${ad}`);
 }
 
 /** "Send to creator": a private link the creator opens without an account. */

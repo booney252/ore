@@ -1,6 +1,6 @@
 import { deleteKey, listKeys, readText, writeText } from "./storage";
 
-export type JobType = "report" | "iterations" | "briefs" | "setup" | "research" | "ingredients" | "mechanisms" | "rank_mechanisms" | "angles" | "scripts" | "tweak" | "lessons" | "master" | "revise" | "versions" | "assign";
+export type JobType = "report" | "iterations" | "briefs" | "setup" | "research" | "ingredients" | "mechanisms" | "rank_mechanisms" | "angles" | "scripts" | "tweak" | "lessons" | "master" | "revise" | "versions" | "assign" | "breakdown";
 export type Job = {
   id: string;
   type: JobType;
@@ -15,6 +15,7 @@ export type Job = {
   session?: string;
   feedback?: string;
   master?: string;
+  ad?: string;
   note?: string;
   creators?: string[];
   script?: string;
@@ -28,7 +29,8 @@ export type Job = {
   error?: string;
 };
 
-const STATES = ["pending", "running", "done", "failed", "waiting", "cancelled"] as const;
+// "batching": a scheduled weekly run waiting on the Batch API; shown as running
+const STATES = ["pending", "running", "batching", "done", "failed", "waiting", "cancelled"] as const;
 const JOB_ID = /^[0-9]{14}-[a-z0-9]{1,12}$/;
 
 /** Drop a request into R2. The Python worker (`cse worker`) picks it up. */
@@ -57,7 +59,7 @@ export async function listJobs(brand: string, limit = 10, types?: JobType[]): Pr
           if (!raw) continue;
           const job = JSON.parse(raw) as Job;
           if (job.brand === brand && (!types || types.includes(job.type))) {
-            out.push({ ...job, status: state });
+            out.push({ ...job, status: state === "batching" ? "running" : state });
           }
         }
         return out;

@@ -165,6 +165,12 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("weekly", help="ads -> creative -> breakdown -> verify -> report")
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1)
+    p.add_argument("--batch", action="store_true",
+                   help="breakdowns and the report through the Batch API: half price, can take hours")
+
+    p = sub.add_parser("usage", help="what Claude cost this month, per brand and per job")
+    p.add_argument("--month", help="YYYY-MM (default: this month)")
+    p.add_argument("--brand")
 
     p = sub.add_parser("verify", help="re-check top ads are still in the Ad Library (1 credit each)")
     p.add_argument("brand")
@@ -273,10 +279,28 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "weekly":
             from . import worker
 
-            try:
-                worker.run_weekly(storage, args.brand, pages=args.pages)
-            except llm.HandoffPending:
-                log.info("weekly: paused for handoff answers; re-run `weekly` when answered.")
+            from . import batch
+
+            resume = None
+            while True:
+                try:
+                    worker.run_weekly(storage, args.brand, pages=args.pages,
+                                      batch_api=args.batch, resume=resume)
+                except batch.Pending as p:
+                    batch.wait(storage, p.ids)
+                    resume = p.resume
+                    continue
+                except llm.HandoffPending:
+                    log.info("weekly: paused for handoff answers; re-run `weekly` when answered.")
+                break
+            return 0
+        if args.command == "usage":
+            from datetime import date as _date
+
+            from . import usage
+
+            month = args.month or _date.today().strftime("%Y-%m")
+            print(usage.format_summary(month, usage.summary(storage, month, args.brand)))
             return 0
         if args.command == "verify":
             cmd_verify(storage, args.brand)
