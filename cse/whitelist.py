@@ -61,8 +61,18 @@ def queries(comp: dict) -> list[str]:
     return out
 
 
+def own_page_name(page_name: str, comp: dict) -> bool:
+    """Is this page the brand's own, just not the one on file? ("Atria AI" for Atria,
+    "foreplay.co" for Foreplay.) Its ads are the brand's regular ads, not whitelisted."""
+    n, b = adslib._norm(page_name), adslib._norm(comp.get("name"))
+    root = adslib._site_root(comp.get("website") or "")
+    return bool(n) and ((len(b) >= 3 and (b in n or n in b)) or (len(root) >= 3 and root in n))
+
+
 def find(source, comp: dict, today: date, max_pages: int = 1) -> list[dict]:
-    """The brand's ads running from pages other than its own, as tagged creatives."""
+    """The brand's ads running from pages other than the one on file. Ads from a creator's page
+    are tagged whitelisted; ads from a page named like the brand are marked own_page (its real
+    page, when the one on file is wrong)."""
     dom, ids = domain(comp.get("website")), app_ids(comp)
     own = str(comp.get("fb_page_id") or "")
     seen, out = set(), []
@@ -73,8 +83,11 @@ def find(source, comp: dict, today: date, max_pages: int = 1) -> list[dict]:
             if not matches(ad, dom, ids):
                 continue
             seen.add(ad["ad_id"])
-            out.append({**ad, "whitelisted": True, "via_page_id": ad["page_id"],
-                        "via_page_name": ad.get("page_name") or ""})
+            if own_page_name(ad.get("page_name") or "", comp):
+                out.append({**ad, "own_page": True})
+            else:
+                out.append({**ad, "whitelisted": True, "via_page_id": ad["page_id"],
+                            "via_page_name": ad.get("page_name") or ""})
     return adslib.dedupe_creatives(out, today)
 
 
@@ -82,6 +95,8 @@ def remember(comp: dict, found: list[dict], today: date) -> list[dict]:
     """Add newly seen creator pages to comp['creator_pages'] (most recently seen first)."""
     pages = {p["page_id"]: p for p in comp.get("creator_pages") or []}
     for ad in found:
+        if not ad.get("whitelisted"):
+            continue
         p = pages.setdefault(ad["via_page_id"], {"page_id": ad["via_page_id"],
                                                  "name": ad["via_page_name"],
                                                  "first_seen": today.isoformat()})
@@ -98,3 +113,14 @@ def top_on_page(source, comp: dict, page: dict, today: date, n: int = 10) -> lis
              "via_page_name": page.get("name") or a.get("page_name") or ""}
             for a in pulled if matches(a, dom, ids)]
     return adslib.dedupe_creatives(mine, today)[:n]
+
+
+def fix_page(comp: dict, found: list[dict]) -> bool:
+    """When the search turns up the brand's real page (its ads link to the brand's site) and the
+    page on file isn't verified, switch to it. Returns True when it changed."""
+    own = [a for a in found if a.get("own_page")]
+    if not own or comp.get("fb_page_match") in ("verified", "set by you"):
+        return False
+    comp["fb_page_id"], comp["fb_page_name"] = own[0]["page_id"], own[0].get("page_name") or ""
+    comp["fb_page_match"] = "verified"
+    return True

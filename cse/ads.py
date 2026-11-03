@@ -210,12 +210,16 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
                 log.warning("  %-22s creator search failed: %s", name, str(e)[:200])
                 wl = []
             if wl:
+                if whitelist.fix_page(comp, wl):
+                    log.info("  %-22s page on file corrected to %s (its ads link to the site)", name,
+                             comp["fb_page_name"])
                 whitelist.remember(comp, wl, today)
                 new_wl = merge_ads(existing, wl, comp, today)
                 all_new.extend(new_wl)
                 via += len(wl)
-                log.info("  %-22s %3d creatives from creator pages (%d new): %s", name, len(wl),
-                         len(new_wl), ", ".join(sorted({a["via_page_name"] for a in wl}))[:200])
+                creators_found = sorted({a["via_page_name"] for a in wl if a.get("whitelisted")})
+                log.info("  %-22s %3d creatives found by site search (%d new)%s", name, len(wl),
+                         len(new_wl), f", via creators: {', '.join(creators_found)[:200]}" if creators_found else "")
         if comp.get("fb_page_id") == "none":
             counts[name] = 0
             continue

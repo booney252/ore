@@ -21,6 +21,7 @@ export default async function Winners({
   const organic = type === "organic";
   const rising = picked === "rising";
   const top10 = picked === "top10";
+  const creators = picked === "creators";
   const only = KINDS.find((k) => k.key === picked)?.key as Kind | undefined;
   const counts = new Map<Kind, number>();
   for (const a of allAds) {
@@ -34,11 +35,15 @@ export default async function Winners({
   const inTop10 = (a: (typeof allAds)[number]) => Boolean(a.top10_rank) || recentBreak(a);
   const tracking = allAds.some((a) => a.top10_days);
   const top10Count = allAds.filter(inTop10).length;
+  // run from a creator's page (whitelisting): found by searching the brand's site in the Ad Library
+  const creatorCount = allAds.filter((a) => a.whitelisted && !a.removed_from_library).length;
   // TikTok Shop posts (a product tagged) vs everything else, on top of the type filter
   const shop = shopPick === "yes" || shopPick === "no" ? shopPick : undefined;
   const hasShop = allAds.some((a) => a.shoppable);
   const shopCount = allAds.filter((a) => a.shoppable).length;
-  const byType = top10
+  const byType = creators
+    ? allAds.filter((a) => a.whitelisted)
+    : top10
     ? allAds.filter(inTop10)
     : rising
     ? allAds.filter((a) => a.rising)
@@ -83,12 +88,17 @@ export default async function Winners({
       <ScoreKey organic={organic} />
 
       <nav className="tabs" aria-label="Sort by type">
-        <Link href={href(undefined, shop)} className={only || rising || top10 ? "" : "on"} scroll={false}>
+        <Link href={href(undefined, shop)} className={only || rising || top10 || creators ? "" : "on"} scroll={false}>
           All
         </Link>
         {!organic && tracking && (
           <Link href={href("top10", shop)} className={top10 ? "on" : ""} scroll={false}>
             Top 10 <span className="mono">{top10Count}</span>
+          </Link>
+        )}
+        {!organic && creatorCount > 0 && (
+          <Link href={href("creators", shop)} className={creators ? "on" : ""} scroll={false} title="Brands' ads run from creators' pages (whitelisting)">
+            Via creators <span className="mono">{creatorCount}</span>
           </Link>
         )}
         {!organic && (

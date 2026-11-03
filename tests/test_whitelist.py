@@ -50,3 +50,15 @@ def test_app_brands_search_by_name():
     comp = {"name": "Pep AI", "website": "https://pepaiapp.com/",
             "app_store_url": "https://apps.apple.com/us/app/pep-ai/id6758682710"}
     assert whitelist.queries(comp) == ["pepaiapp.com", "Pep AI"]
+
+
+def test_own_page_by_name_is_not_whitelisted():
+    comp = {"name": "Atria", "website": "https://www.tryatria.com", "fb_page_id": "9", "fb_page_match": "unverified"}
+    src = FakeSource([ad("a", "5", "Atria AI", "https://www.tryatria.com/"),
+                      ad("b", "6", "Some Creator", "https://tryatria.com/x")])
+    out = whitelist.find(src, comp, date(2026, 11, 3))
+    own = [a for a in out if a.get("own_page")]
+    wl = [a for a in out if a.get("whitelisted")]
+    assert [a["ad_id"] for a in own] == ["a"] and [a["ad_id"] for a in wl] == ["b"]
+    assert whitelist.fix_page(comp, out) and comp["fb_page_id"] == "5" and comp["fb_page_match"] == "verified"
+    assert [p["name"] for p in whitelist.remember(comp, out, date(2026, 11, 3))] == ["Some Creator"]
