@@ -113,6 +113,22 @@ class ScrapeCreatorsSource:
                  "likes": r.get("likes") or 0, "ig_username": r.get("ig_username") or ""}
                 for r in data.get("searchResults") or []]
 
+    def search_ads(self, query: str, country: str = "US", max_pages: int = 1,
+                   status: str = "ACTIVE") -> list[dict]:
+        """Ads from any page that match a keyword (a brand's domain or name). Finds a brand's
+        ads running from creators' pages (whitelisting), which a page pull never sees."""
+        ads, cursor = [], None
+        for _ in range(max_pages):
+            params = {"query": query, "country": country, "status": status}
+            if cursor:
+                params["cursor"] = cursor
+            data = self._get("search/ads", params)
+            ads.extend(normalize_scrapecreators(r) for r in data.get("searchResults") or [])
+            cursor = data.get("cursor")
+            if not cursor or not data.get("searchResults"):
+                break
+        return [a for a in ads if a["ad_id"]]
+
     def fetch_ads(self, page_id: str, country: str = "US", max_pages: int = 2,
                   status: str = "ALL") -> list[dict]:
         """A page's ads in Meta's Ad Library order: most impressions first."""

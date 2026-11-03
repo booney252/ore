@@ -7,6 +7,9 @@ export type Ad = {
   ad_id: string;
   brand: string;
   ring?: string;
+  /** Run from a creator's page (whitelisting): the creator page's name. */
+  whitelisted?: boolean;
+  via_page_name?: string;
   is_own?: boolean;
   start_date?: string;
   is_active?: boolean;
@@ -162,3 +165,7 @@ export async function posterUrl(ad: Ad): Promise<string | null> {
   const key = ad.analysis?.frames?.[0]?.key ?? (ad.media_type === "image" ? ad.media_key : undefined);
   return key ? signedUrl(key) : null;
 }
+
+/** "Motion" or "Motion via Stormie Captures" for an ad run from a creator's page. */
+export const advertiser = (a: Pick<Ad, "brand" | "whitelisted" | "via_page_name">) =>
+  a.whitelisted && a.via_page_name ? `${a.brand} via ${a.via_page_name}` : a.brand;

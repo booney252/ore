@@ -2,7 +2,7 @@ import AdCard from "@/app/AdCard";
 import ScoreKey from "@/app/ScoreKey";
 import Grade from "@/app/Grade";
 import Link from "next/link";
-import { KINDS, kind, link, loadAds, posted, winners, type Kind } from "@/lib/ads";
+import { advertiser, KINDS, kind, link, loadAds, posted, winners, type Kind } from "@/lib/ads";
 import { campaignType } from "@/lib/brands";
 import { explain } from "@/lib/score";
 
@@ -171,7 +171,7 @@ export default async function Winners({
                   <td>
                     <Grade g={explain(a).grade} size="sm" />
                   </td>
-                  <td>{a.brand}</td>
+                  <td>{advertiser(a)}</td>
                   <td>
                     {explain(a).verdict}. <span className="muted">{explain(a).reason}</span>
                   </td>

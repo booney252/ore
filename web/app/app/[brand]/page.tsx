@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { hook, loadAds, posterUrl, winners, type Ad } from "@/lib/ads";
+import { advertiser, hook, loadAds, posterUrl, winners, type Ad } from "@/lib/ads";
 import { brandName, setupState } from "@/lib/brands";
 import { listCreators } from "@/lib/creators";
 import { cardIdea, readCards } from "@/lib/cards";
@@ -116,7 +116,7 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
                   <article key={c.title} className="oa-card oa-pat">
                     <div className="oa-strip" aria-label={`${ev.length} winning ads show this`}>
                       {ev.map((a, j) => (
-                        <span key={a.ad_id} title={`${a.brand}: ${hook(a) || a.headline || ""}`}>
+                        <span key={a.ad_id} title={`${advertiser(a)}: ${hook(a) || a.headline || ""}`}>
                           {strips[i][j] && <img src={strips[i][j]!} alt="" loading="lazy" />}
                         </span>
                       ))}
@@ -184,7 +184,7 @@ export default async function ThisWeek({ params, searchParams }: { params: Promi
                     {posters[i] && <img src={posters[i]!} alt="" loading="lazy" />}
                     <span className={`oa-tag ${cls}`}>{tag}</span>
                   </div>
-                  <span className="oa-small oa-muted">{ad.brand}</span>
+                  <span className="oa-small oa-muted">{advertiser(ad)}</span>
                   <q>{hook(ad) || ad.headline}</q>
                   {proof(ad).length > 0 && (
                     <div className="oa-proof">

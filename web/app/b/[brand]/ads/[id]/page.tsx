@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SlideViewer from "@/app/SlideViewer";
 import { notFound } from "next/navigation";
-import { hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
+import { advertiser, hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
 import { explain } from "@/lib/score";
 import Grade from "@/app/Grade";
 import { signedUrl } from "@/lib/storage";
@@ -86,7 +86,7 @@ export default async function AdPage({ params }: { params: Promise<{ brand: stri
         <div className="ad-info">
           <header>
             <p className="mono muted">
-              {ad.brand}
+              {advertiser(ad)}
               {ad.source === "organic"
                 ? ` · ${ad.is_own ? "ours" : "niche"} · posted ${posted(ad)}`
                 : `${ad.ring ? ` · ${ad.ring}` : ""}${ad.is_own ? " · yours" : ""}`}

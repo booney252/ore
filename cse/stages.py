@@ -155,7 +155,9 @@ def _who(ad: dict) -> str:
     if ad.get("source") == "organic":
         kind = "OUR AFFILIATE'S POST" if ad.get("is_own") else "NICHE CREATOR'S POST"
         return f"{kind} @{ad.get('handle')} on {ad.get('platform')} (organic)"
-    return "OWN AD" if ad.get("is_own") else f"{ad.get('brand')} ({ad.get('ring')})"
+    via = (f", run from creator page \"{ad.get('via_page_name')}\" (whitelisted: the brand pays to run it "
+           "from the creator's account, a strong sign the creative works)") if ad.get("whitelisted") else ""
+    return ("OWN AD" if ad.get("is_own") else f"{ad.get('brand')} ({ad.get('ring')})") + via
 
 
 def _link(ad: dict) -> str:

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Grade from "@/app/Grade";
-import { hook, posted, posterUrl, type Ad } from "@/lib/ads";
+import { advertiser, hook, posted, posterUrl, type Ad } from "@/lib/ads";
 import { commentRate, explain, pct, short } from "@/lib/score";
 
 export default async function AdCard({ brand, ad, rank }: { brand: string; ad: Ad; rank?: number }) {
@@ -30,7 +30,7 @@ export default async function AdCard({ brand, ad, rank }: { brand: string; ad: A
       </div>
       <div className="ad-meta">
         <strong>
-          {ad.source === "organic" ? `${ad.brand} · ${ad.platform === "tiktok" ? "TikTok" : ad.platform === "youtube" ? "YouTube" : "IG"}` : ad.brand}
+          {ad.source === "organic" ? `${ad.brand} · ${ad.platform === "tiktok" ? "TikTok" : ad.platform === "youtube" ? "YouTube" : "IG"}` : advertiser(ad)}
           {!ad.breakdown ? <span className="pending-note"> · not taken apart yet</span> : null}
         </strong>
         {ad.source === "organic" ? (

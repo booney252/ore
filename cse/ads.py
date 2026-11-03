@@ -165,11 +165,12 @@ def _own_entry(fields: dict) -> dict | None:
     if not name or not fields.get("facebook_page_id"):
         return None
     return {"name": name, "ring": "own", "status": "approved",
-            "fb_page_id": str(fields.get("facebook_page_id") or "")}
+            "fb_page_id": str(fields.get("facebook_page_id") or ""),
+            "website": fields.get("website") or "", "app_store_url": fields.get("app_store_url") or ""}
 
 
 def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
-        today: date | None = None, only: list[str] | None = None) -> dict:
+        today: date | None = None, only: list[str] | None = None, creators: bool = True) -> dict:
     """Pull ads for every competitor (or just the names in `only`) plus the brand's own page.
     A competitor whose fb_page_id is "none" was checked and has no Ad Library page: skipped."""
     today = today or datetime.now(timezone.utc).date()
@@ -198,8 +199,23 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
 
     counts = {}
     all_new = []
+    via = 0
     for comp in targets:
         name = comp["name"]
+        if creators:  # the brand's ads running from creators' pages (whitelisting)
+            from . import whitelist
+            try:
+                wl = whitelist.find(source, comp, today)
+            except Exception as e:  # noqa: BLE001 - a failed search shouldn't stop the page pull
+                log.warning("  %-22s creator search failed: %s", name, str(e)[:200])
+                wl = []
+            if wl:
+                whitelist.remember(comp, wl, today)
+                new_wl = merge_ads(existing, wl, comp, today)
+                all_new.extend(new_wl)
+                via += len(wl)
+                log.info("  %-22s %3d creatives from creator pages (%d new): %s", name, len(wl),
+                         len(new_wl), ", ".join(sorted({a["via_page_name"] for a in wl}))[:200])
         if comp.get("fb_page_id") == "none":
             counts[name] = 0
             continue
@@ -234,7 +250,8 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
 
     downloaded = sum(1 for i in all_new if existing[i].get("media_key"))
     failed = sum(1 for i in all_new if existing[i].get("media_error"))
-    summary = {"brands": len(targets), "creatives": sum(counts.values()), "new": len(all_new),
+    summary = {"brands": len(targets), "creatives": sum(counts.values()), "via_creators": via,
+               "new": len(all_new),
                "media_downloaded": downloaded, "media_failed": failed,
                "credits_used": getattr(source, "credits_used", None)}
     log.info("ads: %(brands)d brands, %(creatives)d creatives, %(new)d new, "
@@ -243,7 +260,7 @@ def run(storage, slug: str, source=None, session=None, max_pages: int = 1,
     return summary
 
 
-PAGE_FIELDS = ("fb_page_id", "fb_page_name", "fb_page_match")
+PAGE_FIELDS = ("fb_page_id", "fb_page_name", "fb_page_match", "creator_pages")
 
 
 def _save_pages(storage, comp_key: str, pulled: list[dict]) -> None:

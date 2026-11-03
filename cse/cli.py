@@ -119,6 +119,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("brand")
     p.add_argument("--pages", type=int, default=1, help="result pages per brand (1 credit each)")
     p.add_argument("--only", help="comma-separated competitor names to pull (default: all)")
+    p.add_argument("--no-creators", action="store_true",
+                   help="skip searching for each brand's ads run from creators' pages (whitelisting)")
 
     sub.add_parser("track", help="daily: each advertiser's top 10 ads, flag new ones breaking in (1 credit each)"
                    ).add_argument("brand")
@@ -232,7 +234,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "ads":
             ads.run(storage, args.brand, max_pages=args.pages,
-                    only=[n.strip() for n in args.only.split(",")] if args.only else None)
+                    only=[n.strip() for n in args.only.split(",")] if args.only else None,
+                    creators=not args.no_creators)
             return 0
         if args.command == "track":
             tracking.run(storage, args.brand)

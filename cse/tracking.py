@@ -22,6 +22,7 @@ from datetime import date, datetime, timezone
 
 from . import ads as adslib
 from . import brand as brandlib
+from . import whitelist
 from .score import days_running, regrade_paid
 
 log = logging.getLogger("cse")
@@ -80,23 +81,15 @@ def run(storage, slug: str, source=None, session=None, today: date | None = None
     existing = json.loads(storage.read_text(ads_key))["ads"] if storage.exists(ads_key) else {}
 
     snapshot, moves, skipped = {}, [], []
-    for comp in _targets(storage, slug):
-        name, page_id = comp["name"], comp.get("fb_page_id")
-        if not page_id or page_id == "none":
-            skipped.append(name)
-            continue
-        try:
-            top = top_ads(source, page_id, today)
-        except Exception as e:  # noqa: BLE001 - one advertiser failing shouldn't stop the rest
-            log.warning("  %-22s failed: %s", name, str(e)[:200])
-            skipped.append(name)
-            continue
-        hist = state["advertisers"].get(name)
+    tracked_brands = set()
+
+    def track_one(key: str, comp: dict, top: list[dict]) -> None:
+        """Record one advertiser's top list (the brand's own page, or a creator page's ads for it)."""
+        hist = state["advertisers"].get(key)
         found = compare(top, set(hist["seen"]) if hist else None, today)
         new_ids = adslib.merge_ads(existing, top, comp, today)
         for ad_id in new_ids:
             adslib.download_media(storage, slug, existing[ad_id], session)
-
         for rank, ad in enumerate(top, start=1):
             e = existing[ad["ad_id"]]
             if e.get("top10_last") != now:
@@ -105,23 +98,42 @@ def run(storage, slug: str, source=None, session=None, today: date | None = None
             e.setdefault("top10_since", now)
         for f in found:
             existing[f["ad_id"]]["breakout" if f["kind"] == "breakout" else "top10_back"] = now
-            moves.append({**f, "brand": name})
-
+            moves.append({**f, "brand": comp["name"], "advertiser": key})
         ids = [a["ad_id"] for a in top]
-        state["advertisers"][name] = {
+        state["advertisers"][key] = {
             "since": hist["since"] if hist else now,
             "seen": sorted(set(hist["seen"] if hist else []) | set(ids)),
             "last": ids,
         }
-        snapshot[name] = ids
-        log.info("  %-22s top %d%s", name, len(ids),
+        snapshot[key] = ids
+        tracked_brands.add(comp["name"])
+        log.info("  %-22s top %d%s", key[:40], len(ids),
                  "".join(f"  {'BREAKOUT' if f['kind'] == 'breakout' else 'back'} #{f['rank']}"
                          for f in found) or ("  (baseline)" if not hist else ""))
 
+    for comp in _targets(storage, slug):
+        name, page_id = comp["name"], comp.get("fb_page_id")
+        if page_id and page_id != "none":
+            try:
+                track_one(name, comp, top_ads(source, page_id, today))
+            except Exception as e:  # noqa: BLE001 - one advertiser failing shouldn't stop the rest
+                log.warning("  %-22s failed: %s", name, str(e)[:200])
+                skipped.append(name)
+        else:
+            skipped.append(name)
+        # the brand's ads on the creator pages it whitelists through (newest pages first)
+        for page in (comp.get("creator_pages") or [])[:whitelist.MAX_CREATOR_PAGES]:
+            try:
+                top = whitelist.top_on_page(source, comp, page, today, n=TOP_N)
+            except Exception as e:  # noqa: BLE001
+                log.warning("  %-22s via %s failed: %s", name, page.get("name"), str(e)[:200])
+                continue
+            if top:
+                track_one(f"{name} via {page.get('name') or page['page_id']}", comp, top)
+
     # Ads that dropped out of every top 10 today lose their rank, so "top 10 now" stays true.
-    tracked = set(snapshot)
     for e in existing.values():
-        if e.get("top10_rank") and e.get("brand") in tracked and e.get("top10_last") != now:
+        if e.get("top10_rank") and e.get("brand") in tracked_brands and e.get("top10_last") != now:
             e["top10_rank"] = None
 
     regrade_paid(existing.values(), today)

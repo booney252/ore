@@ -1,5 +1,5 @@
 import Grade from "@/app/Grade";
-import { hook, posterUrl, type Ad } from "@/lib/ads";
+import { advertiser, hook, posterUrl, type Ad } from "@/lib/ads";
 import { explain } from "@/lib/score";
 
 /** A winner you can tick: its frame, rank, grade and hook. Plain checkbox, works without JS. */
@@ -18,7 +18,7 @@ export default async function PickCard({ ad, rank, name }: { ad: Ad; rank: numbe
         </span>
       </span>
       <span className="ad-meta">
-        <strong>{ad.brand}</strong>
+        <strong>{advertiser(ad)}</strong>
         <span className="pick-hook">“{hook(ad) || "No spoken hook"}”</span>
       </span>
     </label>
