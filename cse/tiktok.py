@@ -2,14 +2,17 @@
 
 `refresh(storage, slug)` (job `tiktok`, command `tiktok <brand>`):
 1. Pulls the last few days of every TikTok account in brand.md `organic_accounts`
-   (ScrapeCreators, about 1 credit a page; heavy posters take a few pages).
+   (7 days; ScrapeCreators, about 1 credit a page of ~10 posts, so heavy posters take more).
 2. Scores each post against its account's usual views (the median of its posts that are a
    day or more old). A competitor post 18 to 96 hours old at 5x its usual and 3,000+ views is
    a **breakout**. The owner's posts (":own") get scored the same way.
 3. Saves the first slides of breakouts and of the owner's posts to storage (TikTok's links
    expire), and reads them (Claude, vision): the product, the slide 1 hook, the angle, the
    format. Reads are cached, so each post is read once.
-4. Builds the scoreboards (the owner's results by angle and by product), the product lineup
+4. Grades each product on Kalodata (cse/kalodata.py: sales, growth, share from videos,
+   commission -> A to F) and checks what the top breakouts actually sold and whether they're
+   boosted as ads (paid views aren't a real organic breakout).
+5. Builds the scoreboards (the owner's results by angle and by product), the product lineup
    status (hot / testing / cut, from the rules below) and early alerts (a product or format in
    breakouts from 2+ accounts).
 
@@ -29,7 +32,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
 
 from . import brand as brandlib
-from . import llm
+from . import kalodata, llm
 
 log = logging.getLogger("cse")
 
@@ -52,9 +55,11 @@ BREAKOUT_X = 5.0          # times the account's usual views
 BREAKOUT_MIN_VIEWS = 3000
 HIT, FLOP = 3000, 500     # the owner's post rules
 CUT_AFTER = 15            # posts with nothing over 1K -> cut
-FETCH_DAYS, OWN_DAYS = 4, 8
-MAX_PAGES = 8
-READ_LIMIT = 60           # posts read per refresh (Claude vision), newest breakouts first
+FETCH_DAYS, OWN_DAYS = 7, 10   # a post can take a week to pop
+BREAKOUT_MAX_HOURS = 7 * 24
+MAX_PAGES = 40                 # ~10 posts a page: enough for 40+ posts a day over a week
+READ_LIMIT = 100               # posts read per refresh (Claude vision), newest breakouts first
+VIDEO_LOOKUPS = 15             # top breakouts checked on Kalodata for sales and ad spend
 
 
 def key(slug: str, name: str) -> str:
@@ -87,7 +92,7 @@ def breakouts(posts: list[dict], usual: float, now: float) -> list[dict]:
     out = []
     for p in posts:
         age = _age_hours(p, now)
-        if 18 <= age <= 96 and p["views"] >= max(BREAKOUT_X * max(usual, 1), BREAKOUT_MIN_VIEWS):
+        if 18 <= age <= BREAKOUT_MAX_HOURS and p["views"] >= max(BREAKOUT_X * max(usual, 1), BREAKOUT_MIN_VIEWS):
             out.append(p)
     return out
 
@@ -305,8 +310,20 @@ def refresh(storage, slug: str, source=None, client=None, read: bool = True) -> 
     storage.write_text(key(slug, "reads.json"), json.dumps(reads))
 
     lineup = _load(storage, key(slug, "lineup.json"), [])
+    if kalodata.available():
+        names = [(p.get("read") or {}).get("product", "") for p in todo] + [i["name"] for i in lineup]
+        ratings = kalodata.rate_products(storage, key(slug, "products.json"), names)
+        for p in todo:
+            p["kalo"] = ratings.get((p.get("read") or {}).get("product", ""))
+        for i in lineup:
+            i["kalo"] = ratings.get(i["name"])
+        top = [p["code"] for p in breaks if p.get("shoppable")][:VIDEO_LOOKUPS]
+        sold = kalodata.video_sales(storage, key(slug, "videos.json"), top)
+        for p in breaks:
+            p["sold"] = sold.get(p["code"])
     slim = lambda p: {k: p.get(k) for k in ("code", "handle", "url", "views", "likes", "comments",
-                                            "date", "ts", "age_h", "x", "images", "read", "shoppable")}
+                                            "date", "ts", "age_h", "x", "images", "read", "shoppable",
+                                            "kalo", "sold")}
     data = {
         "updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "accounts": usuals,

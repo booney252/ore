@@ -3,6 +3,9 @@ import { readText, readTextCached, signedUrl, writeText } from "./storage";
 
 /** What cse/tiktok.py saves to brands/<brand>/tiktok/latest.json. */
 export type Read = { product: string; category: string; hook: string; angle: string; format: string };
+/** Kalodata grade for a product (cse/kalodata.py), and what a post sold. */
+export type Kalo = { name: string; id: string; grade: string; why: string; revenue: number; price?: number };
+export type Sold = { revenue: number; sales: number; ad: boolean };
 export type TPost = {
   code: string;
   handle: string;
@@ -17,6 +20,8 @@ export type TPost = {
   images: string[];
   read?: Read;
   shoppable?: boolean;
+  kalo?: Kalo | null;
+  sold?: Sold | null;
 };
 export type Board = { name: string; posts: number; avg: number; best: number; hits: number; flops: number; x: number };
 export type LineupItem = {
@@ -29,6 +34,7 @@ export type LineupItem = {
   best?: number;
   avg?: number;
   status?: "hot" | "testing" | "cut";
+  kalo?: Kalo | null;
 };
 export type Alert = { kind: "product" | "format"; name: string; accounts: string[]; views: number };
 export type Daily = {

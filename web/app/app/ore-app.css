@@ -634,3 +634,13 @@
 .tt-add { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .tt-add input { flex: 1 1 140px; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--oa-line); font: inherit; }
 .tt-alerts ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.tt-product { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; min-width: 0; }
+.tt-product span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tt-grade { flex: none; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; font: 700 12px/1 var(--font-data), monospace; color: #fff; background: #98a2b3; }
+.tt-grade.gA { background: #1f9d55; }
+.tt-grade.gB { background: #4caf50; }
+.tt-grade.gC { background: #e0a100; }
+.tt-grade.gD { background: #ef7d32; }
+.tt-grade.gF { background: #d64545; }
+.tt-why { font-size: 11.5px; color: var(--oa-muted); line-height: 1.35; }
+.tt-kalo { font-size: 12.5px; white-space: normal; display: inline-flex; gap: 6px; align-items: center; }

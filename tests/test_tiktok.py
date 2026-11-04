@@ -20,7 +20,7 @@ def test_usual_uses_posts_a_day_old():
 
 def test_breakout_needs_5x_and_3k_and_the_right_age():
     now = time.time()
-    posts = [post("a", 6000, 30), post("b", 4000, 30), post("c", 9000, 5), post("d", 9000, 120)]
+    posts = [post("a", 6000, 30), post("b", 4000, 30), post("c", 9000, 5), post("d", 9000, 200)]
     assert [p["code"] for p in tiktok.breakouts(posts, 1000, now)] == ["a"]
     assert tiktok.breakouts([post("e", 2900, 30)], 100, now) == []
 
@@ -44,3 +44,11 @@ def test_lineup_status_rules():
     flops = [{**post(str(i), 400, 50, product="Neuro gum"), "x": 1} for i in range(15)]
     assert tiktok.lineup_status({"name": "Neuro gum"}, flops)["status"] == "cut"
     assert tiktok.lineup_status({"name": "New thing"}, flops)["status"] == "testing"
+
+
+def test_kalodata_grade():
+    from cse import kalodata
+    hot = {"revenue": 140000, "revenue_growth_rate": 120, "video_revenue": 130000, "commission_rate": "15%"}
+    assert kalodata.grade(hot)[0] == "A"
+    live = {"revenue": 140000, "revenue_growth_rate": -5, "video_revenue": 10000, "commission_rate": 0.08}
+    assert kalodata.grade(live)[0] == "F"

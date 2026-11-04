@@ -38,10 +38,21 @@ function Post({ p, img, own = false }: { p: TPost; img?: string; own?: boolean }
         </span>
       </div>
       {p.read?.hook && <q>{p.read.hook}</q>}
-      {(p.read?.product || p.read?.angle) && (
+      {p.read?.product && (
+        <div className="tt-product" title={p.kalo ? `${p.kalo.name}: ${p.kalo.why}` : "Not found on Kalodata"}>
+          <span className={`tt-grade g${p.kalo?.grade ?? "none"}`}>{p.kalo?.grade ?? "?"}</span>
+          <span>{p.read.product}</span>
+        </div>
+      )}
+      {p.kalo && <span className="tt-why">{p.kalo.why}</span>}
+      {p.sold && (
+        <span className="tt-why">
+          Sold ${fmt(p.sold.revenue)} ({p.sold.sales} orders){p.sold.ad ? " · boosted as an ad" : ""}
+        </span>
+      )}
+      {p.read?.angle && (
         <div className="tt-chips">
-          {p.read?.product && <span>{p.read.product}</span>}
-          {p.read?.angle && <span className="angle">{ANGLE[p.read.angle] ?? p.read.angle}</span>}
+          <span className="angle">{ANGLE[p.read.angle] ?? p.read.angle}</span>
         </div>
       )}
     </a>
@@ -102,7 +113,7 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
         name={name}
         label="TikTok Shop"
         title={d ? `${breaks.length} breakouts across ${tracked} accounts.` : "Not pulled yet."}
-        sub={d ? `Updated ${ago(d.updated)}. A breakout is a post 1 to 4 days old doing 5x its account's usual and 3K+ views.` : "Pull every tracked account to see what's working."}
+        sub={d ? `Updated ${ago(d.updated)}. A breakout is a post 1 to 7 days old doing 5x its account's usual and 3K+ views.` : "Pull every tracked account to see what's working."}
       >
         <form action={oaTiktokRefresh} className="tt-refresh">
           <input type="hidden" name="brand" value={brand} />
@@ -135,7 +146,7 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
           <section className="oa-stack">
             <h2 className="wa-h">Breaking out now</h2>
             {breaks.length === 0 ? (
-              <div className="oa-card oa-empty">No breakouts in the last 4 days.</div>
+              <div className="oa-card oa-empty">No breakouts in the last 7 days.</div>
             ) : (
               <div className="tt-grid">
                 {breaks.slice(0, 30).map((p) => (
@@ -151,7 +162,7 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
               Your usual: {fmt(Object.values(d?.accounts ?? {}).find((a) => a.own)?.usual ?? 0)} views. Green is 3K+, red is under 500 after 48 hours.
             </p>
             {own.length === 0 ? (
-              <div className="oa-card oa-empty">No posts in the last 8 days.</div>
+              <div className="oa-card oa-empty">No posts in the last 10 days.</div>
             ) : (
               <div className="tt-grid small">
                 {own.map((p) => (
@@ -176,6 +187,7 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
                 <tr>
                   <th>Product</th>
                   <th>Status</th>
+                  <th>Kalodata</th>
                   <th>Posts</th>
                   <th>Best</th>
                   <th>Comm.</th>
@@ -191,6 +203,15 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
                     </td>
                     <td>
                       <span className={`tt-status ${i.status}`}>{i.status}</span>
+                    </td>
+                    <td>
+                      {i.kalo ? (
+                        <span className="tt-kalo" title={i.kalo.name}>
+                          <span className={`tt-grade g${i.kalo.grade}`}>{i.kalo.grade}</span> {i.kalo.why}
+                        </span>
+                      ) : (
+                        <span className="oa-muted">not found</span>
+                      )}
                     </td>
                     <td>{i.posts ?? 0}</td>
                     <td>{fmt(i.best ?? 0)}</td>
