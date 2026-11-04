@@ -10,8 +10,7 @@
    expire), and reads them (Claude, vision): the product, the slide 1 hook, the angle, the
    format. Reads are cached, so each post is read once.
 4. Grades each product on Kalodata (cse/kalodata.py: sales, growth, share from videos,
-   commission -> A to F) and checks what the top breakouts actually sold and whether they're
-   boosted as ads (paid views aren't a real organic breakout).
+   commission -> A to F).
 5. Builds the scoreboards (the owner's results by angle and by product), the product lineup
    status (hot / testing / cut, from the rules below) and early alerts (a product or format in
    breakouts from 2+ accounts).
@@ -59,7 +58,6 @@ FETCH_DAYS, OWN_DAYS = 7, 10   # a post can take a week to pop
 BREAKOUT_MAX_HOURS = 7 * 24
 MAX_PAGES = 40                 # ~10 posts a page: enough for 40+ posts a day over a week
 READ_LIMIT = 100               # posts read per refresh (Claude vision), newest breakouts first
-VIDEO_LOOKUPS = 15             # top breakouts checked on Kalodata for sales and ad spend
 
 
 def key(slug: str, name: str) -> str:
@@ -317,13 +315,9 @@ def refresh(storage, slug: str, source=None, client=None, read: bool = True) -> 
             p["kalo"] = ratings.get((p.get("read") or {}).get("product", ""))
         for i in lineup:
             i["kalo"] = ratings.get(i["name"])
-        top = [p["code"] for p in breaks if p.get("shoppable")][:VIDEO_LOOKUPS]
-        sold = kalodata.video_sales(storage, key(slug, "videos.json"), top)
-        for p in breaks:
-            p["sold"] = sold.get(p["code"])
     slim = lambda p: {k: p.get(k) for k in ("code", "handle", "url", "views", "likes", "comments",
                                             "date", "ts", "age_h", "x", "images", "read", "shoppable",
-                                            "kalo", "sold")}
+                                            "kalo")}
     data = {
         "updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "accounts": usuals,

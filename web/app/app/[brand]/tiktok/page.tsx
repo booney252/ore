@@ -45,11 +45,7 @@ function Post({ p, img, own = false }: { p: TPost; img?: string; own?: boolean }
         </div>
       )}
       {p.kalo && <span className="tt-why">{p.kalo.why}</span>}
-      {p.sold && (
-        <span className="tt-why">
-          Sold ${fmt(p.sold.revenue)} ({p.sold.sales} orders){p.sold.ad ? " · boosted as an ad" : ""}
-        </span>
-      )}
+
       {p.read?.angle && (
         <div className="tt-chips">
           <span className="angle">{ANGLE[p.read.angle] ?? p.read.angle}</span>
