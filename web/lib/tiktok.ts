@@ -93,3 +93,26 @@ export function ago(iso: string): string {
 }
 
 export const fmt = (n: number) => (n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1000 ? `${(n / 1000).toFixed(n >= 10_000 ? 0 : 1)}K` : String(n));
+
+export const ANGLE_LABEL: Record<string, string> = {
+  him: "What he thinks",
+  others: "Others notice",
+  glowup: "Glow-up",
+  shame: "Shame before",
+  price: "Price / dupe",
+  taboo: "Taboo",
+  gift: "Gift",
+  routine: "Routine",
+  problem: "Problem to fix",
+  other: "Other",
+};
+
+const words = (s: string) => new Set(s.toLowerCase().replace(/\./g, "").split(/[^a-z0-9]+/).filter((w) => w.length > 2));
+
+/** Same rule as cse/tiktok.same_product: every word of the shorter name is in the longer one. */
+export function sameProduct(a: string, b: string): boolean {
+  const [x, y] = [words(a), words(b)];
+  if (!x.size || !y.size) return false;
+  const [s, l] = x.size <= y.size ? [x, y] : [y, x];
+  return [...s].every((w) => l.has(w));
+}

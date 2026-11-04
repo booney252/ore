@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { brandName } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 import { ago, fmt, loadDaily, slideUrls, type Board, type TPost } from "@/lib/tiktok";
@@ -22,10 +23,10 @@ const ANGLE: Record<string, string> = {
 
 const age = (h: number) => (h < 24 ? `${Math.round(h)}h` : `${Math.round(h / 24)}d`);
 
-function Post({ p, img, own = false }: { p: TPost; img?: string; own?: boolean }) {
+function Post({ brand, p, img, own = false }: { brand: string; p: TPost; img?: string; own?: boolean }) {
   const tone = own ? (p.views >= 3000 ? "hit" : p.age_h >= 48 && p.views < 500 ? "flop" : "") : "hit";
   return (
-    <a className="tt-post" href={p.url} target="_blank" rel="noreferrer">
+    <Link className="tt-post" href={`/app/${brand}/tiktok/${p.code}`}>
       <div className="tt-img">
         {img ? <img src={img} alt="" loading="lazy" /> : <span className="oa-small oa-muted">No preview</span>}
         <span className={`tt-x ${tone}`}>{p.x}x</span>
@@ -51,7 +52,7 @@ function Post({ p, img, own = false }: { p: TPost; img?: string; own?: boolean }
           <span className="angle">{ANGLE[p.read.angle] ?? p.read.angle}</span>
         </div>
       )}
-    </a>
+    </Link>
   );
 }
 
@@ -146,7 +147,7 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
             ) : (
               <div className="tt-grid">
                 {breaks.slice(0, 30).map((p) => (
-                  <Post key={p.code} p={p} img={bImg[p.code]?.[0]} />
+                  <Post key={p.code} brand={brand} p={p} img={bImg[p.code]?.[0]} />
                 ))}
               </div>
             )}
@@ -162,7 +163,7 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
             ) : (
               <div className="tt-grid small">
                 {own.map((p) => (
-                  <Post key={p.code} p={p} img={oImg[p.code]?.[0]} own />
+                  <Post key={p.code} brand={brand} p={p} img={oImg[p.code]?.[0]} own />
                 ))}
               </div>
             )}

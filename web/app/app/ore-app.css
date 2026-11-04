@@ -644,3 +644,12 @@
 .tt-grade.gF { background: #d64545; }
 .tt-why { font-size: 11.5px; color: var(--oa-muted); line-height: 1.35; }
 .tt-kalo { font-size: 12.5px; white-space: normal; display: inline-flex; gap: 6px; align-items: center; }
+.tt-detail { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .tt-detail { grid-template-columns: minmax(0, 1fr); } }
+.tt-detail > .oa-card { display: grid; gap: 14px; justify-items: start; }
+.tt-slides { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 1fr); gap: 10px; overflow-x: auto; width: 100%; }
+.tt-slides figure { margin: 0; display: grid; gap: 4px; }
+.tt-slides img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 12px; display: block; }
+.tt-product.big { font-size: 16px; margin-bottom: 4px; }
+.tt-product.big .tt-grade { width: 26px; height: 26px; font-size: 14px; }
+.tt-inline { margin-top: 10px; }
