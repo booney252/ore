@@ -96,7 +96,7 @@ def breakouts(posts: list[dict], usual: float, now: float) -> list[dict]:
 
 
 def _norm(name: str) -> str:
-    return re.sub(r"[^a-z0-9]+", " ", (name or "").lower()).strip()
+    return re.sub(r"[^a-z0-9]+", " ", (name or "").lower().replace(".", "")).strip()
 
 
 def same_product(a: str, b: str) -> bool:
@@ -211,8 +211,11 @@ def scoreboard(own: list[dict], field: str) -> list[dict]:
     groups: dict = defaultdict(list)
     for p in own:
         name = (p.get("read") or {}).get(field)
-        if name:
-            groups[name].append(p)
+        if not name:
+            continue
+        if field == "product":  # "Dr.Melaxin spicule lip shot" and "DrMelaxin Spicule Lip Shot" are one product
+            name = next((g for g in groups if same_product(g, name) or _norm(g).replace(" ", "") == _norm(name).replace(" ", "")), name)
+        groups[name].append(p)
     rows = []
     for name, ps in groups.items():
         views = [p["views"] for p in ps]

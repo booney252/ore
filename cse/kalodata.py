@@ -121,7 +121,7 @@ def _cache(storage, k: str) -> dict:
     return json.loads(storage.read_text(k)) if storage.exists(k) else {}
 
 
-def rate_products(storage, cache_key: str, names: list[str], limit: int = 40) -> dict:
+def rate_products(storage, cache_key: str, names: list[str], limit: int = 80) -> dict:
     """{name: rating or None} for each product name, from the cache when fresh."""
     import requests
 
@@ -134,10 +134,18 @@ def rate_products(storage, cache_key: str, names: list[str], limit: int = 40) ->
             continue
         if spent >= limit:
             continue
-        try:
-            rating = lookup(name, session)
-        except Exception as e:  # noqa: BLE001 - one lookup failing shouldn't stop the page
-            log.warning("kalodata: %s: %s", name, e)
+        rating, failed = None, False
+        for wait in (0, 4, 10):  # Kalodata throttles bursts ("exceeding traffic control")
+            time.sleep(wait or 0.5)
+            try:
+                rating, failed = lookup(name, session), False
+                break
+            except Exception as e:  # noqa: BLE001 - one lookup failing shouldn't stop the page
+                failed = True
+                if "traffic" not in str(e):
+                    log.warning("kalodata: %s: %s", name, e)
+                    break
+        if failed:
             continue
         spent += 1
         cache[k] = {"rating": rating, "checked": int(now)}
