@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { readTextCached } from "@/lib/storage";
 import Tabs from "./Tabs";
 
 export function Logo({ href = "/app" }: { href?: string }) {
@@ -14,7 +15,7 @@ export function Logo({ href = "/app" }: { href?: string }) {
 }
 
 /** The glow band at the top of every brand page: nav, then the page's title. */
-export function Band({
+export async function Band({
   brand,
   name,
   label,
@@ -31,12 +32,14 @@ export function Band({
   chips?: React.ReactNode;
   children?: React.ReactNode;
 }) {
+  // brands that post on TikTok Shop (brand.md `tiktok_shop: true`) get the TikTok tab
+  const tiktok = brand ? /^tiktok_shop:\s*true/m.test((await readTextCached(`brands/${brand}/brand.md`, 60_000)) ?? "") : false;
   return (
     <header className="oa-band">
       <div className="oa-wrap">
         <nav className="oa-nav">
           <Logo />
-          {brand && <Tabs brand={brand} />}
+          {brand && <Tabs brand={brand} tiktok={tiktok} />}
           {name && (
             <Link href="/app" className="oa-who">
               {name}

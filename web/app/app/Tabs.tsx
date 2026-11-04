@@ -12,12 +12,12 @@ const TABS = [
   { href: "/brand", label: "My brand" },
 ];
 
-export default function Tabs({ brand }: { brand: string }) {
+export default function Tabs({ brand, tiktok = false }: { brand: string; tiktok?: boolean }) {
   const path = usePathname();
   const base = `/app/${brand}`;
   return (
     <div className="oa-tabs" role="navigation" aria-label="Sections">
-      {TABS.map((t) => {
+      {(tiktok ? [{ href: "/tiktok", label: "TikTok" }, ...TABS] : TABS).map((t) => {
         const on = t.href === "" ? path === base : path.startsWith(base + t.href);
         return (
           <Link key={t.label} href={base + t.href} aria-current={on ? "page" : undefined}>

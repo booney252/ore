@@ -19,6 +19,7 @@ Job types:
   track   {brand}                     daily: each advertiser's top 10; break down the new ones breaking in
   setup   {brand}                     new brand: profile, competitors, VOC, ads, research brief
   research {brand}                    refresh: re-pull customer quotes, re-run the 4 research prompts
+  tiktok  {brand}                     TikTok Shop daily: breakouts, own scoreboard, lineup, alerts
   breakdown {brand, ad}               one ad, on demand: transcribe it if needed, then take it apart
 
 A report job with batch: true (the scheduled weekly run) sends its breakdowns and the report to
@@ -35,7 +36,7 @@ import time
 from contextlib import nullcontext
 from datetime import datetime, timezone
 
-from . import ads, batch, breakdown, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
+from . import ads, batch, breakdown, tiktok, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -154,6 +155,8 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "report":
         return run_weekly(storage, slug, check=check, batch_api=bool(job.get("batch")),
                           resume=job.get("resume"))
+    if job["type"] == "tiktok":  # TikTok Shop daily: breakouts, scoreboards, lineup, alerts
+        return tiktok.refresh(storage, slug)
     if job["type"] == "breakdown":
         return run_breakdown(storage, slug, str(job["ad"]), check=check)
     if job["type"] == "iterations":

@@ -10,6 +10,7 @@ import { writeText } from "@/lib/storage";
 import { addCompetitor, removeCompetitor, RINGS, type Ring, setCompetitorPage } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { createJob, listJobs } from "@/lib/jobs";
+import { readLineup, saveLineup } from "@/lib/tiktok";
 import { addFeedback } from "@/lib/lessons";
 import { requireBrand, requireOwner } from "@/lib/session";
 import { ensurePortal } from "@/lib/portal";
@@ -74,6 +75,33 @@ export async function oaMake(form: FormData) {
   // one master script for the idea; each picked creator gets their own version once it's approved
   await createJob({ type: "master", brand, ...(latest && { report: latest }), ads: latest ? ads : [], idea, creators });
   redirect(`/app/${brand}/scripts?writing=1`);
+}
+
+/** TikTok page: pull every tracked account now (breakouts, your scoreboard, lineup, alerts). */
+export async function oaTiktokRefresh(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const busy = (await listJobs(brand, 10, ["tiktok"])).some((j) => ["pending", "running"].includes(j.status ?? ""));
+  if (!busy) await createJob({ type: "tiktok", brand });
+  redirect(`/app/${brand}/tiktok`);
+}
+
+/** TikTok page: add a product to the lineup, or take one out. */
+export async function oaLineup(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const items = await readLineup(brand);
+  const remove = text(form, "remove", 120);
+  if (remove) {
+    await saveLineup(brand, items.filter((i) => i.name !== remove));
+  } else {
+    const name = text(form, "name", 120);
+    if (name && !items.some((i) => i.name.toLowerCase() === name.toLowerCase())) {
+      items.push({ name, commission: text(form, "commission", 20), note: text(form, "note", 120), added: new Date().toISOString().slice(0, 10) });
+      await saveLineup(brand, items);
+    }
+  }
+  revalidatePath(`/app/${brand}/tiktok`);
 }
 
 /** "Take it apart": break down one ad now (it wasn't among the ones done in the weekly run). */

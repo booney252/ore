@@ -168,6 +168,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--batch", action="store_true",
                    help="breakdowns and the report through the Batch API: half price, can take hours")
 
+    p = sub.add_parser("tiktok", help="TikTok Shop daily: breakouts, your scoreboard, lineup, early alerts")
+    p.add_argument("brand")
+    p.add_argument("--no-read", action="store_true", help="skip reading slides with Claude")
+
     p = sub.add_parser("usage", help="what Claude cost this month, per brand and per job")
     p.add_argument("--month", help="YYYY-MM (default: this month)")
     p.add_argument("--brand")
@@ -293,6 +297,11 @@ def main(argv: list[str] | None = None) -> int:
                 except llm.HandoffPending:
                     log.info("weekly: paused for handoff answers; re-run `weekly` when answered.")
                 break
+            return 0
+        if args.command == "tiktok":
+            from . import tiktok
+
+            print(tiktok.refresh(storage, args.brand, read=not args.no_read))
             return 0
         if args.command == "usage":
             from datetime import date as _date

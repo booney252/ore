@@ -62,6 +62,7 @@ def normalize_tiktok(item: dict, handle: str) -> dict:
         "comments": int(s.get("comment_count") or 0),
         "secs": round(float(v.get("duration") or 0) / (1000 if (v.get("duration") or 0) > 1000 else 1), 1),
         "date": _day(item.get("create_time")),
+        "ts": int(item.get("create_time") or 0),
         "caption": (item.get("desc") or "").strip(),
         "cover_url": _first_url(v.get("origin_cover") or v.get("cover")),
         "media_url": _first_url(v.get("download_no_watermark_addr") or v.get("play_addr")
