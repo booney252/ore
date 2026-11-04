@@ -306,7 +306,14 @@ def refresh(storage, slug: str, source=None, client=None, read: bool = True) -> 
             if got:
                 reads[p["code"]] = p["read"] = got
     storage.write_text(key(slug, "reads.json"), json.dumps(reads))
+    _finish(storage, slug, usuals, breaks, own, updated=datetime.now(timezone.utc).isoformat(timespec="seconds"))
+    log.info("tiktok: %d accounts, %d breakouts, %d own posts", len(accts), len(breaks), len(own))
+    return key(slug, "latest.json")
 
+
+def _finish(storage, slug: str, usuals: dict, breaks: list[dict], own: list[dict], updated: str) -> dict:
+    """Kalodata grades, scoreboards, lineup and alerts, then save latest.json."""
+    todo = breaks + own
     lineup = _load(storage, key(slug, "lineup.json"), [])
     if kalodata.available():
         names = [(p.get("read") or {}).get("product", "") for p in todo] + [i["name"] for i in lineup]
@@ -319,10 +326,10 @@ def refresh(storage, slug: str, source=None, client=None, read: bool = True) -> 
                                             "date", "ts", "age_h", "x", "images", "read", "shoppable",
                                             "kalo")}
     data = {
-        "updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "updated": updated,
         "accounts": usuals,
         "breakouts": [slim(p) for p in breaks],
-        "own": [slim(p) for p in sorted(own, key=lambda p: -p["ts"])],
+        "own": [slim(p) for p in sorted(own, key=lambda p: -(p.get("ts") or 0))],
         "angles": scoreboard(own, "angle"),
         "products": scoreboard(own, "product"),
         "lineup": [lineup_status(i, own) for i in lineup],
@@ -332,6 +339,25 @@ def refresh(storage, slug: str, source=None, client=None, read: bool = True) -> 
     out = json.dumps(data)
     storage.write_text(key(slug, "latest.json"), out)
     storage.write_text(key(slug, f"days/{date.today().isoformat()}.json"), out)
-    log.info("tiktok: %d accounts, %d breakouts, %d own posts, %d alerts",
-             len(accts), len(breaks), len(own), len(data["alerts"]))
+    return data
+
+
+def add_reads(storage, slug: str, new: dict) -> str:
+    """Save slide reads made outside the API (e.g. by hand in a session) and rebuild the page
+    from the last pull, without pulling again."""
+    reads = _load(storage, key(slug, "reads.json"), {})
+    for code, r in new.items():
+        if isinstance(r, dict) and any(r.get(k) for k in ("product", "hook")):
+            r = {k: str(r.get(k) or "")[:300] for k in ("product", "category", "hook", "angle", "format")}
+            r["angle"] = r["angle"] if r["angle"] in ANGLES else "other"
+            reads[code] = r
+    storage.write_text(key(slug, "reads.json"), json.dumps(reads))
+    last = _load(storage, key(slug, "latest.json"), None)
+    if not last:
+        raise ValueError(f"{slug}: no pull yet")
+    for p in last["breakouts"] + last["own"]:
+        if p["code"] in reads:
+            p["read"] = reads[p["code"]]
+    data = _finish(storage, slug, last["accounts"], last["breakouts"], last["own"], last["updated"])
+    log.info("tiktok: %d reads saved, %d alerts", len(reads), len(data["alerts"]))
     return key(slug, "latest.json")

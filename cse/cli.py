@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 import argparse
+import json
 import logging
 import sys
 from pathlib import Path
@@ -171,6 +172,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("tiktok", help="TikTok Shop daily: breakouts, your scoreboard, lineup, early alerts")
     p.add_argument("brand")
     p.add_argument("--no-read", action="store_true", help="skip reading slides with Claude")
+    p.add_argument("--reads", help="a JSON file of slide reads ({code: {product, hook, ...}}): save them and rebuild the page without pulling")
 
     p = sub.add_parser("usage", help="what Claude cost this month, per brand and per job")
     p.add_argument("--month", help="YYYY-MM (default: this month)")
@@ -301,7 +303,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "tiktok":
             from . import tiktok
 
-            print(tiktok.refresh(storage, args.brand, read=not args.no_read))
+            if args.reads:
+                print(tiktok.add_reads(storage, args.brand, json.loads(Path(args.reads).read_text())))
+            else:
+                print(tiktok.refresh(storage, args.brand, read=not args.no_read))
             return 0
         if args.command == "usage":
             from datetime import date as _date
