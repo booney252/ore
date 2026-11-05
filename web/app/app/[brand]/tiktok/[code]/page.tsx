@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { brandName } from "@/lib/brands";
-import { ago, ANGLE_LABEL, fmt, loadDaily, sameProduct, slideUrls, type TPost } from "@/lib/tiktok";
-import { oaLineup } from "../../../actions";
+import { ago, ANGLE_LABEL, fmt, loadDaily, loadSales, sameProduct, slideUrls, type TPost } from "@/lib/tiktok";
+import { oaLineup, oaTiktokSale } from "../../../actions";
 import SubmitButton from "../../../SubmitButton";
 import { Band } from "../../../ui";
 
@@ -29,7 +29,7 @@ function Mini({ brand, p, img }: { brand: string; p: TPost; img?: string }) {
 /** One TikTok post: its slides, why it counts as a breakout, what it sells and how it's built. */
 export default async function TikTokPost({ params }: { params: Promise<{ brand: string; code: string }> }) {
   const { brand, code } = await params;
-  const [name, d] = await Promise.all([brandName(brand), loadDaily(brand)]);
+  const [name, d, sales] = await Promise.all([brandName(brand), loadDaily(brand), loadSales(brand)]);
   const all = [...(d?.breakouts ?? []), ...(d?.own ?? [])];
   const p = all.find((x) => x.code === code);
   if (!d || !p) notFound();
@@ -105,6 +105,24 @@ export default async function TikTokPost({ params }: { params: Promise<{ brand: 
                   </div>
                 </dl>
               </section>
+
+              {own && (
+                <section className="oa-card">
+                  <h2 className="wa-h">Sales from this post</h2>
+                  {(sales[code]?.orders ?? 0) > 0 && (
+                    <p className="oa-small">
+                      <b>{sales[code].orders} orders</b>, {Math.round((sales[code].orders / Math.max(p.views, 1)) * 10000) / 10} per 1K views.
+                    </p>
+                  )}
+                  <form action={oaTiktokSale} className="tt-add">
+                    <input type="hidden" name="brand" value={brand} />
+                    <input type="hidden" name="code" value={code} />
+                    <input name="orders" type="number" min={0} inputMode="numeric" defaultValue={sales[code]?.orders ?? ""} placeholder="Orders" aria-label="Orders from this post" />
+                    <SubmitButton className="oa-btn">Save</SubmitButton>
+                  </form>
+                  <p className="oa-small oa-muted">From your TikTok Shop video stats. It feeds the What sells board.</p>
+                </section>
+              )}
 
               <section className="oa-card">
                 <h2 className="wa-h">What it sells</h2>

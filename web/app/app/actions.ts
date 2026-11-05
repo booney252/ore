@@ -10,7 +10,7 @@ import { writeText } from "@/lib/storage";
 import { addCompetitor, removeCompetitor, RINGS, type Ring, setCompetitorPage } from "@/lib/competitors";
 import { creatorExists, CREATOR_FIELDS, removeCreator, saveCreator } from "@/lib/creators";
 import { createJob, listJobs } from "@/lib/jobs";
-import { readLineup, saveLineup } from "@/lib/tiktok";
+import { readLineup, saveLineup, saveSale } from "@/lib/tiktok";
 import { addFeedback } from "@/lib/lessons";
 import { requireBrand, requireOwner } from "@/lib/session";
 import { ensurePortal } from "@/lib/portal";
@@ -84,6 +84,18 @@ export async function oaTiktokRefresh(form: FormData) {
   const busy = (await listJobs(brand, 10, ["tiktok"])).some((j) => ["pending", "running"].includes(j.status ?? ""));
   if (!busy) await createJob({ type: "tiktok", brand });
   redirect(`/app/${brand}/tiktok`);
+}
+
+/** TikTok page: log how many orders one of your posts made. */
+export async function oaTiktokSale(form: FormData) {
+  const brand = checkSlug(text(form, "brand", 80));
+  await requireBrand(brand);
+  const code = text(form, "code", 40);
+  if (!/^\d{6,30}$/.test(code)) return;
+  const orders = Math.max(0, Math.min(100000, Math.round(Number(text(form, "orders", 10)) || 0)));
+  await saveSale(brand, code, orders);
+  revalidatePath(`/app/${brand}/tiktok`);
+  revalidatePath(`/app/${brand}/tiktok/${code}`);
 }
 
 /** TikTok page: add a product to the lineup, or take one out. */

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { brandName } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
-import { ago, fmt, loadDaily, slideUrls, type Board, type TPost } from "@/lib/tiktok";
+import { ago, fmt, loadDaily, loadSales, salesBoard, slideUrls, type Board, type TPost } from "@/lib/tiktok";
 import { oaLineup, oaTiktokRefresh } from "../../actions";
 import SubmitButton from "../../SubmitButton";
 import { Band, Working } from "../../ui";
@@ -23,7 +23,7 @@ const ANGLE: Record<string, string> = {
 
 const age = (h: number) => (h < 24 ? `${Math.round(h)}h` : `${Math.round(h / 24)}d`);
 
-function Post({ brand, p, img, own = false }: { brand: string; p: TPost; img?: string; own?: boolean }) {
+function Post({ brand, p, img, own = false, sold = 0 }: { brand: string; p: TPost; img?: string; own?: boolean; sold?: number }) {
   const tone = own ? (p.views >= 3000 ? "hit" : p.age_h >= 48 && p.views < 500 ? "flop" : "") : "hit";
   return (
     <Link className="tt-post" href={`/app/${brand}/tiktok/${p.code}`}>
@@ -47,6 +47,7 @@ function Post({ brand, p, img, own = false }: { brand: string; p: TPost; img?: s
       )}
       {p.kalo && <span className="tt-why">{p.kalo.why}</span>}
 
+      {sold > 0 && <span className="tt-sold">{sold} sold</span>}
       {p.read?.angle && (
         <div className="tt-chips">
           <span className="angle">{ANGLE[p.read.angle] ?? p.read.angle}</span>
@@ -95,7 +96,8 @@ function BoardTable({ title, rows, label }: { title: string; rows: Board[]; labe
 /** TikTok Shop daily: what's breaking out, your scoreboard, your product lineup, early alerts. */
 export default async function TikTokPage({ params }: { params: Promise<{ brand: string }> }) {
   const { brand } = await params;
-  const [name, d, jobs] = await Promise.all([brandName(brand), loadDaily(brand), listJobs(brand, 5, ["tiktok"])]);
+  const [name, d, jobs, sales] = await Promise.all([brandName(brand), loadDaily(brand), listJobs(brand, 5, ["tiktok"]), loadSales(brand)]);
+  const selling = salesBoard(d?.own ?? [], sales);
   const working = jobs.some((j) => ["pending", "running"].includes(j.status ?? ""));
   const breaks = d?.breakouts ?? [];
   const own = (d?.own ?? []).slice(0, 48);
@@ -163,9 +165,40 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
             ) : (
               <div className="tt-grid small">
                 {own.map((p) => (
-                  <Post key={p.code} brand={brand} p={p} img={oImg[p.code]?.[0]} own />
+                  <Post key={p.code} brand={brand} p={p} img={oImg[p.code]?.[0]} own sold={sales[p.code]?.orders ?? 0} />
                 ))}
               </div>
+            )}
+          </section>
+
+          <section className="oa-card">
+            <h2 className="wa-h">What sells</h2>
+            <p className="oa-small oa-muted">Orders you logged on your posts, by product. Views don&apos;t pay; orders do. Log a post&apos;s orders on its page.</p>
+            {selling.every((r) => !r.orders) ? (
+              <p className="oa-small oa-muted">No orders logged yet.</p>
+            ) : (
+              <div className="tt-scroll"><table className="tt-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Orders</th>
+                    <th>Per 1K views</th>
+                    <th>Posts</th>
+                    <th>Views</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selling.filter((r) => r.orders).map((r) => (
+                    <tr key={r.name}>
+                      <td>{r.name}</td>
+                      <td className="good">{r.orders}</td>
+                      <td>{r.per1k}</td>
+                      <td>{r.posts}</td>
+                      <td>{fmt(r.views)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table></div>
             )}
           </section>
 

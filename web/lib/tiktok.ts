@@ -116,3 +116,39 @@ export function sameProduct(a: string, b: string): boolean {
   const [s, l] = x.size <= y.size ? [x, y] : [y, x];
   return [...s].every((w) => l.has(w));
 }
+
+/** Orders the owner logged for their own posts (brands/<brand>/tiktok/sales.json). */
+export type Sale = { orders: number; updated?: string };
+
+export async function loadSales(brand: string): Promise<Record<string, Sale>> {
+  const raw = await readText(key(brand, "sales.json"));
+  return raw ? (JSON.parse(raw) as Record<string, Sale>) : {};
+}
+
+export async function saveSale(brand: string, code: string, orders: number): Promise<void> {
+  const sales = await loadSales(brand);
+  if (orders > 0) sales[code] = { orders, updated: new Date().toISOString() };
+  else delete sales[code];
+  await writeText(key(brand, "sales.json"), JSON.stringify(sales, null, 2));
+}
+
+export type SalesRow = { name: string; posts: number; views: number; orders: number; per1k: number };
+
+/** The owner's posts grouped by product: orders and orders per 1,000 views, best sellers first. */
+export function salesBoard(own: TPost[], sales: Record<string, Sale>): SalesRow[] {
+  const groups: { name: string; posts: TPost[] }[] = [];
+  for (const p of own) {
+    const name = p.read?.product;
+    if (!name) continue;
+    const g = groups.find((x) => sameProduct(x.name, name) || x.name.replace(/\W/g, "").toLowerCase() === name.replace(/\W/g, "").toLowerCase());
+    if (g) g.posts.push(p);
+    else groups.push({ name, posts: [p] });
+  }
+  return groups
+    .map((g) => {
+      const views = g.posts.reduce((a, p) => a + p.views, 0);
+      const orders = g.posts.reduce((a, p) => a + (sales[p.code]?.orders ?? 0), 0);
+      return { name: g.name, posts: g.posts.length, views, orders, per1k: views ? Math.round((orders / views) * 10000) / 10 : 0 };
+    })
+    .sort((a, b) => b.orders - a.orders || b.per1k - a.per1k || b.views - a.views);
+}
