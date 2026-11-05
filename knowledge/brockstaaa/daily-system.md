@@ -16,4 +16,4 @@ Rules for every bucket:
 - Never repost another account's actual slide images. Copies are rebuilt with our photos.
 - Before/afters match (same person, or same hair color and type), and slide 1 matches them.
 - No photo twice within 7 days, except product shots.
-- A copied or plugged product needs product photos and must be in the TikTok Shop showcase. If there are no photos yet, the plan lists it under "needs product photos" instead of making the post.
+- A copied or plugged product needs product photos and must be in the TikTok Shop showcase. If there are no photos yet, the plan lists it under "needs product photos" with its TikTok Shop link (https://shop.tiktok.com/view/product/<id>?region=US, id from Kalodata) and the post it came from, and the owner makes the product photos in Flow (decided 2026-11-05; `cse/productshots.py` can do it through the Gemini API but the owner prefers making them).
