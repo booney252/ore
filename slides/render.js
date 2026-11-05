@@ -27,7 +27,7 @@ const CSS = `
 .dim::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
 .t{position:absolute;left:50%;width:470px;margin-left:-235px;text-align:center;font-variation-settings:"wght" 500;font-size:42px;line-height:1.16;
    color:#FBEEA9;z-index:2;white-space:pre-line}
-.top{top:300px}.middle{top:50%;transform:translateY(-50%)}.bottom{bottom:330px}
+.top{top:300px}.high{top:150px}.middle{top:50%;transform:translateY(-50%)}.bottom{bottom:330px}
 .half{position:absolute;left:0;right:0;height:960px;background-size:cover;background-position:center}
 .half.a{top:0}.half.b{top:960px}
 .lab{position:absolute;left:0;right:0;text-align:center;font-size:42px;font-variation-settings:"wght" 500;color:#FBEEA9;z-index:2}
@@ -66,6 +66,7 @@ const CSS = `
 .im-msgs{position:absolute;top:630px;left:60px;right:60px;display:flex;flex-direction:column}
 .im-m{position:relative;max-width:900px;padding:24px 40px;border-radius:46px;font-size:42px;line-height:1.3;margin-top:8px}
 .im-m.im-gap{margin-top:30px}
+.im-compact .im-m{font-size:38px;padding:17px 34px;margin-top:5px;line-height:1.25}.im-compact .im-m.im-gap{margin-top:18px}
 .im-m.im-them{align-self:flex-start;background:#262628}
 .im-m.im-me{align-self:flex-end;background:#2f8cfa}
 .im-m.im-tail.im-them::before{content:"";position:absolute;bottom:0;left:-12px;width:40px;height:34px;background:#262628;border-bottom-right-radius:30px}
@@ -87,7 +88,7 @@ function slideHTML(s, base) {
     case "photo":
       return bg(s.bg) + hook(s.pos || "middle");
     case "product":
-      return bg(s.bg) + hook(s.pos || "middle");
+      return bg(s.bg) + hook(s.pos || "top"); // above the product, not on it
     case "split":
       return (
         `<div class="half a" style="background-image:url('${url(base, s.top)}')"></div>` +
@@ -131,7 +132,7 @@ function slideHTML(s, base) {
         ? `<div class="im-av" style="background-image:url('${url(base, s.avatar)}')"></div>`
         : `<div class="im-av">${esc(s.initial || (s.name || "?").trim()[0].toUpperCase())}</div>`;
       return (
-        `<div class="ios"><div class="im-sb"><div class="im-tm">${esc(s.time || "11:11")}</div><div class="im-ic">` +
+        `<div class="ios${ms.length > 8 ? " im-compact" : ""}"><div class="im-sb"><div class="im-tm">${esc(s.time || "11:11")}</div><div class="im-ic">` +
         `<svg width="54" height="34" viewBox="0 0 54 34"><rect x="0" y="24" width="9" height="10" rx="2" fill="#fff"/><rect x="14" y="17" width="9" height="17" rx="2" fill="#fff"/><rect x="28" y="9" width="9" height="25" rx="2" fill="#fff"/><rect x="42" y="0" width="9" height="34" rx="2" fill="#fff"/></svg>` +
         `<svg width="50" height="36" viewBox="0 0 50 36"><path d="M25 36l7-8a10 10 0 0 0-14 0z" fill="#fff"/><path d="M25 18a18 18 0 0 1 12.7 5.3l4.2-4.7A24 24 0 0 0 8.1 18.6l4.2 4.7A18 18 0 0 1 25 18z" fill="#fff"/><path d="M25 6a30 30 0 0 1 21.2 8.8l4.2-4.7a36 36 0 0 0-50.8 0l4.2 4.7A30 30 0 0 1 25 6z" fill="#fff"/></svg>` +
         `<span class="im-bat"><b>${esc(s.battery || "98")}</b><i></i></span></div></div>` +
