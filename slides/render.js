@@ -24,13 +24,13 @@ const CSS = `
 .s{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:TT}
 .bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .dim::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
-.t{position:absolute;left:90px;right:90px;text-align:center;font-variation-settings:"wght" 500;font-size:78px;line-height:1.18;
-   color:#FFF59D;text-shadow:0 0 3px rgba(0,0,0,.55),0 2px 10px rgba(0,0,0,.35);z-index:2;white-space:pre-line}
+.t{position:absolute;left:50%;width:470px;margin-left:-235px;text-align:center;font-variation-settings:"wght" 500;font-size:42px;line-height:1.16;
+   color:#FBEEA9;z-index:2;white-space:pre-line}
 .top{top:300px}.middle{top:50%;transform:translateY(-50%)}.bottom{bottom:330px}
 .half{position:absolute;left:0;right:0;height:960px;background-size:cover;background-position:center}
 .half.a{top:0}.half.b{top:960px}
-.lab{position:absolute;left:60px;font-size:64px;font-variation-settings:"wght" 500;color:#FFF59D;text-shadow:0 0 3px rgba(0,0,0,.6),0 2px 10px rgba(0,0,0,.4);z-index:2}
-.lab.a{top:60px}.lab.b{top:1020px}
+.lab{position:absolute;left:0;right:0;text-align:center;font-size:42px;font-variation-settings:"wght" 500;color:#FBEEA9;z-index:2}
+.lab.a{top:440px}.lab.b{top:1400px}
 .card{position:absolute;left:70px;right:70px;top:50%;transform:translateY(-50%);background:#fff;border-radius:34px;padding:44px 46px;z-index:2;color:#0f1419;font-variation-settings:"wght" 400}
 .who{display:flex;align-items:center;gap:20px;margin-bottom:22px}
 .av{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#f9a8d4,#93c5fd)}
@@ -50,9 +50,9 @@ function slideHTML(s, base) {
   const hook = (pos = "top") => (s.text ? `<div class="t ${pos}">${esc(s.text)}</div>` : "");
   switch (s.type) {
     case "photo":
-      return bg(s.bg) + hook(s.pos || "top");
+      return bg(s.bg) + hook(s.pos || "middle");
     case "product":
-      return bg(s.bg) + hook(s.pos || "bottom");
+      return bg(s.bg) + hook(s.pos || "middle");
     case "split":
       return (
         `<div class="half a" style="background-image:url('${url(base, s.top)}')"></div>` +
@@ -77,7 +77,7 @@ function slideHTML(s, base) {
         `<div class="th"><div class="from">${esc(s.from)}</div>${s.messages
           .map((m) => `<div class="bub ${m.me ? "me" : "them"}">${esc(m.text)}</div>`)
           .join("")}</div>` +
-        hook(s.pos || "top")
+        hook(s.pos || "middle")
       );
     default:
       throw new Error("unknown slide type: " + s.type);

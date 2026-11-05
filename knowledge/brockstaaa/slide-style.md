@@ -1,9 +1,15 @@
-# brockstaaa slide style (locked 2026-11-05)
+# brockstaaa slide style (matched to the real posts 2026-11-05)
+
+Measured from @brockstaaa's own slides (the 53K "thin lips" post and others pulled by the TikTok page).
 
 - Size: 1080 x 1920 (TikTok photo mode)
-- Font: TikTok Sans (`assets/slides/TikTokSans.ttf`, variable), weight 500 (medium). Not bold.
-- Color: light yellow #FFF59D, with a soft dark shadow so it reads on any photo
-  (`text-shadow: 0 0 3px rgba(0,0,0,.55), 0 2px 10px rgba(0,0,0,.35)`)
-- Size 78px, line height 1.18, centered, 90px side margins
-- Placement: upper third (top about 300px), kept off faces
+- Font: TikTok Sans (`assets/slides/TikTokSans.ttf`, variable), weight 500 (medium)
+- Size: 42px, line height about 1.16. Small, like TikTok's own text tool. Not big.
+- Color: pale yellow #FBEEA9. **No shadow, no outline**: plain text.
+- Placement: centered in the middle of the slide, wrapping at about 470px wide
+  ("how to unf*ck your / thin lips (naturally)" on two lines)
 - Lowercase, like the hooks in the daily post lists
+- Before / after labels: the same small text, centered on each half
+
+Before / afters must be believable: the same person, or at least the same hair color and type,
+in both halves (never brown frizzy hair "before" and blonde waves "after"). Slide 1 should match too.
