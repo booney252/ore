@@ -28,7 +28,7 @@ main::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .themebtn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .themebtn .i-moon{display:none;fill:currentColor;stroke:none}
 .themebtn.isdark .i-sun{display:block}.themebtn:not(.isdark) .i-sun{display:none}.themebtn:not(.isdark) .i-moon{display:block}
-.anchor{margin-top:10px;font-weight:600;color:var(--ink)}.anchor-sub{margin-top:4px;font-size:15px;color:var(--muted)}.founder{max-width:68ch;font-size:18px;line-height:1.6;color:var(--ink)}.td-form{display:grid;gap:12px;max-width:560px;margin-top:22px}.td-form label{display:grid;gap:6px;font-size:14px;font-weight:600}.td-form input,.td-form textarea{font:inherit;font-weight:400;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.92);color:#0f1c33}.td-form .btn{justify-self:start}.td-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}.td-msg{margin:0;font-weight:600}.shot{margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0}.shot img{width:100%;height:auto;display:block;border-radius:18px;border:1px solid var(--glass-line,rgba(15,28,51,.1));box-shadow:0 30px 60px -36px rgba(15,28,51,.45);background:#fff}.shot figcaption{font-size:15px;color:var(--muted)}.shot figcaption b{color:var(--ink)}.shot-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}.shot-phone{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;align-items:center;margin-top:8px}.shot.phone img{border-radius:28px}.shot-phone h3{font-size:26px;margin:0 0 10px}.shot-phone p{color:var(--muted);font-size:17px;max-width:42ch}@media (max-width:760px){.shot-two{grid-template-columns:minmax(0,1fr)}.shot-phone{grid-template-columns:minmax(0,1fr)}.shot.phone{max-width:260px}}</style></head><body><title>Ore</title>
+.anchor{margin-top:10px;font-weight:600;color:var(--ink)}.anchor-sub{margin-top:4px;font-size:15px;color:var(--muted)}.founder{max-width:68ch;font-size:18px;line-height:1.6;color:var(--ink)}.td-form{display:grid;gap:12px;max-width:560px;margin-top:22px}.td-form label{display:grid;gap:6px;font-size:14px;font-weight:600}.td-form input,.td-form textarea{font:inherit;font-weight:400;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.92);color:#0f1c33}.td-form .btn{justify-self:start}.td-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}.td-msg{margin:0;font-weight:600}.td-count{display:none;margin:0;font-family:var(--mono,monospace);font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}.td-nav{display:flex;gap:16px;align-items:center}.td-back{display:none;background:none;border:0;color:#fff;font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;padding:0}.td-form.stepper .td-count{display:block}.td-form.stepper label{display:none;font-size:20px}.td-form.stepper label.cur{display:grid}.td-form.stepper.past1 .td-back{display:inline}.shot{margin:0 0 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0}.shot img{width:100%;height:auto;display:block;border-radius:18px;border:1px solid var(--glass-line,rgba(15,28,51,.1));box-shadow:0 30px 60px -36px rgba(15,28,51,.45);background:#fff}.shot figcaption{font-size:15px;color:var(--muted)}.shot figcaption b{color:var(--ink)}.shot-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}.shot-phone{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;align-items:center;margin-top:8px}.shot.phone img{border-radius:28px}.shot-phone h3{font-size:26px;margin:0 0 10px}.shot-phone p{color:var(--muted);font-size:17px;max-width:42ch}@media (max-width:760px){.shot-two{grid-template-columns:minmax(0,1fr)}.shot-phone{grid-template-columns:minmax(0,1fr)}.shot.phone{max-width:260px}}</style></head><body><title>Ore</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -839,14 +839,14 @@ h1 .it{font-size:1.06em}
       <div class="final">
         <p class="label">Free teardown</p>
         <h2>Send us your app and <span class="it">3 creators</span>.</h2>
-        <p>We'll run them through Ore and send this week's breakouts in your market, with a script written for each creator. No call. No card.</p>
-        <ul><li>Send your app and a line on each creator. Takes a minute.</li><li>In a couple of days: your market's breakouts, why they work, and a script for each creator.</li><li>Keep the scripts either way.</li></ul>
+        <p>In a couple of days you get this week's breakouts in your market and a script written for each creator. No call. No card. Keep the scripts either way.</p>
         <form class="td-form" action="/api/teardown" method="post">
+          <p class="td-count" aria-live="polite"></p>
           <label>Your app<input name="app" required maxlength="300" placeholder="App name or App Store link"></label>
           <label>Your email<input name="email" type="email" required maxlength="200" placeholder="you@yourapp.com"></label>
           <label>3 creators<textarea name="creators" rows="3" maxlength="2000" placeholder="A line on each: who they are and what they post"></textarea></label>
           <input class="td-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <button class="btn btn-white" type="submit">Request your teardown</button>
+          <div class="td-nav"><button class="btn btn-white" type="submit">Request your teardown</button><button class="td-back" type="button">Back</button></div>
           <p class="td-msg" id="td-msg" role="status"></p>
         </form>
       </div>
@@ -987,5 +987,11 @@ h1 .it{font-size:1.06em}
   b.addEventListener('click',function(){var next=cur()==='dark'?'light':'dark';root.setAttribute('data-theme',next);try{localStorage.setItem('ore-theme',next)}catch(e){}sync()});
   if(mq&&mq.addEventListener)mq.addEventListener('change',sync);sync()})();
 </script>
+<script>(function(){var f=document.querySelector('.td-form');if(!f)return;var q=location.search;if(q.indexOf('sent=1')>-1||q.indexOf('err=1')>-1)return;
+var ls=[].slice.call(f.querySelectorAll('label')),btn=f.querySelector('button[type=submit]'),back=f.querySelector('.td-back'),cnt=f.querySelector('.td-count'),i=0;
+var names=['Next','Next','Request your teardown'];f.classList.add('stepper');
+function go(n,focus){i=n;ls.forEach(function(l,k){l.classList.toggle('cur',k===i)});f.classList.toggle('past1',i>0);cnt.textContent=(i+1)+' of '+ls.length;btn.textContent=names[i];if(focus){var x=ls[i].querySelector('input,textarea');x&&x.focus()}}
+f.noValidate=true;f.addEventListener('submit',function(e){for(var k=0;k<=i;k++){var x=ls[k].querySelector('input,textarea');if(x&&!x.checkValidity()){e.preventDefault();if(k!==i)go(k,false);x.focus();x.reportValidity();return}}if(i<ls.length-1){e.preventDefault();go(i+1,true)}});
+back.addEventListener('click',function(){if(i>0)go(i-1,true)});go(0,false)})();</script>
 <script>(function(){var q=location.search,m=document.getElementById('td-msg');if(!m)return;if(q.indexOf('sent=1')>-1){m.textContent='Got it. Your teardown is on its way within a couple of days.';var f=m.closest('form');[].slice.call(f.querySelectorAll('label,button')).forEach(function(e){e.style.display='none'})}else if(q.indexOf('err=1')>-1){m.textContent='Add your app and a valid email, then try again.'}})();</script>
 </body></html>
