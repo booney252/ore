@@ -5,3 +5,6 @@ __pycache__/
 .pytest_cache/
 data/
 exports/peptidepal/ads/*.mp4
+
+# rendered daily slides (made by slides/render.js; sent to the owner, not kept in git)
+exports/*/slides-*.zip
