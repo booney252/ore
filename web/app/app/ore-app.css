@@ -654,3 +654,25 @@
 .tt-product.big .tt-grade { width: 26px; height: 26px; font-size: 14px; }
 .tt-inline { margin-top: 10px; }
 .tt-sold { justify-self: start; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(31, 157, 85, 0.14); color: #1f9d55; }
+
+/* free teardown report (/t/<token>) */
+.td-app{display:flex;gap:16px;align-items:center}
+.td-app img{border-radius:14px;flex:none}
+.td-app div{display:grid;gap:2px;min-width:0}
+.td-ad{display:grid;grid-template-columns:200px minmax(0,1fr);gap:22px;align-items:start}
+.td-frame{border-radius:14px;overflow:hidden;background:#eef2f8;aspect-ratio:9/16;display:grid;place-items:center}
+.td-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.td-body{display:grid;gap:10px;min-width:0}
+.td-body h3{margin:6px 0 0;font-size:16px}
+.td-body p{margin:0}
+.td-hook{font-size:20px;line-height:1.35;display:block}
+.td-els{margin:0;padding-left:18px;display:grid;gap:6px}
+.td-more .oa-form{display:grid;gap:14px}
+.td-count{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:10px}
+.td-count legend{font-weight:600;margin-bottom:8px}
+.td-count label{display:flex;gap:6px;align-items:center;white-space:nowrap;padding:8px 14px;border:1px solid rgba(15,28,51,.14);border-radius:999px;cursor:pointer}
+.td-script{display:grid;gap:10px}
+.td-cta{text-align:center;display:grid;gap:10px;justify-items:center}
+.td-cta h2{margin:0}
+.td-cta p{margin:0;max-width:56ch}
+@media (max-width:640px){.td-ad{grid-template-columns:minmax(0,1fr)}.td-frame{max-width:220px}}

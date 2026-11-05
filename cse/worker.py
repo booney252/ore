@@ -36,7 +36,7 @@ import time
 from contextlib import nullcontext
 from datetime import datetime, timezone
 
-from . import ads, batch, breakdown, tiktok, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
+from . import ads, batch, breakdown, tiktok, teardown, creative, lessons, masters, organic, ingredients, llm, mechanisms, research, setup, stages, studio, tracking, voc
 from . import brand as brandlib
 
 log = logging.getLogger("cse")
@@ -155,6 +155,8 @@ def run_job(storage, job: dict) -> str | None:
     if job["type"] == "report":
         return run_weekly(storage, slug, check=check, batch_api=bool(job.get("batch")),
                           resume=job.get("resume"))
+    if job["type"] == "teardown":  # a free teardown from the landing page (cse/teardown.py)
+        return teardown.build(storage, job["token"], check=check)
     if job["type"] == "tiktok":  # TikTok Shop daily: breakouts, scoreboards, lineup, alerts
         return tiktok.refresh(storage, slug)
     if job["type"] == "breakdown":
@@ -282,6 +284,10 @@ def loop(storage, once: bool = False, every: int = 30) -> None:
     log.info("worker: watching jobs/pending/ in %s", storage.describe())
     while True:
         check_batches(storage)
+        try:
+            teardown.daily(storage)
+        except Exception:  # noqa: BLE001 - the daily teardown pass must never stop the worker
+            log.exception("worker: teardown daily pass failed")
         did = process_one(storage)
         if once and not did:
             return

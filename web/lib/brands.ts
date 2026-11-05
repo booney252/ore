@@ -22,7 +22,7 @@ export function checkFile(name: string): string {
 }
 
 export async function listBrands(): Promise<{ slug: string; name: string }[]> {
-  const slugs = (await listFolders("brands/")).filter((s) => SLUG.test(s));
+  const slugs = (await listFolders("brands/")).filter((s) => SLUG.test(s) && !s.startsWith("td-")); // td-*: free teardown apps
   return Promise.all(slugs.map(async (slug) => ({ slug, name: await brandName(slug) })));
 }
 

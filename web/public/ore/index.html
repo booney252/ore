@@ -42,6 +42,26 @@ main::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .pho-screen img{width:100%;height:auto;aspect-ratio:9/19.3;object-fit:cover;object-position:top;display:block}
 .dev-cap{margin:18px 0 0;font-size:15px;color:var(--muted);max-width:70ch}.dev-cap b{color:var(--ink)}
 @media (max-width:720px){.bw{border-radius:16px;padding:0 6px 6px}.bw-bar{height:34px;gap:6px}.bw-bar i{width:9px;height:9px}.bw-url{font-size:10px;padding:4px 10px}.bw-screen{border-radius:10px}.dev-stage{padding-right:0;padding-bottom:64px}.pho{width:30%;border-radius:24px;padding:4px}.pho-screen{border-radius:20px;padding-top:16px}.pho-screen::before{height:9px;top:4px}}
+.td-final{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center}
+.td-sample{margin:0;background:rgba(255,255,255,.94);color:#0f1c33;border-radius:22px;padding:22px;box-shadow:0 40px 70px -40px rgba(15,28,51,.55);display:grid;gap:10px;transform:rotate(1.2deg)}
+.td-s-label{margin:0;font-family:var(--mono,ui-monospace,monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#5b6b85}
+.td-s-ad{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;align-items:center}
+.td-s-thumb{aspect-ratio:9/14;border-radius:10px;background:#2d63d8 url(/ore/ugc-thumb.jpg) center/cover no-repeat}
+.td-s-meta{margin:0 0 6px;font-size:12px;color:#5b6b85}
+.td-sample q{font-size:17px;line-height:1.35;display:block}
+.td-s-h{margin:4px 0 0;font-weight:700;font-size:14px}
+.td-sample ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px;color:#33415c}
+.td-s-line{margin:0;font-size:14px;color:#33415c;border-left:3px solid #7a5ce6;padding-left:10px}
+.td-s-foot{margin:4px 0 0;font-size:12px;color:#5b6b85}
+.final .td-sample p{margin:0;max-width:none;color:#33415c;font-size:14px}
+.final .td-sample .td-s-label,.final .td-sample .td-s-meta,.final .td-sample .td-s-foot{color:#5b6b85;font-size:12px}
+.final .td-sample .td-s-label{font-size:11px}
+.final .td-sample .td-s-h{color:#0f1c33;font-size:14px;margin-top:4px}
+.final .td-sample .td-s-meta b{color:#0f1c33}
+.final .td-sample ul{margin:0;padding-left:0;list-style:none;font-size:14px;color:#33415c}
+.final .td-sample li::before{content:none}
+.final .td-sample li b{color:#0f1c33}
+@media (max-width:860px){.td-final{grid-template-columns:minmax(0,1fr)}.td-sample{transform:none}}
 </style></head><body><title>Ore</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -844,20 +864,38 @@ h1 .it{font-size:1.06em}
 
   <section id="teardown" style="padding-top:0">
     <div class="wrap">
-      <div class="final">
-        <p class="label">Free teardown</p>
-        <h2>Send us your app and <span class="it">3 creators</span>.</h2>
-        <p>In a couple of days you get this week's breakouts in your market and a script written for each creator. No call. No card. Keep the scripts either way.</p>
-        <form class="td-form" action="/api/teardown" method="post">
-          <p class="td-count" aria-live="polite"></p>
-          <label>Your app<input name="app" required maxlength="300" placeholder="App name or App Store link"></label>
-          <label>Your email<input name="email" type="email" required maxlength="200" placeholder="you@yourapp.com"></label>
-          <label>3 creators<textarea name="creators" rows="3" maxlength="2000" placeholder="A line on each: who they are and what they post"></textarea></label>
-          <input class="td-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <div class="td-nav"><button class="btn btn-white" type="submit">Request your teardown</button><button class="td-back" type="button">Back</button></div>
-          <p class="td-msg" id="td-msg" role="status"></p>
-        </form>
-      </div>
+      <div class="final td-final">
+        <div class="td-left">
+          <p class="label">Free teardown</p>
+          <h2>See what's winning against <span class="it">your app</span>.</h2>
+          <p>Send your App Store link. Ore finds your closest competitors, takes apart the new ads they just started spending on, and watches them for 7 days. Free. No call, no card.</p>
+          <form class="td-form" action="/api/teardown" method="post">
+            <p class="td-count" aria-live="polite"></p>
+            <label>Your App Store link<input name="app" required maxlength="300" placeholder="apps.apple.com/... or your app's name"></label>
+            <label>Your email<input name="email" type="email" required maxlength="200" placeholder="you@yourapp.com"></label>
+            <input class="td-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <div class="td-nav"><button class="btn btn-white" type="submit">Get my free teardown</button><button class="td-back" type="button">Back</button></div>
+            <p class="td-msg" id="td-msg" role="status"></p>
+          </form>
+        </div>
+        <figure class="td-sample" aria-label="A sample teardown">
+          <p class="td-s-label">Sample teardown · a budgeting app</p>
+          <div class="td-s-ad">
+            <div class="td-s-thumb"></div>
+            <div>
+              <p class="td-s-meta"><b>Competitor</b> · #2 in their top 10 · live 6 days</p>
+              <q>Nobody told me where my paycheck actually goes.</q>
+            </div>
+          </div>
+          <p class="td-s-h">Why it works</p>
+          <ul>
+            <li><b>Names the gap.</b> "Nobody told me" is the viewer's own complaint.</li>
+            <li><b>Holds the app back.</b> It shows up after the problem lands.</li>
+          </ul>
+          <p class="td-s-h">Script for Jenny, ER nurse</p>
+          <p class="td-s-line">"I'm a nurse, and nobody told me how much of my overtime I'd never see."</p>
+          <p class="td-s-foot">Then 7 days of alerts when a new ad breaks into a competitor's top 10.</p>
+        </figure>
     </div>
   </section>
 </main>
@@ -997,9 +1035,9 @@ h1 .it{font-size:1.06em}
 </script>
 <script>(function(){var f=document.querySelector('.td-form');if(!f)return;var q=location.search;if(q.indexOf('sent=1')>-1||q.indexOf('err=1')>-1)return;
 var ls=[].slice.call(f.querySelectorAll('label')),btn=f.querySelector('button[type=submit]'),back=f.querySelector('.td-back'),cnt=f.querySelector('.td-count'),i=0;
-var names=['Next','Next','Request your teardown'];f.classList.add('stepper');
+var names=['Next','Get my free teardown'];f.classList.add('stepper');
 function go(n,focus){i=n;ls.forEach(function(l,k){l.classList.toggle('cur',k===i)});f.classList.toggle('past1',i>0);cnt.textContent=(i+1)+' of '+ls.length;btn.textContent=names[i];if(focus){var x=ls[i].querySelector('input,textarea');x&&x.focus()}}
 f.noValidate=true;f.addEventListener('submit',function(e){for(var k=0;k<=i;k++){var x=ls[k].querySelector('input,textarea');if(x&&!x.checkValidity()){e.preventDefault();if(k!==i)go(k,false);x.focus();x.reportValidity();return}}if(i<ls.length-1){e.preventDefault();go(i+1,true)}});
 back.addEventListener('click',function(){if(i>0)go(i-1,true)});go(0,false)})();</script>
-<script>(function(){var q=location.search,m=document.getElementById('td-msg');if(!m)return;if(q.indexOf('sent=1')>-1){m.textContent='Got it. Your teardown is on its way within a couple of days.';var f=m.closest('form');[].slice.call(f.querySelectorAll('label,button')).forEach(function(e){e.style.display='none'})}else if(q.indexOf('err=1')>-1){m.textContent='Add your app and a valid email, then try again.'}})();</script>
+<script>(function(){var q=location.search,m=document.getElementById('td-msg');if(!m)return;if(q.indexOf('sent=1')>-1){m.textContent='Got it. Your teardown is on its way within a couple of days.';var f=m.closest('form');[].slice.call(f.querySelectorAll('label,button')).forEach(function(e){e.style.display='none'})}else if(q.indexOf('err=1')>-1){m.textContent='Add your app and a valid email, then try again.'}else if(q.indexOf('err=2')>-1){m.textContent='Lots of requests from your network today. Try again tomorrow.'}else if(q.indexOf('err=3')>-1){m.textContent='We could not find that app. Paste its App Store link.'}})();</script>
 </body></html>
