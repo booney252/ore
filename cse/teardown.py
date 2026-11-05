@@ -34,7 +34,7 @@ from .stages import load_knowledge
 
 log = logging.getLogger("cse")
 
-TRACK_DAYS = 7
+TRACK_DAYS = 3
 PICKS = 3              # breakdowns in a new report
 DAILY_NEW = 2          # new breakouts broken down per app per day while tracking
 MAX_COMPETITORS = 5    # competitors with an Ad Library page to watch
