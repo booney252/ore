@@ -4,7 +4,7 @@
 //
 // spec.json: {"posts": [{"id": "01", "slides": [<slide>, ...]}, ...]}
 // Every slide has a "type":
-//   photo   {bg, text, pos?: "top"|"middle"|"bottom", focus?: "50% 30%"}   photo with the hook text
+//   photo   {bg, text, pos?: "top"|"middle"|"bottom", focus?: "50% 30%", fit?: "contain"}   photo with the hook text (contain: whole screenshot)
 //   split   {top, bottom, top_label?, bottom_label?, text?}                  before / after, stacked
 //   tweet   {bg, name, handle, text, quote?: {name, handle, text}}           fake post over a dimmed photo
 //   thread  {bg, from, messages: [{me: bool, text}], text?}                  iMessage thread over a dimmed photo
@@ -16,7 +16,7 @@ const { chromium } = require("playwright");
 
 const FONT = path.resolve(__dirname, "../assets/slides/TikTokSans.ttf");
 const esc = (s = "") => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const url = (base, p) => (p ? "file://" + path.resolve(base, p).replace(/'/g, "%27") : "");
+const url = (base, p) => (p ? "file://" + encodeURI(path.resolve(base, p)).replace(/'/g, "%27") : "");
 
 const CSS = `
 @font-face{font-family:TT;src:url('file://${FONT}')}
@@ -46,7 +46,7 @@ const CSS = `
 `;
 
 function slideHTML(s, base) {
-  const bg = (p, extra = "") => `<div class="bg ${extra}" style="background-image:url('${url(base, p)}');${s.focus ? `background-position:${s.focus}` : ""}"></div>`;
+  const bg = (p, extra = "") => `<div class="bg ${extra}" style="background-image:url('${url(base, p)}');${s.focus ? `background-position:${s.focus};` : ""}${s.fit ? `background-size:${s.fit};background-repeat:no-repeat;background-color:#000;` : ""}"></div>`;
   const hook = (pos = "top") => (s.text ? `<div class="t ${pos}">${esc(s.text)}</div>` : "");
   switch (s.type) {
     case "photo":
