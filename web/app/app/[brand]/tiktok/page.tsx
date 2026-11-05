@@ -116,6 +116,9 @@ export default async function TikTokPage({ params }: { params: Promise<{ brand: 
       >
         <form action={oaTiktokRefresh} className="tt-refresh">
           <input type="hidden" name="brand" value={brand} />
+          <Link className="oa-btn white" href={`/app/${brand}/tiktok/slides`}>
+            Today&apos;s slides
+          </Link>{" "}
           <SubmitButton className="oa-btn white" working="Starting...">
             Refresh now
           </SubmitButton>

@@ -676,3 +676,14 @@
 .td-cta h2{margin:0}
 .td-cta p{margin:0;max-width:56ch}
 @media (max-width:640px){.td-ad{grid-template-columns:minmax(0,1fr)}.td-frame{max-width:220px}}
+
+/* Today's slides (/app/<brand>/tiktok/slides) */
+.sl-post{display:grid;gap:10px}
+.sl-head{display:flex;gap:12px;align-items:baseline}
+.sl-head q{font-size:17px}
+.sl-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:560px}
+.sl-img{position:relative;display:block;border-radius:12px;overflow:hidden;aspect-ratio:9/16;background:#111}
+.sl-img img{width:100%;height:100%;object-fit:cover;display:block}
+.sl-img span{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;border-radius:999px;padding:2px 8px}
+.sl-cap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sl-cap p{margin:0;flex:1;min-width:0}
