@@ -6,7 +6,7 @@
 // Every slide has a "type":
 //   photo   {bg, text, pos?: "top"|"middle"|"bottom", focus?: "50% 30%", fit?: "contain"}   photo with the hook text (contain: whole screenshot)
 //   split   {top, bottom, top_label?, bottom_label?, text?}                  before / after, stacked
-//   tweet   {bg, name, handle, text, quote?: {name, handle, text}}           fake post over a dimmed photo
+//   tweet   {name, handle, text, time?, retweets?, quotes?, likes?, avatar?, verified?, quote?, overlay?}  dark-mode X post screenshot
 //   thread  {bg, from, messages: [{me: bool, text}], text?}                  iMessage thread over a dimmed photo
 //   imessage {name, initial?, avatar?, time?, day?, unread?, battery?, read?, messages: [{me, text} | {me, cash}]}  full iPhone screenshot, dark mode
 //   product {bg, text}                                                       product photo with a caption line
@@ -16,7 +16,40 @@ const path = require("path");
 const { chromium } = require("playwright");
 
 const FONT = path.resolve(__dirname, "../assets/slides/TikTokSans.ttf");
-const esc = (s = "") => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const EMOJI_DIR = path.resolve(__dirname, ".emoji");
+const EMOJI_CDN = "https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/";
+const EMOJI_RE = /(?:\p{RI}\p{RI})|(?:[#*0-9]️?⃣)|(?:\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier})?(?:‍\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier})?)*)/gu;
+const hexOf = (e) => [...e].map((c) => c.codePointAt(0).toString(16)).join("-");
+const emojiFile = (e) => {
+  const h = hexOf(e);
+  for (const n of [h, h.replace(/-fe0f/g, ""), h.includes("fe0f") ? null : h.replace(/^([0-9a-f]+)/, "$1-fe0f")]) {
+    if (n && fs.existsSync(path.join(EMOJI_DIR, n + ".png"))) return path.join(EMOJI_DIR, n + ".png");
+  }
+  return null;
+};
+/** Download the Apple image for every emoji in a slide, once (iPhone emoji, not the font's). */
+async function ensureEmoji(text) {
+  fs.mkdirSync(EMOJI_DIR, { recursive: true });
+  for (const e of new Set(String(text).match(EMOJI_RE) || [])) {
+    if (emojiFile(e)) continue;
+    const h = hexOf(e);
+    for (const n of [h, h.replace(/-fe0f/g, ""), h.includes("fe0f") ? null : h.replace(/^([0-9a-f]+)/, "$1-fe0f")]) {
+      if (!n) continue;
+      const r = await fetch(EMOJI_CDN + n + ".png").catch(() => null);
+      if (r && r.ok) {
+        fs.writeFileSync(path.join(EMOJI_DIR, n + ".png"), Buffer.from(await r.arrayBuffer()));
+        break;
+      }
+    }
+  }
+}
+const esc = (s = "") =>
+  String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(EMOJI_RE, (e) => {
+      const f = emojiFile(e);
+      return f ? `<img class="emj" src="file://${encodeURI(f)}" alt="">` : e;
+    });
 const url = (base, p) => (p ? "file://" + encodeURI(path.resolve(base, p)).replace(/'/g, "%27") : "");
 
 const CSS = `
@@ -79,6 +112,26 @@ const CSS = `
 .im-plus{width:96px;height:96px;border-radius:50%;background:#1c1c1e;display:grid;place-items:center;color:#c7c7cc;font-size:62px;font-weight:300;line-height:1}
 .im-field{flex:1;height:96px;border-radius:48px;border:2px solid #2c2c2e;background:#0d0d0d;color:#5b5b60;font-size:40px;display:flex;align-items:center;padding:0 36px;justify-content:space-between}
 .im-home{position:absolute;left:50%;bottom:22px;width:370px;margin-left:-185px;height:13px;border-radius:7px;background:#fff}
+
+/* Apple emoji images inline with text */
+.emj{height:1.12em;width:auto;vertical-align:-.2em;margin:0 .03em;display:inline-block}
+/* X post screenshot, dark mode: the reference is 596px wide, drawn at 1.81x */
+.x{position:absolute;inset:0;background:#000;display:flex;align-items:center;font-family:Inter,system-ui,sans-serif;color:#e7e9ea;-webkit-font-smoothing:antialiased}
+.x-in{width:100%;padding:0 29px}
+.x-who{display:flex;align-items:center;gap:22px;position:relative}
+.x-av,.xq-av{width:87px;height:87px;border-radius:50%;background:#3e4144;background-size:cover;background-position:center;overflow:hidden;flex:none}
+.x-av svg,.xq-av svg{width:100%;height:100%}
+.x-nm{display:flex;flex-direction:column;gap:2px}.x-nm b{font-size:28px;font-weight:700;display:flex;align-items:center;gap:6px}.x-nm span{font-size:27px;color:#71767b}
+.x-ck{width:30px;height:30px}
+.x-more{position:absolute;right:6px;top:-6px;color:#71767b;font-size:30px;letter-spacing:2px}
+.x-tx{font-size:42px;line-height:1.32;margin:34px 0 0;white-space:pre-line}
+.xq{margin-top:26px;border:2px solid #2f3336;border-radius:29px;padding:22px 26px}
+.xq-who{display:flex;align-items:center;gap:12px;font-size:27px}.xq-who b{font-weight:700}.xq-who span{color:#71767b}
+.xq-av{width:42px;height:42px}
+.xq-tx{font-size:30px;line-height:1.32;margin-top:10px;white-space:pre-line}
+.x-time{font-size:27px;color:#71767b;margin:34px 0 0;padding-bottom:29px;border-bottom:2px solid #2f3336}
+.x-stats{display:flex;gap:44px;font-size:27px;color:#71767b;padding:29px 0;border-bottom:2px solid #2f3336}.x-stats b{color:#e7e9ea;font-weight:700}
+.x-acts{display:flex;justify-content:space-around;padding:26px 0 8px}.x-acts svg{width:44px;height:44px}
 `;
 
 function slideHTML(s, base) {
@@ -98,13 +151,21 @@ function slideHTML(s, base) {
         hook(s.pos || "middle")
       );
     case "tweet": {
+      // a dark-mode X post screenshot: {name, handle, text, time?, retweets?, quotes?, likes?, avatar?, verified?, quote?: {name, handle, text, time?}}
+      const av = (a, cls) => a ? `<div class="${cls}" style="background-image:url('${url(base, a)}')"></div>` : `<div class="${cls}"><svg viewBox="0 0 40 40"><circle cx="20" cy="15" r="7" fill="#8b98a5"/><path d="M6 36c1.5-8 7-12 14-12s12.5 4 14 12z" fill="#8b98a5"/></svg></div>`;
       const q = s.quote
-        ? `<div class="qt"><div class="who"><div><div class="nm">${esc(s.quote.name)}</div><div class="hd">${esc(s.quote.handle)}</div></div></div><div class="tx">${esc(s.quote.text)}</div></div>`
+        ? `<div class="xq"><div class="xq-who">${av(s.quote.avatar, "xq-av")}<b>${esc(s.quote.name)}</b><span>${esc(s.quote.handle)}${s.quote.time ? " · " + esc(s.quote.time) : ""}</span></div><div class="xq-tx">${esc(s.quote.text)}</div></div>`
         : "";
+      const n = (v, d) => esc(v ?? d);
       return (
-        bg(s.bg, "dim") +
-        `<div class="card"><div class="who"><div class="av"></div><div><div class="nm">${esc(s.name)}</div><div class="hd">${esc(s.handle)}</div></div></div>` +
-        `<div class="tx">${esc(s.text)}</div>${q}<div class="meta">${esc(s.meta || "9:41 PM · 4.2M Views")}</div></div>`
+        `<div class="x"><div class="x-in"><div class="x-who">${av(s.avatar, "x-av")}<div class="x-nm"><b>${esc(s.name)}${s.verified ? ' <svg class="x-ck" viewBox="0 0 22 22"><path fill="#1d9bf0" d="M20.4 11c0-1.3-.8-2.4-2-2.9.4-1.2.1-2.6-.8-3.5s-2.3-1.2-3.5-.8C13.6 2.6 12.4 1.8 11 1.8s-2.6.8-3.1 2c-1.2-.4-2.6-.1-3.5.8s-1.2 2.3-.8 3.5c-1.2.5-2 1.6-2 2.9s.8 2.4 2 2.9c-.4 1.2-.1 2.6.8 3.5s2.3 1.2 3.5.8c.5 1.2 1.6 2 3.1 2s2.6-.8 3.1-2c1.2.4 2.6.1 3.5-.8s1.2-2.3.8-3.5c1.2-.5 2-1.6 2-2.9z"/><path fill="#fff" d="M9.6 14.6l-3-3 1.3-1.3 1.7 1.7 4.5-4.5 1.3 1.3z"/></svg>' : ""}</b><span>${esc(s.handle)}</span></div><div class="x-more">···</div></div>` +
+        `<div class="x-tx">${esc(s.text)}</div>${q}<div class="x-time">${esc(s.time || "12:00 PM · Nov 1, 2026")}</div>` +
+        `<div class="x-stats"><span><b>${n(s.retweets, "50")}</b> Retweets</span><span><b>${n(s.quotes, "10")}</b> Quote Tweets</span><span><b>${n(s.likes, "1K")}</b> Likes</span></div>` +
+        `<div class="x-acts"><svg viewBox="0 0 24 24"><path d="M12 3c5 0 9 3.6 9 8s-4 8-9 8c-1.2 0-2.4-.2-3.4-.6L4 20l1.3-3.6C4 15 3 13.1 3 11c0-4.4 4-8 9-8z" fill="none" stroke="#71767b" stroke-width="1.8"/></svg>` +
+        `<svg viewBox="0 0 24 24"><path d="M4 9l3-3 3 3M7 6v9a3 3 0 003 3h5M20 15l-3 3-3-3M17 18V9a3 3 0 00-3-3H9" fill="none" stroke="#71767b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
+        `<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z" fill="none" stroke="#71767b" stroke-width="1.8" stroke-linejoin="round"/></svg>` +
+        `<svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6" fill="none" stroke="#71767b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` +
+        `</div></div>` + (s.overlay ? `<div class="t ${s.pos || "bottom"}">${esc(s.overlay)}</div>` : "")
       );
     }
     case "thread":
@@ -161,6 +222,7 @@ function slideHTML(s, base) {
     const dir = path.join(outDir, `post-${post.id}`);
     fs.mkdirSync(dir, { recursive: true });
     for (const [i, s] of post.slides.entries()) {
+      await ensureEmoji(JSON.stringify(s));
       const tmp = path.join(dir, `.slide-${i + 1}.html`);
       fs.writeFileSync(tmp, `<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head><body><div class="s">${slideHTML(s, base)}</div></body></html>`);
       await page.goto("file://" + tmp);
