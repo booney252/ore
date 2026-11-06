@@ -52,3 +52,30 @@ def publish(storage, slug: str, date: str, plan: dict, render_dir: str | Path) -
     storage.write_text(brandlib.brand_key(slug, "slides/latest.txt"), date)
     log.info("slides: published %d posts for %s %s", len(posts), slug, date)
     return {"posts": len(posts), "slides": sum(len(p["slides"]) for p in posts)}
+
+
+def flat_zip(render_dir: str | Path, out: str | Path, date: str, start_hour: int = 9) -> int:
+    """One zip of every slide, no folders: 01-1.jpg, 01-2.jpg, 02-1.jpg... Each JPG gets a
+    "date taken" one second after the last, in posting order, so saving them all to an iPhone's
+    camera roll keeps them in order (Photos sorts by date taken)."""
+    import zipfile
+    from datetime import datetime as dt, timedelta
+    from PIL import Image
+
+    render_dir = Path(render_dir)
+    t = dt.fromisoformat(date).replace(hour=start_hour)
+    n = 0
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_STORED) as z:
+        for folder in sorted(render_dir.glob("post-*")):
+            pid = folder.name.split("-", 1)[1]
+            for png in sorted(folder.glob("*.png"), key=lambda f: int(f.stem)):
+                exif = Image.Exif()
+                stamp = t.strftime("%Y:%m:%d %H:%M:%S")
+                exif[0x0132] = stamp            # DateTime
+                exif[0x8769] = {0x9003: stamp, 0x9004: stamp}  # DateTimeOriginal, DateTimeDigitized
+                buf = io.BytesIO()
+                Image.open(png).convert("RGB").save(buf, "JPEG", quality=92, exif=exif.tobytes())
+                z.writestr(f"{pid}-{png.stem}.jpg", buf.getvalue())
+                t += timedelta(seconds=1)
+                n += 1
+    return n
