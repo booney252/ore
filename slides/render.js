@@ -27,7 +27,7 @@ const CSS = `
 .dim::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
 .t{position:absolute;left:50%;width:470px;margin-left:-235px;text-align:center;font-variation-settings:"wght" 500;font-size:42px;line-height:1.16;
    color:#FBEEA9;z-index:2;white-space:pre-line}
-.top{top:300px}.high{top:150px}.middle{top:50%;transform:translateY(-50%)}.bottom{bottom:330px}
+.top{top:300px}.high{top:150px}.t.sm{font-size:33px;line-height:1.2}.middle{top:50%;transform:translateY(-50%)}.bottom{bottom:330px}
 .half{position:absolute;left:0;right:0;height:960px;background-size:cover;background-position:center}
 .half.a{top:0}.half.b{top:960px}
 .lab{position:absolute;left:0;right:0;text-align:center;font-size:42px;font-variation-settings:"wght" 500;color:#FBEEA9;z-index:2}
@@ -83,7 +83,7 @@ const CSS = `
 
 function slideHTML(s, base) {
   const bg = (p, extra = "") => `<div class="bg ${extra}" style="background-image:url('${url(base, p)}');${s.focus ? `background-position:${s.focus};` : ""}${s.fit ? `background-size:${s.fit};background-repeat:no-repeat;background-color:#000;` : ""}"></div>`;
-  const hook = (pos = "top") => (s.text ? `<div class="t ${pos}">${esc(s.text)}</div>` : "");
+  const hook = (pos = "top") => (s.text ? `<div class="t ${pos}${s.size === "small" ? " sm" : ""}">${esc(s.text)}</div>` : ""); // size "small" for long lists
   switch (s.type) {
     case "photo":
       return bg(s.bg) + hook(s.pos || "middle");
