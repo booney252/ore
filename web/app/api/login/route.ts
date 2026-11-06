@@ -4,7 +4,7 @@ import { COOKIE, login } from "@/lib/auth";
 export async function POST(req: Request) {
   const form = await req.formData();
   const value = await login(String(form.get("password") ?? ""));
-  const res = NextResponse.redirect(new URL(value ? "/" : "/login?wrong=1", req.url), 303);
+  const res = NextResponse.redirect(new URL(value ? (value.startsWith("p.") ? "/ore" : "/") : "/login?wrong=1", req.url), 303);
   if (value) {
     res.cookies.set(COOKIE, value, {
       httpOnly: true,

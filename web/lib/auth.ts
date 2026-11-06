@@ -36,9 +36,25 @@ async function guestToken(brand: string, password: string): Promise<string> {
   return `g.${brand}.${await hash(`ore:guest:${brand}:${password}`)}`;
 }
 
+/**
+ * Until Ore is released, the landing page and teardown reports need a preview password too.
+ * Only its salted hash lives here (PREVIEW_PASSWORD_HASH in the environment overrides it).
+ * A preview cookie opens those public pages, never the app.
+ */
+const PREVIEW_HASH = process.env.PREVIEW_PASSWORD_HASH || "cb23a4ee2d9913d0793bec471361f77ac2499d8e2812e8d341580a92e982667e";
+const previewToken = async () => `p.${await hash(`ore:preview-cookie:${PREVIEW_HASH}`)}`;
+
+/** Can this cookie see the pre-release public pages (landing, teardowns)? Owners and guests can too. */
+export async function canPreview(cookie: string | undefined): Promise<boolean> {
+  if (!cookie) return false;
+  if (cookie === (await previewToken())) return true;
+  return Boolean(await session(cookie));
+}
+
 /** The cookie value for a password, or null if it isn't one. */
 export async function login(password: string): Promise<string | null> {
   if (!password) return null;
+  if ((await hash(`ore:preview:${password}`)) === PREVIEW_HASH) return previewToken();
   if (process.env.SITE_PASSWORD && password === process.env.SITE_PASSWORD) return token();
   const guest = guests().find((g) => g.password === password);
   return guest ? guestToken(guest.brand, guest.password) : null;
