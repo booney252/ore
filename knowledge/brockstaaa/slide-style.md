@@ -5,7 +5,7 @@ Measured from @brockstaaa's own slides (the 53K "thin lips" post and others pull
 - Size: 1080 x 1920 (TikTok photo mode)
 - Font: TikTok Sans (`assets/slides/TikTokSans.ttf`, variable), weight 500 (medium)
 - Size: 42px, line height about 1.16. Small, like TikTok's own text tool. Not big.
-- Color: pale yellow #FBEEA9. **No shadow, no outline**: plain text.
+- Color: pale yellow #FBEEA9. Plain text, no shadow. **Exception:** when the photo behind the text is bright, a thin black outline goes on that text so it can be read (the slide maker checks each text's background automatically; `stroke: true/false` forces it).
 - Placement: centered in the middle of the slide, wrapping at about 470px wide
   ("how to unf*ck your / thin lips (naturally)" on two lines)
 - Lowercase, like the hooks in the daily post lists

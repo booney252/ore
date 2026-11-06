@@ -9,6 +9,7 @@
 //   tweet   {name, handle, text, time?, retweets?, quotes?, likes?, avatar?, verified?, quote?, overlay?}  dark-mode X post screenshot
 //   thread  {bg, from, messages: [{me: bool, text}], text?}                  iMessage thread over a dimmed photo
 //   imessage {name, initial?, avatar?, time?, day?, unread?, battery?, read?, messages: [{me, text} | {me, cash}]}  full iPhone screenshot, dark mode
+//   any slide: stroke?: true|false forces the black outline on overlay text (default: only on bright backgrounds)
 //   product {bg, text}                                                       product photo with a caption line
 // Paths in bg/top/bottom are relative to the spec file. Style: knowledge/brockstaaa/slide-style.md.
 const fs = require("fs");
@@ -60,6 +61,7 @@ const CSS = `
 .dim::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
 .t{position:absolute;left:50%;width:470px;margin-left:-235px;text-align:center;font-variation-settings:"wght" 500;font-size:42px;line-height:1.16;
    color:#FBEEA9;z-index:2;white-space:pre-line}
+.stroke{-webkit-text-stroke:5px #000;paint-order:stroke fill}
 .top{top:300px}.high{top:150px}.t.sm{font-size:33px;line-height:1.2}.middle{top:50%;transform:translateY(-50%)}.bottom{bottom:330px}
 .half{position:absolute;left:0;right:0;height:960px;background-size:cover;background-position:center}
 .half.a{top:0}.half.b{top:960px}
@@ -210,6 +212,43 @@ function slideHTML(s, base) {
   }
 }
 
+
+/** A thin black outline on overlay text that sits on a bright part of the photo (it can't be read
+ * otherwise). Plain text everywhere else, like the owner's own slides. `stroke` true/false on a slide
+ * forces it on or off. */
+async function autoStroke(page, force) {
+  const els = await page.$$(".t, .lab");
+  for (const el of els) {
+    let on = force;
+    if (on === undefined) {
+      await el.evaluate((n) => (n.style.visibility = "hidden"));
+      const box = await el.boundingBox();
+      const shot = box ? await page.screenshot({ clip: { x: box.x, y: box.y, width: Math.max(1, box.width), height: Math.max(1, box.height) } }) : null;
+      await el.evaluate((n) => (n.style.visibility = ""));
+      if (!shot) continue;
+      // share of bright pixels behind the text (measured in the page: a data: URL never taints the canvas)
+      on = await page.evaluate(async (b64) => {
+        const img = new Image();
+        img.src = "data:image/png;base64," + b64;
+        await img.decode();
+        const c = document.createElement("canvas");
+        c.width = img.width; c.height = img.height;
+        const g = c.getContext("2d");
+        g.drawImage(img, 0, 0);
+        const d = g.getImageData(0, 0, c.width, c.height).data;
+        let bright = 0, n = 0;
+        for (let i = 0; i < d.length; i += 16) {
+          const y = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+          if (y > 170) bright++;
+          n++;
+        }
+        return n > 0 && bright / n > 0.3;
+      }, shot.toString("base64"));
+    }
+    if (on) await el.evaluate((n) => n.classList.add("stroke"));
+  }
+}
+
 (async () => {
   const [specPath, outDir] = process.argv.slice(2);
   if (!specPath || !outDir) throw new Error("usage: node slides/render.js <spec.json> <out-dir>");
@@ -228,6 +267,7 @@ function slideHTML(s, base) {
       await page.goto("file://" + tmp);
       await page.evaluate(() => document.fonts.ready);
       await page.waitForLoadState("networkidle").catch(() => {});
+      await autoStroke(page, s.stroke);
       await page.screenshot({ path: path.join(dir, `${i + 1}.png`) });
       fs.unlinkSync(tmp);
       n++;
