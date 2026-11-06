@@ -10,7 +10,7 @@ type Idea = {
   name: string;
   line: string;
   why: string[];
-  ours: { hooks: string[]; beats: string[]; mechanism: string; format: string };
+  ours: { text: string };
   sources: Source[];
 };
 type Brief = { date: string; title: string; intro: string; ideas: Idea[]; alerts?: { title: string; text: string; ad_id?: string }[] };
@@ -113,15 +113,8 @@ export default async function Ideas({ params }: { params: Promise<{ brand: strin
                   <ol className="ix-why">{idea.why.map((w, j) => <li key={j}>{w}</li>)}</ol>
                 </div>
                 <div className="ix-ours">
-                  <h3>Our version</h3>
-                  <p className="ix-k">Hooks to test</p>
-                  <ul className="ix-hooks">{idea.ours.hooks.map((h, j) => <li key={j}>“{h}”</li>)}</ul>
-                  <p className="ix-k">How it runs</p>
-                  <ol className="ix-beats">{idea.ours.beats.map((b, j) => <li key={j}>{b}</li>)}</ol>
-                  <p className="ix-k">Mechanism</p>
-                  <p>{idea.ours.mechanism}</p>
-                  <p className="ix-k">Format</p>
-                  <p>{idea.ours.format}</p>
+                  <h3>How we make it a PeptidePal ad</h3>
+                  <p className="ix-para">{idea.ours.text}</p>
                 </div>
               </div>
 
@@ -172,6 +165,7 @@ const CSS = `
 .ix-why { margin: 0; padding-left: 20px; display: grid; gap: 10px; line-height: 1.55; }
 .ix-ours { background: var(--oa-soft); border: 1px solid var(--oa-line); border-radius: 16px; padding: 18px; }
 .ix-ours p { margin: 0 0 6px; line-height: 1.5; }
+.ix-para { font-size: 15.5px; line-height: 1.65 !important; }
 .ix-k { font-family: var(--font-data), monospace; font-size: 11px !important; letter-spacing: .06em; text-transform: uppercase; color: var(--oa-muted); margin-top: 14px !important; }
 .ix-k:first-of-type { margin-top: 0 !important; }
 .ix-hooks { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-weight: 600; }
