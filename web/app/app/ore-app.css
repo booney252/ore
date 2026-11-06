@@ -692,6 +692,11 @@
 .oa-theme{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);color:#fff;cursor:pointer;padding:0;margin-left:auto}
 .oa-theme svg{width:18px;height:18px}
 .oa-theme + .oa-who{margin-left:0}
+.oa-out{margin:0 0 0 -4px}
+.oa-out button{display:grid;place-items:center;width:36px;height:36px;padding:0;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);color:#fff;cursor:pointer}
+.oa-out svg{width:18px;height:18px}
+.oa-out button:hover{background:rgba(255,255,255,.26)}
+.oa-out + .oa-who{margin-left:0}
 html[data-theme="dark"] .oa{
   --oa-bg:#0b1020;--oa-surface:#141a2b;--oa-soft:#1a2136;--oa-ink:#e7ecf6;--oa-muted:#97a3ba;--oa-line:rgba(255,255,255,.09);
   color-scheme:dark;
