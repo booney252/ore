@@ -180,7 +180,14 @@ function slideHTML(s, base) {
       );
     case "imessage": {
       // a real-looking iPhone screenshot: {name, initial?, avatar?, time?, day?, unread?, battery?, read?, messages: [{me, text} | {me, cash: "30.00"}]}
-      const ms = s.messages || [];
+      // texting style: a mom, dad or guy capitalizes the first word; girls texting girls stay lowercase.
+      // `sender: "adult" | "guy" | "girl"` sets it; otherwise it's guessed from the contact name.
+      const nm = String(s.name || "").toLowerCase();
+      const sender = s.sender || (/\b(mom|mum|mama|dad|papa|grandma|grandpa|him|bae|babe|hubby|husband|bf|boyfriend|situationship|tyler|jake)\b/.test(nm) ? "guy" : "girl");
+      const firstUp = (t) => t.replace(/(^\s*|[.!?]\s+)([a-z])/g, (_, a, b) => a + b.toUpperCase());
+      const firstDown = (t) => (/^\s*[A-Z][a-z]/.test(t) && !/^\s*I\b/.test(t) ? t.replace(/^(\s*)([A-Z])/, (_, a, b) => a + b.toLowerCase()) : t);
+      const ms = (s.messages || []).map((m) =>
+        m.text == null ? m : { ...m, text: m.me ? firstDown(m.text) : sender === "girl" ? firstDown(m.text) : firstUp(m.text) });
       const lastMe = ms.map((x) => x.me).lastIndexOf(true);
       const bubbles = ms.map((m, i) => {
         const next = ms[i + 1], prev = ms[i - 1];

@@ -13,3 +13,9 @@ Measured from @brockstaaa's own slides (the 53K "thin lips" post and others pull
 
 Before / afters must be believable: the same person, or at least the same hair color and type,
 in both halves (never brown frizzy hair "before" and blonde waves "after"). Slide 1 should match too.
+
+## Text threads
+
+- A mom, dad or guy texting capitalizes the first word of each message ("Christmas is in two months why do we have to buy it NOW").
+- Girls texting girls (bestie, sister) and the owner's own messages are all lowercase.
+- The slide maker does this automatically from the contact name (`sender: guy|adult|girl` on a slide overrides it). ALL-CAPS words stay as written.
