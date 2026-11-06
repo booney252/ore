@@ -236,13 +236,15 @@ async function autoStroke(page, force) {
         const g = c.getContext("2d");
         g.drawImage(img, 0, 0);
         const d = g.getImageData(0, 0, c.width, c.height).data;
-        let bright = 0, n = 0;
+        // pale yellow text needs a dark background: outline it on anything light (mean or lots of light pixels)
+        let light = 0, sum = 0, n = 0;
         for (let i = 0; i < d.length; i += 16) {
           const y = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
-          if (y > 170) bright++;
+          if (y > 145) light++;
+          sum += y;
           n++;
         }
-        return n > 0 && bright / n > 0.3;
+        return n > 0 && (sum / n > 125 || light / n > 0.25);
       }, shot.toString("base64"));
     }
     if (on) await el.evaluate((n) => n.classList.add("stroke"));
