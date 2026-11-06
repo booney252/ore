@@ -1,3 +1,4 @@
+import ThemeToggle from "./ThemeToggle";
 import Link from "next/link";
 import { readTextCached } from "@/lib/storage";
 import Tabs from "./Tabs";
@@ -40,6 +41,7 @@ export async function Band({
         <nav className="oa-nav">
           <Logo />
           {brand && <Tabs brand={brand} tiktok={tiktok} />}
+          <ThemeToggle />
           {name && (
             <Link href="/app" className="oa-who">
               {name}

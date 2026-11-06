@@ -687,3 +687,33 @@
 .sl-img span{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;border-radius:999px;padding:2px 8px}
 .sl-cap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .sl-cap p{margin:0;flex:1;min-width:0}
+
+/* ---------- night mode: html[data-theme="dark"] (set by ThemeToggle / the script in app/app/layout.tsx) ---------- */
+.oa-theme{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.38);color:#fff;cursor:pointer;padding:0;margin-left:auto}
+.oa-theme svg{width:18px;height:18px}
+.oa-theme + .oa-who{margin-left:0}
+html[data-theme="dark"] .oa{
+  --oa-bg:#0b1020;--oa-surface:#141a2b;--oa-soft:#1a2136;--oa-ink:#e7ecf6;--oa-muted:#97a3ba;--oa-line:rgba(255,255,255,.09);
+  color-scheme:dark;
+}
+html[data-theme="dark"] body{background:#0b1020}
+html[data-theme="dark"] .oa-card{background:linear-gradient(160deg,rgba(28,35,56,.92),rgba(20,26,43,.82));border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 30px 60px -38px rgba(0,0,0,.7)}
+html[data-theme="dark"] .oa-notice{background:linear-gradient(160deg,rgba(28,35,56,.95),rgba(20,26,43,.85));border-color:rgba(255,255,255,.08)}
+html[data-theme="dark"] .oa-card .oa-chip,html[data-theme="dark"] .oa-card .oa-row,html[data-theme="dark"] .oa-card .oa-kv,html[data-theme="dark"] .oa-card .oa-rule,html[data-theme="dark"] .oa-page,html[data-theme="dark"] .oa-card .oa-why p,
+html[data-theme="dark"] .oa-stats span,html[data-theme="dark"] .oa-ins q,html[data-theme="dark"] .oa-howto li,html[data-theme="dark"] .oa-ad q,html[data-theme="dark"] .cp-admin,html[data-theme="dark"] .cp-steps button,html[data-theme="dark"] .ms-where-chip,html[data-theme="dark"] .wa-filters a,html[data-theme="dark"] .oa-btn.ghost,html[data-theme="dark"] .td-count label{
+  background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:var(--oa-ink)}
+html[data-theme="dark"] .oa input,html[data-theme="dark"] .oa textarea,html[data-theme="dark"] .oa select,html[data-theme="dark"] .oa-card input,html[data-theme="dark"] .oa-card textarea,html[data-theme="dark"] .oa-card select{
+  background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--oa-ink)}
+html[data-theme="dark"] .oa input:focus,html[data-theme="dark"] .oa textarea:focus,html[data-theme="dark"] .oa select:focus{background:rgba(255,255,255,.09)}
+html[data-theme="dark"] .oa input::placeholder,html[data-theme="dark"] .oa textarea::placeholder{color:#6f7b93}
+/* things that stay white on purpose keep dark text */
+html[data-theme="dark"] .oa-tabs a[aria-current="page"],html[data-theme="dark"] .oa-btn.white{color:#0f1c33}
+html[data-theme="dark"] .td-frame{background:#1a2136}
+html[data-theme="dark"] .tt-table th,html[data-theme="dark"] .tt-table td{border-color:rgba(255,255,255,.08)}
+@media (prefers-reduced-transparency: reduce){html[data-theme="dark"] .oa-card,html[data-theme="dark"] .oa-notice{background:#141a2b}}
+/* the shared document styles (.prose, tables) inside the app read these variables */
+html[data-theme="dark"] .oa{--text:#e7ecf6;--text-2:#c6cedd;--muted:#97a3ba;--line:rgba(255,255,255,.1);--diamond:#86a8ff}
+html[data-theme="dark"] .oa .prose h4{color:#b3a4ff}
+html[data-theme="dark"] .oa .prose code{background:rgba(255,255,255,.08)}
+html[data-theme="dark"] .oa .prose table th,html[data-theme="dark"] .oa .prose table td{border-color:rgba(255,255,255,.1)}
+html[data-theme="dark"] .oa-band::after{background:linear-gradient(to bottom,rgba(11,16,32,0) 0%,rgba(11,16,32,.6) 45%,rgba(11,16,32,.92) 75%,var(--oa-bg) 100%)}
