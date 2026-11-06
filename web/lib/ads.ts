@@ -42,7 +42,15 @@ export type Ad = {
   top10_rank?: number | null; // spot in its advertiser's top 10 today, or null if it's out
   top10_days?: number; // days it's been seen in the top 10
   breakout?: string; // date a new ad (30 days or less) broke into the top 10 for the first time
-  top10_back?: string; // date an older ad entered the top 10 for the first time // the advertiser's usual ad life: median days its stopped ads ran
+  top10_back?: string; // date an older ad entered the top 10 for the first time
+  top10_entered?: string; // a new ad's first day in the top 10 (a breakout only after 3 days there)
+  // Top-50 tracking: rank movement over days (cse/tracking.py)
+  top50_rank?: number | null;
+  top50_days?: number;
+  top50_out?: string; // date it stopped running
+  rank_history?: Record<string, number>; // {date: spot in its advertiser's most-shown ads}
+  climbing?: string; // last date it counted as climbing (15+ spots up within 3 days)
+  climb?: { from: number; to: number; days: number }; // the advertiser's usual ad life: median days its stopped ads ran
   min_views?: number; // views a post needs to count as a winner (A or B)
   on_topic?: boolean; // false: blew up, but not about the niche (cse/organic.py check_topics)
   topic_why?: string;
@@ -165,6 +173,14 @@ export async function posterUrl(ad: Ad): Promise<string | null> {
   const key = ad.analysis?.frames?.[0]?.key ?? (ad.media_type === "image" ? ad.media_key : undefined);
   return key ? signedUrl(key) : null;
 }
+
+const DAY_MS = 86_400_000;
+/** Jumped 15+ spots in its advertiser's most-shown ads within the last few days. */
+export const isClimbing = (a: Ad) => Boolean(a.climbing) && Date.now() - Date.parse(a.climbing!) <= 3 * DAY_MS;
+/** In its advertiser's top 50 for 30+ days and still there. */
+export const isSurvivor = (a: Ad) => Boolean(a.top50_rank) && (a.top50_days ?? 0) >= 30;
+/** A new ad that just entered a top 10 and hasn't held it 3 days yet: launch spend, not proof. */
+export const justEntered = (a: Ad) => Boolean(a.top10_entered) && !a.breakout && Boolean(a.top10_rank);
 
 /** "Motion" or "Motion via Stormie Captures" for an ad run from a creator's page. */
 export const advertiser = (a: Pick<Ad, "brand" | "whitelisted" | "via_page_name">) =>

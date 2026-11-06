@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { advertiser, hook, KINDS, kind, loadAds, posterUrl, winners, type Ad } from "@/lib/ads";
+import { advertiser, hook, isClimbing, isSurvivor, justEntered, KINDS, kind, loadAds, posterUrl, winners, type Ad } from "@/lib/ads";
 import { brandName } from "@/lib/brands";
 import { explain } from "@/lib/score";
 import { Band } from "../../ui";
@@ -13,7 +13,9 @@ const inTop10 = (a: Ad) => Boolean(a.top10_rank) || (Boolean(a.breakout) && Date
 
 const FILTERS: { key: string; label: string; test: (a: Ad) => boolean }[] = [
   { key: "all", label: "All", test: () => true },
+  { key: "climbing", label: "Climbing", test: isClimbing },
   { key: "top10", label: "Top 10", test: inTop10 },
+  { key: "survivors", label: "Survivors", test: isSurvivor },
   { key: "creators", label: "Via creators", test: (a) => Boolean(a.whitelisted) },
   { key: "rising", label: "Rising", test: (a) => Boolean(a.rising) },
   ...KINDS.map((k) => ({ key: k.key as string, label: k.label as string, test: (a: Ad) => kind(a) === k.key })),
@@ -21,8 +23,11 @@ const FILTERS: { key: string; label: string; test: (a: Ad) => boolean }[] = [
 
 /** The tag in the corner of a card: why this ad is worth a look right now. */
 function tag(a: Ad): { text: string; cls: string } | null {
+  if (isClimbing(a) && a.climb) return { text: `Climbing · #${a.climb.from} → #${a.climb.to}`, cls: "rise" };
   if (a.breakout && Date.now() - Date.parse(a.breakout) <= 14 * DAY) return { text: `New in top 10${a.top10_rank ? ` · #${a.top10_rank}` : ""}`, cls: "" };
+  if (justEntered(a)) return { text: `Just launched · #${a.top10_rank}`, cls: "" };
   if (a.top10_rank) return { text: `Top 10 · #${a.top10_rank}`, cls: "" };
+  if (isSurvivor(a)) return { text: `Top 50 · ${a.top50_days} days`, cls: "proven" };
   if (a.rising) return { text: "Rising", cls: "rise" };
   if (a.whitelisted) return { text: "Via creator", cls: "proven" };
   return null;
@@ -37,6 +42,8 @@ export default async function WinningAds({ params, searchParams }: { params: Pro
   const f = FILTERS.find((x) => x.key === q.f) ?? FILTERS[0];
   const counts = Object.fromEntries(FILTERS.map((x) => [x.key, pool.filter(x.test).length]));
   let list = pool.filter(f.test);
+  if (f.key === "climbing") list = [...list].sort((a, b) => (b.climb!.from - b.climb!.to) - (a.climb!.from - a.climb!.to));
+  if (f.key === "survivors") list = [...list].sort((a, b) => (b.top50_days ?? 0) - (a.top50_days ?? 0));
   if (f.key === "top10") list = [...list].sort((a, b) => (b.breakout ?? "").localeCompare(a.breakout ?? "") || (a.top10_rank ?? 99) - (b.top10_rank ?? 99));
   const shown = list.slice(0, Math.max(PAGE, Number(q.n) || PAGE));
   const posters = await Promise.all(shown.map((a) => posterUrl(a)));

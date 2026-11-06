@@ -377,7 +377,7 @@ def daily(storage, today: date | None = None, source=None, session=None, client=
         if not summary:
             continue
         snap = json.loads(storage.read_text(summary["key"]))
-        fresh = [m["ad_id"] for m in snap.get("moves", []) if m["kind"] == "breakout"][:DAILY_NEW]
+        fresh = [m["ad_id"] for m in snap.get("moves", []) if m["kind"] in ("breakout", "climbing")][:DAILY_NEW]
         if not fresh:
             continue
         creative.run(storage, slug, limit=0, ids=fresh)

@@ -171,6 +171,9 @@ def _link(ad: dict) -> str:
 def top10_note(ad: dict) -> str:
     """Where the ad sits in its advertiser's top 10 most-shown ads (daily tracking), or ""."""
     bits = []
+    if ad.get("climb") and ad.get("climbing"):
+        c = ad["climb"]
+        bits.append(f"climbing: #{c['from']} to #{c['to']} in {ad.get('brand')}'s most-shown ads over {c['days']} days")
     if ad.get("breakout"):
         bits.append(f"broke into {ad.get('brand')}'s top 10 most-shown ads on {ad['breakout']}, "
                     f"{ad.get('days_running', 0)} days after launch")
@@ -246,8 +249,9 @@ def balance_segments(top: list[dict], pool: list[dict], segs: list[dict],
 # (key, title, what it is, how many ads). Each ad appears once; the first FULL_PER_LANE of a
 # lane get the full line-by-line breakdown, the rest a short card.
 PAID_LANES = [
-    ("cracked", "New in the top 10", "new ads (30 days or less) in their brand's 10 most-shown ads right now, "
-                "and any that broke in during the last 14 days (daily tracking): where brands are moving money", 5),
+    ("cracked", "Breaking out and climbing", "new ads (30 days or less) that held a spot in their brand's 10 "
+                "most-shown ads for 3+ days in the last 14 days, and ads that jumped 15+ spots in their brand's "
+                "top 50 in the last week (daily tracking): where brands are moving money", 5),
     ("proven", "Proven winners", "the best long-runners: months of paid spend and still winning", 5),
     ("rising", "Rising now", "new ads (under 30 days) already outlasting how long their brand usually "
                "keeps an ad, or being scaled with 5+ versions: what's working right now", 5),
@@ -328,8 +332,12 @@ def in_lane(ad: dict, key: str, unknown_video_ok: bool = False) -> bool:
     if key == "cracked":
         if ad.get("breakout") and (date.today() - date.fromisoformat(ad["breakout"])).days <= BREAKOUT_DAYS:
             return True
-        # first report for a brand (no history yet to flag a breakout): young ads already in a top 10
-        return bool(ad.get("top10_rank")) and ad.get("is_active", True) and (ad.get("days_running") or 99) <= NEW_TOP10_DAYS
+        if ad.get("climbing") and (date.today() - date.fromisoformat(ad["climbing"])).days <= 7:
+            return True
+        # first report for a brand (no history yet to flag a breakout): young ads already in a top 10,
+        # but not launch-day ones (a fresh batch always lands high for a day)
+        return (bool(ad.get("top10_rank")) and ad.get("is_active", True)
+                and 3 <= (ad.get("days_running") or 0) <= NEW_TOP10_DAYS)
     if key == "proven":
         return not ad.get("rising")
     if key == "rising":

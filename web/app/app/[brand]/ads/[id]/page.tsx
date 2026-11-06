@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { advertiser, hook, link, loadAds, posted, posterUrl } from "@/lib/ads";
+import { advertiser, hook, link, loadAds, posted, posterUrl, type Ad } from "@/lib/ads";
 import { brandName } from "@/lib/brands";
 import { listJobs } from "@/lib/jobs";
 import { listCreators } from "@/lib/creators";
@@ -121,6 +121,8 @@ export default async function AdDetail({ params }: { params: Promise<{ brand: st
                 </section>
               )}
 
+              {Object.keys(ad.rank_history ?? {}).length > 1 && <RankChart ad={ad} />}
+
               {facts.length > 0 && (
                 <section className="oa-card">
                   <h2 className="wa-h">How it&apos;s built</h2>
@@ -190,5 +192,37 @@ export default async function AdDetail({ params }: { params: Promise<{ brand: st
         </div>
       </main>
     </>
+  );
+}
+
+/** Its spot in the advertiser's most-shown ads, day by day (#1 at the top). */
+function RankChart({ ad }: { ad: Ad }) {
+  const pts = Object.entries(ad.rank_history ?? {}).sort(([a], [b]) => a.localeCompare(b));
+  const W = 560, H = 120, worst = Math.max(10, ...pts.map(([, r]) => r));
+  const x = (i: number) => (pts.length === 1 ? W / 2 : 8 + (i / (pts.length - 1)) * (W - 16));
+  const y = (r: number) => 10 + ((r - 1) / (worst - 1 || 1)) * (H - 20);
+  const top10 = y(10);
+  const first = pts[0][1], last = pts[pts.length - 1][1];
+  const day = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const verdict = ad.top50_out
+    ? `Stopped running on ${day(ad.top50_out)}.`
+    : first > last
+      ? `Up ${first - last} spots since ${day(pts[0][0])}, from #${first} to #${last}.`
+      : first < last
+        ? `Down ${last - first} spots since ${day(pts[0][0])}, from #${first} to #${last}.`
+        : `Holding at #${last} since ${day(pts[0][0])}.`;
+  return (
+    <section className="oa-card">
+      <h2 className="wa-h">Where {ad.brand} is putting its money</h2>
+      <p className="oa-small oa-muted">Its spot in {ad.brand}&apos;s most-shown ads each day. Higher on the chart means more of their spend. {verdict}</p>
+      <svg viewBox={`0 0 ${W} ${H}`} className="wa-rank" role="img" aria-label={`Rank by day: ${pts.map(([d, r]) => `${day(d)} #${r}`).join(", ")}`}>
+        {worst > 10 && <rect x="0" y="0" width={W} height={top10} className="t10" />}
+        <polyline points={pts.map(([, r], i) => `${x(i)},${y(r)}`).join(" ")} />
+        {pts.map(([d, r], i) => (
+          <circle key={d} cx={x(i)} cy={y(r)} r="3.5"><title>{`${day(d)}: #${r}`}</title></circle>
+        ))}
+      </svg>
+      <div className="wa-rank-x oa-small oa-muted"><span>{day(pts[0][0])} · #{first}</span><span>{day(pts[pts.length - 1][0])} · #{last}</span></div>
+    </section>
   );
 }
