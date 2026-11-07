@@ -1,6 +1,6 @@
 # Copywriting skills
 
-Ore's copywriting skills, one per heading. They were built from 8 books (Masterson's Copywriting Secrets and Great Leads, Take Their Money, The Brain Audit, Influence, Predictably Irrational, StoryBrand, Halbert's editing formula) and merged into one skill wherever the books teach the same thing. The full book notes live in `knowledge/books/` for reference. Each skill says what it is, how to use it in a 15-60s video or post, and where it came from.
+Ore's copywriting skills, one per heading. They were built from 8 books (Masterson's Copywriting Secrets and Great Leads, Take Their Money, The Brain Audit, Influence, Predictably Irrational, StoryBrand, Halbert's editing formula) and Callaway's storytelling video and merged into one skill wherever the books teach the same thing. The full book notes live in `knowledge/books/` for reference. Each skill says what it is, how to use it in a 15-60s video or post, and where it came from.
 
 Use them the way a good copywriter does: pick the few that fit this brand, audience and awareness stage. Don't stuff every skill into one script.
 
@@ -70,7 +70,9 @@ Use them the way a good copywriter does: pick the few that fit this brand, audie
 - Keep it short: most top hooks are eight words or fewer.
 - Breakthrough hooks put into words what the audience already thinks or fears right now.
 - Check competitors' hooks so ours don't sound like theirs.
-- *From: Take Their Money, Masterson.*
+- The first line says what the video is about. Curiosity comes from what's held back, not from vague openers like "wait till you see this", which lose the viewer before they know why to stay.
+- Show while you tell: frame 0 should show something that confirms the spoken line (the vial, the scale, the app screen, the messy notes app), not just a talking face. Eyes read faster than ears.
+- *From: Take Their Money, Masterson, Callaway.*
 
 ### 11. Pick the opening type
 Six openings, from most direct to most indirect:
@@ -96,7 +98,10 @@ Six openings, from most direct to most indirect:
 - Stories get past the viewer's guard: they stop being critical when they're entertained.
 - Start in the middle of the conflict, with a place and a time. Give a hero the viewer sees themselves in, raise the stakes, keep the climb short, end on a payoff.
 - The underdog arc is a go-to: an ordinary person tries something, people doubt or mock them, they prove everyone wrong. It hits two deep desires, approval and vindication.
-- *From: Masterson, Great Leads.*
+- Move it with "but" and "therefore", never "and then". Between every two beats there's a turn: something goes wrong (but), or something happens because of the last beat (therefore). "And then" beats pile up detail and the viewer drifts. Context, conflict, context, conflict.
+- Write the last line first, then work backwards. It's the line they'd repeat to a friend, and since short videos loop, it should set up the first line on the replay.
+- Find the lens: the angle on the topic nobody else is taking. If every competitor tells the same story, tell it from the least common angle you can still make true for this creator.
+- *From: Masterson, Great Leads, Callaway.*
 
 ## D. The middle
 
@@ -233,7 +238,8 @@ Six openings, from most direct to most indirect:
 - Spoken lines at a grade 4-6 reading level: short, active and concrete. Simple lines are believed more.
 - One idea per line. Contract everything ("it's", not "it is"). Slang and fragments are fine if a person would say them.
 - Complicated writing often hides weak thinking.
-- *From: Masterson, Halbert.*
+- Write it like a voice note to one close friend, not a presentation. When it sounds like a conversation, the viewer stops asking "am I being sold to?"
+- *From: Masterson, Halbert, Callaway.*
 
 ### 35. Run the edit pass
 Before a script ships, go start to finish once:
@@ -241,7 +247,9 @@ Before a script ships, go start to finish once:
 - The "so what" test: cut any line a busy stranger wouldn't care about.
 - Split long lines at "and" or "because". Swap vague pronouns ("it", "they") for vivid names. Cut extra "that"s, hedges ("may", "could", "some") and lazy "-ly" words. Swap big words, repeated words, and words people secretly hate ("learn", "work" become "the trick", "I'll show you").
 - Explain jargon in the same breath. Turn flat words into strong ones ("upset" becomes "livid").
-- *From: Halbert.*
+- Check the rhythm: with one sentence per line, the right edge should look jagged. Short, medium, and now and then a long one that builds. Same-length lines in a row sound like a stuck record.
+- Check the joins: if beats are linked by "and then", rewrite the link as "but" or "therefore".
+- *From: Halbert, Callaway.*
 
 ### 36. Use on-screen text and emphasis
 - **The text hook** (on screen from frame 0) is 3-8 words and never repeats the spoken hook. It opens a second loop, so the viewer has two reasons to keep watching. Spoken "I owe my GLP-1 an apology", text "It was never the medication"; spoken "here are two things nobody tells you", text "#2 is why your cravings come back". No labels like "Nurse here:".
