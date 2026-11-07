@@ -1,6 +1,6 @@
 # Skill tree: 6 storytelling techniques (Callaway, YouTube)
 
-Ore's notes on a short-form creator's video about storytelling, in our own words. He credits each idea to someone else (South Park's creators, Gary Provost, Steve Jobs, Christopher Nolan); the summary below is how they apply to a 15-180s UGC script. Merged into `knowledge/copywriting-skills.md` (skills 10, 13, 34, 35).
+Ore's notes on a short-form creator's video about storytelling, in our own words. He credits each idea to someone else (South Park's creators, Gary Provost, Steve Jobs, Christopher Nolan); the summary below is how they apply to a 15-180s UGC script. Optional tools for story-driven content, not rules: they live only in skill 13 of `knowledge/copywriting-skills.md`, marked optional. Hook rules (skill 10) are unchanged.
 
 ## 1. The dance: context, then conflict
 - Every story that holds attention alternates: a bit of context (the character is doing something), then a conflict (something goes wrong), then more context (they get past it), then another conflict.
